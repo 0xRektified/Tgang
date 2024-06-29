@@ -7,6 +7,7 @@ import "./index.css";
 import WebApp from "@twa-dev/sdk";
 
 WebApp.ready();
+WebApp.expand();
 
 // this manifest is used temporarily for development purposes
 const manifestUrl =
