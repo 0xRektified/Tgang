@@ -31,31 +31,17 @@ function App() {
   const { network } = useTonConnect();
 
   useEffect(() => {
-    const bottom = document.getElementById("bottom");
-    if (bottom) {
-      bottom.scrollIntoView();
+    const test = document.getElementById("test");
+    if (test) {
+      test.scrollIntoView();
     }
-  }, [document]);
+  }, []);
 
   return (
     <StyledApp>
       <AppContainer>
-        <FlexBoxCol>
-          <Counter />
-          <TransferTon />
-          <Jetton />
-          <div id="bottom" />
-          {/* <FlexBoxRow>
-            <TonConnectButton />
-            <Button>
-              {network
-                ? network === CHAIN.MAINNET
-                  ? "mainnet"
-                  : "testnet"
-                : "N/A"}
-            </Button>
-          </FlexBoxRow> */}
-        </FlexBoxCol>
+        <div id="buffer" style={{ height: "500px" }}></div>
+        <FlexBoxCol id="mainView"></FlexBoxCol>
       </AppContainer>
     </StyledApp>
   );

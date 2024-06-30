@@ -3,38 +3,11 @@ import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
-
 import WebApp from "@twa-dev/sdk";
+import { initializeApp } from "./appScreenHelper";
 
-// App in full screenmode
-WebApp.ready();
-WebApp.expand();
-WebApp.isClosingConfirmationEnabled = true;
-
-let ts: number | undefined;
-const onTouchStart = (e: TouchEvent) => {
-  ts = e.touches[0].clientY;
-};
-const onTouchMove = (e: TouchEvent) => {
-  const scrollableEl = document.documentElement.querySelector("body");
-
-  console.log(scrollableEl);
-  if (scrollableEl) {
-    const scroll = scrollableEl.scrollTop;
-    const te = e.changedTouches[0].clientY;
-    if (scroll <= 0 && ts! < te) {
-      e.preventDefault();
-    }
-  } else {
-    e.preventDefault();
-  }
-};
-document.documentElement.addEventListener("touchstart", onTouchStart, {
-  passive: false,
-});
-document.documentElement.addEventListener("touchmove", onTouchMove, {
-  passive: false,
-});
+// Initialize the screen logic to avoid the app to be closed
+initializeApp();
 
 // this manifest is used temporarily for development purposes
 const manifestUrl =
