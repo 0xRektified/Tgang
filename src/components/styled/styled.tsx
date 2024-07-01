@@ -10,6 +10,10 @@ export const Card = styled.div`
   }
 `;
 
+export const HorizontalSpacing = styled.div`
+  margin: 25px;
+`;
+
 export const FlexBoxRow = styled.div`
   display: flex;
   flex-direction: row;

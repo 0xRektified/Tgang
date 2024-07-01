@@ -1,0 +1,52 @@
+import { FlexBoxCol, FlexBoxRow } from "../styled/styled";
+import { Product } from "./utils/types";
+
+interface ShippingBoardProps {
+  products: Product[];
+  handleOpenModal: (slot: number) => void;
+  totalQuantity: number;
+}
+
+export const ShippingBoard: React.FC<ShippingBoardProps> = ({
+  products,
+  handleOpenModal,
+  totalQuantity,
+}) => {
+  const maxShipping = 500;
+  const slots = [0, 1, 2]; // Define slots
+
+  return (
+    <FlexBoxCol className="w-full">
+      {slots.map((slot) => {
+        const product = products.find((p) => p.slot === slot);
+        return (
+          <FlexBoxRow key={slot} className="w-full">
+            {product ? (
+              <div className="w-full" onClick={() => handleOpenModal(slot)}>
+                <div className="mb-2">
+                  {product.name} {product.quantity}/{product.maxCarry}
+                </div>
+                <progress
+                  className="progress progress-primary w-full"
+                  value={product.quantity}
+                  max={500}
+                ></progress>
+              </div>
+            ) : products.find((p) => p.slot === null) ? (
+              <button
+                onClick={() => handleOpenModal(slot)}
+                className="btn btn-primary w-full"
+              >
+                Add Product
+              </button>
+            ) : (
+              <button disabled className="btn btn-disabled w-full">
+                Locked
+              </button>
+            )}
+          </FlexBoxRow>
+        );
+      })}
+    </FlexBoxCol>
+  );
+};
