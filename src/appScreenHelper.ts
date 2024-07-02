@@ -18,6 +18,18 @@ function debounce<T extends (...args: any[]) => void>(
   };
 }
 
+export const handlePositionCheck = () => {
+  const scrollableEl = document.getElementById("mainView");
+  const bufferEl = document.getElementById("buffer");
+
+  if (scrollableEl && bufferEl) {
+    const bufferRect = bufferEl.getBoundingClientRect();
+    if (bufferRect.bottom > 0) {
+      scrollableEl.scrollIntoView();
+    }
+  }
+};
+
 const initializeApp = () => {
   // App in full screen mode
   WebApp.ready();
@@ -35,18 +47,6 @@ const initializeApp = () => {
   let ts: number | undefined;
   const onTouchStart = (e: TouchEvent) => {
     ts = e.touches[0].clientY;
-  };
-
-  const handlePositionCheck = () => {
-    const scrollableEl = document.getElementById("mainView");
-    const bufferEl = document.getElementById("buffer");
-
-    if (scrollableEl && bufferEl) {
-      const bufferRect = bufferEl.getBoundingClientRect();
-      if (bufferRect.bottom > 0) {
-        scrollableEl.scrollIntoView();
-      }
-    }
   };
 
   const onTouchMove = (e: TouchEvent) => {
