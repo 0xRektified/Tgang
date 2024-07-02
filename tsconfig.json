@@ -16,6 +16,10 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "src/treemaker.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
+// "include": [
+//   "src/**/*",
+//   "src/treemaker.d.ts" // Make sure this line is included
+// ]

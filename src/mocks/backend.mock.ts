@@ -1,5 +1,9 @@
 import { Product } from "../components/home/utils/types";
+import { Upgrades } from "../components/shop/Shop";
 
+/****************************************************
+                        Home View
+*****************************************************/
 export const productsData: Product[] = [
   {
     id: 1,
@@ -120,4 +124,78 @@ export const supplierPrice = {
 };
 
 export const customerList = [{ 1: 10 }, { 2: 1 }, { 3: 5 }, { 1: 1 }, { 1: 1 }];
-export const userCashAmount = 100;
+export const userCashAmount = 1000;
+
+/****************************************************
+                        Shop View
+*****************************************************/
+
+// Update the mock data to include parent-child relationships
+export const upgrades: Upgrades = {
+  dealer: [
+    {
+      id: 1,
+      title: "Upgrade 1",
+      description: "Description of Upgrade 1",
+      level: 0,
+      maxLevel: 5,
+      cost: 100,
+      image:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      locked: false,
+      requirement: null,
+    },
+    {
+      id: 2,
+      title: "Upgrade 2",
+      description: "Description of Upgrade 2",
+      level: 0,
+      maxLevel: 5,
+      cost: 200,
+      image:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      locked: true,
+      requirement: { title: "Upgrade 1", level: 1 },
+    },
+    {
+      id: 3,
+      title: "Upgrade 3",
+      description: "Description of Upgrade 3",
+      level: 0,
+      maxLevel: 5,
+      cost: 200,
+      image:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      locked: true,
+      requirement: { title: "Upgrade 1", level: 1 },
+    },
+  ],
+  farmer: [
+    {
+      id: 4,
+      title: "Upgrade 4",
+      description: "Description of Upgrade 4",
+      level: 3,
+      maxLevel: 5,
+      cost: 300,
+      image:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      locked: false,
+      requirement: null,
+    },
+  ],
+  gangster: [
+    {
+      id: 5,
+      title: "Upgrade 5",
+      description: "Description of Upgrade 5",
+      level: 4,
+      maxLevel: 5,
+      cost: 400,
+      image:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      locked: false,
+      requirement: null,
+    },
+  ],
+};

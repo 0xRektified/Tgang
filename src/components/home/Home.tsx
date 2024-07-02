@@ -13,8 +13,7 @@ import {
 import { HomeProps, Product, TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { LastTransaction } from "./LastTransaction";
-import { Toast } from "./notifications/toast";
-import { TouchPoints } from "./utils/touchPoints";
+import { TouchPoints } from "../utils/touchPoints";
 
 export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
   const [products, setProducts] = useState<Product[]>(productsData);
@@ -74,7 +73,7 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
     setIsModalOpen(false);
   };
 
-  const handleTouchStart = (e: any) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
 
     // Filter products that are in a slot
@@ -192,11 +191,6 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
         />
       )}
       <TouchPoints touchPoints={touchPoints} />
-      {/* <Toast
-        show={showToastNoProduct}
-        message="Nothing to sell."
-        type="error"
-      /> */}
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchPoint } from "./types";
+import { TouchPoint } from "../home/utils/types";
 
 interface TouchPointsProps {
   touchPoints: TouchPoint[];

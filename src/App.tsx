@@ -5,7 +5,7 @@ import "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
-import { Shop } from "./components/Shop";
+import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import { IUserInfo } from "./components/interfaces/user.interface";
 import { useTelegramUserInfo } from "./hooks/useTelegramUserInfo";
@@ -59,7 +59,7 @@ function App() {
       case "Base":
         return <Home setCashAmount={setCashAmount} cashAmount={cashAmount} />;
       case "Shop":
-        return <Shop />;
+        return <Shop setCashAmount={setCashAmount} cashAmount={cashAmount} />;
       case "Statics":
         return <Statics />;
       default:
