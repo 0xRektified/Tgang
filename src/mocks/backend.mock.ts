@@ -28,9 +28,96 @@ export const productsData: Product[] = [
     maxCarry: 100,
     slot: null,
   },
+  {
+    id: 4,
+    name: "Heroin",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 5,
+    name: "MDMA",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 6,
+    name: "LSD",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 7,
+    name: "Ketamine",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 8,
+    name: "Psilocybin Mushrooms",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 9,
+    name: "PCP",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
+  {
+    id: 10,
+    name: "DMT",
+    unlocked: false,
+    selected: false,
+    quantity: 0,
+    maxCarry: 100,
+    slot: null,
+  },
 ];
 
-export const marketPrice = { Weed: 20, Coke: 50, Meth: 10 };
-export const supplierPrice = { Weed: 18, Coke: 45, Meth: 9 };
+export const marketPrice = {
+  Weed: 20,
+  Coke: 50,
+  Meth: 10,
+  Heroin: 150,
+  MDMA: 25,
+  LSD: 5,
+  Ketamine: 25,
+  Psilocybin_Mushrooms: 7,
+  PCP: 30,
+  DMT: 300,
+};
+
+export const supplierPrice = {
+  Weed: 18,
+  Coke: 45,
+  Meth: 9,
+  Heroin: 135,
+  MDMA: 22.5,
+  LSD: 4.5,
+  Ketamine: 22.5,
+  Psilocybin_Mushrooms: 6.3,
+  PCP: 27,
+  DMT: 270,
+};
+
 export const customerList = [{ 1: 10 }, { 2: 1 }, { 3: 5 }, { 1: 1 }, { 1: 1 }];
 export const userCashAmount = 100;
