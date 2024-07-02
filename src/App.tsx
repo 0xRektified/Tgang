@@ -1,7 +1,6 @@
 import "./App.css";
 import styled from "styled-components";
-import { FlexBoxCol, HorizontalSpacing } from "./components/styled/styled";
-import { useTonConnect } from "./hooks/useTonConnect";
+import { FlexBoxCol } from "./components/styled/styled";
 import "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import { FooterMenu } from "./components/FooterMenu";
@@ -11,7 +10,7 @@ import { TopMenu } from "./components/TopMenu";
 import { IUserInfo } from "./components/interfaces/user.interface";
 import { useTelegramUserInfo } from "./hooks/useTelegramUserInfo";
 import { userCashAmount } from "./mocks/backend.mock";
-
+import { customerList } from "./mocks/backend.mock";
 const StyledApp = styled.div``;
 
 const AppContainer = styled.div`
@@ -72,7 +71,11 @@ function App() {
     <StyledApp data-theme="dark">
       <AppContainer>
         <div id="buffer" style={{ height: "500px" }}></div>
-        <TopMenu userInfo={userInfo} cashAmount={cashAmount} />
+        <TopMenu
+          userInfo={userInfo}
+          cashAmount={cashAmount}
+          customerNbr={customerList.length}
+        />
         <FlexBoxCol>{renderCurrentView(cashAmount, setCashAmount)}</FlexBoxCol>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
       </AppContainer>

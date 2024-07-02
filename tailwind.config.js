@@ -20,12 +20,18 @@ export default {
           "0%": { transform: "translateX(0)", opacity: 1 },
           "100%": { transform: "translateX(100%)", opacity: 0 },
         },
+        slideInFromRightBounce: {
+          "0%": { transform: "translateX(100%)", opacity: 0 },
+          "80%": { transform: "translateX(0)", opacity: 1 },
+          "100%": { transform: "translateX(-10px)", opacity: 1 },
+        },
       },
       animation: {
         "fade-out": "fadeOut 1s forwards",
         "fade-out-toast": "fadeOutToast 3s forwards",
         "slide-in-from-left": "slideInFromLeft 1s forwards",
         "slide-out-to-right": "slideOutToRight 1s forwards 3s",
+        "slide-in-from-right-bounce": "slideInFromRightBounce 0.6s ease-out",
       },
     },
   },

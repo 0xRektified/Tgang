@@ -139,10 +139,7 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
   return (
     <>
       <FlexBoxRow className="justify-between items-center bg-zinc-800 text-white px-4 rounded shadow-lg">
-        <LastTransaction
-          transaction={lastTransaction}
-          customerNbr={customerList.length}
-        />
+        <LastTransaction transaction={lastTransaction} />
       </FlexBoxRow>
       <FlexBoxRow className="justify-between items-center">
         <FlexBoxCol>

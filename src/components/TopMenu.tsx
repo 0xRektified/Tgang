@@ -1,34 +1,50 @@
 import React from "react";
 import { IUserInfo } from "./interfaces/user.interface";
 import rank from "/assets/rank.png";
+import {
+  TopMenuContainer,
+  Container,
+  RankIcon,
+  DigitalFont,
+  Username,
+  BalanceLabel,
+  BalanceAmount,
+} from "./styled/topmenu";
+import { FlexBoxCol, FlexBoxRow } from "./styled/styled";
 
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
   cashAmount: number;
+  customerNbr: number;
 }
-
-export const TopMenu: React.FC<TopMenuProps> = ({ userInfo, cashAmount }) => {
+export const TopMenu: React.FC<TopMenuProps> = ({
+  userInfo,
+  cashAmount,
+  customerNbr,
+}) => {
   return (
-    <div
-      id="mainView"
-      className="bg-zinc-800 text-white px-4 shadow-lg p-4 w-full"
-    >
-      <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <img src={rank} alt="Rank" className="w-6 h-6" />
-          <span className="text-sm md:text-base lg:text-lg font-semibold">
-            {userInfo ? userInfo.username : `Welcome`}
-          </span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-xs md:text-sm lg:text-base">
-            Current balance
-          </span>
-          <span className="text-lg md:text-xl lg:text-2xl font-bold text-green-500 animate-pulse">
-            ${cashAmount}
-          </span>
-        </div>
-      </div>
-    </div>
+    <TopMenuContainer id="mainView">
+      <Container>
+        <FlexBoxRow className="w-full justify-between">
+          <FlexBoxCol>
+            <div className="flex items-center space-x-2">
+              <RankIcon src={rank} alt="Rank" />
+              <DigitalFont as={Username}>
+                {userInfo ? userInfo.username : `Welcome`}
+              </DigitalFont>
+            </div>
+            <div>
+              <span className="text-sm">Customer waiting: 5</span>
+            </div>
+          </FlexBoxCol>
+          <FlexBoxCol className="items-end">
+            <DigitalFont as={BalanceLabel}>Current balance</DigitalFont>
+            <DigitalFont as={BalanceAmount}>${cashAmount}</DigitalFont>
+          </FlexBoxCol>
+        </FlexBoxRow>
+      </Container>
+    </TopMenuContainer>
   );
 };
+
+export default TopMenu;
