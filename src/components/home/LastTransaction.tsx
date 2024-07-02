@@ -19,7 +19,7 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
   return (
     <div
       // key={key}
-      className="rounded shadow-lg w-full animate-slide-in-from-right-bounce"
+      className="rounded shadow-lg w-full "
     >
       {transaction ? (
         transaction.type === "success" ? (
