@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Transaction } from "./utils/types";
 
 interface LastTransactionProps {
@@ -11,13 +11,14 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
   // const [key, setKey] = useState(0);
 
   // useEffect(() => {
-  //   setKey((prevKey) => prevKey + 1);
+  //   if (transaction) {
+  //     setKey((prevKey) => prevKey + 1);
+  //   }
   // }, [transaction]);
 
   return (
     <div
       // key={key}
-      key={1}
       className="rounded shadow-lg w-full animate-slide-in-from-right-bounce"
     >
       {transaction ? (
