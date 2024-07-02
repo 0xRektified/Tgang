@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import { supplierPrice } from "../../../mocks/backend.mock";
 import WebApp from "@twa-dev/sdk";
 import { Product } from "../utils/types";
@@ -11,6 +12,92 @@ interface SupplierModalProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
 }
+
+const ModalContainer = styled.div`
+  background-color: #2d3748;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+`;
+
+const StyledLabel = styled.label`
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e0;
+  margin-bottom: 0.5rem;
+`;
+
+const StyledSelect = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #4a5568;
+  background-color: #1a202c;
+  color: #cbd5e0;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #63b3ed;
+  }
+`;
+
+const StyledInputContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #4a5568;
+  background-color: #1a202c;
+  color: #cbd5e0;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #63b3ed;
+  }
+`;
+
+const StyledButton = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: background-color 0.3s;
+
+  &.cancel {
+    background-color: #718096;
+    margin-right: 0.5rem;
+
+    &:hover {
+      background-color: #4a5568;
+    }
+  }
+
+  &.buy {
+    background-color: #48bb78;
+
+    &:hover {
+      background-color: #38a169;
+    }
+  }
+
+  &.max {
+    background-color: #63b3ed;
+
+    &:hover {
+      background-color: #4299e1;
+    }
+  }
+`;
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({
   isOpen,
@@ -47,20 +134,26 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     }
   };
 
+  const handleMaxClick = () => {
+    const productPrice =
+      supplierPrice[selectedProduct as keyof typeof supplierPrice];
+    const maxQuantity = Math.floor(cashAmount / productPrice);
+    setQuantity(maxQuantity);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-4 rounded shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Buy Products - ${cashAmount}</h2>
+      <ModalContainer>
+        <h2 className="text-xl font-bold mb-4 text-white">
+          Buy Products - ${cashAmount}
+        </h2>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Product
-          </label>
-          <select
+          <StyledLabel>Product</StyledLabel>
+          <StyledSelect
             value={selectedProduct}
             onChange={(e) => setSelectedProduct(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
             {Object.keys(supplierPrice).map((product) => (
               <option key={product} value={product}>
@@ -68,34 +161,30 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 {supplierPrice[product as keyof typeof supplierPrice]}
               </option>
             ))}
-          </select>
+          </StyledSelect>
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Quantity
-          </label>
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          />
+          <StyledLabel>Quantity</StyledLabel>
+          <StyledInputContainer>
+            <StyledInput
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
+            <StyledButton onClick={handleMaxClick} className="max">
+              Max
+            </StyledButton>
+          </StyledInputContainer>
         </div>
         <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="mr-2 py-2 px-4 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
+          <StyledButton onClick={onClose} className="cancel">
             Cancel
-          </button>
-          <button
-            onClick={handleBuy}
-            className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600"
-          >
+          </StyledButton>
+          <StyledButton onClick={handleBuy} className="buy">
             Buy
-          </button>
+          </StyledButton>
         </div>
-      </div>
+      </ModalContainer>
       {showToast && (
         <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
           <div className="toast toast-top toast-end">
