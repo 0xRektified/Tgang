@@ -31,7 +31,6 @@ export const handlePositionCheck = () => {
 };
 
 const initializeApp = () => {
-  // App in full screen mode
   WebApp.ready();
   WebApp.expand();
   WebApp.isClosingConfirmationEnabled = true;
@@ -44,39 +43,33 @@ const initializeApp = () => {
     }
   });
 
-  let ts: number | undefined;
-  const onTouchStart = (e: TouchEvent) => {
-    ts = e.touches[0].clientY;
-  };
-
-  const onTouchMove = (e: TouchEvent) => {
-    handlePositionCheck();
-  };
-
-  const onTouchEnd = (e: TouchEvent) => {
-    handlePositionCheck();
-  };
-
-  const debouncedCheckPosition = debounce(handlePositionCheck, 100, true);
-
   const handleScroll = () => {
     handlePositionCheck();
   };
 
-  document.documentElement.addEventListener("touchstart", onTouchStart, {
+  window.addEventListener("resize", debounce(handlePositionCheck, 100));
+
+  document.documentElement.addEventListener("touchstart", handlePositionCheck, {
     passive: false,
   });
-  document.documentElement.addEventListener("touchmove", onTouchMove, {
+  document.documentElement.addEventListener("touchmove", handlePositionCheck, {
     passive: false,
   });
-  document.documentElement.addEventListener("touchend", onTouchEnd, {
+  document.documentElement.addEventListener("touchend", handlePositionCheck, {
     passive: false,
   });
   document.addEventListener("scroll", handleScroll, {
     passive: true,
   });
-  document.addEventListener("scroll", debouncedCheckPosition, {
-    passive: true,
+
+  // Initial scroll into view
+  window.addEventListener("load", () => {
+    requestAnimationFrame(() => {
+      const scrollableEl = document.getElementById("mainView");
+      if (scrollableEl) {
+        scrollableEl.scrollIntoView({ behavior: "smooth" });
+      }
+    });
   });
 };
 

@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import { SupplierModal } from "./modals/SupplierModal";
 import { ShippingBoard } from "./ShippingBoard";
-import { FlexBoxCol, FlexBoxRow, HorizontalSpacing } from "../styled/styled";
+import {
+  FlexBoxCol,
+  FlexBoxRow,
+  HorizontalSpacing,
+} from "../styled/globalStyled";
 import userCharacter from "/assets/user_no_background.png";
 import WebApp from "@twa-dev/sdk";
 import {
@@ -14,6 +18,18 @@ import { HomeProps, Product, TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { LastTransaction } from "./LastTransaction";
 import { TouchPoints } from "../utils/touchPoints";
+import styled from "styled-components";
+
+const ImageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 400px;
+  transition: transform 0.15s ease-in-out;
+  &.pressed {
+    transform: scale(0.95);
+  }
+`;
 
 export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
   const [products, setProducts] = useState<Product[]>(productsData);
@@ -28,7 +44,13 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
   );
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
-  // const [showToastNoProduct, setShowToastNoProduct] = useState<boolean>(false);
+
+  useLayoutEffect(() => {
+    const scrollableEl = document.getElementById("mainView");
+    if (scrollableEl) {
+      scrollableEl.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   useEffect(() => {
     const value = calculateTotalQuantity(products);
@@ -96,13 +118,11 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
       amountEarned: 0,
     };
     if (!slottedProductToSell || slottedProductToSell.quantity < amountToSell) {
-      // setShowToastNoProduct(true);
       setLastTransaction({
         type: "missed",
         product: products.find((p) => p.id === productId)?.name || "Unknown",
         quantity: amountToSell,
       });
-      // setTimeout(() => setShowToastNoProduct(false), 4000);
     } else {
       const { updatedProducts, transaction } = handleTransaction(
         slottedProducts,
@@ -155,14 +175,12 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
       </FlexBoxRow>
 
       <FlexBoxRow>
-        <div
-          className={`flex flex-col items-center ${
-            pressed ? "scale-95" : ""
-          } transition-transform duration-150`}
+        <ImageContainer
+          className={pressed ? "pressed" : ""}
           onTouchStart={handleTouchStart}
         >
           <img src={userCharacter} alt="Logo" style={{ maxWidth: "200px" }} />
-        </div>
+        </ImageContainer>
         <ShippingBoard
           products={products}
           handleOpenModal={handleOpenModal}

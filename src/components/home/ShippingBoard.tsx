@@ -1,4 +1,4 @@
-import { FlexBoxCol, FlexBoxRow } from "../styled/styled";
+import { FlexBoxCol, FlexBoxRow } from "../styled/globalStyled";
 import { Product } from "./utils/types";
 
 interface ShippingBoardProps {

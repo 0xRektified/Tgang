@@ -7,7 +7,7 @@ import {
   FlexBoxRow,
   Button,
   Ellipsis,
-} from "../styled/styled";
+} from "../styled/globalStyled";
 
 export function Jetton() {
   const { connected } = useTonConnect();

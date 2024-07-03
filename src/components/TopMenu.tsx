@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { IUserInfo } from "./interfaces/user.interface";
 import rank from "/assets/rank.png";
 import {
@@ -10,7 +10,7 @@ import {
   BalanceLabel,
   BalanceAmount,
 } from "./styled/topmenu";
-import { FlexBoxCol, FlexBoxRow } from "./styled/styled";
+import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
@@ -22,6 +22,15 @@ export const TopMenu: React.FC<TopMenuProps> = ({
   cashAmount,
   customerNbr,
 }) => {
+  useLayoutEffect(() => {
+    const scrollableEl = document.getElementById("mainView");
+    if (scrollableEl) {
+      requestAnimationFrame(() => {
+        scrollableEl.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  }, []);
+
   return (
     <TopMenuContainer id="mainView">
       <Container>
@@ -34,7 +43,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
               </DigitalFont>
             </div>
             <div>
-              <span className="text-sm">Customer waiting: 5</span>
+              <span className="text-sm">Customer waiting: {customerNbr}</span>
             </div>
           </FlexBoxCol>
           <FlexBoxCol className="items-end">

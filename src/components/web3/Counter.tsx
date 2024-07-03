@@ -8,7 +8,7 @@ import {
   FlexBoxRow,
   Ellipsis,
   Button,
-} from "../styled/styled";
+} from "../styled/globalStyled";
 
 export function Counter() {
   const { connected } = useTonConnect();

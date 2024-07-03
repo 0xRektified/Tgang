@@ -1,6 +1,6 @@
 import "./App.css";
 import styled from "styled-components";
-import { FlexBoxCol } from "./components/styled/styled";
+import { FlexBoxCol } from "./components/styled/globalStyled";
 import "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import { FooterMenu } from "./components/FooterMenu";
