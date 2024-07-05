@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { upgrades } from "../../mocks/backend.mock";
 import { TouchPoints } from "../utils/touchPoints";
 import { FlexBoxRow, Tab, Tabs, UpgradeContainer } from "../styled/shopStyled";
 import { TouchPoint, Upgrades } from "./utils/types";
@@ -12,6 +11,8 @@ interface ShopProps {
   products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   activeTab: keyof Upgrades;
+  upgradesData: Upgrades;
+  setUpgradesData: React.Dispatch<React.SetStateAction<Upgrades>>;
 }
 
 export const Shop: React.FC<ShopProps> = ({
@@ -20,10 +21,10 @@ export const Shop: React.FC<ShopProps> = ({
   products,
   setProducts,
   activeTab,
+  upgradesData,
+  setUpgradesData,
 }) => {
-  const [upgradesData, setUpgradesData] = useState<Upgrades>(upgrades);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-
   const [currentTab, setCurrentTab] = useState<keyof Upgrades>(activeTab);
 
   useEffect(() => {

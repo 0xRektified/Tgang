@@ -41,15 +41,29 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     if (cashAmount >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
       setCashAmount(cashAmount - upgrade.cost);
 
-      // @note IF API Call succeed update the state
       setUpgradesData((prevData) => {
-        const updatedTab = prevData[tab].map((item) =>
-          item.id === upgrade.id ? { ...item, level: item.level + 1 } : item
-        );
-        return { ...prevData, [tab]: updatedTab };
+        const updatedTab = prevData[tab].map((item) => {
+          if (item.id === upgrade.id) {
+            const newLevel = item.level + 1;
+            return { ...item, level: newLevel };
+          }
+          return item;
+        });
+
+        const newTab = updatedTab.map((item) => {
+          if (
+            item.requirement &&
+            item.requirement.title === upgrade.title &&
+            upgrade.level + 1 >= item.requirement.level
+          ) {
+            return { ...item, locked: false };
+          }
+          return item;
+        });
+
+        return { ...prevData, [tab]: newTab };
       });
 
-      // Update products based on the upgrade
       setProducts((prevProducts) => {
         return prevProducts.map((product) => {
           if (product.name === upgrade.title) {
@@ -57,7 +71,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               ...product,
               unlocked: true,
               maxCarry: product.maxCarry + 50,
-            }; // Example logic to increase maxCarry
+            };
           }
           return product;
         });
@@ -121,7 +135,9 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           </CardHeader>
           <CardBody>
             <CardTitle>{upgrade.title}</CardTitle>
-            <CardDescription>{upgrade.description}</CardDescription>
+            <CardDescription>
+              {upgrade.locked ? `Unlock ${upgrade.title}` : upgrade.description}
+            </CardDescription>
           </CardBody>
         </UpgradeCard>
       ))}

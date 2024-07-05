@@ -10,7 +10,7 @@ import { TopMenu } from "./components/TopMenu";
 import { IUserInfo } from "./components/interfaces/user.interface";
 import { useTelegramUserInfo } from "./hooks/useTelegramUserInfo";
 import { userCashAmount } from "./mocks/backend.mock";
-import { productsData, customerList } from "./mocks/backend.mock";
+import { productsData, customerList, upgrades } from "./mocks/backend.mock";
 import { Product } from "./components/home/utils/types";
 import { Upgrades } from "./components/shop/utils/types";
 
@@ -31,6 +31,7 @@ function App() {
   const [cashAmount, setCashAmount] = useState<number>(userCashAmount);
   const [products, setProducts] = useState<Product[]>(productsData);
   const [activeTab, setActiveTab] = useState<keyof Upgrades>("dealer");
+  const [upgradesData, setUpgradesData] = useState<Upgrades>(upgrades);
 
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
 
@@ -81,6 +82,8 @@ function App() {
             products={products}
             setProducts={setProducts}
             activeTab={activeTab}
+            upgradesData={upgradesData}
+            setUpgradesData={setUpgradesData}
           />
         );
       case "Statics":

@@ -150,12 +150,12 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                       {product.unlocked ? (
                         <button>Select</button>
                       ) : (
-                        <StyledButton
-                          className="unlock"
+                        <span
+                          className="text-yellow-400 animate-pulse cursor-pointer"
                           onClick={() => handleUnlockClick(product)}
                         >
-                          Unlock in the shop
-                        </StyledButton>
+                          Unlock
+                        </span>
                       )}
                     </td>
                   </tr>

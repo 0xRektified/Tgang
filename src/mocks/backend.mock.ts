@@ -129,45 +129,40 @@ export const userCashAmount = 1000;
 /****************************************************
                         Shop View
 *****************************************************/
-
-// Update the mock data to include parent-child relationships
 export const upgrades: Upgrades = {
   dealer: [
     {
       id: 1,
       title: "Coke",
-      description: "Unlock Coke",
+      description: "Increase the number of item to carry",
       level: 0,
       maxLevel: 5,
       cost: 100,
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      image: "/assets/cc.png",
       locked: false,
       requirement: null,
     },
     {
       id: 2,
       title: "Meth",
-      description: "Unlock Meth",
+      description: "Increase the number of item to carry",
       level: 0,
       maxLevel: 5,
       cost: 200,
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      image: "/assets/meth.png",
       locked: true,
-      requirement: { title: "Upgrade 1", level: 1 },
+      requirement: { title: "Coke", level: 1 },
     },
     {
       id: 3,
       title: "Heroin",
-      description: "Unlock Heroin",
+      description: "Increase the number of item to carry",
       level: 0,
       maxLevel: 5,
       cost: 200,
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
+      image: "/assets/hero.png",
       locked: true,
-      requirement: { title: "Upgrade 1", level: 1 },
+      requirement: { title: "Meth", level: 1 },
     },
   ],
   farmer: [
