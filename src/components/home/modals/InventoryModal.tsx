@@ -61,8 +61,34 @@ const Table = styled.table`
     font-weight: 600;
   }
 
-  tbody tr:hover {
-    background-color: #4a5568;
+  tbody tr {
+    cursor: pointer;
+
+    &:hover {
+      background-color: #4a5568;
+    }
+
+    &.disabled {
+      background-color: #1a202c;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: #1a202c;
+      }
+
+      td {
+        color: #718096;
+      }
+
+      button {
+        background-color: #2d3748;
+        cursor: not-allowed;
+
+        &:hover {
+          background-color: #2d3748;
+        }
+      }
+    }
   }
 
   button {
@@ -88,7 +114,7 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90">
       <ModalContainer>
         <h2 className="text-2xl font-bold mb-6 text-white">
-          Select Slot {selectedSlot! + 1} Product
+          Inventory Slot {selectedSlot! + 1}
         </h2>
         <ScrollableTableContainer>
           <Table>
@@ -108,12 +134,17 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
                 .map((product) => (
                   <tr
                     key={product.id}
-                    onClick={() => handleSelectProductFromInventory(product)}
+                    onClick={
+                      product.quantity > 0
+                        ? () => handleSelectProductFromInventory(product)
+                        : undefined
+                    }
+                    className={product.quantity === 0 ? "disabled" : ""}
                   >
                     <td>{product.name}</td>
                     <td>{product.quantity}</td>
                     <td className="text-right">
-                      <button>Select</button>
+                      <button disabled={product.quantity === 0}>Select</button>
                     </td>
                   </tr>
                 ))}

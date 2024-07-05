@@ -25,8 +25,3 @@ export interface Transaction {
   quantity: number;
   amountEarned?: number;
 }
-
-export interface HomeProps {
-  cashAmount: number;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-}

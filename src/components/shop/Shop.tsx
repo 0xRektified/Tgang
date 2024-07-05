@@ -1,23 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { upgrades } from "../../mocks/backend.mock";
-import WebApp from "@twa-dev/sdk";
 import { TouchPoints } from "../utils/touchPoints";
 import { FlexBoxRow, Tab, Tabs, UpgradeContainer } from "../styled/shopStyled";
 import { TouchPoint, Upgrades } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
+import { Product } from "../home/utils/types";
 
 interface ShopProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  activeTab: keyof Upgrades;
 }
 
-export const Shop: React.FC<ShopProps> = ({ cashAmount, setCashAmount }) => {
-  const [activeTab, setActiveTab] = useState<keyof Upgrades>("dealer");
+export const Shop: React.FC<ShopProps> = ({
+  cashAmount,
+  setCashAmount,
+  products,
+  setProducts,
+  activeTab,
+}) => {
   const [upgradesData, setUpgradesData] = useState<Upgrades>(upgrades);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
 
+  const [currentTab, setCurrentTab] = useState<keyof Upgrades>(activeTab);
+
+  useEffect(() => {
+    setCurrentTab(activeTab);
+  }, [activeTab]);
+
   const handleTabClick = (tab: keyof Upgrades) => {
-    setActiveTab(tab);
+    setCurrentTab(tab);
   };
 
   return (
@@ -26,21 +40,21 @@ export const Shop: React.FC<ShopProps> = ({ cashAmount, setCashAmount }) => {
         <Tabs role="tablist">
           <Tab
             role="tab"
-            active={activeTab === "dealer"}
+            active={currentTab === "dealer"}
             onClick={() => handleTabClick("dealer")}
           >
             Dealer
           </Tab>
           <Tab
             role="tab"
-            active={activeTab === "farmer"}
+            active={currentTab === "farmer"}
             onClick={() => handleTabClick("farmer")}
           >
             Farmer
           </Tab>
           <Tab
             role="tab"
-            active={activeTab === "gangster"}
+            active={currentTab === "gangster"}
             onClick={() => handleTabClick("gangster")}
           >
             Gangster
@@ -50,12 +64,14 @@ export const Shop: React.FC<ShopProps> = ({ cashAmount, setCashAmount }) => {
       <FlexBoxRow>
         <UpgradeContainer>
           <RenderUpgrades
-            tab={activeTab}
+            tab={currentTab}
             upgradesData={upgradesData}
             cashAmount={cashAmount}
             setCashAmount={setCashAmount}
             setUpgradesData={setUpgradesData}
             setTouchPoints={setTouchPoints}
+            products={products}
+            setProducts={setProducts}
           />
         </UpgradeContainer>
       </FlexBoxRow>
@@ -63,3 +79,5 @@ export const Shop: React.FC<ShopProps> = ({ cashAmount, setCashAmount }) => {
     </>
   );
 };
+
+export default Shop;

@@ -1,5 +1,5 @@
 import { Product } from "../components/home/utils/types";
-import { Upgrades } from "../components/shop/Shop";
+import { Upgrades } from "../components/shop/utils/types";
 
 /****************************************************
                         Home View
@@ -17,8 +17,8 @@ export const productsData: Product[] = [
   {
     id: 2,
     name: "Coke",
-    unlocked: true,
-    selected: true,
+    unlocked: false,
+    selected: false,
     quantity: 0,
     maxCarry: 100,
     slot: null,
@@ -135,8 +135,8 @@ export const upgrades: Upgrades = {
   dealer: [
     {
       id: 1,
-      title: "Upgrade 1",
-      description: "Description of Upgrade 1",
+      title: "Coke",
+      description: "Unlock Coke",
       level: 0,
       maxLevel: 5,
       cost: 100,
@@ -147,8 +147,8 @@ export const upgrades: Upgrades = {
     },
     {
       id: 2,
-      title: "Upgrade 2",
-      description: "Description of Upgrade 2",
+      title: "Meth",
+      description: "Unlock Meth",
       level: 0,
       maxLevel: 5,
       cost: 200,
@@ -159,8 +159,8 @@ export const upgrades: Upgrades = {
     },
     {
       id: 3,
-      title: "Upgrade 3",
-      description: "Description of Upgrade 3",
+      title: "Heroin",
+      description: "Unlock Heroin",
       level: 0,
       maxLevel: 5,
       cost: 200,
@@ -173,8 +173,8 @@ export const upgrades: Upgrades = {
   farmer: [
     {
       id: 4,
-      title: "Upgrade 4",
-      description: "Description of Upgrade 4",
+      title: "Weed_lab",
+      description: "Start your weed production",
       level: 3,
       maxLevel: 5,
       cost: 300,
@@ -187,8 +187,8 @@ export const upgrades: Upgrades = {
   gangster: [
     {
       id: 5,
-      title: "Upgrade 5",
-      description: "Description of Upgrade 5",
+      title: "Workout",
+      description: "Increase you health score",
       level: 4,
       maxLevel: 5,
       cost: 400,

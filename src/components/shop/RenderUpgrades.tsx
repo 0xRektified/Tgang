@@ -10,6 +10,7 @@ import {
 } from "../styled/shopStyled";
 import { Upgrade, Upgrades, TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
+import { Product } from "../home/utils/types";
 
 interface RenderUpgradesProps {
   tab: keyof Upgrades;
@@ -18,6 +19,8 @@ interface RenderUpgradesProps {
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   setUpgradesData: React.Dispatch<React.SetStateAction<Upgrades>>;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
@@ -27,6 +30,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   setCashAmount,
   setUpgradesData,
   setTouchPoints,
+  products,
+  setProducts,
 }) => {
   const handleBuyUpgrade = (
     upgrade: Upgrade,
@@ -35,11 +40,27 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   ) => {
     if (cashAmount >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
       setCashAmount(cashAmount - upgrade.cost);
+
+      // @note IF API Call succeed update the state
       setUpgradesData((prevData) => {
         const updatedTab = prevData[tab].map((item) =>
           item.id === upgrade.id ? { ...item, level: item.level + 1 } : item
         );
         return { ...prevData, [tab]: updatedTab };
+      });
+
+      // Update products based on the upgrade
+      setProducts((prevProducts) => {
+        return prevProducts.map((product) => {
+          if (product.name === upgrade.title) {
+            return {
+              ...product,
+              unlocked: true,
+              maxCarry: product.maxCarry + 50,
+            }; // Example logic to increase maxCarry
+          }
+          return product;
+        });
       });
 
       const newTouchPoint = {

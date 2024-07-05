@@ -14,11 +14,12 @@ import {
   customerList,
   marketPrice,
 } from "../../mocks/backend.mock";
-import { HomeProps, Product, TouchPoint, Transaction } from "./utils/types";
+import { Product, TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { LastTransaction } from "./LastTransaction";
 import { TouchPoints } from "../utils/touchPoints";
 import styled from "styled-components";
+import { Upgrades } from "../shop/utils/types";
 
 const ImageContainer = styled.div`
   display: flex;
@@ -31,8 +32,21 @@ const ImageContainer = styled.div`
   }
 `;
 
-export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
-  const [products, setProducts] = useState<Product[]>(productsData);
+interface HomeProps {
+  cashAmount: number;
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  onUnlockClick: (tab: keyof Upgrades) => void; // Add this prop
+}
+
+export const Home: React.FC<HomeProps> = ({
+  cashAmount,
+  setCashAmount,
+  products,
+  setProducts,
+  onUnlockClick, // Destructure the new prop
+}) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
@@ -98,7 +112,6 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
 
-    // Filter products that are in a slot
     const slottedProducts = products.filter((p) => p.slot !== null);
 
     const order = customerList[currentCustomer];
@@ -206,6 +219,7 @@ export const Home: React.FC<HomeProps> = ({ cashAmount, setCashAmount }) => {
           setProducts={setProducts}
           cashAmount={cashAmount}
           setCashAmount={setCashAmount}
+          onUnlockClick={onUnlockClick} // Pass the new prop
         />
       )}
       <TouchPoints touchPoints={touchPoints} />
