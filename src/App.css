@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --tg-theme-bg-color: #efeff3;
+  --tg-theme-button-color: #2eaddc;
+  --tg-theme-button-text-color: white;
+} */
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-fade-out {
+  animation: fadeOut 1s forwards;
+}
