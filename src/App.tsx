@@ -12,7 +12,8 @@ import { upgrades as mockUpgrades } from "./mocks/backend.mock";
 import { Upgrades } from "./components/shop/utils/types";
 import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
-import { useCustomerData } from "./hooks/useCustomerData";
+import { useCustomerMarketData } from "./hooks/useCustomerMarketData";
+import { useFetchCustomer } from "./hooks/useFetchCustomer";
 
 const StyledApp = styled.div``;
 
@@ -27,7 +28,8 @@ export function Statics() {
 
 function App() {
   const { userInfo, loading, error } = useAuthAndFetchUserData();
-  const { customerInfo } = useCustomerData();
+  const { customerInfo } = useCustomerMarketData();
+  const { customers, setCustomers } = useFetchCustomer();
   const [currentView, setCurrentView] = useState("home");
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
@@ -66,6 +68,8 @@ function App() {
             setCashAmount={setCashAmount}
             cashAmount={cashAmount}
             products={products}
+            customers={customers}
+            setCustomers={setCustomers}
             setProducts={setProducts}
             onUnlockClick={handleUnlockClick}
           />
@@ -90,6 +94,8 @@ function App() {
             setCashAmount={setCashAmount}
             cashAmount={cashAmount}
             products={products}
+            customers={customers}
+            setCustomers={setCustomers}
             setProducts={setProducts}
             onUnlockClick={handleUnlockClick}
           />

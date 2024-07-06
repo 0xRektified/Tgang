@@ -3,7 +3,7 @@ import { TouchPoints } from "../utils/touchPoints";
 import { FlexBoxRow, Tab, Tabs, UpgradeContainer } from "../styled/shopStyled";
 import { TouchPoint, Upgrades } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
-import { Product } from "../home/utils/types";
+import { Product } from "../interfaces/user.interface";
 
 interface ShopProps {
   cashAmount: number;
