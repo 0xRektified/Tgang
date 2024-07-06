@@ -16,6 +16,8 @@ import { Upgrades } from "../../shop/utils/types";
 import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
 import { Product } from "../../interfaces/user.interface";
+import { useMarketData } from "../../../hooks/useMarketData";
+import { useAuthAndFetchUserData } from "../../../hooks/useAuthAndFetchUserData";
 
 interface SupplierModalProps {
   isOpen: boolean;
@@ -37,6 +39,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   onUnlockClick,
 }) => {
   const { buyProduct, loading, error } = useBuyProduct();
+  const { marketInfo } = useMarketData();
+  const { userInfo } = useAuthAndFetchUserData();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [showToast, setShowToast] = useState<boolean>(false);
@@ -145,11 +149,13 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => (
+                { marketInfo ? marketInfo.products.map((product) => {
+                  const userProduct = userInfo?.products.find((p) => p.name === product.name);
+                  return (
                   <tr
                     key={product.name}
                     onClick={() => handleProductSelect(product)}
-                    className={!product.unlocked ? "disabled" : ""}
+                    className={!userProduct ? "disabled" : ""}
                   >
                     <td>{product.name}</td>
                     <td>
@@ -161,7 +167,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                       }
                     </td>
                     <td className="text-right">
-                      {product.unlocked ? (
+                      {userProduct ? (
                         <button>Select</button>
                       ) : (
                         <span
@@ -173,7 +179,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                       )}
                     </td>
                   </tr>
-                ))}
+                )}) : null }
               </tbody>
             </Table>
           </ScrollableTableContainer>

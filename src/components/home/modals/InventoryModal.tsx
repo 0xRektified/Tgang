@@ -133,7 +133,7 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
                 )
                 .map((product) => (
                   <tr
-                    key={product.id}
+                    key={product.name}
                     onClick={
                       product.quantity > 0
                         ? () => handleSelectProductFromInventory(product)
