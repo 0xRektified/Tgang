@@ -1,5 +1,7 @@
+import { EProduct } from "./product.interface";
+
 export interface MarketProduct {
-  name: string;
+  name: EProduct;
   price: number;
 }
 

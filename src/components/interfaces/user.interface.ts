@@ -1,5 +1,7 @@
+import { EProduct } from "./product.interface";
+
 export interface Product {
-  name: string;
+  name: EProduct;
   unlocked: boolean;
   selected: boolean;
   quantity: number;
