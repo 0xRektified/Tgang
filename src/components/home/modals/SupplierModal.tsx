@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { supplierPrice } from "../../../mocks/backend.mock";
 import WebApp from "@twa-dev/sdk";
-import { Product } from "../utils/types";
 import {
   BottomSection,
   ButtonContainer,
@@ -15,6 +14,8 @@ import {
 } from "../styles/supplier.css";
 import { Upgrades } from "../../shop/utils/types";
 import { tabMapping } from "../../interfaces/general.interface";
+import useBuyProduct from "../../../hooks/useBuyProduct";
+import { Product } from "../../interfaces/user.interface";
 
 interface SupplierModalProps {
   isOpen: boolean;
@@ -35,28 +36,41 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   setCashAmount,
   onUnlockClick,
 }) => {
+  const { buyProduct, loading, error } = useBuyProduct();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [showToast, setShowToast] = useState<boolean>(false);
 
-  const handleBuy = () => {
+  const handleBuy = async () => {
     if (!selectedProduct) return;
     const cost =
       supplierPrice[selectedProduct.name as keyof typeof supplierPrice] *
       quantity;
     if (cashAmount >= cost) {
-      setCashAmount(cashAmount - cost);
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.name === selectedProduct.name
-            ? { ...product, quantity: product.quantity + quantity }
-            : product
-        )
+      await buyProduct(
+        "NY", //@note remove that and handle it dynamically
+        selectedProduct.name,
+        quantity,
+        setCashAmount,
+        setProducts
       );
 
-      WebApp.HapticFeedback.impactOccurred("heavy");
-      onClose();
+      if (!error) {
+        setCashAmount(cashAmount - cost);
+
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.name === selectedProduct.name
+              ? { ...product, quantity: product.quantity + quantity }
+              : product
+          )
+        );
+
+        WebApp.HapticFeedback.impactOccurred("heavy");
+      } else {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4000);
+      }
     } else {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
@@ -133,7 +147,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
               <tbody>
                 {products.map((product) => (
                   <tr
-                    key={product.id}
+                    key={product.name}
                     onClick={() => handleProductSelect(product)}
                     className={!product.unlocked ? "disabled" : ""}
                   >
