@@ -8,10 +8,11 @@ import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import { Product } from "./components/interfaces/user.interface";
-import { customerList, upgrades as mockUpgrades } from "./mocks/backend.mock";
+import { upgrades as mockUpgrades } from "./mocks/backend.mock";
 import { Upgrades } from "./components/shop/utils/types";
 import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
+import { useCustomerData } from "./hooks/useCustomerData";
 
 const StyledApp = styled.div``;
 
@@ -26,6 +27,7 @@ export function Statics() {
 
 function App() {
   const { userInfo, loading, error } = useAuthAndFetchUserData();
+  const { customerInfo } = useCustomerData();
   const [currentView, setCurrentView] = useState("home");
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
@@ -110,7 +112,7 @@ function App() {
         <TopMenu
           userInfo={userInfo}
           cashAmount={cashAmount}
-          customerNbr={customerList.length}
+          customerNbr={customerInfo?.length || 0}
         />
         <FlexBoxCol>{renderCurrentView(cashAmount, setCashAmount)}</FlexBoxCol>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />

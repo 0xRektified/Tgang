@@ -11,7 +11,6 @@ import {
   BalanceAmount,
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
-import { useCustomerData } from "../hooks/useCustomerData";
 
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
@@ -23,8 +22,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({
   cashAmount,
   customerNbr,
 }) => {
-  const { customerInfo } = useCustomerData();
-
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -46,7 +43,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
               </DigitalFont>
             </div>
             <div>
-              <span className="text-sm">Customers waiting: {customerInfo?.length || 0}</span>
+              <span className="text-sm">Customers waiting: {customerNbr}</span>
             </div>
           </FlexBoxCol>
           <FlexBoxCol className="items-end">
