@@ -9,7 +9,7 @@ import {
 } from "../styled/globalStyled";
 import userCharacter from "/assets/user_no_background.png";
 import WebApp from "@twa-dev/sdk";
-import { customerList, marketPrice } from "../../mocks/backend.mock";
+import { marketPrice } from "../../mocks/backend.mock";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { LastTransaction } from "./LastTransaction";
@@ -17,6 +17,7 @@ import { TouchPoints } from "../utils/touchPoints";
 import styled from "styled-components";
 import { Upgrades } from "../shop/utils/types";
 import { Product } from "../interfaces/user.interface";
+import { ProductName } from "../../hooks/useFetchCustomer";
 
 const ImageContainer = styled.div`
   display: flex;
@@ -33,6 +34,8 @@ interface HomeProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   products: Product[];
+  customers: any[];
+  setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   onUnlockClick: (tab: keyof Upgrades) => void; // Add this prop
 }
@@ -41,6 +44,8 @@ export const Home: React.FC<HomeProps> = ({
   cashAmount,
   setCashAmount,
   products,
+  customers,
+  setCustomers,
   setProducts,
   onUnlockClick, // Destructure the new prop
 }) => {
@@ -49,7 +54,8 @@ export const Home: React.FC<HomeProps> = ({
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const [currentCustomer, setCurrentCustomer] = useState<number>(0);
+
+  const [customerServed, setCustomerServed] = useState<any[]>([]);
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
@@ -67,11 +73,6 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(products);
     setTotalQuantity(value);
   }, [products]);
-
-  const handleOpenModal = (slot: number) => {
-    setSelectedSlot(slot);
-    setIsModalOpen(true);
-  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -111,62 +112,70 @@ export const Home: React.FC<HomeProps> = ({
 
     const slottedProducts = products.filter((p) => p.slot !== null);
 
-    const order = customerList[currentCustomer];
-    setCurrentCustomer(
-      (prevCustomer) => (prevCustomer + 1) % customerList.length
-    );
-    const productName = Object.keys(order)[0];
-    const amountToSell = Object.values(order)[0];
+    if (customers && customers.length > 0) {
+      const order = customers[0];
+      const productName = Object.keys(order)[0] as ProductName;
+      const { quantity: amountToSell } = order[productName];
 
-    const slottedProductToSell = slottedProducts.find(
-      (p) => p.name === productName
-    );
-    let newTouchPoint = {
-      id: Date.now(),
-      x: touch.clientX,
-      y: touch.clientY,
-      amountEarned: 0,
-    };
-    if (!slottedProductToSell || slottedProductToSell.quantity < amountToSell) {
-      console.log(`IN HOME productId ${productName}`);
-      setLastTransaction({
-        type: "missed",
-        product:
-          products.find((p) => p.name === productName)?.name || "Unknown",
-        quantity: amountToSell,
-      });
-    } else {
-      const { updatedProducts, transaction } = handleTransaction(
-        slottedProducts,
-        products,
-        productName,
-        amountToSell,
-        marketPrice,
-        setCashAmount
+      const slottedProductToSell = slottedProducts.find(
+        (p) => p.name === productName
       );
-
-      setProducts(updatedProducts);
-      setLastTransaction(transaction);
-
-      newTouchPoint = {
+      let newTouchPoint = {
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
-        amountEarned: transaction?.amountEarned || 0,
+        amountEarned: 0,
       };
+      if (
+        !slottedProductToSell ||
+        slottedProductToSell.quantity < amountToSell
+      ) {
+        console.log(`IN HOME productId ${productName}`);
+        setLastTransaction({
+          type: "missed",
+          product:
+            products.find((p) => p.name === productName)?.name || "Unknown",
+          quantity: amountToSell,
+        });
+      } else {
+        const { updatedProducts, transaction } = handleTransaction(
+          slottedProducts,
+          products,
+          productName,
+          amountToSell,
+          marketPrice,
+          setCashAmount
+        );
+
+        setProducts(updatedProducts);
+        setLastTransaction(transaction);
+
+        newTouchPoint = {
+          id: Date.now(),
+          x: touch.clientX,
+          y: touch.clientY,
+          amountEarned: transaction?.amountEarned || 0,
+        };
+
+        setCustomerServed([...customerServed, customers[0]]);
+        const updatedCustomerList = [...customers];
+        updatedCustomerList.splice(0, 1); // Remove the first customer from the list
+        console.log(`updatedCustomerList`);
+        console.log(updatedCustomerList);
+        setCustomers(updatedCustomerList);
+      }
+
+      setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
+      setPressed(true);
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      setTimeout(() => setPressed(false), 50);
+      setTimeout(() => {
+        setTouchPoints((prevTouchPoints) =>
+          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+        );
+      }, 3000);
     }
-
-    setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
-    setPressed(true);
-    WebApp.HapticFeedback.impactOccurred("heavy");
-    setTimeout(() => setPressed(false), 50);
-    setTimeout(() => {
-      setTouchPoints((prevTouchPoints) =>
-        prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
-      );
-    }, 3000);
   };
-
   return (
     <>
       <FlexBoxRow className="justify-between items-center bg-zinc-800 text-white px-4 rounded shadow-lg">
@@ -193,7 +202,7 @@ export const Home: React.FC<HomeProps> = ({
         >
           <img src={userCharacter} alt="Logo" style={{ maxWidth: "200px" }} />
         </ImageContainer>
-        <ShippingBoard products={products} />
+        <ShippingBoard products={products} customers={customers} />
       </FlexBoxRow>
       <HorizontalSpacing />
       <HorizontalSpacing />

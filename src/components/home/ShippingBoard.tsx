@@ -2,10 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Product } from "../interfaces/user.interface";
 
-interface ShippingBoardProps {
-  products: Product[];
-}
-
 const ScrollableContainer = styled.div`
   max-height: 260px;
   overflow-y: auto;
@@ -26,34 +22,13 @@ const ScrollableContainer = styled.div`
   }
 `;
 
-const CarryInfoContainer = styled.div`
-  background-color: #1a202c;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  color: #cbd5e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  font-size: 1.25rem;
-  font-weight: 600;
-`;
+const CardContainer = styled.div``;
 
-const InfoValue = styled.span`
-  color: #f6e05e;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-`;
-
-const CardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`;
+// display: flex;
+// flex-direction: column;
+// gap: 0.2rem;
 
 const ProductRow = styled.div`
-  display: flex;
   align-items: center;
   background-color: #2d3748;
   border-radius: 0.5rem;
@@ -101,7 +76,45 @@ const ProductQuantity = styled.div`
   margin-right: 1rem;
 `;
 
-export const ShippingBoard: React.FC<ShippingBoardProps> = ({ products }) => {
+const CustomerListContainer = styled.div`
+  margin-top: 1rem;
+`;
+
+const CustomerRow = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #2d3748;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+`;
+
+const CustomerInfo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: #cbd5e0;
+  font-size: 1rem;
+`;
+
+interface Customer {
+  [key: string]: {
+    quantity: number;
+    emoji: string;
+  };
+}
+
+interface ShippingBoardProps {
+  products: Product[];
+  customers: Customer[];
+}
+
+export const ShippingBoard: React.FC<ShippingBoardProps> = ({
+  products,
+  customers,
+}) => {
   const totalWeight = 10;
   const totalCapacity = 200;
 
@@ -109,26 +122,30 @@ export const ShippingBoard: React.FC<ShippingBoardProps> = ({ products }) => {
 
   return (
     <div>
-      <CarryInfoContainer>
-        <CarryInfoContainer>
-          Total Carry: <InfoValue>{totalWeight}</InfoValue> /{" "}
-          <InfoValue>{totalCapacity}</InfoValue>
-        </CarryInfoContainer>
-      </CarryInfoContainer>
+      <CardContainer>
+        {products.map((product) => (
+          <ProductRow key={product.name}>
+            <ProductName>{product.name}</ProductName>
+            <ProductQuantity>Quantity: {product.quantity}</ProductQuantity>
+          </ProductRow>
+        ))}
+      </CardContainer>
       <ScrollableContainer>
-        <CardContainer>
-          {products.map((product) => (
-            <>
-              <ProductRow
-                key={product.name}
-                className={product.quantity === 0 ? "disabled" : ""}
-              >
-                <ProductName>{product.name}</ProductName>
-                <ProductQuantity>Quantity: {product.quantity}</ProductQuantity>
-              </ProductRow>
-            </>
-          ))}
-        </CardContainer>
+        <CustomerListContainer>
+          {customers.map((customer, index) => {
+            const productName = Object.keys(customer)[0];
+            const { quantity, emoji } = customer[productName];
+            return (
+              <CustomerRow key={index}>
+                <CustomerInfo>
+                  <span>{emoji}</span>
+                  <span>{quantity}</span>
+                  <span>{productName}</span>
+                </CustomerInfo>
+              </CustomerRow>
+            );
+          })}
+        </CustomerListContainer>
       </ScrollableContainer>
     </div>
   );

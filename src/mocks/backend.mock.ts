@@ -1,3 +1,4 @@
+import { EProduct } from "../components/interfaces/product.interface";
 import { Product } from "../components/interfaces/user.interface";
 import { Upgrades } from "../components/shop/utils/types";
 
@@ -6,7 +7,7 @@ import { Upgrades } from "../components/shop/utils/types";
 *****************************************************/
 export const productsData: Product[] = [
   {
-    name: "Weed",
+    name: EProduct.WEED,
     unlocked: true,
     selected: true,
     quantity: 0,
@@ -14,7 +15,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "Coke",
+    name: EProduct.COCAINE,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -22,7 +23,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "Meth",
+    name: EProduct.METH,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -30,7 +31,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "Heroin",
+    name: EProduct.HEROIN,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -38,7 +39,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "MDMA",
+    name: EProduct.MDMA,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -46,7 +47,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "LSD",
+    name: EProduct.LSD,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -54,7 +55,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "Ketamine",
+    name: EProduct.KETAMINE,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -62,7 +63,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "Mushrooms",
+    name: EProduct.MUSHROOMS,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -70,7 +71,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "PCP",
+    name: EProduct.PCP,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -78,7 +79,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    name: "DMT",
+    name: EProduct.DMT,
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -116,7 +117,13 @@ export const supplierPrice = {
 };
 
 export const customerList = [
-  { Weed: 10 },
+  { Weed: 1 },
+  { Weed: 1 },
+  { Weed: 1 },
+  { Weed: 1 },
+  { Weed: 1 },
+  { Weed: 1 },
+  { Weed: 1 },
   { Coke: 1 },
   { Meth: 5 },
   { Weed: 1 },
