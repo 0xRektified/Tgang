@@ -1,4 +1,4 @@
-import { Product } from "../components/home/utils/types";
+import { Product } from "../components/interfaces/user.interface";
 import { Upgrades } from "../components/shop/utils/types";
 
 /****************************************************
@@ -6,7 +6,6 @@ import { Upgrades } from "../components/shop/utils/types";
 *****************************************************/
 export const productsData: Product[] = [
   {
-    id: 1,
     name: "Weed",
     unlocked: true,
     selected: true,
@@ -15,7 +14,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 2,
     name: "Coke",
     unlocked: false,
     selected: false,
@@ -24,7 +22,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 3,
     name: "Meth",
     unlocked: false,
     selected: false,
@@ -33,7 +30,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 4,
     name: "Heroin",
     unlocked: false,
     selected: false,
@@ -42,7 +38,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 5,
     name: "MDMA",
     unlocked: false,
     selected: false,
@@ -51,7 +46,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 6,
     name: "LSD",
     unlocked: false,
     selected: false,
@@ -60,7 +54,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 7,
     name: "Ketamine",
     unlocked: false,
     selected: false,
@@ -69,8 +62,7 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 8,
-    name: "Psilocybin Mushrooms",
+    name: "Mushrooms",
     unlocked: false,
     selected: false,
     quantity: 0,
@@ -78,7 +70,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 9,
     name: "PCP",
     unlocked: false,
     selected: false,
@@ -87,7 +78,6 @@ export const productsData: Product[] = [
     slot: null,
   },
   {
-    id: 10,
     name: "DMT",
     unlocked: false,
     selected: false,
@@ -96,6 +86,8 @@ export const productsData: Product[] = [
     slot: null,
   },
 ];
+
+export const userCashAmount = 1000;
 
 export const marketPrice = {
   Weed: 20,
@@ -123,8 +115,13 @@ export const supplierPrice = {
   DMT: 270,
 };
 
-export const customerList = [{ 1: 10 }, { 2: 1 }, { 3: 5 }, { 1: 1 }, { 1: 1 }];
-export const userCashAmount = 1000;
+export const customerList = [
+  { Weed: 10 },
+  { Coke: 1 },
+  { Meth: 5 },
+  { Weed: 1 },
+  { Weed: 1 },
+];
 
 /****************************************************
                         Shop View

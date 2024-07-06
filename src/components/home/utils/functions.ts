@@ -1,4 +1,5 @@
-import { Product, Transaction } from "./types";
+import { Product } from "../../interfaces/user.interface";
+import { Transaction } from "./types";
 
 export const calculateTotalQuantity = (products: Product[]): number => {
   return products.reduce((sum, product) => sum + product.quantity, 0);
@@ -6,11 +7,11 @@ export const calculateTotalQuantity = (products: Product[]): number => {
 
 export const updateProducts = (
   products: Product[],
-  productId: number,
+  productName: string,
   amountToSell: number
 ): Product[] => {
   return products.map((product) => {
-    if (product.id === productId && product.quantity >= amountToSell) {
+    if (product.name === productName && product.quantity >= amountToSell) {
       return { ...product, quantity: product.quantity - amountToSell };
     }
     return product;
@@ -20,21 +21,21 @@ export const updateProducts = (
 export const handleTransaction = (
   slottedProducts: Product[],
   products: Product[],
-  productId: number,
+  productName: string,
   amountToSell: number,
   marketPrice: Record<string, number>,
   setCashAmount: React.Dispatch<React.SetStateAction<number>>
 ): { updatedProducts: Product[]; transaction: Transaction | null } => {
   let amountEarned = 0;
   const productToSell = slottedProducts.find(
-    (product) => product.id === productId
+    (product) => product.name === productName
   );
 
   if (productToSell && productToSell.quantity >= amountToSell) {
     const productName = productToSell.name;
     amountEarned = amountToSell * marketPrice[productName];
     setCashAmount((prevCash) => prevCash + amountEarned);
-    const updatedProducts = updateProducts(products, productId, amountToSell);
+    const updatedProducts = updateProducts(products, productName, amountToSell);
     const transaction = {
       type: "success",
       product: productToSell.name,
@@ -51,7 +52,7 @@ export const handleTransaction = (
     return { updatedProducts: products, transaction };
   } else {
     const inventoryProduct = products.find(
-      (product) => product.id === productId
+      (product) => product.name === productName
     );
     if (inventoryProduct) {
       const transaction = {

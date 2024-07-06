@@ -136,7 +136,9 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           <CardBody>
             <CardTitle>{upgrade.title}</CardTitle>
             <CardDescription>
-              {upgrade.locked ? `Unlock ${upgrade.title}` : upgrade.description}
+              {upgrade.locked
+                ? `Unlock ${upgrade.requirement?.title} first`
+                : upgrade.description}
             </CardDescription>
           </CardBody>
         </UpgradeCard>

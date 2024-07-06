@@ -7,12 +7,11 @@ import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
-import { IUserInfo } from "./components/interfaces/user.interface";
-import { useTelegramUserInfo } from "./hooks/useTelegramUserInfo";
-import { userCashAmount } from "./mocks/backend.mock";
-import { productsData, customerList, upgrades } from "./mocks/backend.mock";
-import { Product } from "./components/home/utils/types";
+import { Product } from "./components/interfaces/user.interface";
+import { customerList, upgrades as mockUpgrades } from "./mocks/backend.mock";
 import { Upgrades } from "./components/shop/utils/types";
+import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
+import Loading from "./components/Loading";
 
 const StyledApp = styled.div``;
 
@@ -26,14 +25,12 @@ export function Statics() {
 }
 
 function App() {
-  const { sanitizedQuery } = useTelegramUserInfo();
+  const { userInfo, loading, error } = useAuthAndFetchUserData();
   const [currentView, setCurrentView] = useState("home");
-  const [cashAmount, setCashAmount] = useState<number>(userCashAmount);
-  const [products, setProducts] = useState<Product[]>(productsData);
+  const [cashAmount, setCashAmount] = useState<number>(0);
+  const [products, setProducts] = useState<Product[]>([]);
   const [activeTab, setActiveTab] = useState<keyof Upgrades>("dealer");
-  const [upgradesData, setUpgradesData] = useState<Upgrades>(upgrades);
-
-  const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
+  const [upgradesData, setUpgradesData] = useState<Upgrades>(mockUpgrades);
 
   useEffect(() => {
     const test = document.getElementById("mainView");
@@ -43,16 +40,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (sanitizedQuery && sanitizedQuery.user) {
-      setUserInfo({
-        query_id: sanitizedQuery.query_id,
-        user_id: sanitizedQuery.user.id,
-        username: sanitizedQuery.user.username,
-        language_code: sanitizedQuery.user.language_code,
-        auth_date: sanitizedQuery.auth_date,
-      });
+    if (userInfo) {
+      console.log(`IN APP userInfo.products`);
+      console.log(userInfo.products);
+      setCashAmount(userInfo.cashAmount);
+      setProducts(userInfo.products);
     }
-  }, [sanitizedQuery]);
+  }, [userInfo]);
 
   const handleUnlockClick = (tab: keyof Upgrades) => {
     setActiveTab(tab);
@@ -100,6 +94,14 @@ function App() {
         );
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <StyledApp data-theme="dark">

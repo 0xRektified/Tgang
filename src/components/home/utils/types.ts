@@ -1,17 +1,3 @@
-export interface Product {
-  id: number;
-  name: string;
-  unlocked: boolean;
-  selected: boolean;
-  quantity: number;
-  maxCarry: number;
-  slot: number | null;
-}
-
-export interface IUserInfo {
-  username: string;
-}
-
 export interface TouchPoint {
   id: number;
   x: number;

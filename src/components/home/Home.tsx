@@ -9,17 +9,14 @@ import {
 } from "../styled/globalStyled";
 import userCharacter from "/assets/user_no_background.png";
 import WebApp from "@twa-dev/sdk";
-import {
-  productsData,
-  customerList,
-  marketPrice,
-} from "../../mocks/backend.mock";
-import { Product, TouchPoint, Transaction } from "./utils/types";
+import { customerList, marketPrice } from "../../mocks/backend.mock";
+import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { LastTransaction } from "./LastTransaction";
 import { TouchPoints } from "../utils/touchPoints";
 import styled from "styled-components";
 import { Upgrades } from "../shop/utils/types";
+import { Product } from "../interfaces/user.interface";
 
 const ImageContainer = styled.div`
   display: flex;
@@ -98,7 +95,7 @@ export const Home: React.FC<HomeProps> = ({
 
     setProducts((prevProducts) =>
       prevProducts.map((p) =>
-        p.id === product.id
+        p.name === product.name
           ? { ...p, slot: selectedSlot }
           : p.slot === selectedSlot
           ? { ...p, slot: null }
@@ -118,11 +115,11 @@ export const Home: React.FC<HomeProps> = ({
     setCurrentCustomer(
       (prevCustomer) => (prevCustomer + 1) % customerList.length
     );
-    const productId = parseInt(Object.keys(order)[0]);
+    const productName = Object.keys(order)[0];
     const amountToSell = Object.values(order)[0];
 
     const slottedProductToSell = slottedProducts.find(
-      (p) => p.id === productId
+      (p) => p.name === productName
     );
     let newTouchPoint = {
       id: Date.now(),
@@ -131,16 +128,18 @@ export const Home: React.FC<HomeProps> = ({
       amountEarned: 0,
     };
     if (!slottedProductToSell || slottedProductToSell.quantity < amountToSell) {
+      console.log(`IN HOME productId ${productName}`);
       setLastTransaction({
         type: "missed",
-        product: products.find((p) => p.id === productId)?.name || "Unknown",
+        product:
+          products.find((p) => p.name === productName)?.name || "Unknown",
         quantity: amountToSell,
       });
     } else {
       const { updatedProducts, transaction } = handleTransaction(
         slottedProducts,
         products,
-        productId,
+        productName,
         amountToSell,
         marketPrice,
         setCashAmount

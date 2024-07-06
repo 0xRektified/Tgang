@@ -1,7 +1,15 @@
+export interface Product {
+  name: string;
+  unlocked: boolean;
+  selected: boolean;
+  quantity: number;
+  maxCarry: number;
+  slot: number | null;
+}
+
 export interface IUserInfo {
-  query_id: string;
-  user_id: string;
+  id: string;
   username: string;
-  language_code: string;
-  auth_date: string;
+  cashAmount: number;
+  products: Product[];
 }

@@ -1,6 +1,6 @@
 import { FlexBoxCol, FlexBoxRow } from "../styled/globalStyled";
 import { Product } from "./utils/types";
-
+import { GiAvoidance } from "react-icons/gi";
 interface ShippingBoardProps {
   products: Product[];
   handleOpenModal: (slot: number) => void;
@@ -23,9 +23,14 @@ export const ShippingBoard: React.FC<ShippingBoardProps> = ({
           <FlexBoxRow key={slot} className="w-full">
             {product ? (
               <div className="w-full" onClick={() => handleOpenModal(slot)}>
-                <div className="mb-2">
-                  {product.name} {product.quantity}/{product.maxCarry}
-                </div>
+                <FlexBoxRow key={slot} className="w-full">
+                  <div className="mb-2">
+                    {product.name} {product.quantity}/{product.maxCarry}
+                  </div>
+                  <div className="pl-5 mb-2">
+                    <GiAvoidance />
+                  </div>
+                </FlexBoxRow>
                 <progress
                   className="progress progress-primary w-full"
                   value={product.quantity}
