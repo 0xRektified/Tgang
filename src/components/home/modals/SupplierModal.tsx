@@ -18,6 +18,7 @@ import useBuyProduct from "../../../hooks/useBuyProduct";
 import { Product } from "../../interfaces/user.interface";
 import { useMarketData } from "../../../hooks/useMarketData";
 import { useAuthAndFetchUserData } from "../../../hooks/useAuthAndFetchUserData";
+import { MarketProduct } from "../../interfaces/market.interface";
 
 interface SupplierModalProps {
   isOpen: boolean;
@@ -41,7 +42,9 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   const { buyProduct, loading, error } = useBuyProduct();
   const { marketInfo } = useMarketData();
   const { userInfo } = useAuthAndFetchUserData();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(
+    null
+  );
   const [quantity, setQuantity] = useState<number>(1);
   const [showToast, setShowToast] = useState<boolean>(false);
 
@@ -71,6 +74,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         );
 
         WebApp.HapticFeedback.impactOccurred("heavy");
+        onClose();
       } else {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 4000);
@@ -89,13 +93,11 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     setQuantity(maxQuantity);
   };
 
-  const handleProductSelect = (product: Product) => {
-    if (product.unlocked) {
-      setSelectedProduct(product);
-    }
+  const handleProductSelect = (product: MarketProduct) => {
+    setSelectedProduct(product);
   };
 
-  const handleUnlockClick = (product: Product) => {
+  const handleUnlockClick = (product: MarketProduct) => {
     onUnlockClick(tabMapping[product.name]);
   };
 
@@ -111,7 +113,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         <h2 className="text-xl font-bold mb-4 text-white">
           Buy Products - ${cashAmount}
         </h2>
-        {selectedProduct && selectedProduct.unlocked && (
+        {selectedProduct && (
           <BottomSection>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -149,37 +151,45 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 </tr>
               </thead>
               <tbody>
-                { marketInfo ? marketInfo.products.map((product) => {
-                  const userProduct = userInfo?.products.find((p) => p.name === product.name);
-                  return (
-                  <tr
-                    key={product.name}
-                    onClick={() => handleProductSelect(product)}
-                    className={!userProduct ? "disabled" : ""}
-                  >
-                    <td>{product.name}</td>
-                    <td>
-                      $
-                      {
-                        supplierPrice[
-                          product.name as keyof typeof supplierPrice
-                        ]
-                      }
-                    </td>
-                    <td className="text-right">
-                      {userProduct ? (
-                        <button>Select</button>
-                      ) : (
-                        <span
-                          className="text-yellow-400 animate-pulse cursor-pointer"
-                          onClick={() => handleUnlockClick(product)}
+                {marketInfo
+                  ? marketInfo.products.map((product) => {
+                      const userProduct = userInfo?.products.find(
+                        (p) => p.name === product.name
+                      );
+                      return (
+                        <tr
+                          key={product.name}
+                          className={!userProduct ? "disabled" : ""}
                         >
-                          Unlock
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                )}) : null }
+                          <td>{product.name}</td>
+                          <td>
+                            $
+                            {
+                              supplierPrice[
+                                product.name as keyof typeof supplierPrice
+                              ]
+                            }
+                          </td>
+                          <td className="text-right">
+                            {userProduct?.unlocked ? (
+                              <button
+                                onClick={() => handleProductSelect(product)}
+                              >
+                                Select
+                              </button>
+                            ) : (
+                              <span
+                                className="text-yellow-400 animate-pulse cursor-pointer"
+                                onClick={() => handleUnlockClick(product)}
+                              >
+                                Unlock
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
               </tbody>
             </Table>
           </ScrollableTableContainer>

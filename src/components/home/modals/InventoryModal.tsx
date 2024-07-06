@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Product } from "../utils/types";
+import { Product } from "../../interfaces/user.interface";
 
 interface InventoryModalProps {
   selectedSlot: number | null;
@@ -104,6 +104,8 @@ const Table = styled.table`
   }
 `;
 
+// @note Reuse this class when implementing the labs
+
 export const InventoryModal: React.FC<InventoryModalProps> = ({
   selectedSlot,
   productsData,
@@ -136,7 +138,7 @@ export const InventoryModal: React.FC<InventoryModalProps> = ({
                     key={product.name}
                     onClick={
                       product.quantity > 0
-                        ? () => handleSelectProductFromInventory(product)
+                        ? undefined //() => handleSelectProductFromInventory(product)
                         : undefined
                     }
                     className={product.quantity === 0 ? "disabled" : ""}

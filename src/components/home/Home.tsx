@@ -193,11 +193,7 @@ export const Home: React.FC<HomeProps> = ({
         >
           <img src={userCharacter} alt="Logo" style={{ maxWidth: "200px" }} />
         </ImageContainer>
-        <ShippingBoard
-          products={products}
-          handleOpenModal={handleOpenModal}
-          totalQuantity={totalQuantity}
-        />
+        <ShippingBoard products={products} />
       </FlexBoxRow>
       <HorizontalSpacing />
       <HorizontalSpacing />

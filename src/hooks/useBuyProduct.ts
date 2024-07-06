@@ -1,15 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import { Transaction } from "../components/home/utils/types";
 import { Product } from "../components/interfaces/user.interface";
 
 interface BuyProductResponse {
   user: {
     cashAmount: number;
     products: Product[];
+    reputation: number;
   };
-  transaction: Transaction;
 }
 
 const useBuyProduct = () => {
@@ -34,9 +33,7 @@ const useBuyProduct = () => {
           quantity,
         }
       );
-
       const { user } = response.data;
-
       setCashAmount(user.cashAmount);
       setProducts(user.products);
     } catch (error) {
