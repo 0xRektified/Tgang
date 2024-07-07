@@ -2,10 +2,16 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { ICustomerInfo } from "../components/interfaces/customer.interface";
 import { marketId } from "../mocks/backend.mock";
+import { startOfMinute, getUnixTime } from "date-fns";
 
 const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
 export type ProductName = "Weed" | "Coke" | "Meth";
+
+function getIndexFromTimeStamp(timestamp: Date) {
+  const roundedTimestamp = startOfMinute(timestamp);
+  return getUnixTime(roundedTimestamp) / 60;
+}
 
 export function useFetchCustomer() {
   const [customers, setCustomers] = useState<ICustomerInfo[]>([]);
@@ -15,7 +21,7 @@ export function useFetchCustomer() {
   useEffect(() => {
     const getFetchCustomer = async () => {
       try {
-        const index = Math.floor(new Date().getTime() / 60000);
+        const index = getIndexFromTimeStamp(new Date());
         const customerListResponse = await axiosInstance.get(
           `/customers/${marketId}/${index}`
         );
