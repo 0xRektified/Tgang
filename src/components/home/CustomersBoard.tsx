@@ -76,14 +76,14 @@ const HeaderRow = styled(FlexBoxRow)`
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 `;
 
-interface ShippingBoardProps {
+interface CustomersBoardProps {
   products: Product[];
   customers: any[];
   transaction: Transaction | null;
   waitingCustomersCount: number;
 }
 
-export const ShippingBoard: React.FC<ShippingBoardProps> = ({
+export const CustomersBoard: React.FC<CustomersBoardProps> = ({
   products,
   customers,
   transaction,

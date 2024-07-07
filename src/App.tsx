@@ -15,7 +15,12 @@ import Loading from "./components/Loading";
 import { useCustomerMarketData } from "./hooks/useCustomerMarketData";
 import { useFetchCustomer } from "./hooks/useFetchCustomer";
 
-const StyledApp = styled.div``;
+const StyledApp = styled.div`
+  background-image: url("/assets/street.webp");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+`;
 
 const AppContainer = styled.div`
   max-width: 900px;

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { ShippingBoard } from "./ShippingBoard";
+import { CustomersBoard } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
 import { marketPrice } from "../../mocks/backend.mock";
 import { TouchPoint, Transaction } from "./utils/types";
@@ -153,13 +153,14 @@ export const Home: React.FC<HomeProps> = ({
         pressed={pressed}
       />
       <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
-        <ShippingBoard
+        <CustomersBoard
           products={products}
           customers={customers}
           transaction={lastTransaction}
           waitingCustomersCount={customers.length}
         />
       </div>
+      <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (
         <InventoryModal
           selectedSlot={selectedSlot}
@@ -168,8 +169,6 @@ export const Home: React.FC<HomeProps> = ({
           handleCloseModal={handleCloseModal}
         />
       )}
-
-      <TouchPoints touchPoints={touchPoints} />
     </>
   );
 };

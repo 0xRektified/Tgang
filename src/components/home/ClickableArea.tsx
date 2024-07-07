@@ -36,7 +36,11 @@ const ProductsList = styled.div`
   justify-content: center;
   padding: 10px;
   border-radius: 0.5rem;
-  flex: 0 0 25%;
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 25%; /* Set a fixed width if needed, otherwise remove */
+  flex-grow: 0; /* Prevent the box from growing */
+  flex-shrink: 0; /* Prevent the box from shrinking */
+  align-self: flex-start; /* Ensure the box aligns based on content height */
 `;
 
 const ProductRow = styled(FlexBoxRow)`

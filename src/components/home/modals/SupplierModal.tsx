@@ -5,6 +5,7 @@ import {
   BottomSection,
   ButtonContainer,
   CloseButton,
+  FixedOverlay,
   ModalContainer,
   QuantityInputContainer,
   ScrollableTableContainer,
@@ -104,10 +105,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={onClose}
-    >
+    <FixedOverlay onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <h2 className="text-xl font-bold mb-4 text-white">
@@ -204,6 +202,6 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </FixedOverlay>
   );
 };

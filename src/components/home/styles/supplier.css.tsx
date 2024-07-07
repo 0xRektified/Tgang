@@ -7,6 +7,8 @@ export const ModalContainer = styled.div`
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 1200px;
+  position: relative; /* Ensure relative positioning within the overlay */
+  z-index: 1001; /* Ensure it is above the overlay */
 `;
 
 export const ScrollableTableContainer = styled.div`
@@ -181,4 +183,17 @@ export const CloseButton = styled.button`
   &:hover {
     color: #ff0000;
   }
+`;
+
+export const FixedOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Ensure the overlay is just below the modal */
 `;
