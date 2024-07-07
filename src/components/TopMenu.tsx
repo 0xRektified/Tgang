@@ -1,5 +1,5 @@
-import React, { useLayoutEffect } from "react";
-import { IUserInfo } from "./interfaces/user.interface";
+import React, { useLayoutEffect, useState } from "react";
+import { IUserInfo, Product } from "./interfaces/user.interface";
 import rank from "/assets/rank.png";
 import {
   TopMenuContainer,
@@ -11,17 +11,27 @@ import {
   BalanceAmount,
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
+import { SupplierModal } from "./home/modals/SupplierModal";
+import { Upgrades } from "./shop/utils/types";
 
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
   cashAmount: number;
-  customerNbr: number;
+  products: Product[];
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  onUnlockClick: (tab: keyof Upgrades) => void;
 }
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
   cashAmount,
-  customerNbr,
+  products,
+  setCashAmount,
+  setProducts,
+  onUnlockClick,
 }) => {
+  const [isSupplierModalOpen, setIsSupplierModalOpen] =
+    useState<boolean>(false);
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -30,6 +40,14 @@ export const TopMenu: React.FC<TopMenuProps> = ({
       });
     }
   }, []);
+
+  const handleOpenSupplierModal = () => {
+    setIsSupplierModalOpen(true);
+  };
+
+  const handleCloseSupplierModal = () => {
+    setIsSupplierModalOpen(false);
+  };
 
   return (
     <TopMenuContainer id="mainView">
@@ -42,16 +60,35 @@ export const TopMenu: React.FC<TopMenuProps> = ({
                 {userInfo ? userInfo.username : `Welcome`}
               </DigitalFont>
             </div>
-            <div>
-              <span className="text-sm">Customers waiting: {customerNbr}</span>
-            </div>
+            <FlexBoxRow>
+              <DigitalFont as={BalanceLabel}>Cash</DigitalFont>
+              <DigitalFont as={BalanceAmount}>${cashAmount}</DigitalFont>
+            </FlexBoxRow>
           </FlexBoxCol>
-          <FlexBoxCol className="items-end">
-            <DigitalFont as={BalanceLabel}>Current balance</DigitalFont>
-            <DigitalFont as={BalanceAmount}>${cashAmount}</DigitalFont>
-          </FlexBoxCol>
+          <FlexBoxCol className="items-end"></FlexBoxCol>
+          <FlexBoxRow className="justify-between items-center">
+            <FlexBoxCol className="flex justify-end mr-5">
+              <button
+                className="btn btn-primary mt-4"
+                onClick={handleOpenSupplierModal}
+              >
+                📱 Buy Drugs
+              </button>
+            </FlexBoxCol>
+          </FlexBoxRow>
         </FlexBoxRow>
       </Container>
+      {isSupplierModalOpen && (
+        <SupplierModal
+          isOpen={isSupplierModalOpen}
+          onClose={handleCloseSupplierModal}
+          products={products}
+          setProducts={setProducts}
+          cashAmount={cashAmount}
+          setCashAmount={setCashAmount}
+          onUnlockClick={onUnlockClick}
+        />
+      )}
     </TopMenuContainer>
   );
 };

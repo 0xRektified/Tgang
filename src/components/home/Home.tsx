@@ -1,34 +1,14 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { SupplierModal } from "./modals/SupplierModal";
 import { ShippingBoard } from "./ShippingBoard";
-import {
-  FlexBoxCol,
-  FlexBoxRow,
-  HorizontalSpacing,
-} from "../styled/globalStyled";
-import userCharacter from "/assets/user_no_background.png";
 import WebApp from "@twa-dev/sdk";
 import { marketPrice } from "../../mocks/backend.mock";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
-import { LastTransaction } from "./LastTransaction";
 import { TouchPoints } from "../utils/touchPoints";
-import styled from "styled-components";
-import { Upgrades } from "../shop/utils/types";
 import { Product } from "../interfaces/user.interface";
 import { ProductName } from "../../hooks/useFetchCustomer";
-
-const ImageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 400px;
-  transition: transform 0.15s ease-in-out;
-  &.pressed {
-    transform: scale(0.95);
-  }
-`;
+import { ClickableAreaWithSmoke } from "./ClickableArea";
 
 interface HomeProps {
   cashAmount: number;
@@ -37,7 +17,6 @@ interface HomeProps {
   customers: any[];
   setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  onUnlockClick: (tab: keyof Upgrades) => void; // Add this prop
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -47,7 +26,6 @@ export const Home: React.FC<HomeProps> = ({
   customers,
   setCustomers,
   setProducts,
-  onUnlockClick, // Destructure the new prop
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -59,8 +37,6 @@ export const Home: React.FC<HomeProps> = ({
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
-  const [isSupplierModalOpen, setIsSupplierModalOpen] =
-    useState<boolean>(false);
 
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
@@ -77,14 +53,6 @@ export const Home: React.FC<HomeProps> = ({
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSlot(null);
-  };
-
-  const handleOpenSupplierModal = () => {
-    setIsSupplierModalOpen(true);
-  };
-
-  const handleCloseSupplierModal = () => {
-    setIsSupplierModalOpen(false);
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -159,7 +127,7 @@ export const Home: React.FC<HomeProps> = ({
 
         setCustomerServed([...customerServed, customers[0]]);
         const updatedCustomerList = [...customers];
-        updatedCustomerList.splice(0, 1); // Remove the first customer from the list
+        updatedCustomerList.splice(0, 1);
         console.log(`updatedCustomerList`);
         console.log(updatedCustomerList);
         setCustomers(updatedCustomerList);
@@ -176,37 +144,22 @@ export const Home: React.FC<HomeProps> = ({
       }, 3000);
     }
   };
+
   return (
     <>
-      <FlexBoxRow className="justify-between items-center bg-zinc-800 text-white px-4 rounded shadow-lg">
-        <LastTransaction transaction={lastTransaction} />
-      </FlexBoxRow>
-      <FlexBoxRow className="justify-between items-center">
-        <FlexBoxCol>
-          <div className="mb-2">Sell your product 👇</div>
-        </FlexBoxCol>
-        <FlexBoxCol className="flex justify-end mr-5">
-          <button
-            className="btn btn-primary mt-4"
-            onClick={handleOpenSupplierModal}
-          >
-            Buy Products
-          </button>
-        </FlexBoxCol>
-      </FlexBoxRow>
-
-      <FlexBoxRow>
-        <ImageContainer
-          className={pressed ? "pressed" : ""}
-          onTouchStart={handleTouchStart}
-        >
-          <img src={userCharacter} alt="Logo" style={{ maxWidth: "200px" }} />
-        </ImageContainer>
-        <ShippingBoard products={products} customers={customers} />
-      </FlexBoxRow>
-      <HorizontalSpacing />
-      <HorizontalSpacing />
-
+      <ClickableAreaWithSmoke
+        products={products}
+        handleTouchStart={handleTouchStart}
+        pressed={pressed}
+      />
+      <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
+        <ShippingBoard
+          products={products}
+          customers={customers}
+          transaction={lastTransaction}
+          waitingCustomersCount={customers.length}
+        />
+      </div>
       {isModalOpen && (
         <InventoryModal
           selectedSlot={selectedSlot}
@@ -215,17 +168,7 @@ export const Home: React.FC<HomeProps> = ({
           handleCloseModal={handleCloseModal}
         />
       )}
-      {isSupplierModalOpen && (
-        <SupplierModal
-          isOpen={isSupplierModalOpen}
-          onClose={handleCloseSupplierModal}
-          products={products}
-          setProducts={setProducts}
-          cashAmount={cashAmount}
-          setCashAmount={setCashAmount}
-          onUnlockClick={onUnlockClick} // Pass the new prop
-        />
-      )}
+
       <TouchPoints touchPoints={touchPoints} />
     </>
   );

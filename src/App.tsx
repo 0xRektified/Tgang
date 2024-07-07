@@ -1,6 +1,6 @@
 import "./App.css";
 import styled from "styled-components";
-import { FlexBoxCol } from "./components/styled/globalStyled";
+import { FlexBoxCol, FlexBoxColNoGap } from "./components/styled/globalStyled";
 import "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import { FooterMenu } from "./components/FooterMenu";
@@ -71,7 +71,6 @@ function App() {
             customers={customers}
             setCustomers={setCustomers}
             setProducts={setProducts}
-            onUnlockClick={handleUnlockClick}
           />
         );
       case "Shop":
@@ -97,7 +96,6 @@ function App() {
             customers={customers}
             setCustomers={setCustomers}
             setProducts={setProducts}
-            onUnlockClick={handleUnlockClick}
           />
         );
     }
@@ -118,9 +116,14 @@ function App() {
         <TopMenu
           userInfo={userInfo}
           cashAmount={cashAmount}
-          customerNbr={customerInfo?.length || 0}
+          products={products}
+          setProducts={setProducts}
+          setCashAmount={setCashAmount}
+          onUnlockClick={handleUnlockClick}
         />
-        <FlexBoxCol>{renderCurrentView(cashAmount, setCashAmount)}</FlexBoxCol>
+        <FlexBoxColNoGap>
+          {renderCurrentView(cashAmount, setCashAmount)}
+        </FlexBoxColNoGap>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
       </AppContainer>
     </StyledApp>

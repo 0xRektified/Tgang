@@ -1,40 +1,53 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import styled from "styled-components";
 import { Transaction } from "./utils/types";
+
+const TransactionContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-radius: 0.5rem;
+`;
+
+const TransactionStatus = styled.p`
+  flex: 1;
+  color: #cbd5e0;
+  font-size: 1rem;
+`;
+
+const WaitingCustomers = styled.p`
+  color: #cbd5e0;
+  font-size: 1rem;
+  text-align: right;
+`;
 
 interface LastTransactionProps {
   transaction: Transaction | null;
+  waitingCustomersCount: number;
 }
 
 export const LastTransaction: React.FC<LastTransactionProps> = ({
   transaction,
+  waitingCustomersCount,
 }) => {
-  // const [key, setKey] = useState(0);
-
-  // useEffect(() => {
-  //   if (transaction) {
-  //     setKey((prevKey) => prevKey + 1);
-  //   }
-  // }, [transaction]);
-
   return (
-    <div
-      // key={key}
-      className="rounded shadow-lg w-full "
-    >
+    <TransactionContainer className="rounded shadow-lg w-full ">
       {transaction ? (
         transaction.type === "success" ? (
-          <p>
-            🤑 Successful deal: Sold {transaction.quantity}{" "}
-            {transaction.product} for ${transaction.amountEarned}
-          </p>
+          <TransactionStatus>
+            🤑 Sold {transaction.quantity} {transaction.product} $
+            {transaction.amountEarned}
+          </TransactionStatus>
         ) : (
-          <p>
-            🤬 Missed deal: {transaction.quantity} {transaction.product}
-          </p>
+          <TransactionStatus>
+            🤬 No more {transaction.product}
+          </TransactionStatus>
         )
       ) : (
-        <p>No transactions yet.</p>
+        <TransactionStatus>No transactions yet.</TransactionStatus>
       )}
-    </div>
+      <WaitingCustomers>Customers: {waitingCustomersCount}</WaitingCustomers>
+    </TransactionContainer>
   );
 };

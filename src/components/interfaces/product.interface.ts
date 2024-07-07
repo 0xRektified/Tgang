@@ -5,10 +5,17 @@ export enum EProduct {
   HEROIN = "Heroin",
   MDMA = "MDMA",
   LSD = "LSD",
-  KETAMINE = "ketamine",
   MUSHROOMS = "Mushrooms",
-  PCP = "PCP",
-  DMT = "DMT",
   AMPHETAMINE = "Amphetamine",
-  HASHISH = "Hashish",
+}
+
+export enum EProductIcon {
+  Weed = "🌱",
+  Coke = "🧂",
+  Meth = "💎",
+  Heroin = "🦯",
+  MDMA = "🧊",
+  LSD = "🧪",
+  Mushrooms = "🍄",
+  Amphetamine = "💊",
 }
