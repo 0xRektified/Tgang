@@ -9,9 +9,15 @@ export interface Product {
   slot: number | null;
 }
 
+export interface CarryingGear {
+  name: string;
+  capacity: number;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
   cashAmount: number;
   products: Product[];
+  carryingGear: CarryingGear[];
 }

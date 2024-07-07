@@ -1,0 +1,1 @@
+export const CARRYING_CAPACITY = 10;

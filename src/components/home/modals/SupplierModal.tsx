@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { supplierPrice } from "../../../mocks/backend.mock";
 import WebApp from "@twa-dev/sdk";
 import {
   BottomSection,
@@ -19,6 +18,7 @@ import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../../interfaces/user.interface";
 import { IMarketInfo, MarketProduct } from "../../interfaces/market.interface";
+import { CARRYING_CAPACITY } from "../constants/user.constants";
 
 interface SupplierModalProps {
   userInfo: IUserInfo | undefined;
@@ -29,6 +29,21 @@ interface SupplierModalProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   onUnlockClick: (tab: keyof Upgrades) => void;
+}
+
+function userAmountAndCapacity(user: IUserInfo) {
+  let carryAmount = 0;
+  let carryCapacity = CARRYING_CAPACITY;
+  user.products.forEach((product) => {
+    carryAmount += product.quantity;
+  });
+  user.carryingGear.forEach((gear) => {
+    carryCapacity += gear.capacity;
+  });
+  return {
+    carryAmount,
+    carryCapacity,
+  };
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({
@@ -51,8 +66,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   const handleBuy = async () => {
     if (!selectedProduct) return;
     const cost =
-      supplierPrice[selectedProduct.name as keyof typeof supplierPrice] *
-      quantity;
+      selectedProduct.price * quantity;
     if (cashAmount >= cost) {
       const success = await buyProduct(
         "NY", // Dynamically handle marketId
@@ -75,9 +89,15 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
 
   const handleMaxClick = () => {
     if (!selectedProduct) return;
-    const productPrice =
-      supplierPrice[selectedProduct.name as keyof typeof supplierPrice];
-    const maxQuantity = Math.floor(cashAmount / productPrice);
+    const productPrice = selectedProduct.price;
+
+    const { carryAmount, carryCapacity } = userAmountAndCapacity(userInfo!);
+    const maxCarry = carryCapacity - carryAmount;
+    const maxQuantity = Math.min(
+      maxCarry,
+      Math.floor(cashAmount / productPrice)
+    );
+
     setQuantity(maxQuantity);
   };
 
@@ -149,14 +169,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                           className={!userProduct ? "disabled" : ""}
                         >
                           <td>{product.name}</td>
-                          <td>
-                            $
-                            {
-                              supplierPrice[
-                                product.name as keyof typeof supplierPrice
-                              ]
-                            }
-                          </td>
+                          <td>{ product.price }</td>
                           <td className="text-right">
                             {userProduct?.unlocked ? (
                               <button
