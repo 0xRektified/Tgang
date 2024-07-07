@@ -20,4 +20,6 @@ export interface IUserInfo {
   cashAmount: number;
   products: Product[];
   carryingGear: CarryingGear[];
+  carryAmount: number;
+  carryCapacity: number;
 }

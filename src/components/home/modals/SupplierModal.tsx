@@ -18,7 +18,6 @@ import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../../interfaces/user.interface";
 import { IMarketInfo, MarketProduct } from "../../interfaces/market.interface";
-import { CARRYING_CAPACITY } from "../constants/user.constants";
 
 interface SupplierModalProps {
   userInfo: IUserInfo | undefined;
@@ -29,21 +28,6 @@ interface SupplierModalProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   onUnlockClick: (tab: keyof IUpgrades) => void;
-}
-
-function userAmountAndCapacity(user: IUserInfo) {
-  let carryAmount = 0;
-  let carryCapacity = CARRYING_CAPACITY;
-  user.products.forEach((product) => {
-    carryAmount += product.quantity;
-  });
-  user.carryingGear.forEach((gear) => {
-    carryCapacity += gear.capacity;
-  });
-  return {
-    carryAmount,
-    carryCapacity,
-  };
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({
@@ -90,7 +74,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     if (!selectedProduct) return;
     const productPrice = selectedProduct.price;
 
-    const { carryAmount, carryCapacity } = userAmountAndCapacity(userInfo!);
+    const { carryAmount, carryCapacity } = userInfo!;
     const maxCarry = carryCapacity - carryAmount;
     const maxQuantity = Math.min(
       maxCarry,
