@@ -26,7 +26,7 @@ const ImageContainer = styled.div`
   flex: 0 0 75%;
   transition: transform 0.15s ease-in-out;
   &.pressed {
-    transform: scale(0.95);
+    transform: scale(1.15);
   }
 `;
 
@@ -37,10 +37,10 @@ const ProductsList = styled.div`
   padding: 10px;
   border-radius: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
-  width: 25%; /* Set a fixed width if needed, otherwise remove */
-  flex-grow: 0; /* Prevent the box from growing */
-  flex-shrink: 0; /* Prevent the box from shrinking */
-  align-self: flex-start; /* Ensure the box aligns based on content height */
+  width: 25%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: flex-start;
 `;
 
 const ProductRow = styled(FlexBoxRow)`
@@ -73,19 +73,14 @@ const ProductNameD = styled.div`
   font-weight: 600;
 `;
 
-const ProductQuantity = styled.div`
-  font-size: 0.8rem;
-  color: #2d3748;
-`;
-
 const Smoke = styled.div`
   position: absolute;
-  width: 500px; /* Increased size */
-  height: 500px; /* Increased size */
+  width: 500px;
+  height: 500px;
   background: url("/assets/smoke.png") no-repeat;
   background-size: contain;
-  bottom: 0; /* Start from the bottom */
-  opacity: 0.5; /* Reduced opacity */
+  bottom: 0;
+  opacity: 0.5;
   animation: moveSmoke linear infinite;
 
   @keyframes moveSmoke {
@@ -94,7 +89,7 @@ const Smoke = styled.div`
       opacity: 1;
     }
     100% {
-      transform: translateX(100vw) scale(2); /* Move from left to right */
+      transform: translateX(100vw) scale(2);
       opacity: 0;
     }
   }
@@ -138,7 +133,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
       {smokes}
 
       <ImageContainer className={pressed ? "pressed" : ""}>
-        <img src={userCharacter} alt="Logo" style={{ maxWidth: "200px" }} />
+        <img
+          src={userCharacter}
+          alt="Logo"
+          style={{ maxWidth: "200px", paddingTop: "25px" }}
+        />
       </ImageContainer>
       <ProductsList>
         {Object.values(EProduct).map((productName, index) => {

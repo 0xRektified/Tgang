@@ -17,15 +17,14 @@ import {
 import { Upgrades } from "../../shop/utils/types";
 import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
-import { Product } from "../../interfaces/user.interface";
-import { useMarketData } from "../../../hooks/useMarketData";
-import { useAuthAndFetchUserData } from "../../../hooks/useAuthAndFetchUserData";
-import { MarketProduct } from "../../interfaces/market.interface";
+import { IUserInfo, Product } from "../../interfaces/user.interface";
+import { IMarketInfo, MarketProduct } from "../../interfaces/market.interface";
 
 interface SupplierModalProps {
+  userInfo: IUserInfo | undefined;
+  marketInfo: IMarketInfo | undefined;
   isOpen: boolean;
   onClose: () => void;
-  products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
@@ -33,17 +32,16 @@ interface SupplierModalProps {
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({
+  userInfo,
+  marketInfo,
   isOpen,
   onClose,
-  products,
   setProducts,
   cashAmount,
   setCashAmount,
   onUnlockClick,
 }) => {
   const { buyProduct, loading, error } = useBuyProduct();
-  const { marketInfo } = useMarketData();
-  const { userInfo } = useAuthAndFetchUserData();
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(
     null
   );
@@ -56,31 +54,19 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
       supplierPrice[selectedProduct.name as keyof typeof supplierPrice] *
       quantity;
     if (cashAmount >= cost) {
-      await buyProduct(
-        "NY", //@note remove that and handle it dynamically
+      const success = await buyProduct(
+        "NY", // Dynamically handle marketId
         selectedProduct.name,
         quantity,
         setCashAmount,
         setProducts
       );
-
-      if (!error) {
-        setCashAmount(cashAmount - cost);
-
-        setProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product.name === selectedProduct.name
-              ? { ...product, quantity: product.quantity + quantity }
-              : product
-          )
-        );
-
-        WebApp.HapticFeedback.impactOccurred("heavy");
-        onClose();
-      } else {
+      if (!success) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 4000);
       }
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      onClose();
     } else {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
@@ -199,7 +185,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
           <div className="toast toast-top toast-end">
             <div className="alert alert-error p-4 rounded shadow-lg text-white bg-red-600 font-bold">
-              <span>Not enough cash.</span>
+              <span>{error ? error : `Not enough cash.`}</span>
             </div>
           </div>
         </div>

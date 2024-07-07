@@ -8,6 +8,8 @@ const TransactionContainer = styled.div`
   align-items: center;
   width: 100%;
   border-radius: 0.5rem;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
 `;
 
 const TransactionStatus = styled.p`

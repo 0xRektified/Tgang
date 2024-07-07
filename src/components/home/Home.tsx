@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import { CustomersBoard } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
@@ -35,6 +35,7 @@ export const Home: React.FC<HomeProps> = ({
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
+  const audioRef = useRef(new Audio("/assets/cash.mp3"));
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
@@ -79,6 +80,11 @@ export const Home: React.FC<HomeProps> = ({
     );
 
     setIsModalOpen(false);
+  };
+
+  const playSound = () => {
+    const audio = new Audio("/assets/cash.mp3");
+    audio.play();
   };
 
   const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
@@ -140,6 +146,9 @@ export const Home: React.FC<HomeProps> = ({
 
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
+      if (newTouchPoint.amountEarned) {
+        playSound();
+      }
       WebApp.HapticFeedback.impactOccurred("heavy");
       setTimeout(() => setPressed(false), 50);
       setTimeout(() => {

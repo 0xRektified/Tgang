@@ -13,9 +13,11 @@ import {
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { SupplierModal } from "./home/modals/SupplierModal";
 import { Upgrades } from "./shop/utils/types";
+import { IMarketInfo } from "./interfaces/market.interface";
 
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
+  marketInfo: IMarketInfo | undefined;
   cashAmount: number;
   products: Product[];
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
@@ -24,6 +26,7 @@ interface TopMenuProps {
 }
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
+  marketInfo,
   cashAmount,
   products,
   setCashAmount,
@@ -32,6 +35,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
 }) => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
+
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -80,9 +84,10 @@ export const TopMenu: React.FC<TopMenuProps> = ({
       </Container>
       {isSupplierModalOpen && (
         <SupplierModal
+          userInfo={userInfo}
+          marketInfo={marketInfo}
           isOpen={isSupplierModalOpen}
           onClose={handleCloseSupplierModal}
-          products={products}
           setProducts={setProducts}
           cashAmount={cashAmount}
           setCashAmount={setCashAmount}

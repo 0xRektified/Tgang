@@ -4,11 +4,12 @@ import axiosInstance from "../api/axiosConfig";
 import { Product } from "../components/interfaces/user.interface";
 
 interface BuyProductResponse {
-  user: {
-    cashAmount: number;
-    products: Product[];
-    reputation: number;
-  };
+  carryingGear: any[];
+  cashAmount: number;
+  id: number;
+  products: Product[];
+  reputation: number;
+  username: string;
 }
 
 const useBuyProduct = () => {
@@ -21,7 +22,7 @@ const useBuyProduct = () => {
     quantity: number,
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
     setProducts: React.Dispatch<React.SetStateAction<Product[]>>
-  ) => {
+  ): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
@@ -33,15 +34,16 @@ const useBuyProduct = () => {
           quantity,
         }
       );
-      const { user } = response.data;
-      setCashAmount(user.cashAmount);
-      setProducts(user.products);
+      setCashAmount(response.data.cashAmount);
+      setProducts(response.data.products);
+      return true; // Indicate success
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
       } else {
         setError("An unexpected error occurred");
       }
+      return false; // Indicate failure
     } finally {
       setLoading(false);
     }

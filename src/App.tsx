@@ -1,6 +1,6 @@
 import "./App.css";
 import styled from "styled-components";
-import { FlexBoxCol, FlexBoxColNoGap } from "./components/styled/globalStyled";
+import { FlexBoxColNoGap } from "./components/styled/globalStyled";
 import "@twa-dev/sdk";
 import { useEffect, useState } from "react";
 import { FooterMenu } from "./components/FooterMenu";
@@ -12,8 +12,8 @@ import { upgrades as mockUpgrades } from "./mocks/backend.mock";
 import { Upgrades } from "./components/shop/utils/types";
 import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
-import { useCustomerMarketData } from "./hooks/useCustomerMarketData";
 import { useFetchCustomer } from "./hooks/useFetchCustomer";
+import { useMarketData } from "./hooks/useMarketData";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -33,7 +33,7 @@ export function Statics() {
 
 function App() {
   const { userInfo, loading, error } = useAuthAndFetchUserData();
-  const { customerInfo } = useCustomerMarketData();
+  const { marketInfo } = useMarketData();
   const { customers, setCustomers } = useFetchCustomer();
   const [currentView, setCurrentView] = useState("home");
   const [cashAmount, setCashAmount] = useState<number>(0);
@@ -118,6 +118,7 @@ function App() {
         <div id="buffer" style={{ height: "500px" }}></div>
         <TopMenu
           userInfo={userInfo}
+          marketInfo={marketInfo}
           cashAmount={cashAmount}
           products={products}
           setProducts={setProducts}

@@ -55,7 +55,7 @@ const CustomerRow = styled.div`
   align-items: center;
   background-color: #2d3748;
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.4rem;
   margin: 0.5rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   min-width: 100px;
@@ -66,7 +66,7 @@ const CustomerInfo = styled.div`
   flex-direction: column;
   align-items: center;
   color: #cbd5e0;
-  font-size: 1rem;
+  font-size: 0.9rem;
 `;
 
 const HeaderRow = styled(FlexBoxRow)`
@@ -100,23 +100,33 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
       </HeaderRow>
       <ScrollableContainer>
         <CustomerListContainer>
-          {customers.map((customer, index) => {
-            const { product, quantity, emoji } = customer;
-            const productIcon =
-              EProductIcon[product.name as keyof typeof EProductIcon];
-            return (
-              <CustomerRow key={index}>
-                <CustomerInfo>
-                  <span>
-                    {emoji} {productIcon}
-                  </span>
-                  <span>
-                    {quantity} {product.name}
-                  </span>
-                </CustomerInfo>
-              </CustomerRow>
-            );
-          })}
+          {customers.length > 0 ? (
+            customers.map((customer, index) => {
+              const { product, quantity, emoji } = customer;
+              const productIcon =
+                EProductIcon[product.name as keyof typeof EProductIcon];
+              return (
+                <CustomerRow key={index}>
+                  <CustomerInfo>
+                    <span>
+                      {emoji} {productIcon}
+                    </span>
+                    <span>
+                      {quantity} {product.name}
+                    </span>
+                  </CustomerInfo>
+                </CustomerRow>
+              );
+            })
+          ) : (
+            <CustomerRow>
+              <CustomerInfo>
+                <span>it's night time no more customers</span>
+                <span>...</span>
+                <span>Please wait</span>
+              </CustomerInfo>
+            </CustomerRow>
+          )}
         </CustomerListContainer>
       </ScrollableContainer>
     </>
