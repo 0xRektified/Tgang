@@ -87,6 +87,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
 
   const handleUnlockClick = (product: MarketProduct) => {
     onUnlockClick(tabMapping[product.name]);
+    onClose();
   };
 
   if (!isOpen) return null;
