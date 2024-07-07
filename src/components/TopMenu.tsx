@@ -12,7 +12,7 @@ import {
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { SupplierModal } from "./home/modals/SupplierModal";
-import { Upgrades } from "./shop/utils/types";
+import { IUpgrades } from "./shop/utils/types";
 import { IMarketInfo } from "./interfaces/market.interface";
 
 interface TopMenuProps {
@@ -22,7 +22,7 @@ interface TopMenuProps {
   products: Product[];
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  onUnlockClick: (tab: keyof Upgrades) => void;
+  onUnlockClick: (tab: keyof IUpgrades) => void;
 }
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,

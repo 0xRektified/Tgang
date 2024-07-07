@@ -1,5 +1,5 @@
 // Updated types.ts
-export interface Upgrade {
+export interface IUpgrade {
   id: number;
   title: string;
   description: string;
@@ -12,10 +12,10 @@ export interface Upgrade {
   requirement: { title: string; level: number } | null;
 }
 
-export interface Upgrades {
-  dealer: Upgrade[];
-  farmer: Upgrade[];
-  gangster: Upgrade[];
+export interface IUpgrades {
+  dealer: IUpgrade[];
+  farmer: IUpgrade[];
+  gangster: IUpgrade[];
 }
 
 export interface TouchPoint {

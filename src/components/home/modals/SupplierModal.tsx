@@ -13,7 +13,7 @@ import {
   StyledInput,
   Table,
 } from "../styles/supplier.css";
-import { Upgrades } from "../../shop/utils/types";
+import { IUpgrades } from "../../shop/utils/types";
 import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../../interfaces/user.interface";
@@ -28,7 +28,7 @@ interface SupplierModalProps {
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  onUnlockClick: (tab: keyof Upgrades) => void;
+  onUnlockClick: (tab: keyof IUpgrades) => void;
 }
 
 function userAmountAndCapacity(user: IUserInfo) {
@@ -65,8 +65,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
 
   const handleBuy = async () => {
     if (!selectedProduct) return;
-    const cost =
-      selectedProduct.price * quantity;
+    const cost = selectedProduct.price * quantity;
     if (cashAmount >= cost) {
       const success = await buyProduct(
         "NY", // Dynamically handle marketId
@@ -169,7 +168,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                           className={!userProduct ? "disabled" : ""}
                         >
                           <td>{product.name}</td>
-                          <td>{ product.price }</td>
+                          <td>{product.price}</td>
                           <td className="text-right">
                             {userProduct?.unlocked ? (
                               <button

@@ -9,11 +9,12 @@ import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import { Product } from "./components/interfaces/user.interface";
 import { upgrades as mockUpgrades } from "./mocks/backend.mock";
-import { Upgrades } from "./components/shop/utils/types";
+import { IUpgrades } from "./components/shop/utils/types";
 import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
 import { useFetchCustomer } from "./hooks/useFetchCustomer";
 import { useMarketData } from "./hooks/useMarketData";
+import { useFetchUpgrades } from "./hooks/useFetchUpgrades";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -32,15 +33,20 @@ export function Statics() {
 }
 
 function App() {
+  //@note handle loading and error properly
   const { userInfo, loading, error } = useAuthAndFetchUserData();
   const { customers, setCustomers } = useFetchCustomer();
+  //@note handle loading and error properly
+  const { upgrades } = useFetchUpgrades();
   const { marketInfo } = useMarketData();
   const [currentView, setCurrentView] = useState("Base");
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<keyof Upgrades>("dealer");
-  const [upgradesData, setUpgradesData] = useState<Upgrades>(mockUpgrades);
+  const [activeTab, setActiveTab] = useState<keyof IUpgrades>("dealer");
+  const [upgradesData, setUpgradesData] = useState<IUpgrades>(mockUpgrades);
 
+  console.log(`upgrades`);
+  console.log(upgrades);
   useEffect(() => {
     const test = document.getElementById("mainView");
     if (test) {
@@ -55,7 +61,7 @@ function App() {
     }
   }, [userInfo]);
 
-  const handleUnlockClick = (tab: keyof Upgrades) => {
+  const handleUnlockClick = (tab: keyof IUpgrades) => {
     setActiveTab(tab);
     setCurrentView("Shop");
   };

@@ -1,6 +1,6 @@
 import { EProduct } from "../components/interfaces/product.interface";
 import { Product } from "../components/interfaces/user.interface";
-import { Upgrades } from "../components/shop/utils/types";
+import { IUpgrades } from "../components/shop/utils/types";
 
 //@note TODO make this dynamic
 export const marketId = "NY";
@@ -112,7 +112,7 @@ export const customerList = [
 /****************************************************
                         Shop View
 *****************************************************/
-export const upgrades: Upgrades = {
+export const upgrades: IUpgrades = {
   dealer: [
     {
       id: 1,

@@ -1,1 +1,1 @@
-export const CARRYING_CAPACITY = 10;
+export const CARRYING_CAPACITY = 100;
