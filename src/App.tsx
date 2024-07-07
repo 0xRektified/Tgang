@@ -33,8 +33,8 @@ export function Statics() {
 
 function App() {
   const { userInfo, loading, error } = useAuthAndFetchUserData();
-  const { marketInfo } = useMarketData();
   const { customers, setCustomers } = useFetchCustomer();
+  const { marketInfo } = useMarketData();
   const [currentView, setCurrentView] = useState("Base");
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
