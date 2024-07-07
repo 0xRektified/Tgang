@@ -8,6 +8,7 @@ export interface Upgrade {
   cost: number;
   image: string;
   locked: boolean;
+  group: string;
   requirement: { title: string; level: number } | null;
 }
 

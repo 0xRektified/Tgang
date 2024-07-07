@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { TouchPoints } from "../utils/touchPoints";
-import { FlexBoxRow, Tab, Tabs, UpgradeContainer } from "../styled/shopStyled";
+import {
+  FlexBoxRow,
+  Tab,
+  Tabs,
+  UpgradeContainer,
+  ShopContainer,
+} from "../styled/shopStyled";
 import { TouchPoint, Upgrades } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
 import { Product } from "../interfaces/user.interface";
@@ -36,7 +42,7 @@ export const Shop: React.FC<ShopProps> = ({
   };
 
   return (
-    <>
+    <ShopContainer>
       <FlexBoxRow>
         <Tabs role="tablist">
           <Tab
@@ -77,7 +83,7 @@ export const Shop: React.FC<ShopProps> = ({
         </UpgradeContainer>
       </FlexBoxRow>
       <TouchPoints touchPoints={touchPoints} />
-    </>
+    </ShopContainer>
   );
 };
 

@@ -1,11 +1,12 @@
 import styled from "styled-components";
 
 export const TopMenuContainer = styled.div`
-  background: linear-gradient(135deg, #1f2937, #3b4252);
+  background: linear-gradient(180deg, #1e2734, #3b4252);
   color: white;
   padding: 1rem;
   width: 100%;
-  border-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-family: "Digital", sans-serif;
 `;

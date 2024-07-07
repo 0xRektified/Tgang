@@ -123,6 +123,7 @@ export const upgrades: Upgrades = {
       cost: 100,
       image: "/assets/cc.png",
       locked: false,
+      group: "product",
       requirement: null,
     },
     {
@@ -134,6 +135,8 @@ export const upgrades: Upgrades = {
       cost: 200,
       image: "/assets/meth.png",
       locked: true,
+      group: "product",
+
       requirement: { title: "Coke", level: 1 },
     },
     {
@@ -145,6 +148,7 @@ export const upgrades: Upgrades = {
       cost: 200,
       image: "/assets/hero.png",
       locked: true,
+      group: "product",
       requirement: { title: "Meth", level: 1 },
     },
   ],
@@ -159,6 +163,7 @@ export const upgrades: Upgrades = {
       image:
         "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
       locked: false,
+      group: "production",
       requirement: null,
     },
   ],
@@ -173,6 +178,7 @@ export const upgrades: Upgrades = {
       image:
         "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
       locked: false,
+      group: "stats",
       requirement: null,
     },
   ],

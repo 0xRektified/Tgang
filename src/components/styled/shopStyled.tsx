@@ -6,6 +6,7 @@ export const FlexBoxRow = styled.div`
   flex-direction: row;
   gap: 10px;
   align-items: center;
+  width: 100%;
 `;
 
 export const Tabs = styled.div`
@@ -14,6 +15,8 @@ export const Tabs = styled.div`
   padding: 0.5rem;
   background-color: #1f2937;
   border-radius: 0.375rem;
+  width: 100%;
+  justify-content: center;
 `;
 
 export const Tab = styled.a<{ active: boolean }>`
@@ -29,19 +32,19 @@ export const Tab = styled.a<{ active: boolean }>`
 `;
 
 export const UpgradeContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  background-color: #1f2937;
+  width: 100%;
+  padding: 1rem;
   overflow-y: scroll;
   height: 40rem;
   gap: 1rem;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const UpgradeCard = styled.div<{ locked: boolean }>`
   background-color: #f3f4f6;
-  width: 10rem;
-  height: 12rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
   border-radius: 0.375rem;
   opacity: ${(props) => (props.locked ? 0.5 : 1)};
   pointer-events: ${(props) => (props.locked ? "none" : "auto")};
@@ -57,7 +60,6 @@ export const UpgradeCard = styled.div<{ locked: boolean }>`
 export const CardHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem;
 `;
 
 export const CardImage = styled.figure`
@@ -78,7 +80,6 @@ export const CardDetails = styled.div`
 `;
 
 export const CardBody = styled.div`
-  padding: 0.5rem;
   flex-grow: 1;
 `;
 
@@ -88,3 +89,13 @@ export const CardTitle = styled.h2`
 `;
 
 export const CardDescription = styled.p``;
+
+export const ShopContainer = styled.div`
+  background-color: #111827;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+`;

@@ -115,7 +115,10 @@ function App() {
   return (
     <StyledApp data-theme="dark">
       <AppContainer>
-        <div id="buffer" style={{ height: "500px" }}></div>
+        <div
+          id="buffer"
+          style={{ height: "500px", backgroundColor: "#1e2734" }}
+        ></div>
         <TopMenu
           userInfo={userInfo}
           marketInfo={marketInfo}
