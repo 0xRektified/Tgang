@@ -1,46 +1,78 @@
-export type ViewType = "Base" | "Shop" | "Statics";
-import { GiShop } from "react-icons/gi";
-import { GiThreeFriends } from "react-icons/gi";
-import { GiPlayerBase } from "react-icons/gi";
 import styled from "styled-components";
+import { GiShop, GiThreeFriends, GiPlayerBase } from "react-icons/gi";
 
+// Styled components
 const FooterContainer = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #2d3748;
+  background-color: #1c1c1e;
   z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 0;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.7);
+  border-top: 1px solid #333;
 `;
 
+const FooterButton = styled.button<{ active: boolean }>`
+  background: none;
+  border: none;
+  color: ${(props) => (props.active ? "#FFD700" : "#8e8e93")};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #ffd700;
+  }
+
+  .btm-nav-label {
+    font-size: 0.8em;
+    margin-top: 0.2rem;
+  }
+
+  svg {
+    font-size: 1.5em;
+  }
+`;
+
+type TViewType = "Base" | "Shop" | "Statics";
+
 interface FooterMenuProps {
-  setCurrentView: (view: ViewType) => void;
+  setCurrentView: (view: TViewType) => void;
   currentView: string;
 }
 
 export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
   return (
-    <FooterContainer className="btm-nav">
-      <button
+    <FooterContainer>
+      <FooterButton
         onClick={() => setCurrentView("Base")}
-        className={currentView === "home" ? "active" : ""}
+        active={currentView === "Base"}
       >
         <GiPlayerBase />
         <span className="btm-nav-label">Base</span>
-      </button>
-      <button
+      </FooterButton>
+      <FooterButton
         onClick={() => setCurrentView("Shop")}
-        className={currentView === "warnings" ? "active" : ""}
+        active={currentView === "Shop"}
       >
         <GiShop />
         <span className="btm-nav-label">Shop</span>
-      </button>
-      <button
+      </FooterButton>
+      <FooterButton
         onClick={() => setCurrentView("Statics")}
-        className={currentView === "statics" ? "active" : ""}
+        active={currentView === "Statics"}
       >
         <GiThreeFriends />
-        <span className="btm-nav-label">Referal</span>
-      </button>
+        <span className="btm-nav-label">Referral</span>
+      </FooterButton>
     </FooterContainer>
   );
 }
+
+export default FooterMenu;

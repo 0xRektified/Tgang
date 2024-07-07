@@ -75,8 +75,26 @@ export const TopMenu: React.FC<TopMenuProps> = ({
               <button
                 className="btn btn-primary mt-4"
                 onClick={handleOpenSupplierModal}
+                style={{
+                  background: "linear-gradient(135deg, #FFD700, #FFC107)",
+                  color: "#1a1a1a",
+                  borderRadius: "8px",
+                  padding: "0.5rem 1rem",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)",
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  fontSize: "0.9em", // Smaller text size
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
               >
-                📱 Buy Drugs
+                <span style={{ fontSize: "1.5em" }}>📱</span>{" "}
+                {/* Larger icon size */}
+                <span>Buy Drugs</span>
               </button>
             </FlexBoxCol>
           </FlexBoxRow>
