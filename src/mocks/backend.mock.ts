@@ -2,6 +2,9 @@ import { EProduct } from "../components/interfaces/product.interface";
 import { Product } from "../components/interfaces/user.interface";
 import { Upgrades } from "../components/shop/utils/types";
 
+//@note TODO make this dynamic
+export const marketId = "NY";
+
 /****************************************************
                         Home View
 *****************************************************/

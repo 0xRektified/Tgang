@@ -7,14 +7,17 @@ import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { Product } from "../interfaces/user.interface";
-import { ProductName } from "../../hooks/useFetchCustomer";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
+import useSellProduct from "../../hooks/useSellProduct";
+import { ICustomerInfo } from "../interfaces/customer.interface";
+import { marketId } from "../../mocks/backend.mock";
+import useBatchSell from "../../hooks/useBatchSell";
 
 interface HomeProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   products: Product[];
-  customers: any[];
+  customers: ICustomerInfo[];
   setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
@@ -33,11 +36,14 @@ export const Home: React.FC<HomeProps> = ({
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
 
-  const [customerServed, setCustomerServed] = useState<any[]>([]);
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
-
+  const { addToBatch, loading, error } = useBatchSell(
+    marketId,
+    setCashAmount,
+    setProducts
+  );
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -75,41 +81,40 @@ export const Home: React.FC<HomeProps> = ({
     setIsModalOpen(false);
   };
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
 
     const slottedProducts = products.filter((p) => p.slot !== null);
 
     if (customers && customers.length > 0) {
       const order = customers[0];
-      const productName = Object.keys(order)[0] as ProductName;
-      const { quantity: amountToSell } = order[productName];
+      const { product, quantity: amountToSell } = order;
 
       const slottedProductToSell = slottedProducts.find(
-        (p) => p.name === productName
+        (p) => p.name === product.name
       );
+
       let newTouchPoint = {
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
         amountEarned: 0,
       };
+
       if (
         !slottedProductToSell ||
         slottedProductToSell.quantity < amountToSell
       ) {
-        console.log(`IN HOME productId ${productName}`);
         setLastTransaction({
           type: "missed",
-          product:
-            products.find((p) => p.name === productName)?.name || "Unknown",
+          product: product.name || "Unknown",
           quantity: amountToSell,
         });
       } else {
         const { updatedProducts, transaction } = handleTransaction(
           slottedProducts,
           products,
-          productName,
+          product.name,
           amountToSell,
           marketPrice,
           setCashAmount
@@ -125,11 +130,11 @@ export const Home: React.FC<HomeProps> = ({
           amountEarned: transaction?.amountEarned || 0,
         };
 
-        setCustomerServed([...customerServed, customers[0]]);
+        const servedCustomer = { ...order, customerIndex: order.customerIndex };
+        addToBatch(servedCustomer);
+
         const updatedCustomerList = [...customers];
         updatedCustomerList.splice(0, 1);
-        console.log(`updatedCustomerList`);
-        console.log(updatedCustomerList);
         setCustomers(updatedCustomerList);
       }
 

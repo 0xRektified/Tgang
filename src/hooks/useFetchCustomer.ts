@@ -1,43 +1,33 @@
 import { useState, useEffect } from "react";
-import { customerList } from "../mocks/backend.mock";
+import axiosInstance from "../api/axiosConfig";
+import { ICustomerInfo } from "../components/interfaces/customer.interface";
+import { marketId } from "../mocks/backend.mock";
 
 const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
 export type ProductName = "Weed" | "Coke" | "Meth";
-interface Customer {
-  [key: string]: {
-    quantity: number;
-    emoji: string;
-  };
-}
 
 export function useFetchCustomer() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<ICustomerInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getFetchCustomer = () => {
+    const getFetchCustomer = async () => {
       try {
-        const customersWithDetails: Customer[] = customerList.map(
-          (customer) => {
-            const productName = Object.keys(customer)[0] as ProductName;
-            const quantity = customer[productName];
-
-            if (quantity !== undefined) {
-              return {
-                [productName]: {
-                  quantity,
-                  emoji: emojis[Math.floor(Math.random() * emojis.length)],
-                },
-              };
-            } else {
-              throw new Error("Invalid customer data: quantity is undefined");
-            }
-          }
+        const index = Math.floor(new Date().getTime() / 60000);
+        const customerListResponse = await axiosInstance.get(
+          `/customers/${marketId}/${index}`
         );
+        if (customerListResponse.data) {
+          const customersWithDetails: ICustomerInfo[] =
+            customerListResponse.data.map((customer: ICustomerInfo) => ({
+              ...customer,
+              emoji: emojis[Math.floor(Math.random() * emojis.length)],
+            }));
 
-        setCustomers(customersWithDetails);
+          setCustomers(customersWithDetails);
+        }
       } catch (error) {
         console.error("Failed to fetch market data:", error);
         setError("Failed to fetch market data");

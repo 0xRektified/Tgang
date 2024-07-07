@@ -1,8 +1,17 @@
 import { EProduct } from "./product.interface";
 
 export interface ICustomerInfo {
-  name: string;
-  product: EProduct;
-  price: number;
+  customerIndex: number;
+  product: {
+    name: string;
+    price: number;
+  };
   quantity: number;
+  emoji?: string;
+}
+
+export interface ICustomerSellRequest {
+  product: EProduct;
+  quantity: number;
+  customerIndex: number;
 }

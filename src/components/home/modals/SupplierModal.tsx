@@ -7,6 +7,7 @@ import {
   CloseButton,
   FixedOverlay,
   ModalContainer,
+  Notch,
   QuantityInputContainer,
   ScrollableTableContainer,
   StyledButton,
@@ -107,6 +108,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   return (
     <FixedOverlay onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
+        <Notch />
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <h2 className="text-xl font-bold mb-4 text-white">
           Buy Products - ${cashAmount}

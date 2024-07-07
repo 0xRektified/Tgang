@@ -18,7 +18,6 @@ interface FooterMenuProps {
 }
 
 export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
-  console.log(currentView);
   return (
     <FooterContainer className="btm-nav">
       <button

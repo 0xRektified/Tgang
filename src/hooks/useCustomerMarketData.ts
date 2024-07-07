@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { ICustomerInfo } from "../components/interfaces/customer.interface";
+import { marketId } from "../mocks/backend.mock";
 
 export function useCustomerMarketData() {
   const [customerInfo, setCustomerInfo] = useState<ICustomerInfo[] | undefined>(
@@ -13,7 +14,7 @@ export function useCustomerMarketData() {
     const getMarketInfo = async () => {
       try {
         const marketResponse = await axiosInstance.get<ICustomerInfo[]>(
-          `/customers/NY`
+          `/markets/${marketId}`
         );
         setCustomerInfo(marketResponse.data);
       } catch (error) {

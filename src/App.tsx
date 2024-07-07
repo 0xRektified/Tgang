@@ -50,8 +50,6 @@ function App() {
 
   useEffect(() => {
     if (userInfo) {
-      console.log(`IN APP userInfo.products`);
-      console.log(userInfo.products);
       setCashAmount(userInfo.cashAmount);
       setProducts(userInfo.products);
     }

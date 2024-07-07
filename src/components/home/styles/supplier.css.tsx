@@ -1,21 +1,40 @@
 import styled from "styled-components";
 
+export const FixedOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Ensure the overlay is just below the modal */
+`;
+
 export const ModalContainer = styled.div`
   background-color: #2d3748;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
+  padding: 2rem 1rem; /* Adjust padding to make room for the notch */
+  border-radius: 2rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 1200px;
+  max-width: 400px; /* Width similar to an iPhone */
+  height: 80%; /* Height similar to an iPhone */
   position: relative; /* Ensure relative positioning within the overlay */
   z-index: 1001; /* Ensure it is above the overlay */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 export const ScrollableTableContainer = styled.div`
-  max-height: 400px;
+  flex-grow: 1; /* Allow the table to grow and fill available space */
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
+  border-radius: 1rem;
+  background-color: #1a202c;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -185,15 +204,14 @@ export const CloseButton = styled.button`
   }
 `;
 
-export const FixedOverlay = styled.div`
-  position: fixed;
+export const Notch = styled.div`
+  position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Ensure the overlay is just below the modal */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 20px;
+  background-color: #2d3748;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 `;

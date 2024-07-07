@@ -5,6 +5,7 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { LastTransaction } from "./LastTransaction";
 import { Transaction } from "./utils/types";
 import { EProductIcon } from "../interfaces/product.interface";
+import { ICustomerInfo } from "../interfaces/customer.interface";
 
 const ScrollableContainer = styled.div`
   max-height: 100vh;
@@ -78,7 +79,7 @@ const HeaderRow = styled(FlexBoxRow)`
 
 interface CustomersBoardProps {
   products: Product[];
-  customers: any[];
+  customers: ICustomerInfo[];
   transaction: Transaction | null;
   waitingCustomersCount: number;
 }
@@ -100,10 +101,9 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
       <ScrollableContainer>
         <CustomerListContainer>
           {customers.map((customer, index) => {
-            const productName = Object.keys(customer)[0];
-            const { quantity, emoji } = customer[productName];
+            const { product, quantity, emoji } = customer;
             const productIcon =
-              EProductIcon[productName as keyof typeof EProductIcon];
+              EProductIcon[product.name as keyof typeof EProductIcon];
             return (
               <CustomerRow key={index}>
                 <CustomerInfo>
@@ -111,7 +111,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
                     {emoji} {productIcon}
                   </span>
                   <span>
-                    {quantity} {productName}
+                    {quantity} {product.name}
                   </span>
                 </CustomerInfo>
               </CustomerRow>
