@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
 import { Product } from "../components/interfaces/user.interface";
-import { ICustomerSellRequest } from "../components/interfaces/customer.interface";
 
 const useSellProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -10,7 +9,7 @@ const useSellProduct = () => {
 
   const sellProduct = async (
     marketId: string,
-    customers: ICustomerSellRequest[],
+    customers: number[],
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
     setProducts: React.Dispatch<React.SetStateAction<Product[]>>
   ) => {
