@@ -104,7 +104,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
             customers.map((customer, index) => {
               const { product, quantity, emoji } = customer;
               const productIcon =
-                EProductIcon[product.name as keyof typeof EProductIcon];
+                EProductIcon[product as keyof typeof EProductIcon];
               return (
                 <CustomerRow key={index}>
                   <CustomerInfo>
@@ -112,7 +112,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
                       {emoji} {productIcon}
                     </span>
                     <span>
-                      {quantity} {product.name}
+                      {quantity} {product}
                     </span>
                   </CustomerInfo>
                 </CustomerRow>

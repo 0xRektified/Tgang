@@ -2,18 +2,14 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { ICustomerInfo } from "../components/interfaces/customer.interface";
 import { marketId } from "../mocks/backend.mock";
-import { startOfMinute, getUnixTime } from "date-fns";
+import { useCustomerIndex } from "./useCustomerIndex";
 
 const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
 export type ProductName = "Weed" | "Coke" | "Meth";
 
-function getIndexFromTimeStamp(timestamp: Date) {
-  const roundedTimestamp = startOfMinute(timestamp);
-  return getUnixTime(roundedTimestamp) / 60;
-}
-
 export function useFetchCustomer() {
+  const { customerIndex, setCustomerIndex } = useCustomerIndex();
   const [customers, setCustomers] = useState<ICustomerInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,9 +17,8 @@ export function useFetchCustomer() {
   useEffect(() => {
     const getFetchCustomer = async () => {
       try {
-        const index = getIndexFromTimeStamp(new Date());
         const customerListResponse = await axiosInstance.get(
-          `/customers/${marketId}/${index}`
+          `/customers/${marketId}/${customerIndex}`
         );
         if (customerListResponse.data) {
           const customersWithDetails: ICustomerInfo[] =
@@ -33,6 +28,7 @@ export function useFetchCustomer() {
             }));
 
           setCustomers(customersWithDetails);
+          setCustomerIndex(customerIndex! + 1);
         }
       } catch (error) {
         console.error("Failed to fetch market data:", error);

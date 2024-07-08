@@ -1,18 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import useSellProduct from "./useSellProduct";
-import {
-  ICustomerInfo,
-  ICustomerSellRequest,
-} from "../components/interfaces/customer.interface";
 import { Product } from "../components/interfaces/user.interface";
-import { EProduct } from "../components/interfaces/product.interface";
 
 const useBatchSell = (
   marketId: string,
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>
 ) => {
-  const [batch, setBatch] = useState<ICustomerSellRequest[]>([]);
+  const [batch, setBatch] = useState<number[]>([]);
   const { sellProduct, loading, error } = useSellProduct();
   const timer = useRef<NodeJS.Timeout | null>(null);
   const timerTrigger = 2000;
@@ -48,13 +43,8 @@ const useBatchSell = (
     }
   };
 
-  const addToBatch = (customer: ICustomerInfo) => {
-    const customerBatchDto: ICustomerSellRequest = {
-      product: customer.product.name as EProduct,
-      quantity: customer.quantity,
-      customerIndex: customer.customerIndex,
-    };
-    setBatch((prevBatch) => [...prevBatch, customerBatchDto]);
+  const addToBatch = (customerIndex: number) => {
+    setBatch((prevBatch) => [...prevBatch, customerIndex]);
   };
 
   return { addToBatch, loading, error };

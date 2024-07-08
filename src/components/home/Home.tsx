@@ -8,10 +8,10 @@ import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { Product } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
-import useSellProduct from "../../hooks/useSellProduct";
 import { ICustomerInfo } from "../interfaces/customer.interface";
 import { marketId } from "../../mocks/backend.mock";
 import useBatchSell from "../../hooks/useBatchSell";
+import { useCustomerIndex } from "../../hooks/useCustomerIndex";
 
 interface HomeProps {
   cashAmount: number;
@@ -97,7 +97,7 @@ export const Home: React.FC<HomeProps> = ({
       const { product, quantity: amountToSell } = order;
 
       const slottedProductToSell = slottedProducts.find(
-        (p) => p.name === product.name
+        (p) => p.name === product
       );
 
       let newTouchPoint = {
@@ -113,14 +113,14 @@ export const Home: React.FC<HomeProps> = ({
       ) {
         setLastTransaction({
           type: "missed",
-          product: product.name || "Unknown",
+          product: product || "Unknown",
           quantity: amountToSell,
         });
       } else {
         const { updatedProducts, transaction } = handleTransaction(
           slottedProducts,
           products,
-          product.name,
+          product,
           amountToSell,
           marketPrice,
           setCashAmount
@@ -136,13 +136,13 @@ export const Home: React.FC<HomeProps> = ({
           amountEarned: transaction?.amountEarned || 0,
         };
 
-        const servedCustomer = { ...order, customerIndex: order.customerIndex };
-        addToBatch(servedCustomer);
-
-        const updatedCustomerList = [...customers];
-        updatedCustomerList.splice(0, 1);
-        setCustomers(updatedCustomerList);
+        addToBatch(order.customerIndex);
       }
+
+      const updatedCustomerList = [...customers];
+      updatedCustomerList.splice(0, 1);
+
+      setCustomers(updatedCustomerList);
 
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
