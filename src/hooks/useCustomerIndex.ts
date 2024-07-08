@@ -5,7 +5,7 @@ const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
 export type ProductName = "Weed" | "Coke" | "Meth";
 
-function getIndexFromTimeStamp(timestamp: Date) {
+export function getIndexFromTimeStamp(timestamp: Date) {
   const roundedTimestamp = startOfMinute(timestamp);
   return getUnixTime(roundedTimestamp) / 60;
 }
