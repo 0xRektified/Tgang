@@ -1,8 +1,6 @@
-import { IUpgrades } from "../shop/utils/types";
-
 export type ProductName = "Weed" | "Coke" | "Meth";
 
-export const tabMapping: { [key: string]: keyof IUpgrades } = {
+export const tabMapping: { [key: string]: string } = {
   Weed: "dealer",
   Coke: "dealer",
   Meth: "dealer",

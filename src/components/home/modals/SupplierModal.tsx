@@ -13,7 +13,6 @@ import {
   StyledInput,
   Table,
 } from "../styles/supplier.css";
-import { IUpgrades } from "../../shop/utils/types";
 import { tabMapping } from "../../interfaces/general.interface";
 import useBuyProduct from "../../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../../interfaces/user.interface";
@@ -27,7 +26,7 @@ interface SupplierModalProps {
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  onUnlockClick: (tab: keyof IUpgrades) => void;
+  onUnlockClick: (tab: string) => void;
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({

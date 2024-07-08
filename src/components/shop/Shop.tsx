@@ -7,18 +7,21 @@ import {
   UpgradeContainer,
   ShopContainer,
 } from "../styled/shopStyled";
-import { TouchPoint, Upgrades } from "./utils/types";
+import { TouchPoint } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
 import { Product } from "../interfaces/user.interface";
+import { IUpgradesCategory } from "../interfaces/upgrade.interface";
 
 interface ShopProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  activeTab: keyof Upgrades;
-  upgradesData: Upgrades;
-  setUpgradesData: React.Dispatch<React.SetStateAction<Upgrades>>;
+  activeTab: string;
+  upgradesData: IUpgradesCategory[] | undefined;
+  setUpgrades: React.Dispatch<
+    React.SetStateAction<IUpgradesCategory[] | undefined>
+  >;
 }
 
 export const Shop: React.FC<ShopProps> = ({
@@ -28,16 +31,17 @@ export const Shop: React.FC<ShopProps> = ({
   setProducts,
   activeTab,
   upgradesData,
-  setUpgradesData,
+  setUpgrades,
 }) => {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const [currentTab, setCurrentTab] = useState<keyof Upgrades>(activeTab);
+  const [currentTab, setCurrentTab] = useState<string>(activeTab);
 
+  console.log(currentTab);
   useEffect(() => {
     setCurrentTab(activeTab);
   }, [activeTab]);
 
-  const handleTabClick = (tab: keyof Upgrades) => {
+  const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
   };
 
@@ -75,10 +79,10 @@ export const Shop: React.FC<ShopProps> = ({
             upgradesData={upgradesData}
             cashAmount={cashAmount}
             setCashAmount={setCashAmount}
-            setUpgradesData={setUpgradesData}
             setTouchPoints={setTouchPoints}
             products={products}
             setProducts={setProducts}
+            setUpgrades={setUpgrades}
           />
         </UpgradeContainer>
       </FlexBoxRow>

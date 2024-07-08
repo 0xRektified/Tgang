@@ -12,7 +12,6 @@ import {
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { SupplierModal } from "./home/modals/SupplierModal";
-import { IUpgrades } from "./shop/utils/types";
 import { IMarketInfo } from "./interfaces/market.interface";
 
 interface TopMenuProps {
@@ -22,7 +21,7 @@ interface TopMenuProps {
   products: Product[];
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  onUnlockClick: (tab: keyof IUpgrades) => void;
+  onUnlockClick: (tab: string) => void;
 }
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
@@ -84,7 +83,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
                   border: "none",
                   cursor: "pointer",
                   fontWeight: "bold",
-                  fontSize: "0.9em", // Smaller text size
+                  fontSize: "0.9em",
                   textTransform: "uppercase",
                   letterSpacing: "0.05em",
                   display: "flex",
@@ -93,7 +92,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({
                 }}
               >
                 <span style={{ fontSize: "1.5em" }}>📱</span>{" "}
-                {/* Larger icon size */}
                 <span>Buy Drugs</span>
               </button>
             </FlexBoxCol>

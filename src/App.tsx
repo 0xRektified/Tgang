@@ -8,8 +8,6 @@ import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import { Product } from "./components/interfaces/user.interface";
-import { upgrades as mockUpgrades } from "./mocks/backend.mock";
-import { IUpgrades } from "./components/shop/utils/types";
 import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
 import { useFetchCustomer } from "./hooks/useFetchCustomer";
@@ -37,16 +35,13 @@ function App() {
   const { userInfo, loading, error } = useAuthAndFetchUserData();
   const { customers, setCustomers } = useFetchCustomer();
   //@note handle loading and error properly
-  const { upgrades } = useFetchUpgrades();
+  const { upgrades, setUpgrades } = useFetchUpgrades(userInfo);
   const { marketInfo } = useMarketData();
   const [currentView, setCurrentView] = useState("Base");
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<keyof IUpgrades>("dealer");
-  const [upgradesData, setUpgradesData] = useState<IUpgrades>(mockUpgrades);
+  const [activeTab, setActiveTab] = useState<string>("dealer");
 
-  console.log(`upgrades`);
-  console.log(upgrades);
   useEffect(() => {
     const test = document.getElementById("mainView");
     if (test) {
@@ -61,7 +56,7 @@ function App() {
     }
   }, [userInfo]);
 
-  const handleUnlockClick = (tab: keyof IUpgrades) => {
+  const handleUnlockClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentView("Shop");
   };
@@ -90,8 +85,8 @@ function App() {
             products={products}
             setProducts={setProducts}
             activeTab={activeTab}
-            upgradesData={upgradesData}
-            setUpgradesData={setUpgradesData}
+            upgradesData={upgrades}
+            setUpgrades={setUpgrades}
           />
         );
       case "Statics":
