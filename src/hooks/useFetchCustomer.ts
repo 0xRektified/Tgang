@@ -3,7 +3,6 @@ import axiosInstance from "../api/axiosConfig";
 import { ICustomerInfo } from "../components/interfaces/customer.interface";
 import { marketId } from "../mocks/backend.mock";
 import { getIndexFromTimeStamp, useCustomerIndex } from "./useCustomerIndex";
-import { startOfMinute, getUnixTime } from "date-fns";
 
 const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
