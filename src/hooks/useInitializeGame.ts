@@ -1,24 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useFetchCustomer } from "./useFetchCustomer";
 import { useMarketData } from "./useMarketData";
 import { IUserInfo, Product } from "../components/interfaces/user.interface";
-import { IUpgradesCategory } from "../components/interfaces/upgrade.interface";
-import { ICustomerInfo } from "../components/interfaces/customer.interface";
-import { IMarketInfo } from "../components/interfaces/market.interface";
 
 export function useInitializeGame() {
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
-  const [upgrades, setUpgrades] = useState<IUpgradesCategory[] | undefined>(
-    undefined
-  );
-  const [customers, setCustomers] = useState<ICustomerInfo[]>([]);
-  const [marketInfo, setMarketInfo] = useState<IMarketInfo | undefined>(
-    undefined
-  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,57 +18,81 @@ export function useInitializeGame() {
     loading: authLoading,
     error: authError,
   } = useAuthAndFetchUserData(setCashAmount, setProducts);
+
   const {
-    upgrades: fetchedUpgrades,
-    setUpgrades: setFetchedUpgrades,
+    upgrades,
+    setUpgrades,
     loading: upgradesLoading,
     error: upgradesError,
+    fetchUpgrades,
   } = useFetchUpgrades(fetchedUserInfo);
+
   const {
-    customers: fetchedCustomers,
-    setCustomers: setFetchedCustomers,
+    customers,
+    setCustomers,
     loading: customersLoading,
     error: customersError,
+    fetchCustomers,
   } = useFetchCustomer();
+
   const {
-    marketInfo: fetchedMarketInfo,
+    marketInfo,
+    setMarketInfo,
     loading: marketLoading,
     error: marketError,
+    fetchMarketData,
   } = useMarketData();
 
-  useEffect(() => {
-    const initializeGame = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const initializeGame = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        if (authError) {
-          throw new Error(authError);
-        }
-        if (upgradesError) {
-          throw new Error(upgradesError);
-        }
-        if (customersError) {
-          throw new Error(customersError);
-        }
-        if (marketError) {
-          throw new Error(marketError);
-        }
-
-        setUserInfo(fetchedUserInfo);
-        setUpgrades(fetchedUpgrades);
-        setCustomers(fetchedCustomers);
-        setMarketInfo(fetchedMarketInfo);
-      } catch (error) {
-        setError("Failed to initialize game");
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (authError) {
+        throw new Error(authError);
       }
-    };
 
-    initializeGame();
-  }, [authLoading, upgradesLoading, customersLoading, marketLoading]);
+      if (!fetchedUserInfo) {
+        throw new Error("User info is not available");
+      }
+
+      setUserInfo(fetchedUserInfo);
+
+      const [upgradesData, customerData, marketData] = await Promise.all([
+        fetchUpgrades(),
+        fetchCustomers(),
+        fetchMarketData(),
+      ]);
+
+      if (upgradesError || customersError || marketError) {
+        throw new Error("Failed to fetch one or more game data");
+      }
+
+      setUpgrades(upgradesData?.upgrades || []);
+      setCustomers(customerData?.customers || []);
+      setMarketInfo(marketData?.marketInfo);
+    } catch (error) {
+      setError("Failed to initialize game");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    authError,
+    fetchedUserInfo,
+    fetchUpgrades,
+    fetchCustomers,
+    fetchMarketData,
+    setUpgrades,
+    setCustomers,
+    setMarketInfo,
+  ]);
+
+  useEffect(() => {
+    if (!authLoading) {
+      initializeGame();
+    }
+  }, [fetchedUserInfo]);
 
   return {
     cashAmount,
@@ -89,8 +103,8 @@ export function useInitializeGame() {
     marketInfo,
     setUserInfo: setFetchedUserInfo,
     setProducts,
-    setUpgrades: setFetchedUpgrades,
-    setCustomers: setFetchedCustomers,
+    setUpgrades,
+    setCustomers,
     setCashAmount,
     setMarketInfo,
     loading,

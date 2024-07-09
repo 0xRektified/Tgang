@@ -36,6 +36,7 @@ function App() {
     userInfo,
     upgrades,
     customers,
+    marketInfo,
     setUserInfo,
     setProducts,
     setUpgrades,
@@ -44,9 +45,7 @@ function App() {
     loading,
     error,
   } = useInitializeGame();
-  const { marketInfo } = useMarketData();
   const [currentView, setCurrentView] = useState("Base");
-
   const [activeTab, setActiveTab] = useState<string>("dealer");
 
   useEffect(() => {
