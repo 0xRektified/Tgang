@@ -54,6 +54,7 @@ interface TopMenuProps {
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   onUnlockClick: (tab: string) => void;
 }
+
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
   marketInfo,

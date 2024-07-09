@@ -26,15 +26,13 @@ export function useBuyUpgrades() {
     setLoading(true);
     setError(null);
     try {
-      console.log(`inside buy upgrade`);
       const upgradeId = upgrade.id;
       const response = await axiosInstance.post(`/upgrades/buy`, {
         id: upgradeId,
       });
-      console.log(`response Buy upgrade`, response);
-
-      const newCashAmount = response.data.cashAmount;
-      const updatedUpgrades = response.data.upgrades;
+      const newUserInfo = response.data;
+      const newCashAmount = newUserInfo.cashAmount;
+      const updatedUpgrades = newUserInfo.upgrades;
 
       setCashAmount(newCashAmount);
 
@@ -61,37 +59,17 @@ export function useBuyUpgrades() {
         });
       });
 
-      if (upgrade.group === "product") {
-        setUserInfo((prevUserInfo) => {
-          console.log(`prevUserInfo`);
-          console.log(prevUserInfo);
-          if (!prevUserInfo) return prevUserInfo;
+      setUserInfo((prevUserInfo) => {
+        if (!prevUserInfo) return newUserInfo;
 
-          const newProduct = {
-            name: upgrade.title as EProduct,
-            quantity: 0,
-            unlocked: true,
-            selected: true,
-            maxCarry: 100,
-            slot: 1,
-          };
-
-          const productExists = prevUserInfo.products.some(
-            (product) => product.name === newProduct.name
-          );
-
-          if (!productExists) {
-            console.log(`product did not exist`);
-            console.log(productExists);
-            return {
-              ...prevUserInfo,
-              products: [...prevUserInfo.products, newProduct],
-            };
-          }
-
-          return prevUserInfo;
-        });
-      }
+        const updatedUserInfo = {
+          ...prevUserInfo,
+          cashAmount: newUserInfo.cashAmount,
+          upgrades: newUserInfo.upgrades,
+          products: newUserInfo.products,
+        };
+        return updatedUserInfo;
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);

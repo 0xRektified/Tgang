@@ -129,53 +129,55 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
             </ButtonContainer>
           </BottomSection>
         )}
-        {!selectedProduct && (
-          <ScrollableTableContainer>
-            <Table>
-              <thead>
-                <tr>
-                  <th style={{ width: "50%" }}>Product</th>
-                  <th style={{ width: "25%" }}>Price</th>
-                  <th style={{ width: "25%" }}>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {marketInfo
-                  ? marketInfo.products.map((product) => {
-                      const userProduct = userInfo?.products.find(
-                        (p) => p.name === product.name
-                      );
-                      return (
-                        <tr
-                          key={product.name}
-                          className={!userProduct ? "disabled" : ""}
-                        >
-                          <td>{product.name}</td>
-                          <td>{product.price}</td>
-                          <td className="text-right">
-                            {userProduct?.unlocked ? (
-                              <button
-                                onClick={() => handleProductSelect(product)}
-                              >
-                                Select
-                              </button>
-                            ) : (
-                              <span
-                                className="text-yellow-400 animate-pulse cursor-pointer"
-                                onClick={() => handleUnlockClick(product)}
-                              >
-                                Unlock
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  : null}
-              </tbody>
-            </Table>
-          </ScrollableTableContainer>
-        )}
+        <ScrollableTableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th style={{ width: "50%" }}>Product</th>
+                <th style={{ width: "25%" }}>Price</th>
+                <th style={{ width: "25%" }}>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {marketInfo
+                ? marketInfo.products.map((product) => {
+                    const userProduct = userInfo?.products.find(
+                      (p) => p.name === product.name
+                    );
+                    console.log(
+                      `userProduct for ${product.name}:`,
+                      userProduct
+                    );
+                    return (
+                      <tr
+                        key={product.name}
+                        className={!userProduct ? "disabled" : ""}
+                      >
+                        <td>{product.name}</td>
+                        <td>{product.price}</td>
+                        <td className="text-right">
+                          {userProduct ? (
+                            <button
+                              onClick={() => handleProductSelect(product)}
+                            >
+                              Select
+                            </button>
+                          ) : (
+                            <span
+                              className="text-yellow-400 animate-pulse cursor-pointer"
+                              onClick={() => handleUnlockClick(product)}
+                            >
+                              Unlock
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                : null}
+            </tbody>
+          </Table>
+        </ScrollableTableContainer>
       </ModalContainer>
       {showToast && (
         <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">

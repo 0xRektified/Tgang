@@ -8,7 +8,6 @@ import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
-import { useMarketData } from "./hooks/useMarketData";
 import { useInitializeGame } from "./hooks/useInitializeGame";
 import Social from "./components/social/Social";
 

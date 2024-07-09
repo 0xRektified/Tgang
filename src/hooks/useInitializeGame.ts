@@ -8,7 +8,6 @@ import { IUserInfo, Product } from "../components/interfaces/user.interface";
 export function useInitializeGame() {
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
-  const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +55,7 @@ export function useInitializeGame() {
         throw new Error("User info is not available");
       }
 
-      setUserInfo(fetchedUserInfo);
+      setFetchedUserInfo(fetchedUserInfo);
 
       const [upgradesData, customerData, marketData] = await Promise.all([
         fetchUpgrades(),
@@ -71,6 +70,11 @@ export function useInitializeGame() {
       setUpgrades(upgradesData?.upgrades || []);
       setCustomers(customerData?.customers || []);
       setMarketInfo(marketData?.marketInfo);
+
+      console.log("setUserInfo (initializeGame):", fetchedUserInfo);
+      console.log("setUpgrades:", upgradesData?.upgrades);
+      console.log("setCustomers:", customerData?.customers);
+      console.log("setMarketInfo:", marketData?.marketInfo);
     } catch (error) {
       setError("Failed to initialize game");
       console.error(error);
@@ -92,12 +96,12 @@ export function useInitializeGame() {
     if (!authLoading) {
       initializeGame();
     }
-  }, [fetchedUserInfo]);
+  }, [authLoading]);
 
   return {
     cashAmount,
     products,
-    userInfo,
+    userInfo: fetchedUserInfo,
     upgrades,
     customers,
     marketInfo,
