@@ -11,7 +11,7 @@ import { ClickableAreaWithSmoke } from "./ClickableArea";
 import { ICustomerInfo } from "../interfaces/customer.interface";
 import { marketId } from "../../mocks/backend.mock";
 import useBatchSell from "../../hooks/useBatchSell";
-import { useCustomerIndex } from "../../hooks/useCustomerIndex";
+import styled from "styled-components";
 
 interface HomeProps {
   cashAmount: number;

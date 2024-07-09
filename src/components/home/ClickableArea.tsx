@@ -5,6 +5,32 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 
+const NeonText = styled.div`
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: right;
+  font-weight: bold;
+  text-shadow: 0 0 5px #e600ff, 0 0 10px #e600ff, 0 0 15px #e600ff,
+    0 0 20px #e600ff, 0 0 25px #e600ff, 0 0 30px #e600ff, 0 0 35px #e600ff;
+  animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  animation: pulse 2s infinite;
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  z-index: 1;
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px #e600ff, 0 0 10px #e600ff, 0 0 15px #e600ff,
+        0 0 20px #e600ff, 0 0 25px #e600ff, 0 0 30px #e600ff, 0 0 35px #e600ff;
+    }
+    to {
+      text-shadow: 0 0 10px #ff4dff, 0 0 20px #ff4dff, 0 0 30px #ff4dff,
+        0 0 40px #ff4dff, 0 0 50px #ff4dff, 0 0 60px #ff4dff, 0 0 70px #ff4dff;
+    }
+  }
+`;
+
 const ClickableArea = styled.div`
   position: relative;
   display: flex;
@@ -35,6 +61,7 @@ const ProductsList = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 10px;
+  margin-top: 50px;
   border-radius: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
   width: 25%;
@@ -131,6 +158,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   return (
     <ClickableArea onTouchStart={handleTouchStart}>
       {smokes}
+      <NeonText>TAP TO SELL</NeonText>
 
       <ImageContainer className={pressed ? "pressed" : ""}>
         <img

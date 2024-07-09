@@ -33,14 +33,13 @@ export const Username = styled.span`
 `;
 
 export const BalanceLabel = styled.span`
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 `;
 
 export const BalanceAmount = styled.span`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #32cd32;
-  animation: pulse 2s infinite;
 `;
 
 export const DigitalFont = styled.span`

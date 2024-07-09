@@ -72,10 +72,10 @@ export const TopMenu: React.FC<TopMenuProps> = ({
           <FlexBoxRow className="justify-between items-center">
             <FlexBoxCol className="flex justify-end mr-5">
               <button
-                className="btn btn-primary mt-4"
+                className="btn btn-primary mt-4 skeleton"
                 onClick={handleOpenSupplierModal}
                 style={{
-                  background: "linear-gradient(135deg, #FFD700, #FFC107)",
+                  backgroundColor: "rgb(224 190 16)",
                   color: "#1a1a1a",
                   borderRadius: "8px",
                   padding: "0.5rem 1rem",
