@@ -39,18 +39,16 @@ const useBatchSell = (
     };
   }, [batch]);
 
+  useEffect(() => {
+    if (customers.length < nbrOfUserInBatch / 2) {
+      fetchCustomers();
+    }
+  }, [customers.length]);
+
   const sendBatch = async () => {
     if (batch.length === 0) return;
     try {
-      await sellProduct(
-        marketId,
-        batch,
-        customers,
-        nbrOfUserInBatch,
-        setCashAmount,
-        setProducts,
-        fetchCustomers
-      );
+      await sellProduct(marketId, batch, setCashAmount, setProducts);
       setBatch([]);
     } catch (error) {
       console.error("Failed to send batch", error);

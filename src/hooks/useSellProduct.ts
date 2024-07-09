@@ -10,13 +10,8 @@ const useSellProduct = () => {
   const sellProduct = async (
     marketId: string,
     customersSell: number[],
-    customers: ICustomerInfo[],
-    nbrOfUserInBatch: number,
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
-    fetchCustomers: () => Promise<{
-      customers: ICustomerInfo[];
-    }>
+    setProducts: React.Dispatch<React.SetStateAction<Product[]>>
   ) => {
     setLoading(true);
     setError(null);
@@ -28,9 +23,6 @@ const useSellProduct = () => {
       );
       setCashAmount(response.data.cashAmount);
       setProducts(response.data.products);
-      if (customers.length < nbrOfUserInBatch / 2) {
-        fetchCustomers();
-      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
