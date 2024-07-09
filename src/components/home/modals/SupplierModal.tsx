@@ -144,10 +144,6 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                     const userProduct = userInfo?.products.find(
                       (p) => p.name === product.name
                     );
-                    console.log(
-                      `userProduct for ${product.name}:`,
-                      userProduct
-                    );
                     return (
                       <tr
                         key={product.name}

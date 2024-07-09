@@ -4,13 +4,14 @@ import { ICustomerInfo } from "../components/interfaces/customer.interface";
 import { marketId } from "../mocks/backend.mock";
 import { getIndexFromTimeStamp, useCustomerIndex } from "./useCustomerIndex";
 
-const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
+const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳", "👶"];
 
 export function useFetchCustomer() {
   let { customerIndex, setCustomerIndex } = useCustomerIndex();
   const [customers, setCustomers] = useState<ICustomerInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [nbrOfUserInBatch, setNbrOfUserInBatch] = useState<number>(0);
 
   const fetchCustomers = useCallback(async () => {
     if (!customerIndex) {
@@ -29,8 +30,12 @@ export function useFetchCustomer() {
             ...customer,
             emoji: emojis[Math.floor(Math.random() * emojis.length)],
           }));
+        setNbrOfUserInBatch(customersWithDetails.length);
+        setCustomers((prevCustomers) => [
+          ...prevCustomers,
+          ...customersWithDetails,
+        ]);
 
-        setCustomers(customersWithDetails);
         setCustomerIndex(customerIndex + 1);
         return { customers: customersWithDetails };
       }
@@ -44,5 +49,12 @@ export function useFetchCustomer() {
     }
   }, [customerIndex, setCustomerIndex]);
 
-  return { customers, setCustomers, loading, error, fetchCustomers };
+  return {
+    customers,
+    setCustomers,
+    loading,
+    error,
+    fetchCustomers,
+    nbrOfUserInBatch,
+  };
 }

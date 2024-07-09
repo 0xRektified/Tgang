@@ -36,11 +36,13 @@ function App() {
     upgrades,
     customers,
     marketInfo,
+    nbrOfUserInBatch,
     setUserInfo,
     setProducts,
     setUpgrades,
     setCustomers,
     setCashAmount,
+    fetchCustomers,
     loading,
     error,
   } = useInitializeGame();
@@ -71,8 +73,10 @@ function App() {
             cashAmount={cashAmount}
             products={products}
             customers={customers}
+            nbrOfUserInBatch={nbrOfUserInBatch}
             setCustomers={setCustomers}
             setProducts={setProducts}
+            fetchCustomers={fetchCustomers}
           />
         );
       case "Shop":

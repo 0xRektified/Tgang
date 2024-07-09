@@ -18,8 +18,12 @@ interface HomeProps {
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   products: Product[];
   customers: ICustomerInfo[];
+  nbrOfUserInBatch: number;
   setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  fetchCustomers: () => Promise<{
+    customers: ICustomerInfo[];
+  }>;
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -27,8 +31,10 @@ export const Home: React.FC<HomeProps> = ({
   setCashAmount,
   products,
   customers,
+  nbrOfUserInBatch,
   setCustomers,
   setProducts,
+  fetchCustomers,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -42,8 +48,11 @@ export const Home: React.FC<HomeProps> = ({
   );
   const { addToBatch, loading, error } = useBatchSell(
     marketId,
+    nbrOfUserInBatch,
+    customers,
     setCashAmount,
-    setProducts
+    setProducts,
+    fetchCustomers
   );
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");

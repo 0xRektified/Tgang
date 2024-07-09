@@ -32,6 +32,7 @@ export function useInitializeGame() {
     loading: customersLoading,
     error: customersError,
     fetchCustomers,
+    nbrOfUserInBatch,
   } = useFetchCustomer();
 
   const {
@@ -105,12 +106,14 @@ export function useInitializeGame() {
     upgrades,
     customers,
     marketInfo,
+    nbrOfUserInBatch,
     setUserInfo: setFetchedUserInfo,
     setProducts,
     setUpgrades,
     setCustomers,
     setCashAmount,
     setMarketInfo,
+    fetchCustomers,
     loading,
     error,
   };
