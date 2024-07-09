@@ -36,4 +36,6 @@ export interface IUserInfo {
   carryingGear: CarryingGear[];
   carryAmount: number;
   carryCapacity: number;
+  referralToken: string;
+  referredUsers: string[];
 }

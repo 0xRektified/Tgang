@@ -9,8 +9,8 @@ import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useMarketData } from "./hooks/useMarketData";
-import { useFetchUpgrades } from "./hooks/useFetchUpgrades";
 import { useInitializeGame } from "./hooks/useInitializeGame";
+import Social from "./components/social/Social";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -92,13 +92,10 @@ function App() {
         return <Statics />;
       default:
         return (
-          <Home
-            setCashAmount={setCashAmount}
-            cashAmount={cashAmount}
-            products={products}
-            customers={customers}
-            setCustomers={setCustomers}
-            setProducts={setProducts}
+          <Social
+            referralToken={userInfo!.referralToken}
+            referredUsers={userInfo!.referredUsers}
+            activeTab={activeTab}
           />
         );
     }
