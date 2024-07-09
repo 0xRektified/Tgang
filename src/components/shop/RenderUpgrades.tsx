@@ -1,9 +1,61 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
-import { Product } from "../interfaces/user.interface";
 import { IUpgrade, IUpgradesCategory } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
+import styled from "styled-components";
+
+const NeonButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
+    0 0 10px #eab308;
+  border: 2px solid #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const Button = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border: 2px solid;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
 
 interface RenderUpgradesProps {
   tab: string;
@@ -11,8 +63,6 @@ interface RenderUpgradesProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
-  products: Product[];
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   setUpgrades: React.Dispatch<
     React.SetStateAction<IUpgradesCategory[] | undefined>
   >;
@@ -55,7 +105,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     e: React.TouchEvent<HTMLButtonElement>
   ) => {
     const touch = e.touches[0];
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
 
     handleBuyUpgrade(upgrade, touch);
   };
@@ -104,17 +153,20 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                         )}
                       </div>
                       <div className="ml-4 flex-end">
-                        <button
-                          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                          onTouchStart={(e) => handleCardClick(upgrade, e)}
-                        >
-                          Buy
-                        </button>
+                        {upgrade.locked ? (
+                          <Button>Locked</Button>
+                        ) : (
+                          <NeonButton
+                            onTouchStart={(e) => handleCardClick(upgrade, e)}
+                          >
+                            Buy
+                          </NeonButton>
+                        )}
                       </div>
                     </div>
                     <p className="mt-2">
                       {upgrade.locked
-                        ? `Unlock ${upgrade.requirement?.title} first`
+                        ? `Unlock ${upgrade.requirement?.title} level ${upgrade.requirement?.level} first`
                         : upgrade.description}
                     </p>
                   </div>

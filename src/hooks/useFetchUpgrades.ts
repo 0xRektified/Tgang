@@ -20,17 +20,26 @@ export function useFetchUpgrades(userInfo: IUserInfo | undefined) {
         let updatedUpgrades = upgradesResponse.data;
 
         if (userInfo?.upgrades) {
-          const userUpgradesMap = new Map<number, number>(
-            userInfo.upgrades.map((upgrade) => [upgrade.id, upgrade.level])
+          const userUpgradesMap = new Map<
+            number,
+            { level: number; locked: boolean }
+          >(
+            userInfo.upgrades.map((upgrade) => [
+              upgrade.id,
+              { level: upgrade.level, locked: upgrade.locked },
+            ])
           );
-
           updatedUpgrades = upgradesResponse.data.map((category) => {
             const updatedCategory = {
               ...category,
               upgrades: category.upgrades.map((upgrade) => {
-                const userUpgradeLevel = userUpgradesMap.get(upgrade.id);
-                if (userUpgradeLevel !== undefined) {
-                  return { ...upgrade, level: userUpgradeLevel };
+                const userUpgrade = userUpgradesMap.get(upgrade.id);
+                if (userUpgrade !== undefined) {
+                  return {
+                    ...upgrade,
+                    level: userUpgrade.level,
+                    locked: userUpgrade.locked,
+                  };
                 }
                 return upgrade;
               }),
