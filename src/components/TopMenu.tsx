@@ -14,6 +14,37 @@ import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { SupplierModal } from "./home/modals/SupplierModal";
 import { IMarketInfo } from "./interfaces/market.interface";
 
+import styled from "styled-components";
+
+const NeonButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 0 5px #eab308, 0 0 10px #eab308, 0 0 20px #eab308,
+    0 0 30px #eab308;
+  border: 2px solid #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+  }
+`;
+
+const ButtonIcon = styled.span`
+  font-size: 1.5em;
+`;
+
+const NeonText = styled.span``;
+
 interface TopMenuProps {
   userInfo: IUserInfo | undefined;
   marketInfo: IMarketInfo | undefined;
@@ -71,29 +102,10 @@ export const TopMenu: React.FC<TopMenuProps> = ({
           <FlexBoxCol className="items-end"></FlexBoxCol>
           <FlexBoxRow className="justify-between items-center">
             <FlexBoxCol className="flex justify-end mr-5">
-              <button
-                className="btn btn-primary mt-4 skeleton"
-                onClick={handleOpenSupplierModal}
-                style={{
-                  backgroundColor: "rgb(224 190 16)",
-                  color: "#1a1a1a",
-                  borderRadius: "8px",
-                  padding: "0.5rem 1rem",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)",
-                  border: "none",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  fontSize: "0.9em",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <span style={{ fontSize: "1.5em" }}>📱</span>{" "}
-                <span>Buy Drugs</span>
-              </button>
+              <NeonButton onClick={handleOpenSupplierModal}>
+                <ButtonIcon>📱</ButtonIcon>
+                <NeonText>Buy Drugs</NeonText>
+              </NeonButton>
             </FlexBoxCol>
           </FlexBoxRow>
         </FlexBoxRow>

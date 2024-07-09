@@ -15,8 +15,6 @@ import { IUpgradesCategory } from "../interfaces/upgrade.interface";
 interface ShopProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  products: Product[];
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   activeTab: string;
   upgradesData: IUpgradesCategory[] | undefined;
   setUpgrades: React.Dispatch<
@@ -27,8 +25,6 @@ interface ShopProps {
 export const Shop: React.FC<ShopProps> = ({
   cashAmount,
   setCashAmount,
-  products,
-  setProducts,
   activeTab,
   upgradesData,
   setUpgrades,
@@ -80,8 +76,6 @@ export const Shop: React.FC<ShopProps> = ({
             cashAmount={cashAmount}
             setCashAmount={setCashAmount}
             setTouchPoints={setTouchPoints}
-            products={products}
-            setProducts={setProducts}
             setUpgrades={setUpgrades}
           />
         </UpgradeContainer>

@@ -10,23 +10,22 @@ const NeonText = styled.div`
   color: #fff;
   text-align: right;
   font-weight: bold;
-  text-shadow: 0 0 5px #e600ff, 0 0 10px #e600ff, 0 0 15px #e600ff,
-    0 0 20px #e600ff, 0 0 25px #e600ff, 0 0 30px #e600ff, 0 0 35px #e600ff;
+  text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700,
+    0 0 20px #ffd700, 0 0 25px #ffd700, 0 0 30px #ffd700, 0 0 35px #ffd700;
   animation: glow 1.5s infinite alternate, pulse 2s infinite;
-  animation: pulse 2s infinite;
   position: absolute;
   top: 15px;
-  right: 10px;
+  left: 90px;
   z-index: 1;
 
   @keyframes glow {
     from {
-      text-shadow: 0 0 5px #e600ff, 0 0 10px #e600ff, 0 0 15px #e600ff,
-        0 0 20px #e600ff, 0 0 25px #e600ff, 0 0 30px #e600ff, 0 0 35px #e600ff;
+      text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700,
+        0 0 20px #ffd700, 0 0 25px #ffd700, 0 0 30px #ffd700, 0 0 35px #ffd700;
     }
     to {
-      text-shadow: 0 0 10px #ff4dff, 0 0 20px #ff4dff, 0 0 30px #ff4dff,
-        0 0 40px #ff4dff, 0 0 50px #ff4dff, 0 0 60px #ff4dff, 0 0 70px #ff4dff;
+      text-shadow: 0 0 10px #ffdf00, 0 0 20px #ffdf00, 0 0 30px #ffdf00,
+        0 0 40px #ffdf00, 0 0 50px #ffdf00, 0 0 60px #ffdf00, 0 0 70px #ffdf00;
     }
   }
 `;

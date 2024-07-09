@@ -24,17 +24,11 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   cashAmount,
   setCashAmount,
   setTouchPoints,
-  products,
-  setProducts,
   setUpgrades,
 }) => {
   const { buyUpgrade } = useBuyUpgrades();
 
-  const handleBuyUpgrade = async (
-    upgrade: IUpgrade,
-    touch: React.Touch,
-    position: { top: number; left: number }
-  ) => {
+  const handleBuyUpgrade = async (upgrade: IUpgrade, touch: React.Touch) => {
     const cost = upgrade.levelPrices[upgrade.level];
     if (cashAmount >= cost && upgrade.level < upgrade.maxLevel) {
       await buyUpgrade(upgrade.id, setCashAmount, setUpgrades);
@@ -58,17 +52,15 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
   const handleCardClick = (
     upgrade: IUpgrade,
-    e: React.TouchEvent<HTMLDivElement>
+    e: React.TouchEvent<HTMLButtonElement>
   ) => {
     const touch = e.touches[0];
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const position = { top: rect.top, left: rect.left };
 
-    handleBuyUpgrade(upgrade, touch, position);
+    handleBuyUpgrade(upgrade, touch);
   };
 
   if (upgradesData) {
-    console.log(`Render Once upgradesData`);
     const tabPage = upgradesData.find((e) => e.category === tab);
     const groupedUpgrades = tabPage?.upgrades.reduce((acc, upgrade) => {
       if (!acc[upgrade.group]) {
@@ -91,7 +83,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                     className={`p-4 border rounded-lg ${
                       upgrade.locked ? "opacity-50" : ""
                     }`}
-                    onTouchStart={(e) => handleCardClick(upgrade, e)}
                   >
                     <div className="flex justify-between items-center">
                       <img
@@ -99,7 +90,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                         alt={upgrade.title}
                         className="w-16 h-16"
                       />
-                      <div className="ml-4">
+                      <div className="ml-4 flex-1">
                         <h4 className="font-semibold">{upgrade.title}</h4>
                         {upgrade.locked ? (
                           <p className="text-red-500">Locked</p>
@@ -111,6 +102,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                             </p>
                           </>
                         )}
+                      </div>
+                      <div className="ml-4 flex-end">
+                        <button
+                          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+                          onTouchStart={(e) => handleCardClick(upgrade, e)}
+                        >
+                          Buy
+                        </button>
                       </div>
                     </div>
                     <p className="mt-2">

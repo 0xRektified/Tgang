@@ -82,8 +82,6 @@ function App() {
           <Shop
             setCashAmount={setCashAmount}
             cashAmount={cashAmount}
-            products={products}
-            setProducts={setProducts}
             activeTab={activeTab}
             upgradesData={upgrades}
             setUpgrades={setUpgrades}
