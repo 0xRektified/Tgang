@@ -9,7 +9,7 @@ import {
 } from "../styled/shopStyled";
 import { TouchPoint } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
-import { Product } from "../interfaces/user.interface";
+import { IUserInfo, Product } from "../interfaces/user.interface";
 import { IUpgradesCategory } from "../interfaces/upgrade.interface";
 
 interface ShopProps {
@@ -20,6 +20,7 @@ interface ShopProps {
   setUpgrades: React.Dispatch<
     React.SetStateAction<IUpgradesCategory[] | undefined>
   >;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
 }
 
 export const Shop: React.FC<ShopProps> = ({
@@ -28,6 +29,7 @@ export const Shop: React.FC<ShopProps> = ({
   activeTab,
   upgradesData,
   setUpgrades,
+  setUserInfo,
 }) => {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
@@ -77,6 +79,7 @@ export const Shop: React.FC<ShopProps> = ({
             setCashAmount={setCashAmount}
             setTouchPoints={setTouchPoints}
             setUpgrades={setUpgrades}
+            setUserInfo={setUserInfo}
           />
         </UpgradeContainer>
       </FlexBoxRow>

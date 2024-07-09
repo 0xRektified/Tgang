@@ -3,13 +3,25 @@ import axiosInstance from "../api/axiosConfig";
 import { IUpgradesCategory } from "../components/interfaces/upgrade.interface";
 import { IUserInfo } from "../components/interfaces/user.interface";
 
-export function useFetchUpgrades(userInfo: IUserInfo | undefined) {
-  const [upgrades, setUpgrades] = useState<IUpgradesCategory[] | undefined>(
-    undefined
-  );
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export function useFetchUpgrades(
+  userInfo: IUserInfo | undefined,
+  externalSetters?: {
+    setUpgrades?: React.Dispatch<
+      React.SetStateAction<IUpgradesCategory[] | undefined>
+    >;
+    setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+    setError?: React.Dispatch<React.SetStateAction<string | null>>;
+  }
+) {
+  const [upgrades, setUpgradesInternal] = useState<
+    IUpgradesCategory[] | undefined
+  >(undefined);
+  const [loading, setLoadingInternal] = useState<boolean>(true);
+  const [error, setErrorInternal] = useState<string | null>(null);
 
+  const setUpgrades = externalSetters?.setUpgrades || setUpgradesInternal;
+  const setLoading = externalSetters?.setLoading || setLoadingInternal;
+  const setError = externalSetters?.setError || setErrorInternal;
   useEffect(() => {
     const getUpgrades = async () => {
       try {

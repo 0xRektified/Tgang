@@ -7,12 +7,10 @@ import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
-import { Product } from "./components/interfaces/user.interface";
-import { useAuthAndFetchUserData } from "./hooks/useAuthAndFetchUserData";
 import Loading from "./components/Loading";
-import { useFetchCustomer } from "./hooks/useFetchCustomer";
 import { useMarketData } from "./hooks/useMarketData";
 import { useFetchUpgrades } from "./hooks/useFetchUpgrades";
+import { useInitializeGame } from "./hooks/useInitializeGame";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -32,14 +30,23 @@ export function Statics() {
 
 function App() {
   //@note handle loading and error properly
-  const { userInfo, loading, error } = useAuthAndFetchUserData();
-  const { customers, setCustomers } = useFetchCustomer();
-  //@note handle loading and error properly
-  const { upgrades, setUpgrades } = useFetchUpgrades(userInfo);
+  const {
+    cashAmount,
+    products,
+    userInfo,
+    upgrades,
+    customers,
+    setUserInfo,
+    setProducts,
+    setUpgrades,
+    setCustomers,
+    setCashAmount,
+    loading,
+    error,
+  } = useInitializeGame();
   const { marketInfo } = useMarketData();
   const [currentView, setCurrentView] = useState("Base");
-  const [cashAmount, setCashAmount] = useState<number>(0);
-  const [products, setProducts] = useState<Product[]>([]);
+
   const [activeTab, setActiveTab] = useState<string>("dealer");
 
   useEffect(() => {
@@ -48,13 +55,6 @@ function App() {
       test.scrollIntoView();
     }
   }, []);
-
-  useEffect(() => {
-    if (userInfo) {
-      setCashAmount(userInfo.cashAmount);
-      setProducts(userInfo.products);
-    }
-  }, [userInfo]);
 
   const handleUnlockClick = (tab: string) => {
     setActiveTab(tab);
@@ -85,6 +85,7 @@ function App() {
             activeTab={activeTab}
             upgradesData={upgrades}
             setUpgrades={setUpgrades}
+            setUserInfo={setUserInfo}
           />
         );
       case "Statics":

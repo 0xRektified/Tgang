@@ -4,6 +4,7 @@ import WebApp from "@twa-dev/sdk";
 import { IUpgrade, IUpgradesCategory } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import styled from "styled-components";
+import { IUserInfo, Product } from "../interfaces/user.interface";
 
 const NeonButton = styled.button`
   background-color: rgb(39 39 42);
@@ -66,6 +67,7 @@ interface RenderUpgradesProps {
   setUpgrades: React.Dispatch<
     React.SetStateAction<IUpgradesCategory[] | undefined>
   >;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
@@ -75,13 +77,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   setCashAmount,
   setTouchPoints,
   setUpgrades,
+  setUserInfo,
 }) => {
   const { buyUpgrade } = useBuyUpgrades();
 
   const handleBuyUpgrade = async (upgrade: IUpgrade, touch: React.Touch) => {
     const cost = upgrade.levelPrices[upgrade.level];
     if (cashAmount >= cost && upgrade.level < upgrade.maxLevel) {
-      await buyUpgrade(upgrade.id, setCashAmount, setUpgrades);
+      await buyUpgrade(upgrade, setCashAmount, setUpgrades, setUserInfo);
 
       const newTouchPoint = {
         id: Date.now(),

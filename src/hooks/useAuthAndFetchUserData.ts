@@ -4,9 +4,12 @@ import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import { IUserInfo } from "../components/interfaces/user.interface";
+import { IUserInfo, Product } from "../components/interfaces/user.interface";
 
-export function useAuthAndFetchUserData() {
+export function useAuthAndFetchUserData(
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+) {
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +59,8 @@ export function useAuthAndFetchUserData() {
 
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
         setUserInfo(userInfoResponse.data);
+        setCashAmount(userInfoResponse.data.cashAmount);
+        setProducts(userInfoResponse.data.products);
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
         setError("Failed to authenticate and fetch user data");
@@ -67,5 +72,5 @@ export function useAuthAndFetchUserData() {
     login();
   }, []);
 
-  return { userInfo, loading, error };
+  return { userInfo, setUserInfo, loading, error };
 }
