@@ -21,9 +21,12 @@ interface HomeProps {
   nbrOfUserInBatch: number;
   setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  fetchCustomers: () => Promise<{
-    customers: ICustomerInfo[];
-  }>;
+  fetchCustomers: () => Promise<
+    | {
+        customers: ICustomerInfo[];
+      }
+    | undefined
+  >;
 }
 
 export const Home: React.FC<HomeProps> = ({

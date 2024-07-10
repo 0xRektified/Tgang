@@ -9,9 +9,12 @@ const useBatchSell = (
   customers: ICustomerInfo[],
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
-  fetchCustomers: () => Promise<{
-    customers: ICustomerInfo[];
-  }>
+  fetchCustomers: () => Promise<
+    | {
+        customers: ICustomerInfo[];
+      }
+    | undefined
+  >
 ) => {
   const [batch, setBatch] = useState<number[]>([]);
   const { sellProduct, loading, error } = useSellProduct();

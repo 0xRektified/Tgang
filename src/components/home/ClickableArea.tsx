@@ -40,6 +40,7 @@ const ClickableArea = styled.div`
   padding-right: 20px;
   cursor: pointer;
   overflow: hidden;
+  touch-action: none;
 `;
 
 const ImageContainer = styled.div`
