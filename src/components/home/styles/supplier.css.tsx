@@ -1,5 +1,93 @@
 import styled from "styled-components";
 
+export const NeonButton = styled.button`
+  background-color: rgb(39 39 42) !important;
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+    animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.disabled {
+    background-color: rgb(99 99 99) !important;
+    border: none;
+  }
+`;
+
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 1.4rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: black;
+  font-size: 1.5rem;
+  cursor: pointer;
+
+  &:hover {
+    color: #ff0000;
+  }
+`;
+
+export const Notch = styled.div`
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 20px;
+  background-color: #2d3748;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+`;
+
+export const WebPageTitle = styled.div`
+  background-color: white;
+  color: black;
+`;
+
+export const RoundButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 50%;
+  padding: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  box-shadow: 0 0 5px #ea0808, 0 0 10px #ea0808, 0 0 20px #ea0808,
+    0 0 30px #ea0808;
+  border: 2px solid #ea0808;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+
+  &:hover {
+    background-color: rgb(24 24 27);
+  }
+`;
+
 export const FixedOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -10,31 +98,33 @@ export const FixedOverlay = styled.div`
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Ensure the overlay is just below the modal */
+  z-index: 1000;
 `;
 
 export const ModalContainer = styled.div`
-  background-color: #2d3748;
-  padding: 2rem 1rem; /* Adjust padding to make room for the notch */
+  border: 1px solid #797979;
+  background-color: black;
+  font-size: 0.8em;
+  padding: 2rem 1rem;
   border-radius: 2rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 400px; /* Width similar to an iPhone */
-  height: 80%; /* Height similar to an iPhone */
-  position: relative; /* Ensure relative positioning within the overlay */
-  z-index: 1001; /* Ensure it is above the overlay */
+  max-width: 400px;
+  height: 80%;
+  position: relative;
+  z-index: 1001;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 `;
 
 export const ScrollableTableContainer = styled.div`
-  flex-grow: 1; /* Allow the table to grow and fill available space */
+  flex-grow: 1;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
-  border-radius: 1rem;
   background-color: #1a202c;
+  margin-bottom: 0.2rem;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -48,6 +138,10 @@ export const ScrollableTableContainer = styled.div`
     background-color: #4a5568;
     border-radius: 4px;
   }
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+  }
 `;
 
 export const Table = styled.table`
@@ -60,10 +154,13 @@ export const Table = styled.table`
   td {
     padding: 0.5rem;
     text-align: left;
-    font-size: 0.875rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
   }
 
   th {
+    padding: 0rem;
+    font-size: 0.4rem;
     background-color: #4a5568;
     color: #cbd5e0;
     text-transform: uppercase;
@@ -131,7 +228,6 @@ export const StyledButton = styled.button`
 
   &.cancel {
     background-color: #718096;
-    margin-right: 0.5rem;
 
     &:hover {
       background-color: #4a5568;
@@ -155,63 +251,112 @@ export const StyledButton = styled.button`
   }
 `;
 
-export const BottomSection = styled.div`
-  margin-top: 1rem;
-  padding: 1rem;
+export const ShoppingCart = styled.div`
   background-color: #1a202c;
+  padding: 0.5rem; // Reduced padding
   border-radius: 0.5rem;
+  margin-bottom: 0.5rem; // Reduced margin
 `;
 
-export const QuantityInputContainer = styled.div`
+export const ShoppingCartItem = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.25rem 0; // Reduced padding
+  border-bottom: 1px solid #2d3748;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span {
+    flex: 1;
+    text-align: left;
+    color: #cbd5e0;
+    font-size: 0.8rem; // Reduced font size
+  }
+
+  span:nth-child(2) {
+    text-align: center;
+  }
+
+  span:nth-child(3) {
+    text-align: right;
+  }
 `;
 
-export const StyledInput = styled.input`
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: 1px solid #4a5568;
-  background-color: #1a202c;
+export const ShoppingCartFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.5rem; // Reduced padding
+  border-top: 1px solid #2d3748;
+`;
+
+export const ShoppingCartBalance = styled.div`
   color: #cbd5e0;
-  font-size: 1rem;
-
-  &:focus {
-    outline: none;
-    border-color: #63b3ed;
-  }
+  font-weight: 600;
+  font-size: 0.8rem; // Reduced font size
 `;
 
-export const ButtonContainer = styled.div`
+export const ShoppingCartTotal = styled.div`
+  color: #cbd5e0;
+  font-weight: 600;
+  font-size: 0.8rem; // Reduced font size
+`;
+
+export const FlexBoxRow = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+  flex-direction: row;
+  gap: 5px; // Reduced gap
+  align-items: center;
+  width: 100%;
 `;
 
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 1.5rem;
-  cursor: pointer;
+// export const RoundButton = styled.button`
+//   background-color: rgb(39 39 42);
+//   color: #e4e4e7;
+//   border-radius: 50%;
+//   padding: 0.25rem; // Reduced padding
+//   width: 2rem; // Reduced width
+//   height: 2rem; // Reduced height
+//   box-shadow: 0 0 5px #eab308, 0 0 10px #eab308, 0 0 20px #eab308,
+//     0 0 30px #eab308;
+//   border: 2px solid #eab308;
+//   cursor: pointer;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   transition: background-color 0.3s ease;
+//   position: fixed;
+//   bottom: 0.5rem; // Adjusted position
+//   left: 50%;
+//   transform: translateX(-50%);
 
-  &:hover {
-    color: #ff0000;
-  }
-`;
+//   &:hover {
+//     background-color: rgb(24 24 27);
+//   }
+// `;
 
-export const Notch = styled.div`
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 20px;
-  background-color: #2d3748;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-`;
+// export const NeonButton = styled.button`
+//   background-color: rgb(39 39 42) !important;
+//   color: #e4e4e7;
+//   border-radius: 8px;
+//   padding: 0.25rem 0.5rem; // Reduced padding
+//   border: 1px solid #eab308;
+//   cursor: pointer;
+//   font-weight: bold;
+//   font-size: 0.8rem; // Reduced font size
+//   text-transform: uppercase;
+//   letter-spacing: 0.05em;
+//   display: flex;
+//   align-items: center;
+//   gap: 0.25rem; // Reduced gap
+//   transition: background-color 0.3s ease, transform 0.1s ease;
+
+//   &:hover {
+//     background-color: rgb(24 24 27);
+//   }
+
+//   &:active {
+//     transform: scale(0.95);
+//   }
+// `;

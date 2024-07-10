@@ -11,7 +11,7 @@ import {
   BalanceAmount,
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
-import { SupplierModal } from "./home/modals/SupplierModal";
+import { SupplierModal } from "./home/SupplierModal";
 import { IMarketInfo } from "./interfaces/market.interface";
 
 import styled from "styled-components";
@@ -19,14 +19,13 @@ import styled from "styled-components";
 const NeonButton = styled.button`
   background-color: rgb(39 39 42);
   color: #e4e4e7;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 0 5px #eab308, 0 0 10px #eab308, 0 0 20px #eab308,
-    0 0 30px #eab308;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  box-shadow: 0 0 10px #eab308, 0 0 15px #eab308, 0 0 20px #eab308;
   border: 2px solid #eab308;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;

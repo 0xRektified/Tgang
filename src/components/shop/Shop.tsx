@@ -9,7 +9,7 @@ import {
 } from "../styled/shopStyled";
 import { TouchPoint } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
-import { IUserInfo, Product } from "../interfaces/user.interface";
+import { IUserInfo } from "../interfaces/user.interface";
 import { IUpgradesCategory } from "../interfaces/upgrade.interface";
 
 interface ShopProps {
