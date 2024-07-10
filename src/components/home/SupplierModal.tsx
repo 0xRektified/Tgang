@@ -19,6 +19,7 @@ import { tabMapping } from "../interfaces/general.interface";
 import useBuyProduct from "../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
+import { EProductIcon } from "../interfaces/product.interface";
 
 interface SupplierModalProps {
   userInfo: IUserInfo | undefined;
@@ -129,13 +130,19 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                     const userProduct = userInfo?.products.find(
                       (p) => p.name === product.name
                     );
+                    const productIcon =
+                      (product.name as keyof typeof EProductIcon) &&
+                      EProductIcon[product.name as keyof typeof EProductIcon];
                     return (
                       <React.Fragment key={product.name}>
                         <tr
                           className={!userProduct ? "disabled" : ""}
                           onClick={() => handleProductSelect(product)}
                         >
-                          <td>{product.name}</td>
+                          <td>
+                            {product.name + ` `}
+                            {productIcon}
+                          </td>
                           <td>${product.price}</td>
                           <td className="text-right">
                             {selectedProduct?.name === product.name
