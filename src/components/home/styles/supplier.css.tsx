@@ -235,6 +235,8 @@ export const StyledButton = styled.button`
   }
 
   &.buy {
+    padding: 0.4rem 1rem;
+
     background-color: #48bb78;
 
     &:hover {

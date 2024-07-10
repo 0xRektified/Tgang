@@ -243,7 +243,11 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
           </ShoppingCartFooter>
           <ShoppingCartFooter>
             <RoundButton onClick={onClose}>&times;</RoundButton>
-            <StyledButton onClick={handleBuy} disabled={cartItems.length === 0}>
+            <StyledButton
+              className="buy"
+              onClick={handleBuy}
+              disabled={cartItems.length === 0}
+            >
               Buy
             </StyledButton>
           </ShoppingCartFooter>
