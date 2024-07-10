@@ -155,9 +155,11 @@ export const Home: React.FC<HomeProps> = ({
 
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
-      if (newTouchPoint.amountEarned) {
-        playSound();
-      }
+
+      //@note disabled sound for now it seems to be creating a lag
+      // if (newTouchPoint.amountEarned) {
+      //   playSound();
+      // }
       WebApp.HapticFeedback.impactOccurred("heavy");
       setTimeout(() => setPressed(false), 50);
       setTimeout(() => {

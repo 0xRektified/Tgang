@@ -12,8 +12,11 @@ export function useFetchCustomer() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [nbrOfUserInBatch, setNbrOfUserInBatch] = useState<number>(0);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const fetchCustomers = useCallback(async () => {
+    if (isFetching) return;
+    setIsFetching(true);
     if (!customerIndex) {
       customerIndex = getIndexFromTimeStamp(new Date());
       setCustomerIndex(customerIndex);
@@ -46,8 +49,9 @@ export function useFetchCustomer() {
       return { customers: [] };
     } finally {
       setLoading(false);
+      setIsFetching(false);
     }
-  }, [customerIndex, setCustomerIndex]);
+  }, [customerIndex, setCustomerIndex, isFetching]);
 
   return {
     customers,

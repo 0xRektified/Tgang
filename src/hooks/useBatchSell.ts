@@ -17,6 +17,7 @@ const useBatchSell = (
   const { sellProduct, loading, error } = useSellProduct();
   const timer = useRef<NodeJS.Timeout | null>(null);
   const timerTrigger = 2000;
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   useEffect(() => {
     if (batch.length === 0) return;
 
@@ -40,10 +41,21 @@ const useBatchSell = (
   }, [batch]);
 
   useEffect(() => {
-    if (customers.length < nbrOfUserInBatch / 2) {
-      fetchCustomers();
+    if (customers.length < nbrOfUserInBatch / 2 && !isFetching) {
+      fetchMoreCustomers();
     }
-  }, [customers.length]);
+  }, [customers.length, nbrOfUserInBatch, isFetching]);
+
+  const fetchMoreCustomers = async () => {
+    setIsFetching(true);
+    try {
+      await fetchCustomers();
+    } catch (error) {
+      console.error("Failed to fetch customers", error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const sendBatch = async () => {
     if (batch.length === 0) return;
