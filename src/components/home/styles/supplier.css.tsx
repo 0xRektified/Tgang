@@ -68,8 +68,8 @@ export const RoundButton = styled.button`
   color: #e4e4e7;
   border-radius: 50%;
   padding: 0.5rem;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   box-shadow: 0 0 5px #ea0808, 0 0 10px #ea0808, 0 0 20px #ea0808,
     0 0 30px #ea0808;
   border: 2px solid #ea0808;
@@ -152,7 +152,7 @@ export const Table = styled.table`
 
   th,
   td {
-    padding: 0.5rem;
+    padding: 0.7rem;
     text-align: left;
     font-size: 0.7rem;
     white-space: nowrap;
@@ -253,62 +253,33 @@ export const StyledButton = styled.button`
   }
 `;
 
-export const ShoppingCart = styled.div`
-  background-color: #1a202c;
-  padding: 0.5rem; // Reduced padding
-  border-radius: 0.5rem;
-  margin-bottom: 0.5rem; // Reduced margin
-`;
-
-export const ShoppingCartItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0.25rem 0; // Reduced padding
-  border-bottom: 1px solid #2d3748;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  span {
-    flex: 1;
-    text-align: left;
-    color: #cbd5e0;
-    font-size: 0.8rem; // Reduced font size
-  }
-
-  span:nth-child(2) {
-    text-align: center;
-  }
-
-  span:nth-child(3) {
-    text-align: right;
-  }
-`;
-
 export const ShoppingCartFooter = styled.div`
+  background-color: #191e2b;
   display: flex;
   justify-content: space-between;
-  padding-top: 0.5rem; // Reduced padding
+  padding-top: 0.8rem;
   border-top: 1px solid #2d3748;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const ShoppingCartBalance = styled.div`
   color: #cbd5e0;
   font-weight: 600;
-  font-size: 0.8rem; // Reduced font size
+  font-size: 0.8rem;
 `;
 
 export const ShoppingCartTotal = styled.div`
   color: #cbd5e0;
   font-weight: 600;
-  font-size: 0.8rem; // Reduced font size
+  font-size: 0.8rem;
 `;
 
 export const FlexBoxRow = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5px; // Reduced gap
+  gap: 5px;
   align-items: center;
   width: 100%;
 `;

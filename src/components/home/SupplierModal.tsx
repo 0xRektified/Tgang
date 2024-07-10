@@ -8,11 +8,9 @@ import {
   ScrollableTableContainer,
   StyledButton,
   Table,
-  ShoppingCart,
-  ShoppingCartItem,
-  ShoppingCartTotal,
   ShoppingCartFooter,
   ShoppingCartBalance,
+  ShoppingCartTotal,
   RoundButton,
   NeonButton,
   WebPageTitle,
@@ -49,53 +47,15 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   );
   const [quantity, setQuantity] = useState<number>(1);
   const [showToast, setShowToast] = useState<boolean>(false);
-  const [cartItems, setCartItems] = useState<
-    { product: MarketProduct; quantity: number }[]
-  >([]);
   const [totalCost, setTotalCost] = useState<number>(0);
-
   const [remainingCash, setRemainingCash] = useState<number>(cashAmount);
 
   useEffect(() => {
-    const total = cartItems.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-    setTotalCost(total);
+    setTotalCost(selectedProduct ? selectedProduct.price * quantity : 0);
     setRemainingCash(
-      cashAmount -
-        total -
-        (selectedProduct ? selectedProduct.price * quantity : 0)
+      cashAmount - (selectedProduct ? selectedProduct.price * quantity : 0)
     );
-  }, [cartItems, selectedProduct, quantity, cashAmount]);
-
-  useEffect(() => {
-    const total = cartItems.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-    setTotalCost(total);
-  }, [cartItems]);
-
-  const handleAddToCart = () => {
-    if (!selectedProduct) return;
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item.product.name === selectedProduct.name
-      );
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.product.name === selectedProduct.name
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      } else {
-        return [...prevItems, { product: selectedProduct, quantity }];
-      }
-    });
-    setSelectedProduct(null);
-    setQuantity(1);
-  };
+  }, [selectedProduct, quantity, cashAmount]);
 
   const handleBuy = async () => {
     if (totalCost > cashAmount) {
@@ -103,24 +63,23 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
       setTimeout(() => setShowToast(false), 4000);
       return;
     }
-    for (const item of cartItems) {
+    if (selectedProduct) {
       await buyProduct(
         "NY",
-        item.product.name,
-        item.quantity,
+        selectedProduct.name,
+        quantity,
         setCashAmount,
         setProducts
       );
     }
-    setCartItems([]);
+    setSelectedProduct(null);
+    setQuantity(1);
     WebApp.HapticFeedback.impactOccurred("heavy");
-    onClose();
   };
 
   const handleMaxClick = () => {
     if (!selectedProduct) return;
     const productPrice = selectedProduct.price;
-
     const { carryAmount, carryCapacity } = userInfo!;
     const maxCarry = carryCapacity - carryAmount;
     const maxQuantity = Math.min(
@@ -150,6 +109,10 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <Notch />
         <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
+        <ShoppingCartFooter>
+          <ShoppingCartBalance>Balance: ${remainingCash}</ShoppingCartBalance>
+          <ShoppingCartTotal>Total: ${totalCost}</ShoppingCartTotal>
+        </ShoppingCartFooter>
         <ScrollableTableContainer>
           <Table>
             <thead>
@@ -182,12 +145,10 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                           <td className="text-right">
                             {userProduct ? (
                               selectedProduct?.name === product.name ? (
-                                <NeonButton onClick={handleAddToCart}>
-                                  Add
-                                </NeonButton>
+                                <NeonButton onClick={handleBuy}>Buy</NeonButton>
                               ) : (
                                 <NeonButton className="disabled">
-                                  Add
+                                  Buy
                                 </NeonButton>
                               )
                             ) : (
@@ -229,29 +190,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
           </Table>
         </ScrollableTableContainer>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <ShoppingCart>
-          {cartItems.map((item, index) => (
-            <ShoppingCartItem key={index}>
-              <span>{item.product.name}</span>
-              <span>{item.quantity}</span>
-              <span>${item.product.price * item.quantity}</span>
-            </ShoppingCartItem>
-          ))}
-          <ShoppingCartFooter>
-            <ShoppingCartBalance>Balance: ${remainingCash}</ShoppingCartBalance>
-            <ShoppingCartTotal>Total: ${totalCost}</ShoppingCartTotal>
-          </ShoppingCartFooter>
-          <ShoppingCartFooter>
-            <RoundButton onClick={onClose}>&times;</RoundButton>
-            <StyledButton
-              className="buy"
-              onClick={handleBuy}
-              disabled={cartItems.length === 0}
-            >
-              Buy
-            </StyledButton>
-          </ShoppingCartFooter>
-        </ShoppingCart>
+        <RoundButton onClick={onClose}>&times;</RoundButton>
       </ModalContainer>
       {showToast && (
         <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
