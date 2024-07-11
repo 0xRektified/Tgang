@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
-import { EProduct } from "../components/interfaces/product.interface";
 import {
   IUpgrade,
   IUpgradesCategory,
@@ -29,8 +28,9 @@ export function useBuyUpgrades() {
       const upgradeId = upgrade.id;
       const response = await axiosInstance.post(`/upgrades/buy`, {
         id: upgradeId,
+        group: upgrade.group,
       });
-      const newUserInfo = response.data;
+      const newUserInfo = response.data as IUserInfo;
       const newCashAmount = newUserInfo.cashAmount;
       const updatedUpgrades = newUserInfo.upgrades;
 
@@ -43,6 +43,17 @@ export function useBuyUpgrades() {
           return {
             ...category,
             upgrades: category.upgrades.map((upgrade) => {
+              if (upgrade.group == "gear") {
+                const carryingGear = newUserInfo.carryingGear.find((g) => g.id === upgrade.id);
+                if (carryingGear) {
+                  return {
+                    ...upgrade,
+                    level: 1,
+                    locked: true,
+                  };
+                }
+              }
+
               const updatedUpgrade = updatedUpgrades.find(
                 (u: IUserUpgrade) => u.id === upgrade.id
               );

@@ -23,7 +23,8 @@ export interface IUserUpgrade {
 }
 
 export interface CarryingGear {
-  name: string;
+  id: number;
+  title: string;
   capacity: number;
 }
 

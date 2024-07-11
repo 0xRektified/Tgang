@@ -33,6 +33,17 @@ export function useFetchUpgrades(userInfo: IUserInfo | undefined) {
           const updatedCategory = {
             ...category,
             upgrades: category.upgrades.map((upgrade) => {
+              if (upgrade.group == "gear") {
+                const carryingGear = userInfo.carryingGear.find((g) => g.id === upgrade.id);
+                if (carryingGear) {
+                  return {
+                    ...upgrade,
+                    level: 1,
+                    locked: true,
+                  };
+                }
+              }
+
               const userUpgrade = userUpgradesMap.get(upgrade.id);
               if (userUpgrade !== undefined) {
                 return {
