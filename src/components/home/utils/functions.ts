@@ -24,7 +24,8 @@ export const handleTransaction = (
   productName: string,
   amountToSell: number,
   marketPrice: Record<string, number>,
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>
 ): { updatedProducts: Product[]; transaction: Transaction | null } => {
   let amountEarned = 0;
   const productToSell = slottedProducts.find(
@@ -35,6 +36,7 @@ export const handleTransaction = (
     const productName = productToSell.name;
     amountEarned = amountToSell * marketPrice[productName];
     setCashAmount((prevCash) => prevCash + amountEarned);
+    setCarryAmount((prevCarry) => prevCarry - productToSell.quantity);
     const updatedProducts = updateProducts(products, productName, amountToSell);
     const transaction = {
       type: "success",

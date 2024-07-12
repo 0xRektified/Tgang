@@ -74,7 +74,7 @@ function App() {
           <Home
             setCashAmount={setCashAmount}
             cashAmount={cashAmount}
-            setCarryAmount={setCashAmount}
+            setCarryAmount={setCarryAmount}
             carryAmount={cashAmount}
             products={products}
             customers={customers}
