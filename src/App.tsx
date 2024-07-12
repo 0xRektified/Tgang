@@ -10,6 +10,7 @@ import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
 import Social from "./components/social/Social";
+import Lab from "./components/labs/Lab";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -79,6 +80,8 @@ function App() {
             fetchCustomers={fetchCustomers}
           />
         );
+      case "Lab":
+        return <Lab />;
       case "Shop":
         return (
           <Shop

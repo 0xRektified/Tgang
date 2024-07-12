@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { GiShop, GiThreeFriends, GiPlayerBase } from "react-icons/gi";
-
+import { ImLab } from "react-icons/im";
 // Styled components
 const FooterContainer = styled.div`
   position: fixed;
@@ -40,7 +40,7 @@ const FooterButton = styled.button<{ active: boolean }>`
   }
 `;
 
-type TViewType = "Base" | "Shop" | "Social";
+type TViewType = "Base" | "Lab" | "Shop" | "Social";
 
 interface FooterMenuProps {
   setCurrentView: (view: TViewType) => void;
@@ -56,6 +56,13 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
       >
         <GiPlayerBase />
         <span className="btm-nav-label">Base</span>
+      </FooterButton>
+      <FooterButton
+        onClick={() => setCurrentView("Lab")}
+        active={currentView === "Lab"}
+      >
+        <ImLab />
+        <span className="btm-nav-label">Lab</span>
       </FooterButton>
       <FooterButton
         onClick={() => setCurrentView("Shop")}
