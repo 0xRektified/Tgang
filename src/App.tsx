@@ -32,6 +32,7 @@ function App() {
   //@note handle loading and error properly
   const {
     cashAmount,
+    carryAmount,
     products,
     userInfo,
     upgrades,
@@ -43,6 +44,7 @@ function App() {
     setUpgrades,
     setCustomers,
     setCashAmount,
+    setCarryAmount,
     fetchCustomers,
     loading,
     error,
@@ -72,6 +74,8 @@ function App() {
           <Home
             setCashAmount={setCashAmount}
             cashAmount={cashAmount}
+            setCarryAmount={setCashAmount}
+            carryAmount={cashAmount}
             products={products}
             customers={customers}
             nbrOfUserInBatch={nbrOfUserInBatch}
@@ -125,9 +129,11 @@ function App() {
           userInfo={userInfo}
           marketInfo={marketInfo}
           cashAmount={cashAmount}
+          carryAmount={carryAmount}
           products={products}
           setProducts={setProducts}
           setCashAmount={setCashAmount}
+          setCarryAmount={setCarryAmount}
           onUnlockClick={handleUnlockClick}
         />
         <FlexBoxColNoGap>

@@ -48,8 +48,10 @@ interface TopMenuProps {
   userInfo: IUserInfo | undefined;
   marketInfo: IMarketInfo | undefined;
   cashAmount: number;
+  carryAmount: number;
   products: Product[];
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   onUnlockClick: (tab: string) => void;
 }
@@ -58,8 +60,10 @@ export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
   marketInfo,
   cashAmount,
+  carryAmount,
   products,
   setCashAmount,
+  setCarryAmount,
   setProducts,
   onUnlockClick,
 }) => {
@@ -119,6 +123,8 @@ export const TopMenu: React.FC<TopMenuProps> = ({
           setProducts={setProducts}
           cashAmount={cashAmount}
           setCashAmount={setCashAmount}
+          carryAmount={carryAmount}
+          setCarryAmount={setCarryAmount}
           onUnlockClick={onUnlockClick}
         />
       )}

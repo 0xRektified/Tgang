@@ -6,6 +6,7 @@ import { useMarketData } from "./useMarketData";
 import { IUserInfo, Product } from "../components/interfaces/user.interface";
 
 export function useInitializeGame() {
+  const [carryAmount, setCarryAmount] = useState<number>(0);
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,7 +17,7 @@ export function useInitializeGame() {
     setUserInfo: setFetchedUserInfo,
     loading: authLoading,
     error: authError,
-  } = useAuthAndFetchUserData(setCashAmount, setProducts);
+  } = useAuthAndFetchUserData(setCashAmount, setCarryAmount, setProducts);
 
   const {
     upgrades,
@@ -101,6 +102,7 @@ export function useInitializeGame() {
 
   return {
     cashAmount,
+    carryAmount,
     products,
     userInfo: fetchedUserInfo,
     upgrades,
@@ -112,6 +114,7 @@ export function useInitializeGame() {
     setUpgrades,
     setCustomers,
     setCashAmount,
+    setCarryAmount,
     setMarketInfo,
     fetchCustomers,
     loading,

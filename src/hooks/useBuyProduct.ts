@@ -6,6 +6,7 @@ import { Product } from "../components/interfaces/user.interface";
 interface BuyProductResponse {
   carryingGear: any[];
   cashAmount: number;
+  carryAmount: number;
   id: number;
   products: Product[];
   reputation: number;
@@ -21,7 +22,8 @@ const useBuyProduct = () => {
     productName: string,
     quantity: number,
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+    setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
+    setCarryAmount: React.Dispatch<React.SetStateAction<number>>
   ): Promise<boolean> => {
     setLoading(true);
     setError(null);
@@ -36,6 +38,7 @@ const useBuyProduct = () => {
       );
       setCashAmount(response.data.cashAmount);
       setProducts(response.data.products);
+      setCarryAmount(response.data.carryAmount);
       return true; // Indicate success
     } catch (error) {
       if (axios.isAxiosError(error)) {

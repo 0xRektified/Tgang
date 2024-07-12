@@ -29,6 +29,8 @@ interface SupplierModalProps {
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  carryAmount: number;
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
   onUnlockClick: (tab: string) => void;
 }
 
@@ -40,6 +42,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   setProducts,
   cashAmount,
   setCashAmount,
+  carryAmount,
+  setCarryAmount,
   onUnlockClick,
 }) => {
   const { buyProduct, loading, error } = useBuyProduct();
@@ -56,7 +60,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     setRemainingCash(
       cashAmount - (selectedProduct ? selectedProduct.price * quantity : 0)
     );
-  }, [selectedProduct, quantity, cashAmount]);
+  }, [selectedProduct, quantity, cashAmount, carryAmount]);
 
   const handleBuy = async () => {
     if (totalCost > cashAmount) {
@@ -70,7 +74,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         selectedProduct.name,
         quantity,
         setCashAmount,
-        setProducts
+        setProducts,
+        setCarryAmount,
       );
     }
     setSelectedProduct(null);
@@ -113,6 +118,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         <ShoppingCartFooter>
           <ShoppingCartBalance>Balance: ${remainingCash}</ShoppingCartBalance>
           <ShoppingCartTotal>Total: ${totalCost}</ShoppingCartTotal>
+          <ShoppingCartTotal>Carrying: {carryAmount}/{userInfo?.carryCapacity}</ShoppingCartTotal>
         </ShoppingCartFooter>
         <ScrollableTableContainer>
           <Table>

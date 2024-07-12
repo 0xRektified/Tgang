@@ -16,6 +16,8 @@ import styled from "styled-components";
 interface HomeProps {
   cashAmount: number;
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  carryAmount: number;
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
   products: Product[];
   customers: ICustomerInfo[];
   nbrOfUserInBatch: number;
@@ -32,6 +34,8 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({
   cashAmount,
   setCashAmount,
+  carryAmount,
+  setCarryAmount,
   products,
   customers,
   nbrOfUserInBatch,
@@ -54,6 +58,7 @@ export const Home: React.FC<HomeProps> = ({
     nbrOfUserInBatch,
     customers,
     setCashAmount,
+    setCarryAmount,
     setProducts,
     fetchCustomers
   );

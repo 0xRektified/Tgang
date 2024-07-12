@@ -8,6 +8,7 @@ const useBatchSell = (
   nbrOfUserInBatch: number,
   customers: ICustomerInfo[],
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>,
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
   fetchCustomers: () => Promise<
     | {
@@ -63,7 +64,7 @@ const useBatchSell = (
   const sendBatch = async () => {
     if (batch.length === 0) return;
     try {
-      await sellProduct(marketId, batch, setCashAmount, setProducts);
+      await sellProduct(marketId, batch, setCashAmount, setProducts, setCarryAmount);
       setBatch([]);
     } catch (error) {
       console.error("Failed to send batch", error);

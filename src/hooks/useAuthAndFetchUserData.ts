@@ -8,6 +8,7 @@ import { IUserInfo, Product } from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>,
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>
 ) {
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
@@ -61,6 +62,7 @@ export function useAuthAndFetchUserData(
         setUserInfo(userInfoResponse.data);
         setCashAmount(userInfoResponse.data.cashAmount);
         setProducts(userInfoResponse.data.products);
+        setCarryAmount(userInfoResponse.data.carryAmount);
 
         console.log("setUserInfo:", userInfoResponse.data);
         console.log("setCashAmount:", userInfoResponse.data.cashAmount);

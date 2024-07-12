@@ -11,7 +11,8 @@ const useSellProduct = () => {
     marketId: string,
     customersSell: number[],
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+    setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
+    setCarryAmount: React.Dispatch<React.SetStateAction<number>>
   ) => {
     setLoading(true);
     setError(null);
@@ -23,6 +24,7 @@ const useSellProduct = () => {
       );
       setCashAmount(response.data.cashAmount);
       setProducts(response.data.products);
+      setCarryAmount(response.data.carryAmount);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
