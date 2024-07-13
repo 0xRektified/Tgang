@@ -177,39 +177,39 @@ export const customerList = [
 //   ],
 // };
 
-export const mockLabs: ILab[] = [
-  {
-    capacityLevel: 1,
-    capacity: 100,
-    productionLevel: 1,
-    production: 10,
-    productType: "Weed Lab",
-    price: 500,
-    increaseProductionPrice: 200,
-    increaseCapacityPrice: 200,
-    image: `/assets/weed_lab_2.png`,
-  },
-  {
-    capacityLevel: 1,
-    capacity: 200,
-    productionLevel: 1,
-    production: 20,
-    productType: "Coke Lab",
-    price: 800,
-    increaseProductionPrice: 300,
-    increaseCapacityPrice: 300,
-    image: `/assets/weed_lab_2.png`,
-  },
-  {
-    capacityLevel: 1,
-    capacity: 300,
-    productionLevel: 1,
-    production: 30,
-    productType: "Meth Lab",
-    price: 1200,
-    increaseProductionPrice: 400,
-    increaseCapacityPrice: 400,
-    image: `/assets/weed_lab_2.png`,
-  },
-  // Add more mock labs as needed
-];
+// export const mockLabs: ILab[] = [
+//   {
+//     capacityLevel: 1,
+//     capacity: 100,
+//     productionLevel: 1,
+//     production: 10,
+//     productType: "Weed Lab",
+//     price: 500,
+//     increaseProductionPrice: 200,
+//     increaseCapacityPrice: 200,
+//     image: `/assets/weed_lab_2.png`,
+//   },
+//   {
+//     capacityLevel: 1,
+//     capacity: 200,
+//     productionLevel: 1,
+//     production: 20,
+//     productType: "Coke Lab",
+//     price: 800,
+//     increaseProductionPrice: 300,
+//     increaseCapacityPrice: 300,
+//     image: `/assets/weed_lab_2.png`,
+//   },
+//   {
+//     capacityLevel: 1,
+//     capacity: 300,
+//     productionLevel: 1,
+//     production: 30,
+//     productType: "Meth Lab",
+//     price: 1200,
+//     increaseProductionPrice: 400,
+//     increaseCapacityPrice: 400,
+//     image: `/assets/weed_lab_2.png`,
+//   },
+//   // Add more mock labs as needed
+// ];

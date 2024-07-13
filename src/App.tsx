@@ -11,7 +11,6 @@ import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
 import Social from "./components/social/Social";
 import Lab from "./components/labs/Lab";
-import { mockLabs } from "./mocks/backend.mock";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -39,6 +38,7 @@ function App() {
     upgrades,
     customers,
     marketInfo,
+    labs,
     nbrOfUserInBatch,
     setUserInfo,
     setProducts,
@@ -46,6 +46,7 @@ function App() {
     setCustomers,
     setCashAmount,
     setCarryAmount,
+    setLabs,
     fetchCustomers,
     loading,
     error,
@@ -86,7 +87,7 @@ function App() {
           />
         );
       case "Lab":
-        return <Lab labs={mockLabs} />;
+        return <Lab labs={labs!} labPlots={userInfo!.labPlots} />;
       case "Shop":
         return (
           <Shop

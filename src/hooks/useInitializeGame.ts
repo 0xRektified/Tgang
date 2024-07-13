@@ -4,6 +4,9 @@ import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useFetchCustomer } from "./useFetchCustomer";
 import { useMarketData } from "./useMarketData";
 import { Product } from "../components/interfaces/user.interface";
+import { EProduct } from "../components/interfaces/product.interface";
+import { ILab } from "../components/interfaces/lab.interface";
+import { useFetchLabs } from "./useFetchLabs";
 
 export function useInitializeGame() {
   const [carryAmount, setCarryAmount] = useState<number>(0);
@@ -26,6 +29,14 @@ export function useInitializeGame() {
     error: upgradesError,
     fetchUpgrades,
   } = useFetchUpgrades(fetchedUserInfo);
+
+  const {
+    labs,
+    setLabs,
+    loading: labsLoading,
+    error: labsError,
+    fetchLabs,
+  } = useFetchLabs();
 
   const {
     customers,
@@ -59,19 +70,21 @@ export function useInitializeGame() {
 
       setFetchedUserInfo(fetchedUserInfo);
 
-      const [upgradesData, customerData, marketData] = await Promise.all([
+      const [upgradesData, customerData, marketData, labs] = await Promise.all([
         fetchUpgrades(),
         fetchCustomers(),
         fetchMarketData(),
+        fetchLabs(),
       ]);
 
-      if (upgradesError || customersError || marketError) {
+      if (upgradesError || customersError || marketError || labsError) {
         throw new Error("Failed to fetch one or more game data");
       }
 
       setUpgrades(upgradesData?.upgrades || []);
       setCustomers(customerData?.customers || []);
       setMarketInfo(marketData?.marketInfo);
+      setLabs(labs?.labs);
 
       console.log("setUserInfo (initializeGame):", fetchedUserInfo);
       console.log("setUpgrades:", upgradesData?.upgrades);
@@ -108,6 +121,7 @@ export function useInitializeGame() {
     upgrades,
     customers,
     marketInfo,
+    labs,
     nbrOfUserInBatch,
     setUserInfo: setFetchedUserInfo,
     setProducts,
@@ -116,6 +130,7 @@ export function useInitializeGame() {
     setCashAmount,
     setCarryAmount,
     setMarketInfo,
+    setLabs,
     fetchCustomers,
     loading,
     error,

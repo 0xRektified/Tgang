@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
-import { HorizontalSpacing } from "../styled/globalStyled";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
+import { LabPlot, UserLab } from "../interfaces/user.interface";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -51,7 +51,7 @@ const LabsGrid = styled.div`
   }
 `;
 
-const LabItem = styled.div`
+const PlotItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,10 +77,11 @@ const AddLabButton = styled.button`
 `;
 
 interface LabProps {
-  labs: ILab[];
+  labs: Record<string, ILab>;
+  labPlots: LabPlot[];
 }
 
-export const Lab: React.FC<LabProps> = ({ labs }) => {
+export const Lab: React.FC<LabProps> = ({ labs, labPlots }) => {
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
 
   const handleOpenLabModal = () => {
@@ -91,17 +92,17 @@ export const Lab: React.FC<LabProps> = ({ labs }) => {
     setIsLabModalOpen(false);
   };
 
-  const handleSelectLab = (lab: ILab) => {
+  const handleSelectLab = (lab: [string, ILab]) => {
     console.log("Selected Lab:", lab);
     setIsLabModalOpen(false);
   };
 
-  const handleUpdateProduction = (lab: ILab) => {
-    console.log("Update Production for:", lab.productType);
+  const handleUpdateProduction = (lab: UserLab) => {
+    console.log("Update Production for:", lab.title);
   };
 
-  const handleUpdateCapacity = (lab: ILab) => {
-    console.log("Update Capacity for:", lab.productType);
+  const handleUpdateCapacity = (lab: UserLab) => {
+    console.log("Update Capacity for:", lab.title);
   };
 
   return (
@@ -119,9 +120,30 @@ export const Lab: React.FC<LabProps> = ({ labs }) => {
       </ProductionRecap>
       <div className="divider"></div>
       <LabsGrid>
-        <LabItem>
+        {
+          labPlots.map((labPlot) => {
+            if (labPlot.lab) {
+              return (
+                <PurchasedLab
+                  key={labPlot.lab.product}
+                  lab={labPlot.lab}
+                  onUpdateProduction={() => handleUpdateProduction(labPlot.lab as UserLab)}
+                  onUpdateCapacity={() => handleUpdateCapacity(labPlot.lab as UserLab)}
+                />
+              );
+            }
+            return (
+              <PlotItem>
+                <AddLabButton onClick={handleOpenLabModal}>+</AddLabButton>
+              </PlotItem>
+            );
+          })
+        }
+
+
+        {/* <PlotItem>
           <AddLabButton onClick={handleOpenLabModal}>+</AddLabButton>
-        </LabItem>
+        </PlotItem>
         {labs.map((lab) => (
           <PurchasedLab
             key={lab.productType}
@@ -129,7 +151,7 @@ export const Lab: React.FC<LabProps> = ({ labs }) => {
             onUpdateProduction={() => handleUpdateProduction(lab)}
             onUpdateCapacity={() => handleUpdateCapacity(lab)}
           />
-        ))}
+        ))} */}
       </LabsGrid>
       {isLabModalOpen && (
         <LabModal

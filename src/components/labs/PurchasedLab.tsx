@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
+import { UserLab } from "../interfaces/user.interface";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -68,7 +69,7 @@ const PlaceholderImage = styled.div.attrs<{
 `;
 
 interface PurchasedLabProps {
-  lab: ILab;
+  lab: UserLab;
   onUpdateProduction: () => void;
   onUpdateCapacity: () => void;
 }
@@ -102,7 +103,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
           isVideoLoaded={isVideoLoaded}
         />
       </VideoWrapper>
-      <LabInfo>{lab.productType}</LabInfo>
+      <LabInfo>{lab.product}</LabInfo>
       <ProgressContainer>
         <div className="flex items-center mt-2">
           <progress

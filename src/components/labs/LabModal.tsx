@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
+import { EProduct } from "../interfaces/product.interface";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -33,9 +34,9 @@ const CloseButton = styled.button`
 `;
 
 interface LabModalProps {
-  labs: ILab[];
+  labs: Record<EProduct, ILab>;
   onClose: () => void;
-  onSelectLab: (lab: ILab) => void;
+  onSelectLab: (lab: [string, ILab]) => void;
 }
 
 const LabModal: React.FC<LabModalProps> = ({ labs, onClose, onSelectLab }) => {
@@ -44,17 +45,17 @@ const LabModal: React.FC<LabModalProps> = ({ labs, onClose, onSelectLab }) => {
       <ModalContent>
         <h2 className="text-lg font-bold text-white mb-4">Select a Lab</h2>
         <div className="grid grid-cols-2 gap-4">
-          {labs.map((lab, index) => (
-            <LabItem key={index}>
+          {Object.entries(labs).map((lab) => (
+            <LabItem key={lab[0]}>
               <img
-                src={lab.image}
-                alt={lab.productType}
+                src={lab[1].image}
+                alt={lab[0]}
                 className="w-16 h-16"
               />
-              <div className="text-white">Type: {lab.productType}</div>
-              <div className="text-white">Capacity: {lab.capacity}</div>
-              <div className="text-white">Production: {lab.production}</div>
-              <div className="text-white">Price: ${lab.price}</div>
+              <div className="text-white">Type: {lab[0]}</div>
+              <div className="text-white">Capacity: {lab[1].baseCapacity}</div>
+              <div className="text-white">Production: {lab[1].baseProduction}</div>
+              <div className="text-white">Price: ${lab[1].labPrice}</div>
               <LabButton onClick={() => onSelectLab(lab)}>Buy</LabButton>
             </LabItem>
           ))}

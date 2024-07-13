@@ -1,11 +1,11 @@
 export interface ILab {
-  capacityLevel: number;
-  capacity: number;
-  productionLevel: number;
-  production: number;
-  productType: string;
-  price: number;
-  increaseProductionPrice: number;
-  increaseCapacityPrice: number;
+  id: number;
+  title: string;
+  description: string;
+  labPrice: number;
+  baseCapacity: number;
+  baseCapacityUpgradePrice: number;
+  baseProduction: number;
+  baseProductionUpgradePrice: number;
   image: string;
 }

@@ -1,5 +1,22 @@
 import { EProduct } from "./product.interface";
 
+export interface UserLab {
+  product: EProduct;
+  title: string;
+  image: string;
+  capacityLevel: number;
+  productionLevel: number;
+  capacity: number;
+  production: number;
+  upgradeCapacityPrice: number;
+  upgradeProductionPrice: number;
+}
+
+export interface LabPlot {
+  id: number;
+  lab?: UserLab;
+}
+
 export interface Product {
   name: EProduct;
   unlocked: boolean;
@@ -35,6 +52,7 @@ export interface IUserInfo {
   products: Product[];
   upgrades: IUserUpgrade[];
   carryingGear: CarryingGear[];
+  labPlots: LabPlot[];
   carryAmount: number;
   carryCapacity: number;
   referralToken: string;
