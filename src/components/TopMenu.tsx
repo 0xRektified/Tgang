@@ -99,7 +99,9 @@ export const TopMenu: React.FC<TopMenuProps> = ({
             </div>
             <FlexBoxRow>
               <DigitalFont as={BalanceLabel}>Cash</DigitalFont>
-              <DigitalFont as={BalanceAmount}>${cashAmount}</DigitalFont>
+              <DigitalFont as={BalanceAmount}>
+                ${cashAmount.toFixed(0)}
+              </DigitalFont>
             </FlexBoxRow>
           </FlexBoxCol>
           <FlexBoxCol className="items-end"></FlexBoxCol>
