@@ -3,7 +3,7 @@ import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useFetchCustomer } from "./useFetchCustomer";
 import { useMarketData } from "./useMarketData";
-import { IUserInfo, Product } from "../components/interfaces/user.interface";
+import { Product } from "../components/interfaces/user.interface";
 
 export function useInitializeGame() {
   const [carryAmount, setCarryAmount] = useState<number>(0);

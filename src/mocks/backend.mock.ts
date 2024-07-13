@@ -58,14 +58,6 @@ export const productsData: Product[] = [
     maxCarry: 100,
     slot: null,
   },
-  {
-    name: EProduct.MUSHROOMS,
-    unlocked: false,
-    selected: false,
-    quantity: 0,
-    maxCarry: 100,
-    slot: null,
-  },
 ];
 
 export const userCashAmount = 1000;
@@ -195,7 +187,7 @@ export const mockLabs: ILab[] = [
     price: 500,
     increaseProductionPrice: 200,
     increaseCapacityPrice: 200,
-    image: `/assets/weed_lab_small.webp`,
+    image: `/assets/weed_lab_2.png`,
   },
   {
     capacityLevel: 1,
@@ -206,7 +198,7 @@ export const mockLabs: ILab[] = [
     price: 800,
     increaseProductionPrice: 300,
     increaseCapacityPrice: 300,
-    image: `/assets/weed_lab_small.webp`,
+    image: `/assets/weed_lab_2.png`,
   },
   {
     capacityLevel: 1,
@@ -217,7 +209,7 @@ export const mockLabs: ILab[] = [
     price: 1200,
     increaseProductionPrice: 400,
     increaseCapacityPrice: 400,
-    image: `/assets/weed_lab_small.webp`,
+    image: `/assets/weed_lab_2.png`,
   },
   // Add more mock labs as needed
 ];

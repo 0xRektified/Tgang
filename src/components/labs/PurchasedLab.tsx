@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
@@ -42,6 +42,31 @@ const UpdateButton = styled.button`
   }
 `;
 
+const VideoWrapper = styled.div`
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+`;
+
+const StyledVideo = styled.video.attrs<{ isVideoLoaded: boolean }>({})<{
+  isVideoLoaded: boolean;
+}>`
+  width: 100%;
+  height: 100%;
+  display: ${({ isVideoLoaded }) => (isVideoLoaded ? "block" : "none")};
+`;
+
+const PlaceholderImage = styled.div.attrs<{
+  poster: string;
+  isVideoLoaded: boolean;
+}>({})<{ poster: string; isVideoLoaded: boolean }>`
+  width: 100%;
+  height: 100%;
+  background: url(${({ poster }) => poster}) no-repeat center center;
+  background-size: cover;
+  display: ${({ isVideoLoaded }) => (isVideoLoaded ? "none" : "block")};
+`;
+
 interface PurchasedLabProps {
   lab: ILab;
   onUpdateProduction: () => void;
@@ -53,19 +78,32 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   onUpdateProduction,
   onUpdateCapacity,
 }) => {
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
+  };
+
   return (
     <PurchasedLabContainer>
-      <LabImage src={lab.image} alt={lab.productType} />
+      <VideoWrapper>
+        <PlaceholderImage
+          poster={`/assets/weed_lab_2.png`}
+          isVideoLoaded={isVideoLoaded}
+        />
+        <StyledVideo
+          src={`/assets/weed_lab_video.mp4`}
+          poster={`/assets/weed_lab_2.png`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onLoadedData={handleVideoLoad}
+          isVideoLoaded={isVideoLoaded}
+        />
+      </VideoWrapper>
       <LabInfo>{lab.productType}</LabInfo>
       <ProgressContainer>
-        <div className="flex items-center">
-          <progress
-            className="progress progress-accent w-56"
-            value={lab.productionLevel * 10}
-            max="100"
-          ></progress>
-          <UpdateButton onClick={onUpdateProduction}>+</UpdateButton>
-        </div>
         <div className="flex items-center mt-2">
           <progress
             className="progress progress-accent w-56"

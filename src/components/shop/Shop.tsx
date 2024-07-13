@@ -33,8 +33,6 @@ export const Shop: React.FC<ShopProps> = ({
 }) => {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
-
-  console.log(currentTab);
   useEffect(() => {
     setCurrentTab(activeTab);
   }, [activeTab]);

@@ -1,21 +1,21 @@
 export enum EProduct {
   WEED = "Weed",
   COCAINE = "Coke",
-  METH = "Meth",
-  HEROIN = "Heroin",
   MDMA = "MDMA",
+  METH = "Meth",
   LSD = "LSD",
-  MUSHROOMS = "Mushrooms",
-  AMPHETAMINE = "Amphetamine",
+  HEROIN = "Heroin",
+  // MUSHROOMS = "Mushrooms",
+  // AMPHETAMINE = "Amphetamine",
 }
 
 export enum EProductIcon {
   Weed = "🌱",
   Coke = "🧂",
+  MDMA = "💊",
   Meth = "💎",
   Heroin = "🦯",
-  MDMA = "🧊",
   LSD = "🧪",
-  Mushrooms = "🍄",
-  Amphetamine = "💊",
+  // Mushrooms = "🍄",
+  // Amphetamine = "💊",
 }
