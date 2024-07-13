@@ -140,7 +140,7 @@ export const Home: React.FC<HomeProps> = ({
           product,
           amountToSell,
           marketInfo,
-          setCashAmount
+          setCashAmount,
           setCarryAmount
         );
 

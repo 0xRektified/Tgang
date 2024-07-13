@@ -51,7 +51,7 @@ export const handleTransaction = (
       );
       if (productUpgrade) {
         const discountValue = productUpgrade.value[productUpgrade.level];
-        productPrice = productMarket.price / discountValue;
+        productPrice = productPrice / discountValue;
       }
       amountEarned = amountToSell * productPrice;
       setCashAmount((prevCash) => prevCash + amountEarned);
