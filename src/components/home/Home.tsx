@@ -98,10 +98,28 @@ export const Home: React.FC<HomeProps> = ({
     setIsModalOpen(false);
   };
 
-  const playSound = () => {
-    const audio = new Audio("/assets/cash.mp3");
-    audio.play();
-  };
+  const playSound = (() => {
+    let lastPlayTime = 0;
+    let concurrentSounds = 0;
+    const maxConcurrentSounds = 3;
+    const minInterval = 200;
+
+    return () => {
+      const now = Date.now();
+      if (
+        concurrentSounds < maxConcurrentSounds &&
+        now - lastPlayTime > minInterval
+      ) {
+        concurrentSounds++;
+        lastPlayTime = now;
+        const audio = new Audio("/assets/cash.mp3");
+        audio.play();
+        audio.onended = () => {
+          concurrentSounds--;
+        };
+      }
+    };
+  })();
 
   const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
@@ -166,9 +184,9 @@ export const Home: React.FC<HomeProps> = ({
       setPressed(true);
 
       //@note disabled sound for now it seems to be creating a lag
-      // if (newTouchPoint.amountEarned) {
-      //   playSound();
-      // }
+      if (newTouchPoint.amountEarned) {
+        playSound();
+      }
       WebApp.HapticFeedback.impactOccurred("heavy");
       setTimeout(() => setPressed(false), 50);
       setTimeout(() => {

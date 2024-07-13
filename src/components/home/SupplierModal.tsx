@@ -58,6 +58,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     useState<number>(carryAmount);
 
   useEffect(() => {
+    console.log(`carryAmount`);
+    console.log(carryAmount);
     setTotalCost(selectedProduct ? selectedProduct.price * quantity : 0);
     setRemainingCash(
       cashAmount - (selectedProduct ? selectedProduct.price * quantity : 0)

@@ -67,6 +67,7 @@ export function useAuthAndFetchUserData(
         console.log("setUserInfo:", userInfoResponse.data);
         console.log("setCashAmount:", userInfoResponse.data.cashAmount);
         console.log("setProducts:", userInfoResponse.data.products);
+        console.log("setCarryAmount:", userInfoResponse.data.carryAmount);
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
         setError("Failed to authenticate and fetch user data");
