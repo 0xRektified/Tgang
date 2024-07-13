@@ -3,6 +3,8 @@ import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import { EProduct } from "../interfaces/product.interface";
+import { useBuyLab } from "../../hooks/useBuyLab";
+import { LabPlot, IUserInfo } from "../interfaces/user.interface";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -36,10 +38,14 @@ const CloseButton = styled.button`
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
   onClose: () => void;
-  onSelectLab: (lab: [string, ILab]) => void;
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
 }
 
-const LabModal: React.FC<LabModalProps> = ({ labs, onClose, onSelectLab }) => {
+const LabModal: React.FC<LabModalProps> = ({ labs, onClose, setCashAmount, setLabPlots, setUserInfo }) => {
+  const { buyLab } = useBuyLab();
+
   return (
     <ModalBackground>
       <ModalContent>
@@ -56,7 +62,10 @@ const LabModal: React.FC<LabModalProps> = ({ labs, onClose, onSelectLab }) => {
               <div className="text-white">Capacity: {lab[1].baseCapacity}</div>
               <div className="text-white">Production: {lab[1].baseProduction}</div>
               <div className="text-white">Price: ${lab[1].labPrice}</div>
-              <LabButton onClick={() => onSelectLab(lab)}>Buy</LabButton>
+              <LabButton onClick={() => buyLab({
+                labProduct: lab[0] as EProduct,
+                plotId: 0,
+              }, setCashAmount, setLabPlots, setUserInfo)}>Buy</LabButton>
             </LabItem>
           ))}
         </div>
