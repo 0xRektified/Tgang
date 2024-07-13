@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { mockLabs } from "../../mocks/backend.mock";
 import { ILab } from "../interfaces/lab.interface";
 import { HorizontalSpacing } from "../styled/globalStyled";
 import LabModal from "./LabModal";
@@ -123,7 +122,7 @@ export const Lab: React.FC<LabProps> = ({ labs }) => {
         <LabItem>
           <AddLabButton onClick={handleOpenLabModal}>+</AddLabButton>
         </LabItem>
-        {mockLabs.map((lab) => (
+        {labs.map((lab) => (
           <PurchasedLab
             key={lab.productType}
             lab={lab}
@@ -134,7 +133,7 @@ export const Lab: React.FC<LabProps> = ({ labs }) => {
       </LabsGrid>
       {isLabModalOpen && (
         <LabModal
-          labs={mockLabs}
+          labs={labs}
           onClose={handleCloseLabModal}
           onSelectLab={handleSelectLab}
         />

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useSellProduct from "./useSellProduct";
-import { Product } from "../components/interfaces/user.interface";
+import { IUserInfo, Product } from "../components/interfaces/user.interface";
 import { ICustomerInfo } from "../components/interfaces/customer.interface";
 
 const useBatchSell = (
@@ -64,7 +64,13 @@ const useBatchSell = (
   const sendBatch = async () => {
     if (batch.length === 0) return;
     try {
-      await sellProduct(marketId, batch, setCashAmount, setProducts, setCarryAmount);
+      await sellProduct(
+        marketId,
+        batch,
+        setCashAmount,
+        setProducts,
+        setCarryAmount
+      );
       setBatch([]);
     } catch (error) {
       console.error("Failed to send batch", error);

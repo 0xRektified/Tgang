@@ -2,27 +2,26 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import { CustomersBoard } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
-import { marketPrice } from "../../mocks/backend.mock";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
-import { Product } from "../interfaces/user.interface";
+import { IUserInfo, Product } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
 import { ICustomerInfo } from "../interfaces/customer.interface";
 import { marketId } from "../../mocks/backend.mock";
 import useBatchSell from "../../hooks/useBatchSell";
-import styled from "styled-components";
+import { IMarketInfo } from "../interfaces/market.interface";
 
 interface HomeProps {
-  cashAmount: number;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  carryAmount: number;
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
+  userInfo: IUserInfo | undefined;
   products: Product[];
   customers: ICustomerInfo[];
   nbrOfUserInBatch: number;
+  marketInfo: IMarketInfo | undefined;
   setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
   fetchCustomers: () => Promise<
     | {
         customers: ICustomerInfo[];
@@ -32,16 +31,16 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({
-  cashAmount,
-  setCashAmount,
-  carryAmount,
-  setCarryAmount,
+  userInfo,
   products,
   customers,
   nbrOfUserInBatch,
+  marketInfo,
   setCustomers,
   setProducts,
   fetchCustomers,
+  setCashAmount,
+  setCarryAmount,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -135,12 +134,13 @@ export const Home: React.FC<HomeProps> = ({
         });
       } else {
         const { updatedProducts, transaction } = handleTransaction(
+          userInfo,
           slottedProducts,
           products,
           product,
           amountToSell,
-          marketPrice,
-          setCashAmount,
+          marketInfo,
+          setCashAmount
           setCarryAmount
         );
 

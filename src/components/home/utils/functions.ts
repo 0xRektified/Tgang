@@ -1,4 +1,5 @@
-import { Product } from "../../interfaces/user.interface";
+import { IMarketInfo } from "../../interfaces/market.interface";
+import { IUserInfo, Product } from "../../interfaces/user.interface";
 import { Transaction } from "./types";
 
 export const calculateTotalQuantity = (products: Product[]): number => {
@@ -19,11 +20,12 @@ export const updateProducts = (
 };
 
 export const handleTransaction = (
+  userInfo: IUserInfo | undefined,
   slottedProducts: Product[],
   products: Product[],
   productName: string,
   amountToSell: number,
-  marketPrice: Record<string, number>,
+  marketInfo: IMarketInfo | undefined,
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
   setCarryAmount: React.Dispatch<React.SetStateAction<number>>
 ): { updatedProducts: Product[]; transaction: Transaction | null } => {
@@ -31,38 +33,61 @@ export const handleTransaction = (
   const productToSell = slottedProducts.find(
     (product) => product.name === productName
   );
-
-  if (productToSell && productToSell.quantity >= amountToSell) {
+  if (
+    productToSell &&
+    marketInfo &&
+    marketInfo.products.length > 0 &&
+    productToSell.quantity >= amountToSell
+  ) {
     const productName = productToSell.name;
-    amountEarned = amountToSell * marketPrice[productName];
-    setCashAmount((prevCash) => prevCash + amountEarned);
-    setCarryAmount((prevCarry) => prevCarry - productToSell.quantity);
-    const updatedProducts = updateProducts(products, productName, amountToSell);
-    const transaction = {
-      type: "success",
-      product: productToSell.name,
-      quantity: amountToSell,
-      amountEarned: amountEarned,
-    } as Transaction;
-    return { updatedProducts, transaction };
-  } else if (productToSell) {
-    const transaction = {
-      type: "missed",
-      product: productToSell.name,
-      quantity: amountToSell,
-    } as Transaction;
-    return { updatedProducts: products, transaction };
-  } else {
-    const inventoryProduct = products.find(
-      (product) => product.name === productName
+
+    const productMarket = marketInfo.products.find(
+      (e) => e.name === productName
     );
-    if (inventoryProduct) {
+    if (productMarket && userInfo) {
+      let productPrice = productMarket.price;
+      const productUpgrade = userInfo.upgrades.find(
+        (u) => u.title === productName
+      );
+      if (productUpgrade) {
+        const discountValue = productUpgrade.value[productUpgrade.level];
+        productPrice = productMarket.price / discountValue;
+      }
+      amountEarned = amountToSell * productPrice;
+      setCashAmount((prevCash) => prevCash + amountEarned);
+      setCarryAmount((prevCarry) => prevCarry - productToSell.quantity);
+
+      const updatedProducts = updateProducts(
+        products,
+        productName,
+        amountToSell
+      );
+      const transaction = {
+        type: "success",
+        product: productToSell.name,
+        quantity: amountToSell,
+        amountEarned: amountEarned,
+      } as Transaction;
+      return { updatedProducts, transaction };
+    } else if (productToSell) {
       const transaction = {
         type: "missed",
-        product: inventoryProduct.name,
+        product: productToSell.name,
         quantity: amountToSell,
       } as Transaction;
       return { updatedProducts: products, transaction };
+    } else {
+      const inventoryProduct = products.find(
+        (product) => product.name === productName
+      );
+      if (inventoryProduct) {
+        const transaction = {
+          type: "missed",
+          product: inventoryProduct.name,
+          quantity: amountToSell,
+        } as Transaction;
+        return { updatedProducts: products, transaction };
+      }
     }
   }
 

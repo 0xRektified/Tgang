@@ -11,6 +11,7 @@ import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
 import Social from "./components/social/Social";
 import Lab from "./components/labs/Lab";
+import { mockLabs } from "./mocks/backend.mock";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
@@ -72,20 +73,20 @@ function App() {
       case "Base":
         return (
           <Home
-            setCashAmount={setCashAmount}
-            cashAmount={cashAmount}
-            setCarryAmount={setCarryAmount}
-            carryAmount={cashAmount}
+            userInfo={userInfo}
             products={products}
             customers={customers}
             nbrOfUserInBatch={nbrOfUserInBatch}
+            marketInfo={marketInfo}
             setCustomers={setCustomers}
             setProducts={setProducts}
             fetchCustomers={fetchCustomers}
+            setCashAmount={setCashAmount}
+            setCarryAmount={setCarryAmount}
           />
         );
       case "Lab":
-        return <Lab />;
+        return <Lab labs={mockLabs} />;
       case "Shop":
         return (
           <Shop
@@ -131,9 +132,9 @@ function App() {
           cashAmount={cashAmount}
           carryAmount={carryAmount}
           products={products}
-          setProducts={setProducts}
           setCashAmount={setCashAmount}
           setCarryAmount={setCarryAmount}
+          setProducts={setProducts}
           onUnlockClick={handleUnlockClick}
         />
         <FlexBoxColNoGap>

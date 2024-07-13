@@ -69,7 +69,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({
 }) => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
-
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {

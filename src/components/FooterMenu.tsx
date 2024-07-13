@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { GiShop, GiThreeFriends, GiPlayerBase } from "react-icons/gi";
 import { ImLab } from "react-icons/im";
+import { GiPistolGun } from "react-icons/gi";
+
 // Styled components
 const FooterContainer = styled.div`
   position: fixed;
@@ -40,7 +42,7 @@ const FooterButton = styled.button<{ active: boolean }>`
   }
 `;
 
-type TViewType = "Base" | "Lab" | "Shop" | "Social";
+type TViewType = "Base" | "Lab" | "Shop" | "Social" | "Pvp";
 
 interface FooterMenuProps {
   setCurrentView: (view: TViewType) => void;
@@ -77,6 +79,13 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
       >
         <GiThreeFriends />
         <span className="btm-nav-label">Social</span>
+      </FooterButton>
+      <FooterButton
+        onClick={() => setCurrentView("Pvp")}
+        active={currentView === "Pvp"}
+      >
+        <GiPistolGun />
+        <span className="btm-nav-label text-white-grey">Soon Pvp </span>
       </FooterButton>
     </FooterContainer>
   );
