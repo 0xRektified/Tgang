@@ -22,7 +22,7 @@ export const NeonButton = styled.button`
   }
 
   &:active {
-    transform: scale(0.95);
+    animation: glow 1.5s infinite alternate, pulse 2s infinite;
   }
 
   &.disabled {

@@ -54,12 +54,15 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   const [showToast, setShowToast] = useState<boolean>(false);
   const [totalCost, setTotalCost] = useState<number>(0);
   const [remainingCash, setRemainingCash] = useState<number>(cashAmount);
+  const [projectedCarryAmount, setProjectedCarryAmount] =
+    useState<number>(carryAmount);
 
   useEffect(() => {
     setTotalCost(selectedProduct ? selectedProduct.price * quantity : 0);
     setRemainingCash(
       cashAmount - (selectedProduct ? selectedProduct.price * quantity : 0)
     );
+    setProjectedCarryAmount(carryAmount + (selectedProduct ? quantity : 0));
   }, [selectedProduct, quantity, cashAmount, carryAmount]);
 
   const handleBuy = async () => {
@@ -75,7 +78,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         quantity,
         setCashAmount,
         setProducts,
-        setCarryAmount,
+        setCarryAmount
       );
     }
     setSelectedProduct(null);
@@ -116,9 +119,23 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         <Notch />
         <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
         <ShoppingCartFooter>
-          <ShoppingCartBalance>Balance: ${remainingCash}</ShoppingCartBalance>
-          <ShoppingCartTotal>Total: ${totalCost}</ShoppingCartTotal>
-          <ShoppingCartTotal>Carrying: {carryAmount}/{userInfo?.carryCapacity}</ShoppingCartTotal>
+          <ShoppingCartBalance>
+            Balance: ${remainingCash.toFixed(0)}
+          </ShoppingCartBalance>
+          <ShoppingCartTotal>Total: ${totalCost.toFixed(0)}</ShoppingCartTotal>
+          <ShoppingCartTotal>
+            Carrying:{" "}
+            <span
+              style={{
+                color:
+                  projectedCarryAmount >= userInfo!.carryCapacity
+                    ? "red"
+                    : "inherit",
+              }}
+            >
+              {projectedCarryAmount}/{userInfo?.carryCapacity}
+            </span>
+          </ShoppingCartTotal>
         </ShoppingCartFooter>
         <ScrollableTableContainer>
           <Table>
@@ -158,7 +175,12 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                           <td className="text-right">
                             {userProduct ? (
                               selectedProduct?.name === product.name ? (
-                                <NeonButton onClick={handleBuy}>Buy</NeonButton>
+                                <NeonButton
+                                  onClick={handleBuy}
+                                  className="active"
+                                >
+                                  Buy
+                                </NeonButton>
                               ) : (
                                 <NeonButton className="disabled">
                                   Buy
@@ -182,8 +204,9 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                                   <input
                                     type="range"
                                     min={0}
-                                    max={Math.floor(
-                                      remainingCash / product.price
+                                    max={Math.min(
+                                      Math.floor(remainingCash / product.price),
+                                      userInfo!.carryCapacity - carryAmount
                                     )}
                                     value={quantity}
                                     className="range"
