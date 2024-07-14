@@ -171,19 +171,6 @@ export const Lab: React.FC<LabProps> = ({ labs, labPlots }) => {
             );
           })
         }
-
-
-        {/* <PlotItem>
-          <AddLabButton onClick={handleOpenLabModal}>+</AddLabButton>
-        </PlotItem>
-        {labs.map((lab) => (
-          <PurchasedLab
-            key={lab.productType}
-            lab={lab}
-            onUpdateProduction={() => handleUpdateProduction(lab)}
-            onUpdateCapacity={() => handleUpdateCapacity(lab)}
-          />
-        ))} */}
       </LabsGrid>
       {isLabModalOpen && (
         <LabModal

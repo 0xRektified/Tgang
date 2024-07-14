@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import { UserLab } from "../interfaces/user.interface";
+import { getUnixTime } from "date-fns";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -80,6 +81,22 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   onUpdateCapacity,
 }) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [produced, setProduction] = useState(lab.produced);
+
+  const updateProduction = () => {
+    const now = new Date();
+    const diff = getUnixTime(now) - getUnixTime(lab.collectTime);
+    const productionPerSecond = lab.production / 3600;
+    const produced = Math.floor(productionPerSecond * diff + lab.leftover);
+    setProduction(produced);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => updateProduction(), 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleVideoLoad = () => {
     setIsVideoLoaded(true);
@@ -108,7 +125,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         <div className="flex items-center mt-2">
           <progress
             className="progress progress-accent w-56"
-            value={lab.produced}
+            value={produced}
             max={lab.capacity}
           ></progress>
           <UpdateButton onClick={onUpdateCapacity}>+</UpdateButton>
