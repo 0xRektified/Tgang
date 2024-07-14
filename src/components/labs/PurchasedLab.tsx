@@ -108,8 +108,8 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         <div className="flex items-center mt-2">
           <progress
             className="progress progress-accent w-56"
-            value={lab.capacityLevel * 10}
-            max="100"
+            value={lab.produced}
+            max={lab.capacity}
           ></progress>
           <UpdateButton onClick={onUpdateCapacity}>+</UpdateButton>
         </div>

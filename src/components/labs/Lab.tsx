@@ -5,6 +5,7 @@ import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
 import { LabPlot, UserLab } from "../interfaces/user.interface";
+import { EProduct } from "../interfaces/product.interface";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -105,17 +106,48 @@ export const Lab: React.FC<LabProps> = ({ labs, labPlots }) => {
     console.log("Update Capacity for:", lab.title);
   };
 
+  const production = {
+    [EProduct.WEED]: 0,
+    [EProduct.COCAINE]: 0,
+    [EProduct.METH]: 0,
+    [EProduct.HEROIN]: 0,
+    [EProduct.LSD]: 0,
+    [EProduct.MDMA]: 0,
+  }
+  labPlots.forEach((labPlot) => {
+    switch (labPlot.lab?.product) {
+      case EProduct.WEED:
+        production[EProduct.WEED] = labPlot.lab.production;
+        break;
+      case EProduct.COCAINE:
+        production[EProduct.COCAINE] = labPlot.lab.production;
+        break;
+      case EProduct.METH:
+        production[EProduct.METH] = labPlot.lab.production;
+        break;
+      case EProduct.HEROIN:
+        production[EProduct.HEROIN] = labPlot.lab.production;
+        break;
+      case EProduct.LSD:
+        production[EProduct.LSD] = labPlot.lab.production;
+        break;
+      case EProduct.MDMA:
+        production[EProduct.MDMA] = labPlot.lab.production;
+        break;
+    }
+  })
+
   return (
     <LabContainer>
       <ProductionRecap>
         <h2 className="text-lg font-bold">Current Production</h2>
         <ProductionGrid>
-          <ProductionItem>Weed 100/H</ProductionItem>
-          <ProductionItem>Coke 0/H</ProductionItem>
-          <ProductionItem>Meth 100/H</ProductionItem>
-          <ProductionItem>Heroin 100/H</ProductionItem>
-          <ProductionItem>Mushroom 100/H</ProductionItem>
-          <ProductionItem>Crack 100/H</ProductionItem>
+          <ProductionItem>Weed {production[EProduct.WEED]}/H</ProductionItem>
+          <ProductionItem>Cocaine {production[EProduct.COCAINE]}/H</ProductionItem>
+          <ProductionItem>Meth {production[EProduct.METH]}/H</ProductionItem>
+          <ProductionItem>Heroin {production[EProduct.HEROIN]}/H</ProductionItem>
+          <ProductionItem>LSD {production[EProduct.LSD]}/H</ProductionItem>
+          <ProductionItem>MDMA {production[EProduct.MDMA]}/H</ProductionItem>
         </ProductionGrid>
       </ProductionRecap>
       <div className="divider"></div>

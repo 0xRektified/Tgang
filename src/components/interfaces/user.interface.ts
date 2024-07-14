@@ -10,6 +10,9 @@ export interface UserLab {
   production: number;
   upgradeCapacityPrice: number;
   upgradeProductionPrice: number;
+  collectTime: Date;
+  produced: number;
+  leftover: number;
 }
 
 export interface LabPlot {
