@@ -16,7 +16,7 @@ export interface UserLab {
 }
 
 export interface LabPlot {
-  id: number;
+  plotId: number;
   lab?: UserLab;
 }
 
@@ -56,6 +56,7 @@ export interface IUserInfo {
   upgrades: IUserUpgrade[];
   carryingGear: CarryingGear[];
   labPlots: LabPlot[];
+  labPlotPrice: number;
   carryAmount: number;
   carryCapacity: number;
   referralToken: string;

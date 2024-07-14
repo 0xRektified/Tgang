@@ -3,15 +3,14 @@ import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useFetchCustomer } from "./useFetchCustomer";
 import { useMarketData } from "./useMarketData";
-import { Product } from "../components/interfaces/user.interface";
-import { EProduct } from "../components/interfaces/product.interface";
-import { ILab } from "../components/interfaces/lab.interface";
+import { LabPlot, Product } from "../components/interfaces/user.interface";
 import { useFetchLabs } from "./useFetchLabs";
 
 export function useInitializeGame() {
   const [carryAmount, setCarryAmount] = useState<number>(0);
   const [cashAmount, setCashAmount] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
+  const [labPlots, setLabPlots] = useState<LabPlot[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +19,7 @@ export function useInitializeGame() {
     setUserInfo: setFetchedUserInfo,
     loading: authLoading,
     error: authError,
-  } = useAuthAndFetchUserData(setCashAmount, setCarryAmount, setProducts);
+  } = useAuthAndFetchUserData(setCashAmount, setCarryAmount, setProducts, setLabPlots);
 
   const {
     upgrades,
@@ -131,6 +130,7 @@ export function useInitializeGame() {
     setCarryAmount,
     setMarketInfo,
     setLabs,
+    setLabPlots,
     fetchCustomers,
     loading,
     error,

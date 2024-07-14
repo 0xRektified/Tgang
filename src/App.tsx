@@ -46,7 +46,7 @@ function App() {
     setCustomers,
     setCashAmount,
     setCarryAmount,
-    setLabs,
+    setLabPlots,
     fetchCustomers,
     loading,
     error,
@@ -87,7 +87,16 @@ function App() {
           />
         );
       case "Lab":
-        return <Lab labs={labs!} labPlots={userInfo!.labPlots} />;
+        return (
+          <Lab 
+            labPlotPrice={userInfo!.labPlotPrice}
+            labs={labs!}
+            labPlots={userInfo!.labPlots} 
+            setCashAmount={setCashAmount}
+            setLabPlots={setLabPlots}
+            setUserInfo={setUserInfo}
+          />
+        );
       case "Shop":
         return (
           <Shop

@@ -4,12 +4,13 @@ import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import { IUserInfo, Product } from "../components/interfaces/user.interface";
+import { IUserInfo, LabPlot, Product } from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
   setCashAmount: React.Dispatch<React.SetStateAction<number>>,
   setCarryAmount: React.Dispatch<React.SetStateAction<number>>,
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
+  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
 ) {
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
@@ -63,6 +64,7 @@ export function useAuthAndFetchUserData(
         setCashAmount(userInfoResponse.data.cashAmount);
         setProducts(userInfoResponse.data.products);
         setCarryAmount(userInfoResponse.data.carryAmount);
+        setLabPlots(userInfoResponse.data.labPlots);
 
         console.log("setUserInfo:", userInfoResponse.data);
         console.log("setCashAmount:", userInfoResponse.data.cashAmount);

@@ -7,12 +7,11 @@ import {
 } from "../components/interfaces/user.interface";
 import { IBuyLab } from "../components/interfaces/lab.interface";
 
-export function useBuyLab() {
+export function useBuyLabPlot() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buyLab = async (
-    lab: IBuyLab,
+  const buyLabPlot = async (
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
     setLabPlots: React.Dispatch<
       React.SetStateAction<LabPlot[]>
@@ -22,10 +21,7 @@ export function useBuyLab() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axiosInstance.post<IUserInfo>(`/labs/buy`, {
-        plotId: lab.plotId,
-        labProduct: lab.labProduct,
-      });
+      const { data } = await axiosInstance.post<IUserInfo>(`/labs/buy-plot`);
       const newUserInfo = data;
       const newCashAmount = newUserInfo.cashAmount;
       const updatedUpgrades = newUserInfo.upgrades;
@@ -58,5 +54,5 @@ export function useBuyLab() {
     }
   };
 
-  return { buyLab, loading, error };
+  return { buyLabPlot, loading, error };
 }

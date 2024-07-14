@@ -4,8 +4,9 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
-import { LabPlot, UserLab } from "../interfaces/user.interface";
+import { IUserInfo, LabPlot, UserLab } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
+import LabPlotModal from "./LabPlotModal";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -78,19 +79,34 @@ const AddLabButton = styled.button`
 `;
 
 interface LabProps {
+  labPlotPrice: number;
   labs: Record<string, ILab>;
   labPlots: LabPlot[];
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[] | []>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
 }
 
-export const Lab: React.FC<LabProps> = ({ labs, labPlots }) => {
+export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashAmount, setLabPlots, setUserInfo }) => {
+  const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
+  const [selectedPlotId, setSelectedPlotId] = useState<number>(0);
 
-  const handleOpenLabModal = () => {
+  const handleOpenLabModal = (plotId: number) => {
+    setSelectedPlotId(plotId);
     setIsLabModalOpen(true);
+  };
+
+  const handleOpenLabPlotModal = () => {
+    setIsLabPlotModalOpen(true);
   };
 
   const handleCloseLabModal = () => {
     setIsLabModalOpen(false);
+  };
+
+  const handleCloseLabPlotModal = () => {
+    setIsLabPlotModalOpen(false);
   };
 
   const handleSelectLab = (lab: [string, ILab]) => {
@@ -166,17 +182,32 @@ export const Lab: React.FC<LabProps> = ({ labs, labPlots }) => {
             }
             return (
               <PlotItem>
-                <AddLabButton onClick={handleOpenLabModal}>+</AddLabButton>
+                <AddLabButton onClick={() => handleOpenLabModal(labPlot.plotId)}></AddLabButton>
               </PlotItem>
             );
           })
         }
+        <PlotItem>
+          <AddLabButton onClick={handleOpenLabPlotModal}>+</AddLabButton>
+        </PlotItem>
       </LabsGrid>
       {isLabModalOpen && (
         <LabModal
           labs={labs}
+          plotId={selectedPlotId}
           onClose={handleCloseLabModal}
-          onSelectLab={handleSelectLab}
+          setCashAmount={setCashAmount}
+          setLabPlots={setLabPlots}
+          setUserInfo={setUserInfo}
+        />
+      )}
+      {isLabPlotModalOpen && (
+        <LabPlotModal
+          plotPrice={labPlotPrice}
+          onClose={handleCloseLabPlotModal}
+          setCashAmount={setCashAmount}
+          setLabPlots={setLabPlots}
+          setUserInfo={setUserInfo}
         />
       )}
     </LabContainer>
