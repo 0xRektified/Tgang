@@ -72,18 +72,18 @@ const PlaceholderImage = styled.div.attrs<{
 
 interface PurchasedLabProps {
   plot: LabPlot;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
   setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
+  handleOpenPurchasedLabModal: (plot: LabPlot) => void;
 }
 
 const PurchasedLab: React.FC<PurchasedLabProps> = ({
   plot,
-  setCashAmount,
   setLabPlots,
   setProducts,
   setUserInfo,
+  handleOpenPurchasedLabModal,
 }) => {
   const lab = plot.lab!;
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -99,7 +99,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   };
 
   const collectProduct = () => {
-    collectLabProduct(plot.plotId, setCashAmount, setProducts, setLabPlots, setUserInfo);
+    collectLabProduct(plot.plotId, setProducts, setLabPlots, setUserInfo);
     setProduction(0);
   }
 
@@ -116,7 +116,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   return (
     <PurchasedLabContainer>
-      <VideoWrapper>
+      <VideoWrapper onClick={() => handleOpenPurchasedLabModal(plot)}>
         <PlaceholderImage
           poster={`/assets/weed_lab_2.png`}
           isVideoLoaded={isVideoLoaded}

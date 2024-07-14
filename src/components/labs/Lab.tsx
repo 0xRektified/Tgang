@@ -7,6 +7,7 @@ import PurchasedLab from "./PurchasedLab";
 import { IUserInfo, LabPlot, Product, UserLab } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
+import PurchasedLabModal from "./PurchasedLabModal";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -91,11 +92,17 @@ interface LabProps {
 export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashAmount, setLabPlots, setUserInfo, setProducts }) => {
   const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
-  const [selectedPlotId, setSelectedPlotId] = useState<number>(0);
+  const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] = useState<boolean>(false);
+  const [selectedPlot, setSelectedPlot] = useState<LabPlot>();
 
-  const handleOpenLabModal = (plotId: number) => {
-    setSelectedPlotId(plotId);
+  const handleOpenLabModal = (plot: LabPlot) => {
+    setSelectedPlot(plot);
     setIsLabModalOpen(true);
+  };
+
+  const handleOpenPurchasedLabModal = (plot: LabPlot) => {
+    setSelectedPlot(plot);
+    setIsPurchasedLabModalOpen(true);
   };
 
   const handleOpenLabPlotModal = () => {
@@ -108,6 +115,10 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
 
   const handleCloseLabPlotModal = () => {
     setIsLabPlotModalOpen(false);
+  };
+
+  const handleClosePurchasedLabModal = () => {
+    setIsPurchasedLabModalOpen(false);
   };
 
   const handleSelectLab = (lab: [string, ILab]) => {
@@ -180,16 +191,16 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
                 <PurchasedLab
                   key={labPlot.lab.product}
                   plot={labPlot}
-                  setCashAmount={setCashAmount}
                   setLabPlots={setLabPlots}
                   setProducts={setProducts}
                   setUserInfo={setUserInfo}
+                  handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
                 />
               );
             }
             return (
               <PlotItem>
-                <AddLabButton onClick={() => handleOpenLabModal(labPlot.plotId)}></AddLabButton>
+                <AddLabButton onClick={() => handleOpenLabModal(labPlot)}></AddLabButton>
               </PlotItem>
             );
           })
@@ -201,7 +212,7 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
       {isLabModalOpen && (
         <LabModal
           labs={labs}
-          plotId={selectedPlotId}
+          plotId={selectedPlot?.plotId!}
           onClose={handleCloseLabModal}
           setCashAmount={setCashAmount}
           setLabPlots={setLabPlots}
@@ -212,6 +223,15 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
         <LabPlotModal
           plotPrice={labPlotPrice}
           onClose={handleCloseLabPlotModal}
+          setCashAmount={setCashAmount}
+          setLabPlots={setLabPlots}
+          setUserInfo={setUserInfo}
+        />
+      )}
+      {isPurchasedLabModalOpen && (
+        <PurchasedLabModal
+          plot={selectedPlot!}
+          onClose={handleClosePurchasedLabModal}
           setCashAmount={setCashAmount}
           setLabPlots={setLabPlots}
           setUserInfo={setUserInfo}

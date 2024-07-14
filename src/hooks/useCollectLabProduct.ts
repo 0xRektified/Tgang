@@ -13,7 +13,6 @@ export function useCollectLabProduct() {
 
   const collectLabProduct = async (
     plotId: number,
-    setCashAmount: React.Dispatch<React.SetStateAction<number>>,
     setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
     setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>
@@ -23,9 +22,7 @@ export function useCollectLabProduct() {
     try {
       const { data } = await axiosInstance.post<IUserInfo>(`/labs/${plotId}/collect`);
       const newUserInfo = data;
-      const newCashAmount = newUserInfo.cashAmount;
 
-      setCashAmount(newCashAmount);
       setProducts(data.products);
       setLabPlots(data.labPlots);
 
