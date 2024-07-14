@@ -121,6 +121,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         />
       </VideoWrapper>
       <LabInfo>{lab.product}</LabInfo>
+      <LabInfo>{produced}/{lab.capacity}</LabInfo>
       <ProgressContainer>
         <div className="flex items-center mt-2">
           <progress
