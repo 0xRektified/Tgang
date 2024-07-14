@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { GiHandTruck } from "react-icons/gi";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { ILab } from "../interfaces/lab.interface";
-import { UserLab } from "../interfaces/user.interface";
+import { IUserInfo, LabPlot, Product, UserLab } from "../interfaces/user.interface";
 import { getUnixTime } from "date-fns";
+import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -70,18 +71,24 @@ const PlaceholderImage = styled.div.attrs<{
 `;
 
 interface PurchasedLabProps {
-  lab: UserLab;
-  onUpdateProduction: () => void;
-  onUpdateCapacity: () => void;
+  plot: LabPlot;
+  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
+  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
 }
 
 const PurchasedLab: React.FC<PurchasedLabProps> = ({
-  lab,
-  onUpdateProduction,
-  onUpdateCapacity,
+  plot,
+  setCashAmount,
+  setLabPlots,
+  setProducts,
+  setUserInfo,
 }) => {
+  const lab = plot.lab!;
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [produced, setProduction] = useState(lab.produced);
+  const { collectLabProduct } = useCollectLabProduct();
 
   const updateProduction = () => {
     const now = new Date();
@@ -90,6 +97,11 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
     const produced = Math.floor(productionPerSecond * diff + lab.leftover);
     setProduction(produced);
   };
+
+  const collectProduct = () => {
+    collectLabProduct(plot.plotId, setCashAmount, setProducts, setLabPlots, setUserInfo);
+    setProduction(0);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => updateProduction(), 1000);
@@ -129,7 +141,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
             value={produced}
             max={lab.capacity}
           ></progress>
-          <UpdateButton onClick={onUpdateCapacity}>+</UpdateButton>
+          <UpdateButton onClick={() => collectProduct()}><GiHandTruck /></UpdateButton>
         </div>
       </ProgressContainer>
     </PurchasedLabContainer>

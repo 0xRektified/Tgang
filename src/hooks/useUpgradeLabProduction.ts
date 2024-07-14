@@ -4,23 +4,23 @@ import axiosInstance from "../api/axiosConfig";
 import {
   IUserInfo,
   LabPlot,
+  Product,
 } from "../components/interfaces/user.interface";
 
-export function useBuyLabPlot() {
+export function useUpgradeLabProduction() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buyLabPlot = async (
+  const upgradeLabProduction = async (
+    plotId: number,
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setLabPlots: React.Dispatch<
-      React.SetStateAction<LabPlot[]>
-    >,
+    setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>
   ) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axiosInstance.post<IUserInfo>(`/labs/buy-plot`);
+      const { data } = await axiosInstance.put<IUserInfo>(`/labs/${plotId}/production`);
       const newUserInfo = data;
       const newCashAmount = newUserInfo.cashAmount;
 
@@ -48,5 +48,5 @@ export function useBuyLabPlot() {
     }
   };
 
-  return { buyLabPlot, loading, error };
+  return { upgradeLabProduction, loading, error };
 }

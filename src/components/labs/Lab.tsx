@@ -4,7 +4,7 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
-import { IUserInfo, LabPlot, UserLab } from "../interfaces/user.interface";
+import { IUserInfo, LabPlot, Product, UserLab } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
 
@@ -83,11 +83,12 @@ interface LabProps {
   labs: Record<string, ILab>;
   labPlots: LabPlot[];
   setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[] | []>>;
+  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
 
-export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashAmount, setLabPlots, setUserInfo }) => {
+export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashAmount, setLabPlots, setUserInfo, setProducts }) => {
   const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
   const [selectedPlotId, setSelectedPlotId] = useState<number>(0);
@@ -119,6 +120,10 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
   };
 
   const handleUpdateCapacity = (lab: UserLab) => {
+    console.log("Update Capacity for:", lab.title);
+  };
+
+  const handleCollectProduct = (lab: UserLab) => {
     console.log("Update Capacity for:", lab.title);
   };
 
@@ -174,9 +179,11 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
               return (
                 <PurchasedLab
                   key={labPlot.lab.product}
-                  lab={labPlot.lab}
-                  onUpdateProduction={() => handleUpdateProduction(labPlot.lab as UserLab)}
-                  onUpdateCapacity={() => handleUpdateCapacity(labPlot.lab as UserLab)}
+                  plot={labPlot}
+                  setCashAmount={setCashAmount}
+                  setLabPlots={setLabPlots}
+                  setProducts={setProducts}
+                  setUserInfo={setUserInfo}
                 />
               );
             }

@@ -4,27 +4,29 @@ import axiosInstance from "../api/axiosConfig";
 import {
   IUserInfo,
   LabPlot,
+  Product,
 } from "../components/interfaces/user.interface";
 
-export function useBuyLabPlot() {
+export function useCollectLabProduct() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buyLabPlot = async (
+  const collectLabProduct = async (
+    plotId: number,
     setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setLabPlots: React.Dispatch<
-      React.SetStateAction<LabPlot[]>
-    >,
+    setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
+    setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>
   ) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axiosInstance.post<IUserInfo>(`/labs/buy-plot`);
+      const { data } = await axiosInstance.post<IUserInfo>(`/labs/${plotId}/collect`);
       const newUserInfo = data;
       const newCashAmount = newUserInfo.cashAmount;
 
       setCashAmount(newCashAmount);
+      setProducts(data.products);
       setLabPlots(data.labPlots);
 
       setUserInfo((prevUserInfo) => {
@@ -48,5 +50,5 @@ export function useBuyLabPlot() {
     }
   };
 
-  return { buyLabPlot, loading, error };
+  return { collectLabProduct, loading, error };
 }

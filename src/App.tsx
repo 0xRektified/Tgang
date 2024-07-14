@@ -95,6 +95,7 @@ function App() {
             setCashAmount={setCashAmount}
             setLabPlots={setLabPlots}
             setUserInfo={setUserInfo}
+            setProducts={setProducts}
           />
         );
       case "Shop":
