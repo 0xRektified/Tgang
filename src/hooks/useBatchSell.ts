@@ -44,6 +44,8 @@ const useBatchSell = (
         product,
         amountToSell,
       }));
+      console.log(`batchArray`);
+      console.log(batchArray);
       await sellProduct(marketId, batchArray, setUserInfo);
       setBatch(new Map());
     } catch (error) {
