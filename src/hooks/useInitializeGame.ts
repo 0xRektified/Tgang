@@ -1,25 +1,32 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
-import { useFetchCustomer } from "./useFetchCustomer";
 import { useMarketData } from "./useMarketData";
-import { LabPlot, Product } from "../components/interfaces/user.interface";
+import { IUserInfo, Product } from "../components/interfaces/user.interface";
+import { EProduct } from "../components/interfaces/product.interface";
+import { ILab } from "../components/interfaces/lab.interface";
 import { useFetchLabs } from "./useFetchLabs";
 
+const defaultUserInfo: IUserInfo = {
+  id: "",
+  username: "",
+  cashAmount: 0,
+  products: [],
+  upgrades: [],
+  labPlots: [],
+  labPlotPrice: 0,
+  referralToken: "",
+  referredUsers: [],
+  customerAmount: 0,
+};
+
 export function useInitializeGame() {
-  const [carryAmount, setCarryAmount] = useState<number>(0);
-  const [cashAmount, setCashAmount] = useState<number>(0);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [labPlots, setLabPlots] = useState<LabPlot[]>([]);
+  const [user, setUser] = useState<IUserInfo>(defaultUserInfo);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    userInfo: fetchedUserInfo,
-    setUserInfo: setFetchedUserInfo,
-    loading: authLoading,
-    error: authError,
-  } = useAuthAndFetchUserData(setCashAmount, setCarryAmount, setProducts, setLabPlots);
+  const { loading: authLoading, error: authError } =
+    useAuthAndFetchUserData(setUser);
 
   const {
     upgrades,
@@ -27,7 +34,7 @@ export function useInitializeGame() {
     loading: upgradesLoading,
     error: upgradesError,
     fetchUpgrades,
-  } = useFetchUpgrades(fetchedUserInfo);
+  } = useFetchUpgrades(user);
 
   const {
     labs,
@@ -36,15 +43,6 @@ export function useInitializeGame() {
     error: labsError,
     fetchLabs,
   } = useFetchLabs();
-
-  const {
-    customers,
-    setCustomers,
-    loading: customersLoading,
-    error: customersError,
-    fetchCustomers,
-    nbrOfUserInBatch,
-  } = useFetchCustomer();
 
   const {
     marketInfo,
@@ -63,31 +61,27 @@ export function useInitializeGame() {
         throw new Error(authError);
       }
 
-      if (!fetchedUserInfo) {
+      if (!user) {
         throw new Error("User info is not available");
       }
 
-      setFetchedUserInfo(fetchedUserInfo);
-
-      const [upgradesData, customerData, marketData, labs] = await Promise.all([
+      console.log(user);
+      const [upgradesData, marketData, labs] = await Promise.all([
         fetchUpgrades(),
-        fetchCustomers(),
         fetchMarketData(),
         fetchLabs(),
       ]);
 
-      if (upgradesError || customersError || marketError || labsError) {
+      if (upgradesError || marketError || labsError) {
         throw new Error("Failed to fetch one or more game data");
       }
 
       setUpgrades(upgradesData?.upgrades || []);
-      setCustomers(customerData?.customers || []);
       setMarketInfo(marketData?.marketInfo);
       setLabs(labs?.labs);
 
-      console.log("setUserInfo (initializeGame):", fetchedUserInfo);
+      console.log("setUserInfo (initializeGame):", user);
       console.log("setUpgrades:", upgradesData?.upgrades);
-      console.log("setCustomers:", customerData?.customers);
       console.log("setMarketInfo:", marketData?.marketInfo);
     } catch (error) {
       setError("Failed to initialize game");
@@ -95,16 +89,7 @@ export function useInitializeGame() {
     } finally {
       setLoading(false);
     }
-  }, [
-    authError,
-    fetchedUserInfo,
-    fetchUpgrades,
-    fetchCustomers,
-    fetchMarketData,
-    setUpgrades,
-    setCustomers,
-    setMarketInfo,
-  ]);
+  }, [authError, fetchUpgrades, fetchMarketData, setUpgrades, setMarketInfo]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -113,25 +98,14 @@ export function useInitializeGame() {
   }, [authLoading]);
 
   return {
-    cashAmount,
-    carryAmount,
-    products,
-    userInfo: fetchedUserInfo,
+    userInfo: user,
     upgrades,
-    customers,
     marketInfo,
     labs,
-    nbrOfUserInBatch,
-    setUserInfo: setFetchedUserInfo,
-    setProducts,
+    setUserInfo: setUser,
     setUpgrades,
-    setCustomers,
-    setCashAmount,
-    setCarryAmount,
     setMarketInfo,
     setLabs,
-    setLabPlots,
-    fetchCustomers,
     loading,
     error,
   };

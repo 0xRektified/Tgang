@@ -45,27 +45,17 @@ const ButtonIcon = styled.span`
 const NeonText = styled.span``;
 
 interface TopMenuProps {
-  userInfo: IUserInfo | undefined;
+  userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
-  cashAmount: number;
-  carryAmount: number;
-  products: Product[];
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   onUnlockClick: (tab: string) => void;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
 export const TopMenu: React.FC<TopMenuProps> = ({
   userInfo,
   marketInfo,
-  cashAmount,
-  carryAmount,
-  products,
-  setCashAmount,
-  setCarryAmount,
-  setProducts,
   onUnlockClick,
+  setUserInfo,
 }) => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
@@ -100,7 +90,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
             <FlexBoxRow>
               <DigitalFont as={BalanceLabel}>Cash</DigitalFont>
               <DigitalFont as={BalanceAmount}>
-                ${cashAmount.toFixed(0)}
+                ${userInfo.cashAmount.toFixed(0)}
               </DigitalFont>
             </FlexBoxRow>
           </FlexBoxCol>
@@ -121,12 +111,8 @@ export const TopMenu: React.FC<TopMenuProps> = ({
           marketInfo={marketInfo}
           isOpen={isSupplierModalOpen}
           onClose={handleCloseSupplierModal}
-          setProducts={setProducts}
-          cashAmount={cashAmount}
-          setCashAmount={setCashAmount}
-          carryAmount={carryAmount}
-          setCarryAmount={setCarryAmount}
           onUnlockClick={onUnlockClick}
+          setUserInfo={setUserInfo}
         />
       )}
     </TopMenuContainer>

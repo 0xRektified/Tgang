@@ -4,15 +4,15 @@ import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import { IUserInfo, LabPlot, Product } from "../components/interfaces/user.interface";
+import {
+  IUserInfo,
+  LabPlot,
+  Product,
+} from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>,
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
+  setUser: React.Dispatch<React.SetStateAction<IUserInfo>>
 ) {
-  const [userInfo, setUserInfo] = useState<IUserInfo | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,16 +60,9 @@ export function useAuthAndFetchUserData(
         localStorage.setItem("jwtToken", access_token);
 
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
-        setUserInfo(userInfoResponse.data);
-        setCashAmount(userInfoResponse.data.cashAmount);
-        setProducts(userInfoResponse.data.products);
-        setCarryAmount(userInfoResponse.data.carryAmount);
-        setLabPlots(userInfoResponse.data.labPlots);
+        setUser(userInfoResponse.data);
 
-        console.log("setUserInfo:", userInfoResponse.data);
-        console.log("setCashAmount:", userInfoResponse.data.cashAmount);
-        console.log("setProducts:", userInfoResponse.data.products);
-        console.log("setCarryAmount:", userInfoResponse.data.carryAmount);
+        console.log("setUser:", userInfoResponse.data);
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
         setError("Failed to authenticate and fetch user data");
@@ -79,7 +72,6 @@ export function useAuthAndFetchUserData(
     };
 
     login();
-  }, []);
-
-  return { userInfo, setUserInfo, loading, error };
+  }, [setLoading, setError]);
+  return { loading, error };
 }

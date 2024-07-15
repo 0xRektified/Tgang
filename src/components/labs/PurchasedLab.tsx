@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GiHandTruck } from "react-icons/gi";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { IUserInfo, LabPlot, Product, UserLab } from "../interfaces/user.interface";
+import { IUserInfo, LabPlot } from "../interfaces/user.interface";
 import { getUnixTime } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 
@@ -72,16 +72,12 @@ const PlaceholderImage = styled.div.attrs<{
 
 interface PurchasedLabProps {
   plot: LabPlot;
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   handleOpenPurchasedLabModal: (plot: LabPlot) => void;
 }
 
 const PurchasedLab: React.FC<PurchasedLabProps> = ({
   plot,
-  setLabPlots,
-  setProducts,
   setUserInfo,
   handleOpenPurchasedLabModal,
 }) => {
@@ -92,16 +88,22 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   const updateProduction = () => {
     const now = new Date();
+    console.log(now);
     const diff = getUnixTime(now) - getUnixTime(lab.collectTime);
+    console.log(diff);
+
     const productionPerSecond = lab.production / 3600;
     const produced = Math.floor(productionPerSecond * diff + lab.leftover);
+    console.log(`produced`);
+    console.log(produced);
+
     setProduction(produced);
   };
 
   const collectProduct = () => {
-    collectLabProduct(plot.plotId, setProducts, setLabPlots, setUserInfo);
+    collectLabProduct(plot.plotId, setUserInfo);
     setProduction(0);
-  }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => updateProduction(), 1000);
@@ -133,7 +135,9 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         />
       </VideoWrapper>
       <LabInfo>{lab.product}</LabInfo>
-      <LabInfo>{produced}/{lab.capacity}</LabInfo>
+      <LabInfo>
+        {produced}/{lab.capacity}
+      </LabInfo>
       <ProgressContainer>
         <div className="flex items-center mt-2">
           <progress
@@ -141,7 +145,9 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
             value={produced}
             max={lab.capacity}
           ></progress>
-          <UpdateButton onClick={() => collectProduct()}><GiHandTruck /></UpdateButton>
+          <UpdateButton onClick={() => collectProduct()}>
+            <GiHandTruck />
+          </UpdateButton>
         </div>
       </ProgressContainer>
     </PurchasedLabContainer>

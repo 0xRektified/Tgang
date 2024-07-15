@@ -1,9 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { EProduct } from "../interfaces/product.interface";
-import { useBuyLab } from "../../hooks/useBuyLab";
-import { LabPlot, IUserInfo } from "../interfaces/user.interface";
+import { IUserInfo } from "../interfaces/user.interface";
 import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
 
 const ModalBackground = styled.div`
@@ -38,23 +36,27 @@ const CloseButton = styled.button`
 interface LabModalProps {
   plotPrice: number;
   onClose: () => void;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
-const LabModal: React.FC<LabModalProps> = ({ plotPrice, onClose, setLabPlots, setCashAmount, setUserInfo }) => {
+const LabModal: React.FC<LabModalProps> = ({
+  plotPrice,
+  onClose,
+  setUserInfo,
+}) => {
   const { buyLabPlot } = useBuyLabPlot();
 
   const buyAndClose = () => {
-    buyLabPlot(setCashAmount, setLabPlots, setUserInfo);
+    buyLabPlot(setUserInfo);
     onClose();
   };
 
   return (
     <ModalBackground>
       <ModalContent>
-        <h2 className="text-lg font-bold text-white mb-4">Buy Lab Plot for {plotPrice}</h2>
+        <h2 className="text-lg font-bold text-white mb-4">
+          Buy Lab Plot for {plotPrice}
+        </h2>
         <div className="grid grid-cols-2 gap-4">
           <LabButton onClick={() => buyAndClose()}>Buy</LabButton>
           <CloseButton onClick={onClose}>Close</CloseButton>

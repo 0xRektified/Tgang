@@ -24,30 +24,16 @@ const AppContainer = styled.div`
   margin: 0 auto;
 `;
 
-export function Statics() {
-  return <h1 className="text-3xl font-bold underline">Hello Statics!</h1>;
-}
-
 function App() {
   //@note handle loading and error properly
   const {
-    cashAmount,
-    carryAmount,
-    products,
     userInfo,
     upgrades,
-    customers,
     marketInfo,
     labs,
-    nbrOfUserInBatch,
     setUserInfo,
-    setProducts,
     setUpgrades,
-    setCustomers,
-    setCashAmount,
-    setCarryAmount,
-    setLabPlots,
-    fetchCustomers,
+    setLabs,
     loading,
     error,
   } = useInitializeGame();
@@ -66,51 +52,30 @@ function App() {
     setCurrentView("Shop");
   };
 
-  const renderCurrentView = (
-    cashAmount: number,
-    setCashAmount: React.Dispatch<React.SetStateAction<number>>
-  ) => {
+  const renderCurrentView = () => {
     switch (currentView) {
       case "Base":
         return (
           <Home
             userInfo={userInfo}
-            products={products}
-            customers={customers}
-            nbrOfUserInBatch={nbrOfUserInBatch}
             marketInfo={marketInfo}
-            setCustomers={setCustomers}
-            setProducts={setProducts}
-            fetchCustomers={fetchCustomers}
-            setCashAmount={setCashAmount}
-            setCarryAmount={setCarryAmount}
+            setUserInfo={setUserInfo}
           />
         );
       case "Lab":
         return (
-          <Lab 
-            labPlotPrice={userInfo!.labPlotPrice}
-            labs={labs!}
-            labPlots={userInfo!.labPlots} 
-            setCashAmount={setCashAmount}
-            setLabPlots={setLabPlots}
-            setUserInfo={setUserInfo}
-            setProducts={setProducts}
-          />
+          <Lab userInfo={userInfo} labs={labs!} setUserInfo={setUserInfo} />
         );
       case "Shop":
         return (
           <Shop
-            setCashAmount={setCashAmount}
-            cashAmount={cashAmount}
+            userInfo={userInfo}
             activeTab={activeTab}
             upgradesData={upgrades}
-            setUpgrades={setUpgrades}
             setUserInfo={setUserInfo}
+            setUpgrades={setUpgrades}
           />
         );
-      case "Statics":
-        return <Statics />;
       default:
         return (
           <Social
@@ -140,17 +105,10 @@ function App() {
         <TopMenu
           userInfo={userInfo}
           marketInfo={marketInfo}
-          cashAmount={cashAmount}
-          carryAmount={carryAmount}
-          products={products}
-          setCashAmount={setCashAmount}
-          setCarryAmount={setCarryAmount}
-          setProducts={setProducts}
           onUnlockClick={handleUnlockClick}
+          setUserInfo={setUserInfo}
         />
-        <FlexBoxColNoGap>
-          {renderCurrentView(cashAmount, setCashAmount)}
-        </FlexBoxColNoGap>
+        <FlexBoxColNoGap>{renderCurrentView()}</FlexBoxColNoGap>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
       </AppContainer>
     </StyledApp>

@@ -39,19 +39,25 @@ interface LabModalProps {
   labs: Record<EProduct, ILab>;
   plotId: number;
   onClose: () => void;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
-const LabModal: React.FC<LabModalProps> = ({ labs, plotId, onClose, setCashAmount, setLabPlots, setUserInfo }) => {
+const LabModal: React.FC<LabModalProps> = ({
+  labs,
+  plotId,
+  onClose,
+  setUserInfo,
+}) => {
   const { buyLab } = useBuyLab();
 
   const buyAndClose = (labProduct: EProduct, plotId: number) => {
-    buyLab({
-      labProduct,
-      plotId,
-    }, setCashAmount, setLabPlots, setUserInfo);
+    buyLab(
+      {
+        labProduct,
+        plotId,
+      },
+      setUserInfo
+    );
     onClose();
   };
 
@@ -62,19 +68,18 @@ const LabModal: React.FC<LabModalProps> = ({ labs, plotId, onClose, setCashAmoun
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(labs).map((lab) => (
             <LabItem key={lab[0]}>
-              <img
-                src={lab[1].image}
-                alt={lab[0]}
-                className="w-16 h-16"
-              />
+              <img src={lab[1].image} alt={lab[0]} className="w-16 h-16" />
               <div className="text-white">Type: {lab[0]}</div>
               <div className="text-white">Capacity: {lab[1].baseCapacity}</div>
-              <div className="text-white">Production: {lab[1].baseProduction}</div>
+              <div className="text-white">
+                Production: {lab[1].baseProduction}
+              </div>
               <div className="text-white">Price: ${lab[1].labPrice}</div>
-              <LabButton onClick={() => buyAndClose(
-                lab[0] as EProduct,
-                plotId,
-              )}>Buy</LabButton>
+              <LabButton
+                onClick={() => buyAndClose(lab[0] as EProduct, plotId)}
+              >
+                Buy
+              </LabButton>
             </LabItem>
           ))}
         </div>

@@ -1,11 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { Product } from "../interfaces/user.interface";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { LastTransaction } from "./LastTransaction";
 import { Transaction } from "./utils/types";
-import { EProductIcon } from "../interfaces/product.interface";
-import { ICustomerInfo } from "../interfaces/customer.interface";
 
 const ScrollableContainer = styled.div`
   max-height: 100vh;
@@ -30,7 +27,8 @@ const ScrollableContainer = styled.div`
 
 const CustomerListContainer = styled.div`
   display: flex;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
   max-width: 100%;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
@@ -49,24 +47,9 @@ const CustomerListContainer = styled.div`
   }
 `;
 
-const CustomerRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #2d3748;
-  border-radius: 0.5rem;
-  padding: 0.4rem;
-  margin: 0.5rem;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  min-width: 100px;
-`;
-
-const CustomerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #cbd5e0;
-  font-size: 0.9rem;
+const CustomerEmoji = styled.span`
+  font-size: 0.8rem;
+  margin: 0.2rem;
 `;
 
 const HeaderRow = styled(FlexBoxRow)`
@@ -78,54 +61,77 @@ const HeaderRow = styled(FlexBoxRow)`
 `;
 
 interface CustomersBoardProps {
-  products: Product[];
-  customers: ICustomerInfo[];
+  customers: number;
   transaction: Transaction | null;
-  waitingCustomersCount: number;
 }
 
+const emojiList = [
+  "👶",
+  "🧒",
+  "👦",
+  "👧",
+  "🧑",
+  "👱",
+  "👨",
+  "🧔",
+  "👶🏿",
+  "🧒🏿",
+  "👦🏿",
+  "👧🏿",
+  "🧑🏿",
+  "👱🏿",
+  "👨🏿",
+  "🧔🏿",
+  "👶🏻",
+  "🧒🏻",
+  "👦🏻",
+  "👧🏻",
+  "🧑🏻",
+  "👱🏻",
+  "👨🏻",
+  "🧔🏻",
+  "👶🏽",
+  "🧒🏽",
+  "👦🏽",
+  "👧🏽",
+  "🧑🏽",
+  "👱🏽",
+  "👨🏽",
+  "🧔🏽",
+  "👶🏾",
+  "🧒🏾",
+  "👦🏾",
+  "👧🏾",
+  "🧑🏾",
+  "👱🏾",
+  "👨🏾",
+  "🧔🏾",
+];
+
 export const CustomersBoard: React.FC<CustomersBoardProps> = ({
-  products,
   customers,
   transaction,
-  waitingCustomersCount,
 }) => {
   return (
     <>
       <HeaderRow>
         <LastTransaction
           transaction={transaction}
-          waitingCustomersCount={waitingCustomersCount}
+          waitingCustomersCount={customers}
         />
       </HeaderRow>
       <ScrollableContainer>
         <CustomerListContainer>
-          {customers.length > 0 ? (
-            customers.map((customer, index) => {
-              const { product, quantity, emoji } = customer;
-              const productIcon =
-                EProductIcon[product as keyof typeof EProductIcon];
-              return (
-                <CustomerRow key={index}>
-                  <CustomerInfo>
-                    <span>
-                      {emoji} {productIcon}
-                    </span>
-                    <span>
-                      {quantity} {product}
-                    </span>
-                  </CustomerInfo>
-                </CustomerRow>
-              );
-            })
+          {customers > 0 ? (
+            Array.from({ length: Math.min(customers, 40) }, (_, index) => (
+              <CustomerEmoji key={index}>
+                {emojiList[index % emojiList.length]}
+              </CustomerEmoji>
+            ))
           ) : (
-            <CustomerRow>
-              <CustomerInfo>
-                <span>it's night time no more customers</span>
-                <span>...</span>
-                <span>Please wait</span>
-              </CustomerInfo>
-            </CustomerRow>
+            <CustomerEmoji>
+              it's night time no more customers... Please wait
+            </CustomerEmoji>
           )}
         </CustomerListContainer>
       </ScrollableContainer>

@@ -20,16 +20,18 @@ export const updateProducts = (
 };
 
 export const handleTransaction = (
-  userInfo: IUserInfo | undefined,
+  userInfo: IUserInfo,
   slottedProducts: Product[],
-  products: Product[],
   productName: string,
   amountToSell: number,
-  marketInfo: IMarketInfo | undefined,
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>
-): { updatedProducts: Product[]; transaction: Transaction | null } => {
+  marketInfo: IMarketInfo | undefined
+): {
+  updatedProducts: Product[];
+  transaction: Transaction | null;
+  cashState: number;
+} => {
   let amountEarned = 0;
+  let cashState = userInfo.cashAmount;
   const productToSell = slottedProducts.find(
     (product) => product.name === productName
   );
@@ -54,11 +56,10 @@ export const handleTransaction = (
         productPrice = productPrice / discountValue;
       }
       amountEarned = amountToSell * productPrice;
-      setCashAmount((prevCash) => prevCash + amountEarned);
-      setCarryAmount((prevCarry) => prevCarry - productToSell.quantity);
+      cashState += amountEarned;
 
       const updatedProducts = updateProducts(
-        products,
+        userInfo.products,
         productName,
         amountToSell
       );
@@ -68,16 +69,16 @@ export const handleTransaction = (
         quantity: amountToSell,
         amountEarned: amountEarned,
       } as Transaction;
-      return { updatedProducts, transaction };
+      return { updatedProducts, transaction, cashState };
     } else if (productToSell) {
       const transaction = {
         type: "missed",
         product: productToSell.name,
         quantity: amountToSell,
       } as Transaction;
-      return { updatedProducts: products, transaction };
+      return { updatedProducts: userInfo.products, transaction, cashState };
     } else {
-      const inventoryProduct = products.find(
+      const inventoryProduct = userInfo.products.find(
         (product) => product.name === productName
       );
       if (inventoryProduct) {
@@ -86,10 +87,10 @@ export const handleTransaction = (
           product: inventoryProduct.name,
           quantity: amountToSell,
         } as Transaction;
-        return { updatedProducts: products, transaction };
+        return { updatedProducts: userInfo.products, transaction, cashState };
       }
     }
   }
 
-  return { updatedProducts: products, transaction: null };
+  return { updatedProducts: userInfo.products, transaction: null, cashState };
 };

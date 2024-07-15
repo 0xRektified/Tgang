@@ -13,54 +13,26 @@ import useBatchSell from "../../hooks/useBatchSell";
 import { IMarketInfo } from "../interfaces/market.interface";
 
 interface HomeProps {
-  userInfo: IUserInfo | undefined;
-  products: Product[];
-  customers: ICustomerInfo[];
-  nbrOfUserInBatch: number;
+  userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
-  setCustomers: React.Dispatch<React.SetStateAction<any[]>>;
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
-  fetchCustomers: () => Promise<
-    | {
-        customers: ICustomerInfo[];
-      }
-    | undefined
-  >;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
 export const Home: React.FC<HomeProps> = ({
   userInfo,
-  products,
-  customers,
-  nbrOfUserInBatch,
   marketInfo,
-  setCustomers,
-  setProducts,
-  fetchCustomers,
-  setCashAmount,
-  setCarryAmount,
+  setUserInfo,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const audioRef = useRef(new Audio("/assets/cash.mp3"));
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
-  const { addToBatch, loading, error } = useBatchSell(
-    marketId,
-    nbrOfUserInBatch,
-    customers,
-    setCashAmount,
-    setCarryAmount,
-    setProducts,
-    fetchCustomers
-  );
+  const { addToBatch, loading, error } = useBatchSell(marketId, setUserInfo);
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -69,9 +41,9 @@ export const Home: React.FC<HomeProps> = ({
   }, []);
 
   useEffect(() => {
-    const value = calculateTotalQuantity(products);
+    const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
-  }, [products]);
+  }, [userInfo.products]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -85,15 +57,22 @@ export const Home: React.FC<HomeProps> = ({
   }) => {
     if (selectedSlot === null) return;
 
-    setProducts((prevProducts) =>
-      prevProducts.map((p) =>
+    setUserInfo((prevUser) => {
+      if (!prevUser) return prevUser;
+
+      const updatedProducts = prevUser.products.map((p) =>
         p.name === product.name
           ? { ...p, slot: selectedSlot }
           : p.slot === selectedSlot
           ? { ...p, slot: null }
           : p
-      )
-    );
+      );
+
+      return {
+        ...prevUser,
+        products: updatedProducts,
+      };
+    });
 
     setIsModalOpen(false);
   };
@@ -124,11 +103,13 @@ export const Home: React.FC<HomeProps> = ({
   const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
 
-    const slottedProducts = products.filter((p) => p.slot !== null);
+    const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
 
-    if (customers && customers.length > 0) {
-      const order = customers[0];
-      const { product, quantity: amountToSell } = order;
+    if (userInfo.customerAmount) {
+      // @note TODO update that with a selector in the FE to know which product to sell
+      const product = "Weed";
+      // @note TODO update that with the value in upgrade customer needs
+      const amountToSell = 1;
 
       const slottedProductToSell = slottedProducts.find(
         (p) => p.name === product
@@ -141,6 +122,8 @@ export const Home: React.FC<HomeProps> = ({
         amountEarned: 0,
       };
 
+      let _updatedProducts: Product[] = [];
+      let _cashState: number = userInfo.cashAmount;
       if (
         !slottedProductToSell ||
         slottedProductToSell.quantity < amountToSell
@@ -151,18 +134,15 @@ export const Home: React.FC<HomeProps> = ({
           quantity: amountToSell,
         });
       } else {
-        const { updatedProducts, transaction } = handleTransaction(
+        const { updatedProducts, transaction, cashState } = handleTransaction(
           userInfo,
           slottedProducts,
-          products,
           product,
           amountToSell,
-          marketInfo,
-          setCashAmount,
-          setCarryAmount
+          marketInfo
         );
-
-        setProducts(updatedProducts);
+        _updatedProducts = updatedProducts;
+        _cashState = cashState;
         setLastTransaction(transaction);
 
         newTouchPoint = {
@@ -172,13 +152,20 @@ export const Home: React.FC<HomeProps> = ({
           amountEarned: transaction?.amountEarned || 0,
         };
 
-        addToBatch(order.customerIndex);
+        addToBatch(product, amountToSell);
       }
 
-      const updatedCustomerList = [...customers];
-      updatedCustomerList.splice(0, 1);
+      setUserInfo((prevUser) => {
+        if (!prevUser) return prevUser;
 
-      setCustomers(updatedCustomerList);
+        return {
+          ...prevUser,
+          products:
+            _updatedProducts.length > 0 ? _updatedProducts : prevUser.products,
+          customerAmount: prevUser.customerAmount - 1,
+          cashAmount: _cashState,
+        };
+      });
 
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
@@ -200,23 +187,22 @@ export const Home: React.FC<HomeProps> = ({
   return (
     <>
       <ClickableAreaWithSmoke
-        products={products}
+        products={userInfo.products}
         handleTouchStart={handleTouchStart}
         pressed={pressed}
       />
       <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
         <CustomersBoard
-          products={products}
-          customers={customers}
+          // customers={userInfo.customerAmount}
+          customers={200}
           transaction={lastTransaction}
-          waitingCustomersCount={customers.length}
         />
       </div>
       <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (
         <InventoryModal
           selectedSlot={selectedSlot}
-          productsData={products}
+          productsData={userInfo.products}
           handleSelectProductFromInventory={handleSelectProductFromInventory}
           handleCloseModal={handleCloseModal}
         />

@@ -1,17 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import { Product } from "../components/interfaces/user.interface";
-
-interface BuyProductResponse {
-  carryingGear: any[];
-  cashAmount: number;
-  carryAmount: number;
-  id: number;
-  products: Product[];
-  reputation: number;
-  username: string;
-}
+import { IUserInfo, Product } from "../components/interfaces/user.interface";
 
 const useBuyProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,24 +11,20 @@ const useBuyProduct = () => {
     marketId: string,
     productName: string,
     quantity: number,
-    setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setProducts: React.Dispatch<React.SetStateAction<Product[]>>,
-    setCarryAmount: React.Dispatch<React.SetStateAction<number>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axiosInstance.post<BuyProductResponse>(
+      const response = await axiosInstance.post<IUserInfo>(
         `/products/${marketId}/buy`,
         {
           product: productName,
           quantity,
         }
       );
-      setCashAmount(response.data.cashAmount);
-      setProducts(response.data.products);
-      setCarryAmount(response.data.carryAmount);
+      setUserInfo(response.data);
       return true; // Indicate success
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -13,30 +13,16 @@ export function useUpgradeLabProduction() {
 
   const upgradeLabProduction = async (
     plotId: number,
-    setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-    setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axiosInstance.put<IUserInfo>(`/labs/${plotId}/production`);
+      const { data } = await axiosInstance.put<IUserInfo>(
+        `/labs/${plotId}/production`
+      );
       const newUserInfo = data;
-      const newCashAmount = newUserInfo.cashAmount;
-
-      setCashAmount(newCashAmount);
-      setLabPlots(data.labPlots);
-
-      setUserInfo((prevUserInfo) => {
-        if (!prevUserInfo) return newUserInfo;
-
-        const updatedUserInfo = {
-          ...prevUserInfo,
-          cashAmount: newUserInfo.cashAmount,
-          labPlots: newUserInfo.labPlots,
-        };
-        return updatedUserInfo;
-      });
+      setUserInfo(newUserInfo);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);

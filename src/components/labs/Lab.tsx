@@ -4,7 +4,12 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
-import { IUserInfo, LabPlot, Product, UserLab } from "../interfaces/user.interface";
+import {
+  IUserInfo,
+  LabPlot,
+  Product,
+  UserLab,
+} from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
 import PurchasedLabModal from "./PurchasedLabModal";
@@ -80,19 +85,16 @@ const AddLabButton = styled.button`
 `;
 
 interface LabProps {
-  labPlotPrice: number;
+  userInfo: IUserInfo;
   labs: Record<string, ILab>;
-  labPlots: LabPlot[];
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>;
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
-export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashAmount, setLabPlots, setUserInfo, setProducts }) => {
+export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
-  const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] = useState<boolean>(false);
+  const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] =
+    useState<boolean>(false);
   const [selectedPlot, setSelectedPlot] = useState<LabPlot>();
 
   const handleOpenLabModal = (plot: LabPlot) => {
@@ -145,8 +147,8 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
     [EProduct.HEROIN]: 0,
     [EProduct.LSD]: 0,
     [EProduct.MDMA]: 0,
-  }
-  labPlots.forEach((labPlot) => {
+  };
+  userInfo.labPlots.forEach((labPlot) => {
     switch (labPlot.lab?.product) {
       case EProduct.WEED:
         production[EProduct.WEED] = labPlot.lab.production;
@@ -167,7 +169,7 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
         production[EProduct.MDMA] = labPlot.lab.production;
         break;
     }
-  })
+  });
 
   return (
     <LabContainer>
@@ -175,36 +177,38 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
         <h2 className="text-lg font-bold">Current Production</h2>
         <ProductionGrid>
           <ProductionItem>Weed {production[EProduct.WEED]}/H</ProductionItem>
-          <ProductionItem>Cocaine {production[EProduct.COCAINE]}/H</ProductionItem>
+          <ProductionItem>
+            Cocaine {production[EProduct.COCAINE]}/H
+          </ProductionItem>
           <ProductionItem>Meth {production[EProduct.METH]}/H</ProductionItem>
-          <ProductionItem>Heroin {production[EProduct.HEROIN]}/H</ProductionItem>
+          <ProductionItem>
+            Heroin {production[EProduct.HEROIN]}/H
+          </ProductionItem>
           <ProductionItem>LSD {production[EProduct.LSD]}/H</ProductionItem>
           <ProductionItem>MDMA {production[EProduct.MDMA]}/H</ProductionItem>
         </ProductionGrid>
       </ProductionRecap>
       <div className="divider"></div>
       <LabsGrid>
-        {
-          labPlots.map((labPlot) => {
-            if (labPlot.lab) {
-              return (
-                <PurchasedLab
-                  key={labPlot.lab.product}
-                  plot={labPlot}
-                  setLabPlots={setLabPlots}
-                  setProducts={setProducts}
-                  setUserInfo={setUserInfo}
-                  handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
-                />
-              );
-            }
+        {userInfo.labPlots.map((labPlot) => {
+          if (labPlot.lab) {
             return (
-              <PlotItem>
-                <AddLabButton onClick={() => handleOpenLabModal(labPlot)}></AddLabButton>
-              </PlotItem>
+              <PurchasedLab
+                key={labPlot.lab.product}
+                plot={labPlot}
+                setUserInfo={setUserInfo}
+                handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
+              />
             );
-          })
-        }
+          }
+          return (
+            <PlotItem>
+              <AddLabButton
+                onClick={() => handleOpenLabModal(labPlot)}
+              ></AddLabButton>
+            </PlotItem>
+          );
+        })}
         <PlotItem>
           <AddLabButton onClick={handleOpenLabPlotModal}>+</AddLabButton>
         </PlotItem>
@@ -214,17 +218,13 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
           labs={labs}
           plotId={selectedPlot?.plotId!}
           onClose={handleCloseLabModal}
-          setCashAmount={setCashAmount}
-          setLabPlots={setLabPlots}
           setUserInfo={setUserInfo}
         />
       )}
       {isLabPlotModalOpen && (
         <LabPlotModal
-          plotPrice={labPlotPrice}
+          plotPrice={userInfo.labPlotPrice}
           onClose={handleCloseLabPlotModal}
-          setCashAmount={setCashAmount}
-          setLabPlots={setLabPlots}
           setUserInfo={setUserInfo}
         />
       )}
@@ -232,8 +232,6 @@ export const Lab: React.FC<LabProps> = ({ labPlotPrice, labs, labPlots, setCashA
         <PurchasedLabModal
           plot={selectedPlot!}
           onClose={handleClosePurchasedLabModal}
-          setCashAmount={setCashAmount}
-          setLabPlots={setLabPlots}
           setUserInfo={setUserInfo}
         />
       )}

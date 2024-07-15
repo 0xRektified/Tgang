@@ -42,23 +42,15 @@ export interface IUserUpgrade {
   group: string;
 }
 
-export interface CarryingGear {
-  id: number;
-  title: string;
-  capacity: number;
-}
-
 export interface IUserInfo {
   id: string;
   username: string;
   cashAmount: number;
   products: Product[];
   upgrades: IUserUpgrade[];
-  carryingGear: CarryingGear[];
   labPlots: LabPlot[];
   labPlotPrice: number;
-  carryAmount: number;
-  carryCapacity: number;
   referralToken: string;
   referredUsers: string[];
+  customerAmount: number;
 }

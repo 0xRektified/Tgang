@@ -22,16 +22,12 @@ import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProductIcon } from "../interfaces/product.interface";
 
 interface SupplierModalProps {
-  userInfo: IUserInfo | undefined;
+  userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
   isOpen: boolean;
   onClose: () => void;
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
-  cashAmount: number;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
-  carryAmount: number;
-  setCarryAmount: React.Dispatch<React.SetStateAction<number>>;
   onUnlockClick: (tab: string) => void;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
 export const SupplierModal: React.FC<SupplierModalProps> = ({
@@ -39,12 +35,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   marketInfo,
   isOpen,
   onClose,
-  setProducts,
-  cashAmount,
-  setCashAmount,
-  carryAmount,
-  setCarryAmount,
   onUnlockClick,
+  setUserInfo,
 }) => {
   const { buyProduct, loading, error } = useBuyProduct();
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(
@@ -53,35 +45,26 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [totalCost, setTotalCost] = useState<number>(0);
-  const [remainingCash, setRemainingCash] = useState<number>(cashAmount);
-  const [projectedCarryAmount, setProjectedCarryAmount] =
-    useState<number>(carryAmount);
+  const [remainingCash, setRemainingCash] = useState<number>(
+    userInfo.cashAmount
+  );
 
   useEffect(() => {
-    console.log(`carryAmount`);
-    console.log(carryAmount);
     setTotalCost(selectedProduct ? selectedProduct.price * quantity : 0);
     setRemainingCash(
-      cashAmount - (selectedProduct ? selectedProduct.price * quantity : 0)
+      userInfo.cashAmount -
+        (selectedProduct ? selectedProduct.price * quantity : 0)
     );
-    setProjectedCarryAmount(carryAmount + (selectedProduct ? quantity : 0));
-  }, [selectedProduct, quantity, cashAmount, carryAmount]);
+  });
 
   const handleBuy = async () => {
-    if (totalCost > cashAmount) {
+    if (totalCost > userInfo.cashAmount) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
       return;
     }
     if (selectedProduct) {
-      await buyProduct(
-        "NY",
-        selectedProduct.name,
-        quantity,
-        setCashAmount,
-        setProducts,
-        setCarryAmount
-      );
+      await buyProduct("NY", selectedProduct.name, quantity, setUserInfo);
     }
     setSelectedProduct(null);
     setQuantity(1);
@@ -91,12 +74,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   const handleMaxClick = () => {
     if (!selectedProduct) return;
     const productPrice = selectedProduct.price;
-    const { carryAmount, carryCapacity } = userInfo!;
-    const maxCarry = carryCapacity - carryAmount;
-    const maxQuantity = Math.min(
-      maxCarry,
-      Math.floor(cashAmount / productPrice)
-    );
+    const maxQuantity = Math.floor(userInfo.cashAmount / productPrice);
 
     setQuantity(maxQuantity);
   };
@@ -125,19 +103,6 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
             Balance: ${remainingCash.toFixed(0)}
           </ShoppingCartBalance>
           <ShoppingCartTotal>Total: ${totalCost.toFixed(0)}</ShoppingCartTotal>
-          <ShoppingCartTotal>
-            Carrying:{" "}
-            <span
-              style={{
-                color:
-                  projectedCarryAmount >= userInfo!.carryCapacity
-                    ? "red"
-                    : "inherit",
-              }}
-            >
-              {projectedCarryAmount}/{userInfo?.carryCapacity}
-            </span>
-          </ShoppingCartTotal>
         </ShoppingCartFooter>
         <ScrollableTableContainer>
           <Table>
@@ -206,9 +171,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                                   <input
                                     type="range"
                                     min={0}
-                                    max={Math.min(
-                                      Math.floor(remainingCash / product.price),
-                                      userInfo!.carryCapacity - carryAmount
+                                    max={Math.floor(
+                                      remainingCash / product.price
                                     )}
                                     value={quantity}
                                     className="range"

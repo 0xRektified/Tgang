@@ -39,32 +39,38 @@ const CloseButton = styled.button`
 interface PurchasedLabModalProps {
   plot: LabPlot;
   onClose: () => void;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>,
-  setLabPlots: React.Dispatch<React.SetStateAction<LabPlot[]>>,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>,
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
-const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({ plot, onClose, setCashAmount, setLabPlots, setUserInfo }) => {
+const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
+  plot,
+  onClose,
+  setUserInfo,
+}) => {
   const { upgradeLabCapacity } = useUpgradeLabCapacity();
   const { upgradeLabProduction } = useUpgradeLabProduction();
 
   const upgradeCapacity = () => {
-    upgradeLabCapacity(plot.plotId, setCashAmount, setLabPlots, setUserInfo);
+    upgradeLabCapacity(plot.plotId, setUserInfo);
     onClose();
-  }
+  };
 
   const upgradeProduction = () => {
-    upgradeLabProduction(plot.plotId, setCashAmount, setLabPlots, setUserInfo);
+    upgradeLabProduction(plot.plotId, setUserInfo);
     onClose();
-  }
+  };
 
   return (
     <ModalBackground>
       <ModalContent>
         <h2 className="text-lg font-bold text-white mb-4">Lab details</h2>
         <div className="grid grid-cols-1 gap-4">
-          <LabButton onClick={() => upgradeCapacity()}><LuPackagePlus /> ${plot.lab?.upgradeCapacityPrice}</LabButton>
-          <LabButton onClick={() => upgradeProduction()}><MdConveyorBelt /> ${plot.lab?.upgradeProductionPrice}</LabButton>
+          <LabButton onClick={() => upgradeCapacity()}>
+            <LuPackagePlus /> ${plot.lab?.upgradeCapacityPrice}
+          </LabButton>
+          <LabButton onClick={() => upgradeProduction()}>
+            <MdConveyorBelt /> ${plot.lab?.upgradeProductionPrice}
+          </LabButton>
         </div>
         <CloseButton onClick={onClose}>Close</CloseButton>
       </ModalContent>

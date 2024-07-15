@@ -13,23 +13,21 @@ import { IUserInfo } from "../interfaces/user.interface";
 import { IUpgradesCategory } from "../interfaces/upgrade.interface";
 
 interface ShopProps {
-  cashAmount: number;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
+  userInfo: IUserInfo;
   activeTab: string;
   upgradesData: IUpgradesCategory[] | undefined;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<
     React.SetStateAction<IUpgradesCategory[] | undefined>
   >;
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
 }
 
 export const Shop: React.FC<ShopProps> = ({
-  cashAmount,
-  setCashAmount,
+  userInfo,
   activeTab,
   upgradesData,
-  setUpgrades,
   setUserInfo,
+  setUpgrades,
 }) => {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
@@ -71,13 +69,12 @@ export const Shop: React.FC<ShopProps> = ({
       <FlexBoxRow>
         <UpgradeContainer>
           <RenderUpgrades
+            userInfo={userInfo}
             tab={currentTab}
             upgradesData={upgradesData}
-            cashAmount={cashAmount}
-            setCashAmount={setCashAmount}
             setTouchPoints={setTouchPoints}
-            setUpgrades={setUpgrades}
             setUserInfo={setUserInfo}
+            setUpgrades={setUpgrades}
           />
         </UpgradeContainer>
       </FlexBoxRow>

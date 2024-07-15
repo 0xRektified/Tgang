@@ -16,11 +16,10 @@ export function useBuyUpgrades() {
 
   const buyUpgrade = async (
     upgrade: IUpgrade,
-    setCashAmount: React.Dispatch<React.SetStateAction<number>>,
     setUpgrades: React.Dispatch<
       React.SetStateAction<IUpgradesCategory[] | undefined>
     >,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
     setLoading(true);
     setError(null);
@@ -31,10 +30,9 @@ export function useBuyUpgrades() {
         group: upgrade.group,
       });
       const newUserInfo = response.data as IUserInfo;
-      const newCashAmount = newUserInfo.cashAmount;
-      const updatedUpgrades = newUserInfo.upgrades;
+      setUserInfo(newUserInfo);
 
-      setCashAmount(newCashAmount);
+      const updatedUpgrades = newUserInfo.upgrades;
 
       setUpgrades((prevUpgrades) => {
         if (!prevUpgrades) return prevUpgrades;
@@ -43,17 +41,6 @@ export function useBuyUpgrades() {
           return {
             ...category,
             upgrades: category.upgrades.map((upgrade) => {
-              if (upgrade.group == "gear") {
-                const carryingGear = newUserInfo.carryingGear.find((g) => g.id === upgrade.id);
-                if (carryingGear) {
-                  return {
-                    ...upgrade,
-                    level: 1,
-                    locked: true,
-                  };
-                }
-              }
-
               const updatedUpgrade = updatedUpgrades.find(
                 (u: IUserUpgrade) => u.id === upgrade.id
               );
@@ -68,18 +55,6 @@ export function useBuyUpgrades() {
             }),
           };
         });
-      });
-
-      setUserInfo((prevUserInfo) => {
-        if (!prevUserInfo) return newUserInfo;
-
-        const updatedUserInfo = {
-          ...prevUserInfo,
-          cashAmount: newUserInfo.cashAmount,
-          upgrades: newUserInfo.upgrades,
-          products: newUserInfo.products,
-        };
-        return updatedUserInfo;
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {

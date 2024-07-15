@@ -59,32 +59,30 @@ const Button = styled.button`
 `;
 
 interface RenderUpgradesProps {
+  userInfo: IUserInfo;
   tab: string;
   upgradesData: IUpgradesCategory[] | undefined;
-  cashAmount: number;
-  setCashAmount: React.Dispatch<React.SetStateAction<number>>;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<
     React.SetStateAction<IUpgradesCategory[] | undefined>
   >;
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo | undefined>>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
+  userInfo,
   tab,
   upgradesData,
-  cashAmount,
-  setCashAmount,
   setTouchPoints,
-  setUpgrades,
   setUserInfo,
+  setUpgrades,
 }) => {
   const { buyUpgrade } = useBuyUpgrades();
 
   const handleBuyUpgrade = async (upgrade: IUpgrade, touch: React.Touch) => {
     const cost = upgrade.levelPrices[upgrade.level];
-    if (cashAmount >= cost && upgrade.level < upgrade.maxLevel) {
-      await buyUpgrade(upgrade, setCashAmount, setUpgrades, setUserInfo);
+    if (userInfo.cashAmount >= cost && upgrade.level < upgrade.maxLevel) {
+      await buyUpgrade(upgrade, setUpgrades, setUserInfo);
 
       const newTouchPoint = {
         id: Date.now(),
