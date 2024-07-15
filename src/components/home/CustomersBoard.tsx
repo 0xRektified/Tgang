@@ -4,6 +4,17 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { LastTransaction } from "./LastTransaction";
 import { Transaction } from "./utils/types";
 
+const CustomerBoardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 6em;
+  width: 100%;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  padding: 0 !important;
+`;
+
 const ScrollableContainer = styled.div`
   max-height: 100vh;
   overflow-y: auto;
@@ -117,7 +128,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
   transaction,
 }) => {
   return (
-    <>
+    <CustomerBoardContainer className="bg-zinc-800">
       <HeaderRow>
         <LastTransaction
           transaction={transaction}
@@ -128,7 +139,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
         <CustomerListContainer>
           {customers.length > 0 ? (
             customers
-              .slice(0, 40)
+              .slice(0, 32)
               .map((emoji, index) => (
                 <CustomerEmoji key={index}>{emoji}</CustomerEmoji>
               ))
@@ -139,6 +150,6 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
           )}
         </CustomerListContainer>
       </ScrollableContainer>
-    </>
+    </CustomerBoardContainer>
   );
 };

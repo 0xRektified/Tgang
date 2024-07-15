@@ -27,7 +27,7 @@ export const handleTransaction = (
   marketInfo: IMarketInfo | undefined
 ): {
   updatedProducts: Product[];
-  transaction: Transaction | null;
+  transaction: Transaction;
   cashState: number;
 } => {
   let amountEarned = 0;
@@ -92,5 +92,13 @@ export const handleTransaction = (
     }
   }
 
-  return { updatedProducts: userInfo.products, transaction: null, cashState };
+  return {
+    updatedProducts: userInfo.products,
+    transaction: {
+      type: "missed",
+      product: "Unknown",
+      quantity: 0,
+    } as Transaction,
+    cashState,
+  };
 };

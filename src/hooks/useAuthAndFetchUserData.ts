@@ -23,7 +23,6 @@ export function useAuthAndFetchUserData(
         const parsedQuery = queryString.parse(decodedInput);
         const sanitizeQuery = (query: Record<string, any>) => {
           const sanitizedQuery: Record<string, any> = {};
-
           if (query.query_id && typeof query.query_id === "string") {
             sanitizedQuery.query_id = validator.escape(query.query_id);
           }
@@ -47,14 +46,11 @@ export function useAuthAndFetchUserData(
           }
           return sanitizedQuery;
         };
-
         const sanitizedResult = sanitizeQuery(parsedQuery);
-
         const response = await axios.post<{ access_token: string }>(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
           sanitizedResult
         );
-
         const { access_token } = response.data;
 
         localStorage.setItem("jwtToken", access_token);

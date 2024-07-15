@@ -1,61 +1,38 @@
 import { useEffect, useRef, useState } from "react";
-import useSellProduct from "./useSellProduct";
-import { IUserInfo, Product } from "../components/interfaces/user.interface";
-import { ICustomerInfo } from "../components/interfaces/customer.interface";
 
-type BatchMap = Map<string, number>;
-
-const useBatchSell = (
+export const useBatchSell = (
   marketId: string,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
-  setCustomers: React.Dispatch<React.SetStateAction<string[]>>
+  handleSell: (
+    marketId: string,
+    batch: { product: string; amountToSell: number }[]
+  ) => Promise<void>
 ) => {
-  const [batch, setBatch] = useState<BatchMap>(new Map());
-  const { sellProduct, loading, error } = useSellProduct();
-  const timer = useRef<NodeJS.Timeout | null>(null);
+  const [batch, setBatch] = useState<Map<string, number>>(new Map());
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timerTrigger = 2000;
-  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
-    if (batch.size === 0) return;
-
-    if (timer.current) {
-      clearTimeout(timer.current);
-    }
-
-    if (batch.size >= 50) {
-      sendBatch();
-    } else {
-      timer.current = setTimeout(() => {
+    intervalRef.current = setInterval(() => {
+      if (batch.size > 0) {
         sendBatch();
-      }, timerTrigger);
-    }
+      }
+    }, timerTrigger);
 
     return () => {
-      if (timer.current) {
-        clearTimeout(timer.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
     };
   }, [batch]);
 
   const sendBatch = async () => {
     if (batch.size === 0) return;
-    try {
-      const batchArray = Array.from(batch, ([product, amountToSell]) => ({
-        product,
-        amountToSell,
-      }));
-      console.log(`batchArray`);
-      console.log(batchArray);
-      const response = await sellProduct(marketId, batchArray, setUserInfo);
-      setBatch(new Map());
-      setUserInfo((prevUserInfo) => {
-        setCustomers((prevCustomers) => prevCustomers.slice(batch.size));
-        return { ...prevUserInfo, ...response.data };
-      });
-    } catch (error) {
-      console.error("Failed to send batch", error);
-    }
+    const batchArray = Array.from(batch, ([product, amountToSell]) => ({
+      product,
+      amountToSell,
+    }));
+    setBatch(new Map());
+    await handleSell(marketId, batchArray);
   };
 
   const addToBatch = (product: string, amountToSell: number) => {
@@ -70,7 +47,5 @@ const useBatchSell = (
     });
   };
 
-  return { addToBatch, loading, error };
+  return { addToBatch };
 };
-
-export default useBatchSell;

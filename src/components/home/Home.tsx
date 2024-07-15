@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import { CustomersBoard, getRandomEmoji } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
@@ -8,10 +15,21 @@ import { TouchPoints } from "../utils/touchPoints";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
 import { marketId } from "../../mocks/backend.mock";
-import useBatchSell from "../../hooks/useBatchSell";
 import { IMarketInfo } from "../interfaces/market.interface";
 import { getUnixTime } from "date-fns";
 import { EDealerUpgrade } from "../interfaces/upgrade.interface";
+import styled from "styled-components";
+import useCustomerManagement from "../../hooks/useCustomerManagement";
+import { useBatchSell } from "../../hooks/useBatchSell";
+
+const HomeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+`;
 
 interface HomeProps {
   userInfo: IUserInfo;
@@ -29,21 +47,20 @@ export const Home: React.FC<HomeProps> = ({
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const [customers, setCustomers] = useState<string[]>(() => {
-    const initialCustomers = Math.max(0, userInfo.customerAmount);
-    return Array(initialCustomers)
-      .fill(null)
-      .map(() => getRandomEmoji());
-  });
+  const { customers, setCustomers, handleSell } = useCustomerManagement(
+    userInfo,
+    setUserInfo
+  );
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
-  const { addToBatch, loading, error } = useBatchSell(
-    marketId,
-    setUserInfo,
-    setCustomers
+
+  const { addToBatch } = useBatchSell(
+    marketInfo?.id || "", // Pass marketId here
+    handleSell // Pass handleSell to synchronize customer count after selling
   );
+
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -55,30 +72,6 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const updatedCustomerAmount = calculateCustomers();
-      setUserInfo((prevUser) => ({
-        ...prevUser,
-        customerAmount: updatedCustomerAmount,
-      }));
-      setCustomers((prevCustomers) => {
-        const newCustomerCount = updatedCustomerAmount - prevCustomers.length;
-        if (newCustomerCount > 0) {
-          const newCustomers = Array(newCustomerCount)
-            .fill(null)
-            .map(() => getRandomEmoji());
-          return [...prevCustomers, ...newCustomers];
-        }
-        return prevCustomers;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [userInfo.lastSell, userInfo.upgrades, userInfo.customerAmountRemaining]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -157,8 +150,6 @@ export const Home: React.FC<HomeProps> = ({
         amountEarned: 0,
       };
 
-      let _updatedProducts: Product[] = [];
-      let _cashState: number = userInfo.cashAmount;
       if (
         !slottedProductToSell ||
         slottedProductToSell.quantity < amountToSell
@@ -176,8 +167,6 @@ export const Home: React.FC<HomeProps> = ({
           amountToSell,
           marketInfo
         );
-        _updatedProducts = updatedProducts;
-        _cashState = cashState;
         setLastTransaction(transaction);
 
         newTouchPoint = {
@@ -188,22 +177,13 @@ export const Home: React.FC<HomeProps> = ({
         };
 
         addToBatch(product, amountToSell);
-      }
-
-      setUserInfo((prevUser) => {
-        if (!prevUser) return prevUser;
-
-        return {
+        setCustomers((prevCustomers) => prevCustomers.slice(1));
+        setUserInfo((prevUser) => ({
           ...prevUser,
-          products:
-            _updatedProducts.length > 0 ? _updatedProducts : prevUser.products,
-          customerAmount: prevUser.customerAmount - 1,
-          cashAmount: _cashState,
-        };
-      });
-
-      setCustomers((prevCustomers) => prevCustomers.slice(1));
-
+          cashAmount: cashState,
+          products: updatedProducts,
+        }));
+      }
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
 
@@ -220,53 +200,14 @@ export const Home: React.FC<HomeProps> = ({
     }
   };
 
-  const calculateCustomers = () => {
-    const now = new Date();
-    const nowUTC = new Date(
-      Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate(),
-        now.getUTCHours(),
-        now.getUTCMinutes(),
-        now.getUTCSeconds()
-      )
-    );
-
-    const serverTime = getUnixTime(new Date(userInfo.lastSell));
-    const feTime = getUnixTime(nowUTC);
-    const diff = feTime - serverTime;
-    const customerAmountUpgrade = userInfo.upgrades.find(
-      (e) => e.id === EDealerUpgrade.CUSTOMER_AMOUNT
-    );
-    if (!customerAmountUpgrade) {
-      return 0;
-    }
-    const customerAmountMax =
-      customerAmountUpgrade.value[customerAmountUpgrade.level];
-    let newCustomers = 0;
-
-    if (diff > 3600) {
-      newCustomers = Math.floor(customerAmountMax);
-    } else {
-      newCustomers = Math.floor((diff / 3600) * customerAmountMax);
-    }
-    return Math.min(
-      userInfo.customerAmountRemaining + newCustomers,
-      customerAmountMax
-    );
-  };
-
   return (
-    <>
+    <HomeContainer>
       <ClickableAreaWithSmoke
         products={userInfo.products}
         handleTouchStart={handleTouchStart}
         pressed={pressed}
       />
-      <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
-        <CustomersBoard customers={customers} transaction={lastTransaction} />
-      </div>
+      <CustomersBoard customers={customers} transaction={lastTransaction} />
       <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (
         <InventoryModal
@@ -276,6 +217,6 @@ export const Home: React.FC<HomeProps> = ({
           handleCloseModal={handleCloseModal}
         />
       )}
-    </>
+    </HomeContainer>
   );
 };
