@@ -83,10 +83,10 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 }) => {
   const lab = plot.lab!;
 
-  // alert(lab.collectTime);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [produced, setProduction] = useState(lab.produced);
-  const collectTimeRef = useRef(lab.collectTime);
+  const [collectTime, setCollectTime] = useState(lab.collectTime);
+  const collectTimeRef = useRef(collectTime);
   const { collectLabProduct } = useCollectLabProduct();
 
   const updateProduction = () => {
@@ -99,11 +99,12 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   const collectProduct = () => {
     collectLabProduct(plot.plotId, setUserInfo);
+    setCollectTime(new Date());
   };
 
   useEffect(() => {
-    collectTimeRef.current = lab.collectTime;
-  }, [lab.collectTime]);
+    collectTimeRef.current = collectTime;
+  }, [collectTime]);
 
   useEffect(() => {
     const interval = setInterval(() => updateProduction(), 1000);
