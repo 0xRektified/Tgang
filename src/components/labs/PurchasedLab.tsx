@@ -82,27 +82,26 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   handleOpenPurchasedLabModal,
 }) => {
   const lab = plot.lab!;
+
+  // alert(lab.collectTime);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [produced, setProduction] = useState(lab.produced);
+  const [collectTime, setCollectTime] = useState(lab.collectTime);
   const { collectLabProduct } = useCollectLabProduct();
 
   const updateProduction = () => {
     const now = new Date();
-    console.log(now);
-    const diff = getUnixTime(now) - getUnixTime(lab.collectTime);
-    console.log(diff);
-
+    const diff = getUnixTime(now) - getUnixTime(collectTime);
     const productionPerSecond = lab.production / 3600;
-    const produced = Math.floor(productionPerSecond * diff + lab.leftover);
-    console.log(`produced`);
-    console.log(produced);
-
+    const produced = Math.floor(productionPerSecond * diff);
     setProduction(produced);
   };
 
   const collectProduct = () => {
     collectLabProduct(plot.plotId, setUserInfo);
-    setProduction(0);
+    // setProduction(0);
+    console.log("collectProduct");
+    setCollectTime(new Date());
   };
 
   useEffect(() => {

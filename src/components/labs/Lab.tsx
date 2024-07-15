@@ -7,8 +7,6 @@ import PurchasedLab from "./PurchasedLab";
 import {
   IUserInfo,
   LabPlot,
-  Product,
-  UserLab,
 } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
@@ -123,23 +121,6 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     setIsPurchasedLabModalOpen(false);
   };
 
-  const handleSelectLab = (lab: [string, ILab]) => {
-    console.log("Selected Lab:", lab);
-    setIsLabModalOpen(false);
-  };
-
-  const handleUpdateProduction = (lab: UserLab) => {
-    console.log("Update Production for:", lab.title);
-  };
-
-  const handleUpdateCapacity = (lab: UserLab) => {
-    console.log("Update Capacity for:", lab.title);
-  };
-
-  const handleCollectProduct = (lab: UserLab) => {
-    console.log("Update Capacity for:", lab.title);
-  };
-
   const production = {
     [EProduct.WEED]: 0,
     [EProduct.COCAINE]: 0,
@@ -151,22 +132,22 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   userInfo.labPlots.forEach((labPlot) => {
     switch (labPlot.lab?.product) {
       case EProduct.WEED:
-        production[EProduct.WEED] = labPlot.lab.production;
+        production[EProduct.WEED] += labPlot.lab.production;
         break;
       case EProduct.COCAINE:
-        production[EProduct.COCAINE] = labPlot.lab.production;
+        production[EProduct.COCAINE] += labPlot.lab.production;
         break;
       case EProduct.METH:
-        production[EProduct.METH] = labPlot.lab.production;
+        production[EProduct.METH] += labPlot.lab.production;
         break;
       case EProduct.HEROIN:
-        production[EProduct.HEROIN] = labPlot.lab.production;
+        production[EProduct.HEROIN] += labPlot.lab.production;
         break;
       case EProduct.LSD:
-        production[EProduct.LSD] = labPlot.lab.production;
+        production[EProduct.LSD] += labPlot.lab.production;
         break;
       case EProduct.MDMA:
-        production[EProduct.MDMA] = labPlot.lab.production;
+        production[EProduct.MDMA] += labPlot.lab.production;
         break;
     }
   });

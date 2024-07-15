@@ -12,7 +12,6 @@ export interface UserLab {
   upgradeProductionPrice: number;
   collectTime: Date;
   produced: number;
-  leftover: number;
 }
 
 export interface LabPlot {
