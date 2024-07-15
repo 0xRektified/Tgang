@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GiHandTruck } from "react-icons/gi";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo, LabPlot } from "../interfaces/user.interface";
-import { getUnixTime } from "date-fns";
+import { getUnixTime, set } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 
 const PurchasedLabContainer = styled.div`
@@ -86,12 +86,12 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   // alert(lab.collectTime);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [produced, setProduction] = useState(lab.produced);
-  const [collectTime, setCollectTime] = useState(lab.collectTime);
+  const collectTimeRef = useRef(lab.collectTime);
   const { collectLabProduct } = useCollectLabProduct();
 
   const updateProduction = () => {
     const now = new Date();
-    const diff = getUnixTime(now) - getUnixTime(collectTime);
+    const diff = getUnixTime(now) - getUnixTime(collectTimeRef.current);
     const productionPerSecond = lab.production / 3600;
     const produced = Math.floor(productionPerSecond * diff);
     setProduction(produced);
@@ -99,10 +99,11 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   const collectProduct = () => {
     collectLabProduct(plot.plotId, setUserInfo);
-    // setProduction(0);
-    console.log("collectProduct");
-    setCollectTime(new Date());
   };
+
+  useEffect(() => {
+    collectTimeRef.current = lab.collectTime;
+  }, [lab.collectTime]);
 
   useEffect(() => {
     const interval = setInterval(() => updateProduction(), 1000);
