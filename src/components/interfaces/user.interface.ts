@@ -53,4 +53,6 @@ export interface IUserInfo {
   referralToken: string;
   referredUsers: string[];
   customerAmount: number;
+  lastSell: Date;
+  customerAmountRemaining: number;
 }

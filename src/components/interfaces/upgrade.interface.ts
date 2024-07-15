@@ -1,3 +1,12 @@
+export enum EDealerUpgrade {
+  WEED = 1000,
+  COKE = 1001,
+  METH = 1002,
+  HEROIN = 1003,
+  CUSTOMER_AMOUNT = 1004,
+  CUSTOMER_NEEDS = 1005,
+}
+
 export interface IRequirement {
   title: string;
   level: number;

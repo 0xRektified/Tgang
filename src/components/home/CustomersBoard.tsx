@@ -30,6 +30,7 @@ const CustomerListContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   max-width: 100%;
+  height: 5em;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
 
@@ -48,7 +49,7 @@ const CustomerListContainer = styled.div`
 `;
 
 const CustomerEmoji = styled.span`
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin: 0.2rem;
 `;
 
@@ -123,7 +124,7 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
       <ScrollableContainer>
         <CustomerListContainer>
           {customers > 0 ? (
-            Array.from({ length: Math.min(customers, 40) }, (_, index) => (
+            Array.from({ length: Math.min(customers, 28) }, (_, index) => (
               <CustomerEmoji key={index}>
                 {emojiList[index % emojiList.length]}
               </CustomerEmoji>

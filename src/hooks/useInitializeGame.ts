@@ -10,14 +10,16 @@ import { useFetchLabs } from "./useFetchLabs";
 const defaultUserInfo: IUserInfo = {
   id: "",
   username: "",
-  cashAmount: 0,
+  cashAmount: 1000,
   products: [],
   upgrades: [],
   labPlots: [],
   labPlotPrice: 0,
   referralToken: "",
   referredUsers: [],
-  customerAmount: 0,
+  customerAmount: 3600,
+  lastSell: new Date(),
+  customerAmountRemaining: 3600,
 };
 
 export function useInitializeGame() {

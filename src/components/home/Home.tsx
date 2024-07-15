@@ -11,6 +11,8 @@ import { ICustomerInfo } from "../interfaces/customer.interface";
 import { marketId } from "../../mocks/backend.mock";
 import useBatchSell from "../../hooks/useBatchSell";
 import { IMarketInfo } from "../interfaces/market.interface";
+import { getUnixTime } from "date-fns";
+import { EDealerUpgrade } from "../interfaces/upgrade.interface";
 
 interface HomeProps {
   userInfo: IUserInfo;
@@ -44,6 +46,20 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const updatedCustomerAmount = calculateCustomers();
+      setUserInfo((prevUser) => ({
+        ...prevUser,
+        customerAmount: updatedCustomerAmount,
+      }));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [userInfo.lastSell, userInfo.upgrades, userInfo.customerAmountRemaining]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -184,6 +200,45 @@ export const Home: React.FC<HomeProps> = ({
     }
   };
 
+  const calculateCustomers = () => {
+    // Get the current time in UTC
+    const now = new Date();
+    const nowUTC = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds()
+      )
+    ); // Create a new Date object in UTC
+
+    // Ensure 'userInfo.lastSell' is treated as a Date object in UTC
+    const serverTime = getUnixTime(new Date(userInfo.lastSell));
+    const feTime = getUnixTime(nowUTC); // Get the Unix timestamp in seconds
+    const diff = feTime - serverTime;
+    const customerAmountUpgrade = userInfo.upgrades.find(
+      (e) => e.id === EDealerUpgrade.CUSTOMER_AMOUNT
+    );
+    if (!customerAmountUpgrade) {
+      return 0;
+    }
+    const customerAmountMax =
+      customerAmountUpgrade.value[customerAmountUpgrade.level];
+    let newCustomers = 0;
+
+    if (diff > 3600) {
+      newCustomers = Math.floor(customerAmountMax);
+    } else {
+      newCustomers = Math.floor((diff / 3600) * customerAmountMax);
+    }
+    return Math.min(
+      userInfo.customerAmountRemaining + newCustomers,
+      customerAmountMax
+    );
+  };
+
   return (
     <>
       <ClickableAreaWithSmoke
@@ -193,8 +248,7 @@ export const Home: React.FC<HomeProps> = ({
       />
       <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
         <CustomersBoard
-          // customers={userInfo.customerAmount}
-          customers={200}
+          customers={userInfo.customerAmount}
           transaction={lastTransaction}
         />
       </div>
