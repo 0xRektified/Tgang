@@ -1,13 +1,12 @@
 import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { CustomersBoard } from "./CustomersBoard";
+import { CustomersBoard, getRandomEmoji } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
-import { ICustomerInfo } from "../interfaces/customer.interface";
 import { marketId } from "../../mocks/backend.mock";
 import useBatchSell from "../../hooks/useBatchSell";
 import { IMarketInfo } from "../interfaces/market.interface";
@@ -30,11 +29,21 @@ export const Home: React.FC<HomeProps> = ({
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
+  const [customers, setCustomers] = useState<string[]>(() => {
+    const initialCustomers = Math.max(0, userInfo.customerAmount);
+    return Array(initialCustomers)
+      .fill(null)
+      .map(() => getRandomEmoji());
+  });
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
-  const { addToBatch, loading, error } = useBatchSell(marketId, setUserInfo);
+  const { addToBatch, loading, error } = useBatchSell(
+    marketId,
+    setUserInfo,
+    setCustomers
+  );
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -54,6 +63,16 @@ export const Home: React.FC<HomeProps> = ({
         ...prevUser,
         customerAmount: updatedCustomerAmount,
       }));
+      setCustomers((prevCustomers) => {
+        const newCustomerCount = updatedCustomerAmount - prevCustomers.length;
+        if (newCustomerCount > 0) {
+          const newCustomers = Array(newCustomerCount)
+            .fill(null)
+            .map(() => getRandomEmoji());
+          return [...prevCustomers, ...newCustomers];
+        }
+        return prevCustomers;
+      });
     }, 1000);
 
     return () => {
@@ -183,10 +202,11 @@ export const Home: React.FC<HomeProps> = ({
         };
       });
 
+      setCustomers((prevCustomers) => prevCustomers.slice(1));
+
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setPressed(true);
 
-      //@note disabled sound for now it seems to be creating a lag
       if (newTouchPoint.amountEarned) {
         playSound();
       }
@@ -201,7 +221,6 @@ export const Home: React.FC<HomeProps> = ({
   };
 
   const calculateCustomers = () => {
-    // Get the current time in UTC
     const now = new Date();
     const nowUTC = new Date(
       Date.UTC(
@@ -212,11 +231,10 @@ export const Home: React.FC<HomeProps> = ({
         now.getUTCMinutes(),
         now.getUTCSeconds()
       )
-    ); // Create a new Date object in UTC
+    );
 
-    // Ensure 'userInfo.lastSell' is treated as a Date object in UTC
     const serverTime = getUnixTime(new Date(userInfo.lastSell));
-    const feTime = getUnixTime(nowUTC); // Get the Unix timestamp in seconds
+    const feTime = getUnixTime(nowUTC);
     const diff = feTime - serverTime;
     const customerAmountUpgrade = userInfo.upgrades.find(
       (e) => e.id === EDealerUpgrade.CUSTOMER_AMOUNT
@@ -247,10 +265,7 @@ export const Home: React.FC<HomeProps> = ({
         pressed={pressed}
       />
       <div className="bg-zinc-800 text-white px-4 rounded shadow-lg">
-        <CustomersBoard
-          customers={userInfo.customerAmount}
-          transaction={lastTransaction}
-        />
+        <CustomersBoard customers={customers} transaction={lastTransaction} />
       </div>
       <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (

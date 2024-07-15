@@ -7,7 +7,8 @@ type BatchMap = Map<string, number>;
 
 const useBatchSell = (
   marketId: string,
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
+  setCustomers: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   const [batch, setBatch] = useState<BatchMap>(new Map());
   const { sellProduct, loading, error } = useSellProduct();
@@ -46,8 +47,12 @@ const useBatchSell = (
       }));
       console.log(`batchArray`);
       console.log(batchArray);
-      await sellProduct(marketId, batchArray, setUserInfo);
+      const response = await sellProduct(marketId, batchArray, setUserInfo);
       setBatch(new Map());
+      setUserInfo((prevUserInfo) => {
+        setCustomers((prevCustomers) => prevCustomers.slice(batch.size));
+        return { ...prevUserInfo, ...response.data };
+      });
     } catch (error) {
       console.error("Failed to send batch", error);
     }

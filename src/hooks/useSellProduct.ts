@@ -14,19 +14,19 @@ const useSellProduct = () => {
     setLoading(true);
     setError(null);
 
-    console.log(`batch when selling`);
-    console.log(batch);
     try {
       const response = await axiosInstance.post(`/products/${marketId}/sell`, {
         batch,
       });
       setUserInfo(response.data);
+      return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
       } else {
         setError("An unexpected error occurred");
       }
+      throw error;
     } finally {
       setLoading(false);
     }

@@ -30,7 +30,6 @@ const CustomerListContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   max-width: 100%;
-  height: 5em;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
 
@@ -49,7 +48,7 @@ const CustomerListContainer = styled.div`
 `;
 
 const CustomerEmoji = styled.span`
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin: 0.2rem;
 `;
 
@@ -60,11 +59,6 @@ const HeaderRow = styled(FlexBoxRow)`
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 `;
-
-interface CustomersBoardProps {
-  customers: number;
-  transaction: Transaction | null;
-}
 
 const emojiList = [
   "👶",
@@ -109,6 +103,15 @@ const emojiList = [
   "🧔🏾",
 ];
 
+interface CustomersBoardProps {
+  customers: string[];
+  transaction: Transaction | null;
+}
+
+export const getRandomEmoji = () => {
+  return emojiList[Math.floor(Math.random() * emojiList.length)];
+};
+
 export const CustomersBoard: React.FC<CustomersBoardProps> = ({
   customers,
   transaction,
@@ -118,17 +121,17 @@ export const CustomersBoard: React.FC<CustomersBoardProps> = ({
       <HeaderRow>
         <LastTransaction
           transaction={transaction}
-          waitingCustomersCount={customers}
+          waitingCustomersCount={customers.length}
         />
       </HeaderRow>
       <ScrollableContainer>
         <CustomerListContainer>
-          {customers > 0 ? (
-            Array.from({ length: Math.min(customers, 28) }, (_, index) => (
-              <CustomerEmoji key={index}>
-                {emojiList[index % emojiList.length]}
-              </CustomerEmoji>
-            ))
+          {customers.length > 0 ? (
+            customers
+              .slice(0, 40)
+              .map((emoji, index) => (
+                <CustomerEmoji key={index}>{emoji}</CustomerEmoji>
+              ))
           ) : (
             <CustomerEmoji>
               it's night time no more customers... Please wait
