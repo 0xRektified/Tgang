@@ -93,7 +93,10 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
     const now = new Date();
     const diff = getUnixTime(now) - getUnixTime(collectTimeRef.current);
     const productionPerSecond = lab.production / 3600;
-    const produced = Math.floor(productionPerSecond * diff);
+    let produced = Math.floor(productionPerSecond * diff);
+    if (produced < 0) {
+      produced = 0;
+    }
     setProduction(produced);
   };
 
