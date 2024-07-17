@@ -1,5 +1,5 @@
 import userCharacter from "/assets/user_no_background.png";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
@@ -68,14 +68,21 @@ const ProductsList = styled.div`
   flex-grow: 0;
   flex-shrink: 0;
   align-self: flex-start;
+  position: absolute;
+  bottom: 100;
+  right: 0;
+  z-index: 2;
 `;
 
-const ProductRow = styled(FlexBoxRow)`
+const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
   justify-content: space-between;
   align-items: center;
   padding: 0.3rem;
   margin-bottom: 0.3rem;
   transition: transform 0.2s;
+  border: ${(props) => (props.isSelected ? "2px solid  #ffd70012" : "none")};
+  border-radius: 5px;
+  background-color: ${(props) => (props.isSelected ? " #ffd7001a" : "none")};
 
   &:hover {
     transform: translateY(-5px);
@@ -126,12 +133,16 @@ interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
   pressed: boolean;
+  selectedProduct: string;
+  setSelectedProduct: Dispatch<SetStateAction<string>>;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   products,
   handleTouchStart,
   pressed,
+  selectedProduct,
+  setSelectedProduct,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
 
@@ -156,50 +167,38 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   }, []);
 
   return (
-    <ClickableArea onTouchStart={handleTouchStart}>
-      {smokes}
-      <NeonText>TAP TO SELL</NeonText>
+    <>
+      <ClickableArea onTouchStart={handleTouchStart}>
+        {smokes}
+        <NeonText>TAP TO SELL</NeonText>
 
-      <ImageContainer className={pressed ? "pressed" : ""}>
-        <img
-          src={userCharacter}
-          alt="Logo"
-          style={{ maxWidth: "200px", paddingTop: "25px" }}
-        />
-      </ImageContainer>
+        <ImageContainer className={pressed ? "pressed" : ""}>
+          <img
+            src={userCharacter}
+            alt="Logo"
+            style={{ maxWidth: "200px", paddingTop: "25px" }}
+          />
+        </ImageContainer>
+      </ClickableArea>
       <ProductsList>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);
           const quantity = product ? product.quantity : 0;
-          return index % 2 === 0 ? (
+          return (
             <FlexBoxRow key={productName}>
-              <ProductRow>
+              <ProductRow
+                isSelected={selectedProduct === productName}
+                onClick={() => setSelectedProduct(productName)}
+              >
                 <ProductNameD>
-                  {EProductIcon[productName as keyof typeof EProductIcon]} X{" "}
-                  {quantity}
+                  {quantity}{" "}
+                  {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductNameD>
               </ProductRow>
-              {Object.values(EProduct)[index + 1] && (
-                <ProductRow>
-                  <ProductNameD>
-                    {
-                      EProductIcon[
-                        Object.values(EProduct)[
-                          index + 1
-                        ] as keyof typeof EProductIcon
-                      ]
-                    }{" "}
-                    X{" "}
-                    {products.find(
-                      (p) => p.name === Object.values(EProduct)[index + 1]
-                    )?.quantity || 0}
-                  </ProductNameD>
-                </ProductRow>
-              )}
             </FlexBoxRow>
-          ) : null;
+          );
         })}
       </ProductsList>
-    </ClickableArea>
+    </>
   );
 };

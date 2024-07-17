@@ -21,6 +21,7 @@ import { EDealerUpgrade } from "../interfaces/upgrade.interface";
 import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
+import { EProduct } from "../interfaces/product.interface";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -45,6 +46,8 @@ export const Home: React.FC<HomeProps> = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
+  const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.WEED);
+
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const { customers, setCustomers, handleSell } = useCustomerManagement(
@@ -134,13 +137,11 @@ export const Home: React.FC<HomeProps> = ({
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
 
     if (userInfo.customerAmount) {
-      // @note TODO update that with a selector in the FE to know which product to sell
-      const product = "Weed";
       // @note TODO update that with the value in upgrade customer needs
       const amountToSell = 1;
 
       const slottedProductToSell = slottedProducts.find(
-        (p) => p.name === product
+        (p) => p.name === selectedProduct
       );
 
       let newTouchPoint = {
@@ -156,14 +157,14 @@ export const Home: React.FC<HomeProps> = ({
       ) {
         setLastTransaction({
           type: "missed",
-          product: product || "Unknown",
+          product: selectedProduct || "Unknown",
           quantity: amountToSell,
         });
       } else {
         const { updatedProducts, transaction, cashState } = handleTransaction(
           userInfo,
           slottedProducts,
-          product,
+          selectedProduct,
           amountToSell,
           marketInfo
         );
@@ -176,7 +177,7 @@ export const Home: React.FC<HomeProps> = ({
           amountEarned: transaction?.amountEarned || 0,
         };
 
-        addToBatch(product, amountToSell);
+        addToBatch(selectedProduct, amountToSell);
         setCustomers((prevCustomers) => prevCustomers.slice(1));
         setUserInfo((prevUser) => ({
           ...prevUser,
@@ -206,6 +207,8 @@ export const Home: React.FC<HomeProps> = ({
         products={userInfo.products}
         handleTouchStart={handleTouchStart}
         pressed={pressed}
+        selectedProduct={selectedProduct}
+        setSelectedProduct={setSelectedProduct}
       />
       <CustomersBoard customers={customers} transaction={lastTransaction} />
       <TouchPoints touchPoints={touchPoints} />

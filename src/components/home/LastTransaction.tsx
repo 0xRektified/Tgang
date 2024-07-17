@@ -39,7 +39,7 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
         transaction.type === "success" ? (
           <TransactionStatus>
             🤑 Sold {transaction.quantity} {transaction.product} $
-            {transaction.amountEarned}
+            {transaction.amountEarned?.toFixed(0)}
           </TransactionStatus>
         ) : (
           <TransactionStatus>
