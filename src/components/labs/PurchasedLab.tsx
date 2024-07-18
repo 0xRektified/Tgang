@@ -17,11 +17,6 @@ const PurchasedLabContainer = styled.div`
   position: relative;
 `;
 
-const LabImage = styled.img`
-  height: 4rem;
-  width: 4rem;
-`;
-
 const LabInfo = styled.div`
   text-align: center;
   color: white;
@@ -91,6 +86,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   const [collecting, setCollecting] = useState(false);
   const collectTimeRef = useRef(collectTime);
   const { collectLabProduct } = useCollectLabProduct();
+  const [noProductAnimation, setNoProductAnimation] = useState(false);
 
   const updateProduction = () => {
     const now = new Date();
@@ -112,21 +108,28 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   };
 
   const collectProduct = () => {
-    setCollecting(true);
+    if (produced > 0) {
+      setCollecting(true);
+      setNoProductAnimation(true);
 
-    const hapticCount = Math.min(produced, 10);
-    const interval = 1000 / hapticCount;
-    for (let i = 0; i < hapticCount; i++) {
-      setTimeout(
-        () => WebApp.HapticFeedback.impactOccurred("heavy"),
-        i * interval
-      );
+      const hapticCount = Math.min(produced, 10);
+      const interval = 1000 / hapticCount;
+      for (let i = 0; i < hapticCount; i++) {
+        setTimeout(
+          () => WebApp.HapticFeedback.impactOccurred("heavy"),
+          i * interval
+        );
+      }
+      setTimeout(() => {
+        setCollecting(false);
+        collectLabProduct(plot.plotId, setUserInfo);
+        setCollectTime(new Date());
+      }, 1000);
+      setTimeout(() => {
+        setNoProductAnimation(false);
+      }, 500);
+    } else {
     }
-    setTimeout(() => {
-      setCollecting(false);
-      collectLabProduct(plot.plotId, setUserInfo);
-      setCollectTime(new Date());
-    }, 1000);
   };
 
   useEffect(() => {
@@ -146,7 +149,10 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   return (
     <PurchasedLabContainer>
-      <VideoWrapper onClick={() => collectProduct()}>
+      <VideoWrapper
+        onClick={collectProduct}
+        className={noProductAnimation ? "animate-resize" : ""}
+      >
         <PlaceholderImage
           poster={`/assets/weed_lab_2.png`}
           isVideoLoaded={isVideoLoaded}

@@ -29,6 +29,11 @@ export default {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-200px)" },
         },
+        resize: {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.2)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-out": "fadeOut 1s forwards",
@@ -37,6 +42,7 @@ export default {
         "slide-out-to-right": "slideOutToRight 1s forwards 3s",
         "slide-in-from-right-bounce": "slideInFromRightBounce 1s ease",
         "move-up": "moveUp 1s forwards",
+        resize: "resize 0.5s forwards",
       },
     },
   },
