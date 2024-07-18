@@ -14,7 +14,7 @@ const NeonText = styled.div`
     0 0 20px #ffd700, 0 0 25px #ffd700, 0 0 30px #ffd700, 0 0 35px #ffd700;
   animation: glow 1.5s infinite alternate, pulse 2s infinite;
   position: absolute;
-  top: 15px;
+  top: 0px;
   left: 90px;
   z-index: 1;
 
@@ -34,7 +34,7 @@ const ClickableArea = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 31em;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
@@ -48,7 +48,7 @@ const ImageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 410px;
+  height: 32em;
   flex: 0 0 75%;
   transition: transform 0.15s ease-in-out;
   &.pressed {
@@ -61,7 +61,7 @@ const ProductsList = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 10px;
-  margin-top: 50px;
+  margin-top: 25px;
   border-radius: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
   width: 25%;
@@ -129,12 +129,39 @@ const Smoke = styled.div`
   }
 `;
 
+const NeonButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+`;
+
+const ButtonIcon = styled.span`
+  font-size: 1.5em;
+`;
+
+export const ButtonFlexBoxRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 0px;
+`;
+
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
   pressed: boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
+  handleOpenSupplierModal: () => void;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -143,6 +170,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   pressed,
   selectedProduct,
   setSelectedProduct,
+  handleOpenSupplierModal,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
 
@@ -176,11 +204,15 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           <img
             src={userCharacter}
             alt="Logo"
-            style={{ maxWidth: "200px", paddingTop: "25px" }}
+            style={{ maxWidth: "220px", paddingTop: "25px" }}
           />
         </ImageContainer>
       </ClickableArea>
+
       <ProductsList>
+        <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
+          <div>Buy Drugs</div>
+        </NeonButton>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);
           const quantity = product ? product.quantity : 0;
@@ -191,8 +223,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                 onClick={() => setSelectedProduct(productName)}
               >
                 <ProductNameD>
-                  {quantity}{" "}
-                  {EProductIcon[productName as keyof typeof EProductIcon]}
+                  {EProductIcon[productName as keyof typeof EProductIcon]}{" "}
+                  {quantity}
                 </ProductNameD>
               </ProductRow>
             </FlexBoxRow>

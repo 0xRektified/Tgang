@@ -22,6 +22,8 @@ import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
+import { FlexBoxRow } from "../styled/globalStyled";
+import { SupplierModal } from "./SupplierModal";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -36,12 +38,14 @@ interface HomeProps {
   userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  onUnlockClick: (tab: string) => void;
 }
 
 export const Home: React.FC<HomeProps> = ({
   userInfo,
   marketInfo,
   setUserInfo,
+  onUnlockClick,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -54,7 +58,8 @@ export const Home: React.FC<HomeProps> = ({
     userInfo,
     setUserInfo
   );
-
+  const [isSupplierModalOpen, setIsSupplierModalOpen] =
+    useState<boolean>(false);
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
@@ -75,10 +80,15 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
-
+  const handleCloseSupplierModal = () => {
+    setIsSupplierModalOpen(false);
+  };
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSlot(null);
+  };
+  const handleOpenSupplierModal = () => {
+    setIsSupplierModalOpen(true);
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -135,11 +145,16 @@ export const Home: React.FC<HomeProps> = ({
     const touch = e.touches[0];
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
-
     if (userInfo.customerAmount) {
       // @note TODO update that with the value in upgrade customer needs
-      const amountToSell = 1;
+      const customerProductUpgrade = userInfo.upgrades.find(
+        (p) => p.title === "Customer Needs"
+      );
+      const amountToSell =
+        customerProductUpgrade?.value[customerProductUpgrade.level] || 1;
 
+      console.log(`amountToSell`);
+      console.log(amountToSell);
       const slottedProductToSell = slottedProducts.find(
         (p) => p.name === selectedProduct
       );
@@ -209,6 +224,7 @@ export const Home: React.FC<HomeProps> = ({
         pressed={pressed}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
+        handleOpenSupplierModal={handleOpenSupplierModal}
       />
       <CustomersBoard customers={customers} transaction={lastTransaction} />
       <TouchPoints touchPoints={touchPoints} />
@@ -218,6 +234,16 @@ export const Home: React.FC<HomeProps> = ({
           productsData={userInfo.products}
           handleSelectProductFromInventory={handleSelectProductFromInventory}
           handleCloseModal={handleCloseModal}
+        />
+      )}
+      {isSupplierModalOpen && (
+        <SupplierModal
+          userInfo={userInfo}
+          marketInfo={marketInfo}
+          isOpen={isSupplierModalOpen}
+          onClose={handleCloseSupplierModal}
+          onUnlockClick={onUnlockClick}
+          setUserInfo={setUserInfo}
         />
       )}
     </HomeContainer>

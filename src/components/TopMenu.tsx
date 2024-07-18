@@ -11,54 +11,13 @@ import {
   BalanceAmount,
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
-import { SupplierModal } from "./home/SupplierModal";
 import { IMarketInfo } from "./interfaces/market.interface";
-
-import styled from "styled-components";
-
-const NeonButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 6px;
-  padding: 0.5rem 0.7rem;
-  box-shadow: 0 0 10px #eab308, 0 0 15px #eab308, 0 0 20px #eab308;
-  border: 2px solid #eab308;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.8em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: rgb(24 24 27);
-  }
-`;
-
-const ButtonIcon = styled.span`
-  font-size: 1.5em;
-`;
-
-const NeonText = styled.span``;
 
 interface TopMenuProps {
   userInfo: IUserInfo;
-  marketInfo: IMarketInfo | undefined;
-  onUnlockClick: (tab: string) => void;
-  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
-export const TopMenu: React.FC<TopMenuProps> = ({
-  userInfo,
-  marketInfo,
-  onUnlockClick,
-  setUserInfo,
-}) => {
-  const [isSupplierModalOpen, setIsSupplierModalOpen] =
-    useState<boolean>(false);
+export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -67,14 +26,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({
       });
     }
   }, []);
-
-  const handleOpenSupplierModal = () => {
-    setIsSupplierModalOpen(true);
-  };
-
-  const handleCloseSupplierModal = () => {
-    setIsSupplierModalOpen(false);
-  };
 
   return (
     <TopMenuContainer id="mainView">
@@ -87,34 +38,17 @@ export const TopMenu: React.FC<TopMenuProps> = ({
                 {userInfo ? userInfo.username : `Welcome`}
               </DigitalFont>
             </div>
-            <FlexBoxRow>
+          </FlexBoxCol>
+          <FlexBoxCol>
+            <div className="justify-end space-x-2">
               <DigitalFont as={BalanceLabel}>Cash</DigitalFont>
               <DigitalFont as={BalanceAmount}>
                 ${userInfo.cashAmount.toFixed(0)}
               </DigitalFont>
-            </FlexBoxRow>
+            </div>
           </FlexBoxCol>
-          <FlexBoxCol className="items-end"></FlexBoxCol>
-          <FlexBoxRow className="justify-between items-center">
-            <FlexBoxCol className="flex justify-end mr-5">
-              <NeonButton onClick={handleOpenSupplierModal}>
-                <ButtonIcon>📱</ButtonIcon>
-                <NeonText>Buy Drugs</NeonText>
-              </NeonButton>
-            </FlexBoxCol>
-          </FlexBoxRow>
         </FlexBoxRow>
       </Container>
-      {isSupplierModalOpen && (
-        <SupplierModal
-          userInfo={userInfo}
-          marketInfo={marketInfo}
-          isOpen={isSupplierModalOpen}
-          onClose={handleCloseSupplierModal}
-          onUnlockClick={onUnlockClick}
-          setUserInfo={setUserInfo}
-        />
-      )}
     </TopMenuContainer>
   );
 };

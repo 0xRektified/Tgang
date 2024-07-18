@@ -60,6 +60,7 @@ function App() {
             userInfo={userInfo}
             marketInfo={marketInfo}
             setUserInfo={setUserInfo}
+            onUnlockClick={handleUnlockClick}
           />
         );
       case "Lab":
@@ -102,12 +103,7 @@ function App() {
           id="buffer"
           style={{ height: "500px", backgroundColor: "#1e2734" }}
         ></div>
-        <TopMenu
-          userInfo={userInfo}
-          marketInfo={marketInfo}
-          onUnlockClick={handleUnlockClick}
-          setUserInfo={setUserInfo}
-        />
+        <TopMenu userInfo={userInfo} />
         <FlexBoxColNoGap>{renderCurrentView()}</FlexBoxColNoGap>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
       </AppContainer>
