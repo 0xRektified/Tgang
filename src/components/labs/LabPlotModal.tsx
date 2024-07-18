@@ -3,6 +3,7 @@ import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo } from "../interfaces/user.interface";
 import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
+import { formatPrice } from "../utils/formater";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -18,19 +19,45 @@ const ModalBackground = styled.div`
 `;
 
 const ModalContent = styled.div`
-  @apply bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full;
-`;
-
-const LabItem = styled.div`
-  @apply bg-gray-700 p-4 rounded-lg flex flex-col justify-between;
+  background-color: #1f2937;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
 `;
 
 const LabButton = styled.button`
-  @apply py-2 px-4 mt-2 bg-green-600 rounded-lg hover:bg-green-700 text-white font-bold;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: #10b981;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #059669;
+    transform: scale(1.05);
+  }
 `;
 
 const CloseButton = styled.button`
-  @apply mt-4 py-2 px-4 bg-red-600 rounded-lg hover:bg-red-700 text-white font-bold;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: #ef4444;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #dc2626;
+    transform: scale(1.05);
+  }
 `;
 
 interface LabModalProps {
@@ -52,14 +79,14 @@ const LabModal: React.FC<LabModalProps> = ({
   };
 
   return (
-    <ModalBackground>
+    <ModalBackground onClick={onClose}>
       <ModalContent>
         <h2 className="text-lg font-bold text-white mb-4">
-          Buy Lab Plot for {plotPrice}
+          Buy a new Lab Plot for {formatPrice(plotPrice, false)}
         </h2>
         <div className="grid grid-cols-2 gap-4">
           <LabButton onClick={() => buyAndClose()}>Buy</LabButton>
-          <CloseButton onClick={onClose}>Close</CloseButton>
+          <CloseButton onClick={onClose}>Cancel</CloseButton>
         </div>
       </ModalContent>
     </ModalBackground>

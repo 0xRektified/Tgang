@@ -21,19 +21,61 @@ const ModalBackground = styled.div`
 `;
 
 const ModalContent = styled.div`
-  @apply bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full;
-`;
-
-const LabItem = styled.div`
-  @apply bg-gray-700 p-4 rounded-lg flex flex-col justify-between;
+  background-color: #1f2937;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
 `;
 
 const LabButton = styled.button`
-  @apply py-2 px-4 mt-2 bg-green-600 rounded-lg hover:bg-green-700 text-white font-bold;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: #3b82f6; /* Creative blue color */
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #2563eb;
+    transform: scale(1.05);
+  }
+
+  & > svg {
+    font-size: 1.25rem;
+  }
 `;
 
 const CloseButton = styled.button`
-  @apply mt-4 py-2 px-4 bg-red-600 rounded-lg hover:bg-red-700 text-white font-bold;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ef44449c;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.3s;
+
+  &:hover {
+    transform: scale(1.2);
+    background-color: #dc2626;
+  }
 `;
 
 interface PurchasedLabModalProps {
@@ -60,19 +102,29 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
     onClose();
   };
 
+  const formatPrice = (price: number) => {
+    return price.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+  };
+
   return (
-    <ModalBackground>
+    <ModalBackground onClick={onClose}>
       <ModalContent>
+        <CloseButton onClick={onClose}>&times;</CloseButton>
+
         <h2 className="text-lg font-bold text-white mb-4">Lab details</h2>
         <div className="grid grid-cols-1 gap-4">
           <LabButton onClick={() => upgradeCapacity()}>
-            <LuPackagePlus /> ${plot.lab?.upgradeCapacityPrice}
+            Upgrade Capacity <LuPackagePlus />{" "}
+            {formatPrice(plot.lab?.upgradeCapacityPrice || 0)}
           </LabButton>
           <LabButton onClick={() => upgradeProduction()}>
-            <MdConveyorBelt /> ${plot.lab?.upgradeProductionPrice}
+            Upgrade Production <MdConveyorBelt />{" "}
+            {formatPrice(plot.lab?.upgradeProductionPrice || 0)}
           </LabButton>
         </div>
-        <CloseButton onClick={onClose}>Close</CloseButton>
       </ModalContent>
     </ModalBackground>
   );

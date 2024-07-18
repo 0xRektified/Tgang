@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
-  --tg-theme-bg-color: #efeff3;
-  --tg-theme-button-color: #2eaddc;
-  --tg-theme-button-text-color: white;
-} */
-
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -19,6 +13,21 @@
   }
 }
 
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .animate-fade-out {
   animation: fadeOut 1s forwards;
+}
+
+.animate-slide-in-from-left {
+  animation: slideInFromLeft 1s forwards;
 }

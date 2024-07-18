@@ -12,6 +12,7 @@ import {
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { IMarketInfo } from "./interfaces/market.interface";
+import { formatPrice } from "./utils/formater";
 
 interface TopMenuProps {
   userInfo: IUserInfo;
@@ -43,7 +44,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
             <div className="justify-end space-x-2">
               <DigitalFont as={BalanceLabel}>Cash</DigitalFont>
               <DigitalFont as={BalanceAmount}>
-                ${userInfo.cashAmount.toFixed(0)}
+                {formatPrice(userInfo.cashAmount, false)}
               </DigitalFont>
             </div>
           </FlexBoxCol>

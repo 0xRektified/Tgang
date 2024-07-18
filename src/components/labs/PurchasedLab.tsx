@@ -3,8 +3,9 @@ import { GiHandTruck } from "react-icons/gi";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo, LabPlot } from "../interfaces/user.interface";
-import { getUnixTime, set } from "date-fns";
+import { getUnixTime } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
+import WebApp from "@twa-dev/sdk";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -13,6 +14,7 @@ const PurchasedLabContainer = styled.div`
   padding: 1rem;
   width: 100%;
   border-radius: 0.375rem;
+  position: relative;
 `;
 
 const LabImage = styled.img`
@@ -31,17 +33,17 @@ const ProgressContainer = styled.div`
 `;
 
 const UpdateButton = styled.button`
-  margin-left: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.5rem;
+  font-size: 1rem;
   font-weight: bold;
   color: white;
   background-color: #2563eb;
-  border-radius: 0.25rem;
-  transition: background-color 0.3s;
+  border-radius: 0.375rem;
+  transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
     background-color: #1d4ed8;
+    transform: scale(1.1);
   }
 `;
 
@@ -82,10 +84,11 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   handleOpenPurchasedLabModal,
 }) => {
   const lab = plot.lab!;
-
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [produced, setProduction] = useState(lab.produced);
   const [collectTime, setCollectTime] = useState(lab.collectTime);
+  const [progress, setProgress] = useState(0);
+  const [collecting, setCollecting] = useState(false);
   const collectTimeRef = useRef(collectTime);
   const { collectLabProduct } = useCollectLabProduct();
 
@@ -93,16 +96,37 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
     const now = new Date();
     const diff = getUnixTime(now) - getUnixTime(collectTimeRef.current);
     const productionPerSecond = lab.production / 3600;
-    let produced = Math.floor(productionPerSecond * diff);
+    const totalProduction = productionPerSecond * diff;
+    const produced = Math.floor(totalProduction);
+    const fractionalProgress = totalProduction - produced;
     if (produced < 0) {
-      produced = 0;
+      setProduction(0);
+      setProgress(0);
+    } else if (produced > lab.capacity) {
+      setProduction(lab.capacity);
+      setProgress(1);
+    } else {
+      setProduction(produced);
+      setProgress(fractionalProgress);
     }
-    setProduction(produced);
   };
 
   const collectProduct = () => {
-    collectLabProduct(plot.plotId, setUserInfo);
-    setCollectTime(new Date());
+    setCollecting(true);
+
+    const hapticCount = Math.min(produced, 10);
+    const interval = 1000 / hapticCount;
+    for (let i = 0; i < hapticCount; i++) {
+      setTimeout(
+        () => WebApp.HapticFeedback.impactOccurred("heavy"),
+        i * interval
+      );
+    }
+    setTimeout(() => {
+      setCollecting(false);
+      collectLabProduct(plot.plotId, setUserInfo);
+      setCollectTime(new Date());
+    }, 1000);
   };
 
   useEffect(() => {
@@ -144,16 +168,34 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
       </LabInfo>
       <ProgressContainer>
         <div className="flex items-center mt-2">
-          <progress
-            className="progress progress-accent w-56"
-            value={produced}
-            max={lab.capacity}
-          ></progress>
           <UpdateButton onClick={() => collectProduct()}>
             <GiHandTruck />
           </UpdateButton>
+          <progress
+            className="progress progress-accent w-56 ml-2"
+            value={progress}
+            max={1}
+          ></progress>
+          {Math.floor(progress * 100)}%
         </div>
       </ProgressContainer>
+      {collecting &&
+        Array.from({ length: produced }).map((_, index) => {
+          const delay = (index * 1000) / produced;
+          return (
+            <div
+              key={index}
+              className="absolute bottom-20 left-1/2 transform -translate-x-1/2 h-6 w-6 animate-move-up"
+              style={{
+                fontSize: "2rem",
+                color: "white",
+                animationDelay: `${delay}ms`,
+              }}
+            >
+              🌱
+            </div>
+          );
+        })}
     </PurchasedLabContainer>
   );
 };

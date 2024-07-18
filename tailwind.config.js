@@ -25,6 +25,10 @@ export default {
           "80%": { transform: "translateX(-10px)" },
           "100%": { transform: "translateX(0)" },
         },
+        moveUp: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-200px)" },
+        },
       },
       animation: {
         "fade-out": "fadeOut 1s forwards",
@@ -32,6 +36,7 @@ export default {
         "slide-in-from-left": "slideInFromLeft 1s forwards",
         "slide-out-to-right": "slideOutToRight 1s forwards 3s",
         "slide-in-from-right-bounce": "slideInFromRightBounce 1s ease",
+        "move-up": "moveUp 1s forwards",
       },
     },
   },

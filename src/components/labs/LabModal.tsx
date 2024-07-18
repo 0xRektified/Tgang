@@ -20,19 +20,73 @@ const ModalBackground = styled.div`
 `;
 
 const ModalContent = styled.div`
-  @apply bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full;
+  background-color: #1f2937;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
 `;
 
 const LabItem = styled.div`
-  @apply bg-gray-700 p-4 rounded-lg flex flex-col justify-between;
+  background-color: #374151;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
 `;
 
 const LabButton = styled.button`
-  @apply py-2 px-4 mt-2 bg-green-600 rounded-lg hover:bg-green-700 text-white font-bold;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: #10b981;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #059669;
+    transform: scale(1.05);
+  }
 `;
 
 const CloseButton = styled.button`
-  @apply mt-4 py-2 px-4 bg-red-600 rounded-lg hover:bg-red-700 text-white font-bold;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ef44449c;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.3s;
+
+  &:hover {
+    transform: scale(1.2);
+    background-color: #dc2626;
+  }
+`;
+const LabImage = styled.img`
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.5rem;
+`;
+
+const LabInfo = styled.div`
+  color: white;
+  text-align: center;
 `;
 
 interface LabModalProps {
@@ -62,19 +116,18 @@ const LabModal: React.FC<LabModalProps> = ({
   };
 
   return (
-    <ModalBackground>
+    <ModalBackground onClick={onClose}>
       <ModalContent>
+        <CloseButton onClick={onClose}>&times;</CloseButton>
         <h2 className="text-lg font-bold text-white mb-4">Select a Lab</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(labs).map((lab) => (
             <LabItem key={lab[0]}>
-              <img src={lab[1].image} alt={lab[0]} className="w-16 h-16" />
-              <div className="text-white">Type: {lab[0]}</div>
-              <div className="text-white">Capacity: {lab[1].baseCapacity}</div>
-              <div className="text-white">
-                Production: {lab[1].baseProduction}
-              </div>
-              <div className="text-white">Price: ${lab[1].labPrice}</div>
+              <LabImage src={lab[1].image} alt={lab[0]} />
+              <LabInfo>Type: {lab[0]}</LabInfo>
+              <LabInfo>Capacity: {lab[1].baseCapacity}</LabInfo>
+              <LabInfo>Production: {lab[1].baseProduction}</LabInfo>
+              <LabInfo>Price: ${lab[1].labPrice}</LabInfo>
               <LabButton
                 onClick={() => buyAndClose(lab[0] as EProduct, plotId)}
               >
@@ -83,7 +136,6 @@ const LabModal: React.FC<LabModalProps> = ({
             </LabItem>
           ))}
         </div>
-        <CloseButton onClick={onClose}>Close</CloseButton>
       </ModalContent>
     </ModalBackground>
   );

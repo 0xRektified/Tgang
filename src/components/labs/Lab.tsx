@@ -4,16 +4,16 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
-import {
-  IUserInfo,
-  LabPlot,
-} from "../interfaces/user.interface";
-import { EProduct } from "../interfaces/product.interface";
+import { IUserInfo, LabPlot } from "../interfaces/user.interface";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
 import PurchasedLabModal from "./PurchasedLabModal";
+import { MdConstruction } from "react-icons/md";
+import Production from "./Production";
+import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 
 const LabContainer = styled.div`
-  background-color: #1c1c1e;
+  background-color: rgb(17 17 23);
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -22,6 +22,7 @@ const LabContainer = styled.div`
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  position: relative;
 `;
 
 const ProductionRecap = styled.div`
@@ -29,46 +30,72 @@ const ProductionRecap = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ProductionGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-`;
-
-const ProductionItem = styled.div`
-  padding: 0.2rem;
-  background-color: #374151;
-  border-radius: 0.375rem;
-  text-align: center;
-  color: white;
-`;
-
 const LabsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
+  overflow-y: auto;
+  max-height: calc(80vh - 150px);
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 `;
 
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #4a4a4a;
+  margin: 0.5rem 0;
+`;
+
 const PlotItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 6rem;
+  height: 8rem;
   border-radius: 0.375rem;
   margin-top: 1em;
+  text-align: center;
+  color: white;
 `;
 
 const AddLabButton = styled.button`
   width: 5em;
-  height: 100%;
+  height: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #a392164a;
+  border-radius: 0.375rem;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #a392164a;
+  }
+
+  & > div {
+    font-size: 0.75rem;
+  }
+
+  & > svg {
+    font-size: 2rem;
+  }
+`;
+
+const AddPlotButton = styled.button`
+  width: 5em;
+  height: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-size: 1.25rem;
   font-weight: bold;
   text-align: center;
@@ -79,6 +106,33 @@ const AddLabButton = styled.button`
 
   &:hover {
     background-color: #15803d;
+  }
+
+  & > div {
+    font-size: 0.75rem;
+  }
+
+  & > svg {
+    font-size: 2rem;
+  }
+`;
+
+const CollectIcon = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: white;
+  transition: transform 2s, opacity 2s;
+  opacity: 1;
+  background-color: red;
+  height: 25px;
+  width: 25px;
+
+  &.collected {
+    transform: translateX(-50%) translateY(-200px);
+    opacity: 0;
   }
 `;
 
@@ -155,27 +209,16 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   return (
     <LabContainer>
       <ProductionRecap>
-        <h2 className="text-lg font-bold">Current Production</h2>
-        <ProductionGrid>
-          <ProductionItem>Weed {production[EProduct.WEED]}/H</ProductionItem>
-          <ProductionItem>
-            Cocaine {production[EProduct.COCAINE]}/H
-          </ProductionItem>
-          <ProductionItem>Meth {production[EProduct.METH]}/H</ProductionItem>
-          <ProductionItem>
-            Heroin {production[EProduct.HEROIN]}/H
-          </ProductionItem>
-          <ProductionItem>LSD {production[EProduct.LSD]}/H</ProductionItem>
-          <ProductionItem>MDMA {production[EProduct.MDMA]}/H</ProductionItem>
-        </ProductionGrid>
+        <h2 className="text-lg font-bold p-2">Current Production</h2>
+        <Production production={production} />
       </ProductionRecap>
-      <div className="divider"></div>
+      <Divider />
       <LabsGrid>
         {userInfo.labPlots.map((labPlot) => {
           if (labPlot.lab) {
             return (
               <PurchasedLab
-                key={labPlot.lab.product}
+                key={labPlot.plotId}
                 plot={labPlot}
                 setUserInfo={setUserInfo}
                 handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
@@ -183,15 +226,19 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
             );
           }
           return (
-            <PlotItem>
-              <AddLabButton
-                onClick={() => handleOpenLabModal(labPlot)}
-              ></AddLabButton>
+            <PlotItem key={labPlot.plotId}>
+              <div>Build a new lab</div>
+              <AddLabButton onClick={() => handleOpenLabModal(labPlot)}>
+                <MdConstruction />
+              </AddLabButton>
             </PlotItem>
           );
         })}
         <PlotItem>
-          <AddLabButton onClick={handleOpenLabPlotModal}>+</AddLabButton>
+          <div>Expand your territory</div>
+          <AddPlotButton onClick={handleOpenLabPlotModal} className="skeleton">
+            +
+          </AddPlotButton>
         </PlotItem>
       </LabsGrid>
       {isLabModalOpen && (
