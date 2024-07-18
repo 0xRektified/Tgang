@@ -146,7 +146,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
 
   return (
     <PurchasedLabContainer>
-      <VideoWrapper onClick={() => handleOpenPurchasedLabModal(plot)}>
+      <VideoWrapper onClick={() => collectProduct()}>
         <PlaceholderImage
           poster={`/assets/weed_lab_2.png`}
           isVideoLoaded={isVideoLoaded}
@@ -168,7 +168,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
       </LabInfo>
       <ProgressContainer>
         <div className="flex items-center mt-2">
-          <UpdateButton onClick={() => collectProduct()}>
+          <UpdateButton onClick={() => handleOpenPurchasedLabModal(plot)}>
             <GiHandTruck />
           </UpdateButton>
           <progress
