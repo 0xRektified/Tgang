@@ -10,15 +10,15 @@ import {
 import { TouchPoint } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
 import { IUserInfo } from "../interfaces/user.interface";
-import { IUpgradesCategory } from "../interfaces/upgrade.interface";
+import { IUpgrade } from "../interfaces/upgrade.interface";
 
 interface ShopProps {
   userInfo: IUserInfo;
   activeTab: string;
-  upgradesData: IUpgradesCategory[] | undefined;
+  upgradesData: IUpgrade | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<
-    React.SetStateAction<IUpgradesCategory[] | undefined>
+    React.SetStateAction<IUpgrade | undefined>
   >;
 }
 
@@ -49,13 +49,6 @@ export const Shop: React.FC<ShopProps> = ({
             onClick={() => handleTabClick("dealer")}
           >
             Dealer
-          </Tab>
-          <Tab
-            role="tab"
-            active={currentTab === "farmer"}
-            onClick={() => handleTabClick("farmer")}
-          >
-            Farmer
           </Tab>
           <Tab
             role="tab"

@@ -4,7 +4,7 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import { EProduct } from "../interfaces/product.interface";
 import { useBuyLab } from "../../hooks/useBuyLab";
-import { LabPlot, IUserInfo } from "../interfaces/user.interface";
+import { LabPlot, IUserInfo, Product } from "../interfaces/user.interface";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -56,6 +56,15 @@ const LabButton = styled.button`
   }
 `;
 
+const LockedButton = styled.button`
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  background-color: #cf2400;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: bold;
+`;
+
 const CloseButton = styled.button`
   position: fixed;
   top: 1rem;
@@ -92,6 +101,7 @@ const LabInfo = styled.div`
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
   plotId: number;
+  products: Product[];
   onClose: () => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
@@ -99,6 +109,7 @@ interface LabModalProps {
 const LabModal: React.FC<LabModalProps> = ({
   labs,
   plotId,
+  products,
   onClose,
   setUserInfo,
 }) => {
@@ -121,20 +132,38 @@ const LabModal: React.FC<LabModalProps> = ({
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <h2 className="text-lg font-bold text-white mb-4">Select a Lab</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.entries(labs).map((lab) => (
-            <LabItem key={lab[0]}>
-              <LabImage src={lab[1].image} alt={lab[0]} />
-              <LabInfo>Type: {lab[0]}</LabInfo>
-              <LabInfo>Capacity: {lab[1].baseCapacity}</LabInfo>
-              <LabInfo>Production: {lab[1].baseProduction}</LabInfo>
-              <LabInfo>Price: ${lab[1].labPrice}</LabInfo>
-              <LabButton
-                onClick={() => buyAndClose(lab[0] as EProduct, plotId)}
-              >
-                Buy
-              </LabButton>
-            </LabItem>
-          ))}
+          {Object.entries(labs).map((lab) => {
+            const levelRequirement = lab[1].levelRequirement;
+            let locked = false;
+            const requiredProduct = products.find((u) => u.name === lab[0]);
+            if (!requiredProduct) {
+              locked = true;
+            } else {
+              locked = requiredProduct.level < levelRequirement;
+            }
+            return (
+              <LabItem key={lab[0]}>
+                <LabImage src={lab[1].image} alt={lab[0]} />
+                <LabInfo>Type: {lab[0]}</LabInfo>
+                <LabInfo>Capacity: {lab[1].baseCapacity}</LabInfo>
+                <LabInfo>Production: {lab[1].baseProduction}</LabInfo>
+                <LabInfo>Price: ${lab[1].labPrice}</LabInfo>
+                {locked ? (
+                  <LockedButton
+                    disabled = {locked}
+                  >
+                    Locked
+                  </LockedButton>
+                ) : (
+                  <LabButton
+                  onClick={() => buyAndClose(lab[0] as EProduct, plotId)}
+                  >
+                    Buy
+                  </LabButton>
+                )}
+              </LabItem>
+            )}
+          )}
         </div>
       </ModalContent>
     </ModalBackground>

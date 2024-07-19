@@ -39,19 +39,18 @@ const useCustomerManagement = (
     return () => {
       clearInterval(interval);
     };
-  }, [userInfo.upgrades]);
+  }, [userInfo.dealerUpgrades]);
 
   const calculateCustomersPerSecond = (
     userInfo: IUserInfo
   ): { customersPerSecond: number; customerAmountMax: number } => {
-    const customerAmountUpgrade = userInfo.upgrades.find(
-      (e) => e.id === EDealerUpgrade.CUSTOMER_AMOUNT
+    const customerAmountUpgrade = userInfo.dealerUpgrades.find(
+      (upgrade) => upgrade.product === EDealerUpgrade.CUSTOMER_AMOUNT
     );
     if (!customerAmountUpgrade) {
       return { customersPerSecond: 0, customerAmountMax: 0 };
     }
-    const customerAmountMax =
-      customerAmountUpgrade.value[customerAmountUpgrade.level];
+    const customerAmountMax = customerAmountUpgrade.amount;
     const customersPerSecond = customerAmountMax / 3600;
     return { customersPerSecond, customerAmountMax };
   };

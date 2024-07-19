@@ -245,6 +245,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
         <LabModal
           labs={labs}
           plotId={selectedPlot?.plotId!}
+          products={userInfo.products}
           onClose={handleCloseLabModal}
           setUserInfo={setUserInfo}
         />

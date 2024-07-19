@@ -146,12 +146,10 @@ export const Home: React.FC<HomeProps> = ({
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
     if (userInfo.customerAmount) {
-      // @note TODO update that with the value in upgrade customer needs
-      const customerProductUpgrade = userInfo.upgrades.find(
-        (p) => p.title === "Customer Needs"
+      const customerProductUpgrade = userInfo.dealerUpgrades.find(
+        (p) => p.product === EDealerUpgrade.CUSTOMER_NEEDS
       );
-      const amountToSell =
-        customerProductUpgrade?.value[customerProductUpgrade.level] || 1;
+      const amountToSell = customerProductUpgrade?.amount || 1;
 
       console.log(`amountToSell`);
       console.log(amountToSell);

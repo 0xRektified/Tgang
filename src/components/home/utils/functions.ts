@@ -48,13 +48,6 @@ export const handleTransaction = (
     );
     if (productMarket && userInfo) {
       let productPrice = productMarket.price;
-      const productUpgrade = userInfo.upgrades.find(
-        (u) => u.title === productName
-      );
-      if (productUpgrade) {
-        const discountValue = productUpgrade.value[productUpgrade.level];
-        productPrice = productPrice / discountValue;
-      }
       amountEarned = amountToSell * productPrice;
       cashState += amountEarned;
 

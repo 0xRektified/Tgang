@@ -1,4 +1,5 @@
 import { EProduct } from "./product.interface";
+import { EDealerUpgrade } from "./upgrade.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -21,10 +22,12 @@ export interface LabPlot {
 
 export interface Product {
   name: EProduct;
-  unlocked: boolean;
-  selected: boolean;
   quantity: number;
-  maxCarry: number;
+  image: string;
+  level: number;
+  upgradePrice: number;
+  marketDiscount: number;
+  selected: boolean;
   slot: number | null;
 }
 
@@ -41,12 +44,21 @@ export interface IUserUpgrade {
   group: string;
 }
 
+export interface UserDealerUpgrade {
+  product: EDealerUpgrade;
+  title: string;
+  image: number;
+  level: number;
+  upgradePrice: number;
+  amount: number;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
   cashAmount: number;
   products: Product[];
-  upgrades: IUserUpgrade[];
+  dealerUpgrades: UserDealerUpgrade[];
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;

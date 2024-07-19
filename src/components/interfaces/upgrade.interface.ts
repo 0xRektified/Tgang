@@ -1,32 +1,43 @@
+import { EProduct } from "./product.interface";
+
+export enum EUpgradeCategory {
+  PRODUCT = 'product',
+  DEALER = 'dealer',
+  GANGSTER = 'gangster', // TODO: Implement gangster upgrades
+}
+
 export enum EDealerUpgrade {
-  WEED = 1000,
-  COKE = 1001,
-  METH = 1002,
-  HEROIN = 1003,
-  CUSTOMER_AMOUNT = 1004,
-  CUSTOMER_NEEDS = 1005,
+  CUSTOMER_AMOUNT = 'customer_amount',
+  CUSTOMER_NEEDS = 'customer_needs',
 }
 
 export interface IRequirement {
-  title: string;
+  product: EProduct;
   level: number;
+}
+
+export interface DealerUpgrade {
+  title: string;
+  description: string;
+  basePrice: number;
+  upgradeMultiplier: number;
+  baseAmount: number;
+  amountMultiplier: number;
+  image: string;
+  requirement: IRequirement | null;
+}
+
+export interface ProductUpgrade {
+  title: string;
+  description: string;
+  basePrice: number;
+  upgradeMultiplier: number;
+  image: string;
+  requirement: IRequirement | null;
 }
 
 export interface IUpgrade {
-  id: number;
-  title: string;
-  description: string;
-  level: number;
-  maxLevel: number;
-  levelPrices: number[];
-  value: number[];
-  image: string;
-  locked: boolean;
-  group: string;
-  requirement?: IRequirement | null;
-}
-
-export interface IUpgradesCategory {
-  category: string;
-  upgrades: IUpgrade[];
+  [EUpgradeCategory.PRODUCT]: Record<EProduct, ProductUpgrade>;
+  [EUpgradeCategory.DEALER]: Record<EDealerUpgrade, DealerUpgrade>;
+  [EUpgradeCategory.GANGSTER]: Record<any, any>;
 }

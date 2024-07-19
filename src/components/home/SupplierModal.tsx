@@ -50,10 +50,10 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   );
 
   useEffect(() => {
-    setTotalCost(selectedProduct ? selectedProduct.price * quantity : 0);
+    setTotalCost(selectedProduct ? selectedProduct.discountPrice * quantity : 0);
     setRemainingCash(
       userInfo.cashAmount -
-        (selectedProduct ? selectedProduct.price * quantity : 0)
+        (selectedProduct ? selectedProduct.discountPrice * quantity : 0)
     );
   });
 
@@ -73,7 +73,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
 
   const handleMaxClick = () => {
     if (!selectedProduct) return;
-    const productPrice = selectedProduct.price;
+    const productPrice = selectedProduct.discountPrice;
     const maxQuantity = Math.floor(userInfo.cashAmount / productPrice);
 
     setQuantity(maxQuantity);
@@ -133,7 +133,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                             {product.name + ` `}
                             {productIcon}
                           </td>
-                          <td>${product.price}</td>
+                          <td>${product.discountPrice}</td>
                           <td className="text-right">
                             {selectedProduct?.name === product.name
                               ? quantity
@@ -172,7 +172,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                                     type="range"
                                     min={0}
                                     max={Math.floor(
-                                      remainingCash / product.price
+                                      remainingCash / product.discountPrice
                                     )}
                                     value={quantity}
                                     className="range"
