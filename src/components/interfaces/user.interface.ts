@@ -1,5 +1,5 @@
 import { EProduct } from "./product.interface";
-import { EDealerUpgrade } from "./upgrade.interface";
+import { EDealerUpgrade, EShippingUpgrade } from "./upgrade.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -53,12 +53,22 @@ export interface UserDealerUpgrade {
   amount: number;
 }
 
+export interface UserShippingUpgrade {
+  product: EShippingUpgrade;
+  title: string;
+  image: number;
+  level: number;
+  upgradePrice: number;
+  amount: number;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
   cashAmount: number;
   products: Product[];
   dealerUpgrades: UserDealerUpgrade[];
+  shippingUpgrades: UserShippingUpgrade[];
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;
@@ -68,4 +78,6 @@ export interface IUserInfo {
   customerAmountRemaining: number;
   robberyStrike: number;
   lastRobbery?: Date;
+  lastShipment?: Date;
+  nextShipment: Date;
 }

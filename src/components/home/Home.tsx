@@ -14,6 +14,7 @@ import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
 import { SupplierModal } from "./SupplierModal";
+import { ShippingModal } from "./ShippingModal";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -50,6 +51,8 @@ export const Home: React.FC<HomeProps> = ({
   );
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
+  const [isShippinhModalOpen, setIsShippinhModalOpen] =
+    useState<boolean>(false);
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
@@ -73,12 +76,18 @@ export const Home: React.FC<HomeProps> = ({
   const handleCloseSupplierModal = () => {
     setIsSupplierModalOpen(false);
   };
+  const handleCloseShippingModal = () => {
+    setIsShippinhModalOpen(false);
+  };
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSlot(null);
   };
   const handleOpenSupplierModal = () => {
     setIsSupplierModalOpen(true);
+  };
+  const handleOpenShippingModal = () => {
+    setIsShippinhModalOpen(true);
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -213,6 +222,7 @@ export const Home: React.FC<HomeProps> = ({
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
         handleOpenSupplierModal={handleOpenSupplierModal}
+        handleOpenShippingModal={handleOpenShippingModal}
       />
       <CustomersBoard customers={customers} transaction={lastTransaction} />
       <TouchPoints touchPoints={touchPoints} />
@@ -230,6 +240,16 @@ export const Home: React.FC<HomeProps> = ({
           marketInfo={marketInfo}
           isOpen={isSupplierModalOpen}
           onClose={handleCloseSupplierModal}
+          onUnlockClick={onUnlockClick}
+          setUserInfo={setUserInfo}
+        />
+      )}
+      {isShippinhModalOpen && (
+        <ShippingModal
+          userInfo={userInfo}
+          marketInfo={marketInfo}
+          isOpen={isShippinhModalOpen}
+          onClose={handleCloseShippingModal}
           onUnlockClick={onUnlockClick}
           setUserInfo={setUserInfo}
         />

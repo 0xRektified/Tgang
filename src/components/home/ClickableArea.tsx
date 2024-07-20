@@ -5,6 +5,8 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { RiShipLine } from "react-icons/ri";
+
 const NeonText = styled.div`
   font-size: 1.5rem;
   color: #fff;
@@ -152,6 +154,23 @@ const NeonButton = styled.button`
   padding: 1em;
 `;
 
+const ShipButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 6px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.1em;
+  justify-content: center;
+  width: 100%;
+`;
+
 const ButtonIcon = styled.span`
   font-size: 1.5em;
 `;
@@ -170,6 +189,7 @@ interface ClickableAreaWithSmokeProps {
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
   handleOpenSupplierModal: () => void;
+  handleOpenShippingModal: () => void;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -179,6 +199,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   selectedProduct,
   setSelectedProduct,
   handleOpenSupplierModal,
+  handleOpenShippingModal,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
 
@@ -241,6 +262,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             </FlexBoxRow>
           );
         })}
+
+        <ShipButton onClick={handleOpenShippingModal}><RiShipLine /></ShipButton>
       </ProductsList>
     </>
   );

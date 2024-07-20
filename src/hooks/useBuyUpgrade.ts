@@ -3,12 +3,11 @@ import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
 import {
   EDealerUpgrade,
+  EShippingUpgrade,
   EUpgradeCategory,
-  IUpgrade,
 } from "../components/interfaces/upgrade.interface";
 import {
   IUserInfo,
-  IUserUpgrade,
 } from "../components/interfaces/user.interface";
 import { EProduct } from "../components/interfaces/product.interface";
 
@@ -19,7 +18,7 @@ export function useBuyUpgrades() {
   const buyUpgrade = async (
     params: {
       category: EUpgradeCategory;
-      upgrade: EProduct | EDealerUpgrade;
+      upgrade: EProduct | EDealerUpgrade | EShippingUpgrade;
     },
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {

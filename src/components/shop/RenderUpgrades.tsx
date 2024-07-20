@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
-import { DealerUpgrade, EDealerUpgrade, EUpgradeCategory, IUpgrade, ProductUpgrade } from "../interfaces/upgrade.interface";
+import { DealerUpgrade, EDealerUpgrade, EShippingUpgrade, EUpgradeCategory, IUpgrade, ProductUpgrade } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import styled from "styled-components";
 import { IUserInfo, Product } from "../interfaces/user.interface";
@@ -81,7 +81,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
   const handleBuyUpgrade = async (params: {
     category: EUpgradeCategory;
-    upgrade: EProduct | EDealerUpgrade;
+    upgrade: EProduct | EDealerUpgrade | EShippingUpgrade;
     upgradePrice: number;
   }, touch: React.Touch) => {
     const cost = params.upgradePrice;
@@ -108,7 +108,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   const handleCardClick = (
     params: {
       category: EUpgradeCategory;
-      upgrade: EProduct | EDealerUpgrade;
+      upgrade: EProduct | EDealerUpgrade | EShippingUpgrade;
       upgradePrice: number;
     },
     e: React.TouchEvent<HTMLButtonElement>
@@ -120,7 +120,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
   const renderUpgrade = (
     upgrade: ProductUpgrade | DealerUpgrade,
-    key: EProduct | EDealerUpgrade,
+    key: EProduct | EDealerUpgrade | EShippingUpgrade,
+    category: EUpgradeCategory,
     price: number,
     level: number,
     locked?: boolean
@@ -153,8 +154,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           ) : (
             <NeonButton
               onTouchStart={(e) => handleCardClick({
-                category: EUpgradeCategory.PRODUCT,
-                upgrade: key as EDealerUpgrade,
+                category,
+                upgrade: key,
                 upgradePrice: price
               }, e)}
             >
@@ -180,6 +181,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                 return renderUpgrade(
                   upgrade,
                   key as EDealerUpgrade,
+                  EUpgradeCategory.DEALER,
                   userUpgrade?.upgradePrice || upgrade.basePrice,
                   userUpgrade?.level || 0
                 );
@@ -206,7 +208,37 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
                 return renderUpgrade(
                   upgrade,
-                  key as EDealerUpgrade,
+                  key as EProduct,
+                  EUpgradeCategory.PRODUCT,
+                  price,
+                  level,
+                  locked
+                );
+              })}
+            </div>
+          </div>
+          <div key="Shipping">
+            <h3 className="text-lg font-semibold capitalize">Shipping</h3>
+            <div className="space-y-2">
+              {Object.entries(upgradesData.shipping).map(([key, upgrade]) => {
+                const userUpgrade = userInfo.shippingUpgrades.find((u) => u.product === key);
+                const price = userUpgrade?.upgradePrice || upgrade.basePrice;
+                const level = userUpgrade?.level || 0;
+                const upgradeRequirements = upgrade.requirement;
+                let locked = false;
+                if (upgradeRequirements) {
+                  const requiredProduct = userInfo.products.find((u) => u.name === upgradeRequirements.product);
+                  if (!requiredProduct) {
+                    locked = true;
+                  } else {
+                    locked = requiredProduct.level < upgradeRequirements.level;
+                  }
+                }
+
+                return renderUpgrade(
+                  upgrade,
+                  key as EShippingUpgrade,
+                  EUpgradeCategory.SHIPPING,
                   price,
                   level,
                   locked
