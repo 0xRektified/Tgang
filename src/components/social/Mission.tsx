@@ -239,7 +239,7 @@ const Mission: React.FC<MissionProps> = ({
       audioCash.volume = 0.4;
       audioCash.play();
       setIsButtonDisabled(false);
-    }, 1000);
+    }, 2000);
   };
 
   return (
