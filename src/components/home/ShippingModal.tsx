@@ -12,12 +12,15 @@ import {
   ShoppingCartBalance,
   ShoppingCartFooter,
   ShoppingCartTotal,
+  FlexBoxRow,
+  SiteTitle,
 } from "./styles/supplier.css";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import useShipProduct from "../../hooks/useShipProduct";
 import { EShippingUpgrade } from "../interfaces/upgrade.interface";
+import { addSeconds, formatDistanceToNow, formatDistanceToNowStrict, formatDuration } from "date-fns";
 
 interface ShippingModalProps {
   userInfo: IUserInfo;
@@ -76,12 +79,20 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
         newBatch.push({ product: selectedProduct.name, amountToSell: quantity });
         return newBatch;
       });
-      console.log(batch);
     }
   }
 
   const handleShip = () => {
     shipProduct("NY", batch, setUserInfo);
+  }
+
+  const duration = () => {
+    const hours = Math.floor(shippingTime / 3600);
+    const minutes = Math.floor((shippingTime % 3600) / 60);
+    return formatDuration({
+      hours,
+      minutes,
+    });
   }
 
   if (!isOpen) return null;
@@ -90,7 +101,9 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
     <FixedOverlay onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <Notch />
-        <p>Shipping Manifest</p>
+        <FlexBoxRow>
+          <SiteTitle>Shipping Manifest</SiteTitle>
+        </FlexBoxRow>
         <ScrollableTableContainer>
           <Table>
             <thead>
@@ -152,30 +165,40 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
               })}
             </tbody>
           </Table>
+          </ScrollableTableContainer>
           <ShoppingCartFooter>
             <ShoppingCartBalance>
               Containers: {batch.length}/{shippingContainers}
             </ShoppingCartBalance>
             <ShoppingCartTotal>
-              <Table>
-                <tbody>
-                  {batch.map((b) => (
-                    <tr key={b.product}>
-                      <td>{b.product}</td>
-                      <td>{b.amountToSell}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+              Shipping Time: {duration()}
             </ShoppingCartTotal>
-            <NeonButton
-              onClick={handleShip}
-              className="active"
-            >
-              Ship
-            </NeonButton>
           </ShoppingCartFooter>
-          </ScrollableTableContainer>
+
+          <Table>
+              <thead>
+                <tr>
+                  <th style={{ width: "50%" }}></th>
+                  <th style={{ width: "50%" }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {batch.map((b) => (
+                  <tr key={b.product}>
+                    <td>{b.product}</td>
+                    <td>{b.amountToSell}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <FlexBoxRow>
+              <NeonButton
+                onClick={handleShip}
+                className="active"
+              >
+                Ship
+              </NeonButton>
+            </FlexBoxRow>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <RoundButton onClick={onClose}>&times;</RoundButton>
       </ModalContainer>
