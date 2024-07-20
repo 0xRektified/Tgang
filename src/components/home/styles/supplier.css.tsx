@@ -148,7 +148,6 @@ export const ScrollableTableContainer = styled.div`
 export const Table = styled.table`
   width: 100%;
   background-color: #2d3748;
-  border: 1px solid #4a5568;
   border-radius: 0.5rem;
 
   th,

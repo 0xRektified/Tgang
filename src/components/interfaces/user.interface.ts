@@ -62,6 +62,12 @@ export interface UserShippingUpgrade {
   amount: number;
 }
 
+export interface IReputationLevel {
+  level: number;
+  minReputation: number;
+  maxReputation: number;
+  title: string;
+}
 export interface IUserInfo {
   id: string;
   username: string;
@@ -80,4 +86,6 @@ export interface IUserInfo {
   lastRobbery?: Date;
   lastShipment?: Date;
   nextShipment: Date;
+  reputation: number;
+  userLevel: IReputationLevel;
 }

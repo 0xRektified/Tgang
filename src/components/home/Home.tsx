@@ -150,8 +150,6 @@ export const Home: React.FC<HomeProps> = ({
       );
       const amountToSell = customerProductUpgrade?.amount || 1;
 
-      console.log(`amountToSell`);
-      console.log(amountToSell);
       const slottedProductToSell = slottedProducts.find(
         (p) => p.name === selectedProduct
       );
