@@ -14,12 +14,14 @@ import {
   RoundButton,
   NeonButton,
   WebPageTitle,
+  SiteTitle,
 } from "./styles/supplier.css";
 import { tabMapping } from "../interfaces/general.interface";
 import useBuyProduct from "../../hooks/useBuyProduct";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProductIcon } from "../interfaces/product.interface";
+import { FlexBoxRow } from "../styled/globalStyled";
 
 interface SupplierModalProps {
   userInfo: IUserInfo;
@@ -50,7 +52,9 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   );
 
   useEffect(() => {
-    setTotalCost(selectedProduct ? selectedProduct.discountPrice * quantity : 0);
+    setTotalCost(
+      selectedProduct ? selectedProduct.discountPrice * quantity : 0
+    );
     setRemainingCash(
       userInfo.cashAmount -
         (selectedProduct ? selectedProduct.discountPrice * quantity : 0)
@@ -71,15 +75,8 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
     WebApp.HapticFeedback.impactOccurred("heavy");
   };
 
-  const handleMaxClick = () => {
-    if (!selectedProduct) return;
-    const productPrice = selectedProduct.discountPrice;
-    const maxQuantity = Math.floor(userInfo.cashAmount / productPrice);
-
-    setQuantity(maxQuantity);
-  };
-
   const handleProductSelect = (product: MarketProduct) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setSelectedProduct((prevSelectedProduct) =>
       prevSelectedProduct?.name === product.name ? null : product
     );
@@ -98,6 +95,15 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <Notch />
         <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
+
+        <FlexBoxRow>
+          <img
+            src={`/assets/market_logo.webp`}
+            alt="Logo"
+            style={{ maxWidth: "50px", padding: "10px" }}
+          />
+          <SiteTitle>Welcome to Tilk Road</SiteTitle>
+        </FlexBoxRow>
         <ShoppingCartFooter>
           <ShoppingCartBalance>
             Balance: ${remainingCash.toFixed(0)}

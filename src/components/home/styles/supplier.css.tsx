@@ -61,6 +61,7 @@ export const Notch = styled.div`
 export const WebPageTitle = styled.div`
   background-color: white;
   color: black;
+  font-size: 1rem;
 `;
 
 export const RoundButton = styled.button`
@@ -152,9 +153,9 @@ export const Table = styled.table`
 
   th,
   td {
-    padding: 0.7rem;
+    padding: 0.9rem;
     text-align: left;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     white-space: nowrap;
   }
 
@@ -259,21 +260,20 @@ export const ShoppingCartFooter = styled.div`
   justify-content: space-between;
   padding-top: 0.8rem;
   border-top: 1px solid #2d3748;
-  display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 `;
 
 export const ShoppingCartBalance = styled.div`
   color: #cbd5e0;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 1rem;
 `;
 
 export const ShoppingCartTotal = styled.div`
   color: #cbd5e0;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 1rem;
 `;
 
 export const FlexBoxRow = styled.div`
@@ -283,53 +283,8 @@ export const FlexBoxRow = styled.div`
   align-items: center;
   width: 100%;
 `;
-
-// export const RoundButton = styled.button`
-//   background-color: rgb(39 39 42);
-//   color: #e4e4e7;
-//   border-radius: 50%;
-//   padding: 0.25rem; // Reduced padding
-//   width: 2rem; // Reduced width
-//   height: 2rem; // Reduced height
-//   box-shadow: 0 0 5px #eab308, 0 0 10px #eab308, 0 0 20px #eab308,
-//     0 0 30px #eab308;
-//   border: 2px solid #eab308;
-//   cursor: pointer;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   transition: background-color 0.3s ease;
-//   position: fixed;
-//   bottom: 0.5rem; // Adjusted position
-//   left: 50%;
-//   transform: translateX(-50%);
-
-//   &:hover {
-//     background-color: rgb(24 24 27);
-//   }
-// `;
-
-// export const NeonButton = styled.button`
-//   background-color: rgb(39 39 42) !important;
-//   color: #e4e4e7;
-//   border-radius: 8px;
-//   padding: 0.25rem 0.5rem; // Reduced padding
-//   border: 1px solid #eab308;
-//   cursor: pointer;
-//   font-weight: bold;
-//   font-size: 0.8rem; // Reduced font size
-//   text-transform: uppercase;
-//   letter-spacing: 0.05em;
-//   display: flex;
-//   align-items: center;
-//   gap: 0.25rem; // Reduced gap
-//   transition: background-color 0.3s ease, transform 0.1s ease;
-
-//   &:hover {
-//     background-color: rgb(24 24 27);
-//   }
-
-//   &:active {
-//     transform: scale(0.95);
-//   }
-// `;
+export const SiteTitle = styled.div`
+  color: #cbd5e0;
+  font-weight: 600;
+  font-size: 1rem;
+`;

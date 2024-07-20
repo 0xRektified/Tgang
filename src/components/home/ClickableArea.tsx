@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
-
+import { FaArrowRightLong } from "react-icons/fa6";
 const NeonText = styled.div`
   font-size: 1.5rem;
   color: #fff;
@@ -75,14 +75,19 @@ const ProductsList = styled.div`
 `;
 
 const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0.3rem;
   margin-bottom: 0.3rem;
   transition: transform 0.2s;
-  border: ${(props) => (props.isSelected ? "2px solid  #ffd70012" : "none")};
+  border: ${(props) =>
+    props.isSelected ? "2px solid  #ffd70012" : "2px solid #595757"};
   border-radius: 5px;
-  background-color: ${(props) => (props.isSelected ? " #ffd7001a" : "none")};
+  background-color: ${(props) =>
+    props.isSelected ? " #ffd7001a" : "##59575742"};
+  width: 100%; // Ensure the ProductRow takes full width
 
   &:hover {
     transform: translateY(-5px);
@@ -105,6 +110,7 @@ const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
 const ProductNameD = styled.div`
   font-size: 0.8rem;
   font-weight: 600;
+  flex-grow: 1;
 `;
 
 const Smoke = styled.div`
@@ -133,7 +139,6 @@ const NeonButton = styled.button`
   background-color: rgb(39 39 42);
   color: #e4e4e7;
   border-radius: 6px;
-  padding: 0.5rem 0.7rem;
   box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
     0 0 10px #eab308;
   cursor: pointer;
@@ -144,6 +149,7 @@ const NeonButton = styled.button`
   display: flex;
   align-items: center;
   margin-bottom: 1em;
+  padding: 1em;
 `;
 
 const ButtonIcon = styled.span`
@@ -213,17 +219,20 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
       <ProductsList>
         <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
-          <div>Market</div>
+          Market{" "}
         </NeonButton>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);
           const quantity = product ? product.quantity : 0;
           return (
-            <FlexBoxRow key={productName}>
+            <FlexBoxRow key={productName} style={{ alignItems: "center" }}>
               <ProductRow
                 isSelected={selectedProduct === productName}
                 onClick={() => setSelectedProduct(productName)}
               >
+                {selectedProduct === productName && (
+                  <FaArrowRightLong className="h-6" />
+                )}
                 <ProductNameD>
                   {EProductIcon[productName as keyof typeof EProductIcon]}{" "}
                   {quantity}
