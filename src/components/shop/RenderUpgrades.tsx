@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
-import { EDealerUpgrade, EUpgradeCategory, IUpgrade } from "../interfaces/upgrade.interface";
+import { DealerUpgrade, EDealerUpgrade, EUpgradeCategory, IUpgrade, ProductUpgrade } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import styled from "styled-components";
 import { IUserInfo, Product } from "../interfaces/user.interface";
@@ -118,6 +118,55 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     handleBuyUpgrade(params, touch);
   };
 
+  const renderUpgrade = (
+    upgrade: ProductUpgrade | DealerUpgrade,
+    key: EProduct | EDealerUpgrade,
+    price: number,
+    level: number,
+    locked?: boolean
+  ) => {
+    return (<div
+      key={upgrade.title}
+    >
+      <div className="flex justify-between items-center">
+        <img
+          src={upgrade.image}
+          alt={upgrade.title}
+          className="w-16 h-16"
+        />
+        <div className="ml-4 flex-1">
+          <h4 className="font-semibold">{upgrade.title}</h4>
+            {locked ? (
+              <p className="text-red-500">Locked</p>
+            ) : (
+              <>
+                <p>Cost: ${price}</p>
+                <p>
+                  Level: {level}
+                </p>
+              </>
+            )}
+        </div>
+        <div className="ml-4 flex-end">
+            {locked ? (
+            <Button>Locked</Button>
+          ) : (
+            <NeonButton
+              onTouchStart={(e) => handleCardClick({
+                category: EUpgradeCategory.PRODUCT,
+                upgrade: key as EDealerUpgrade,
+                upgradePrice: price
+              }, e)}
+            >
+              Buy
+            </NeonButton>
+          )}
+        </div>
+      </div>
+    </div>
+    )
+  }
+
   if (upgradesData) {
     switch (tab) {
       case "dealer":
@@ -128,36 +177,12 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               {Object.entries(upgradesData.dealer).map(([key, upgrade]) => {
                 const userUpgrade = userInfo.dealerUpgrades.find((u) => u.product === key);
 
-                return (<div
-                  key={upgrade.title}
-                >
-                  <div className="flex justify-between items-center">
-                    <img
-                      src={upgrade.image}
-                      alt={upgrade.title}
-                      className="w-16 h-16"
-                    />
-                    <div className="ml-4 flex-1">
-                      <h4 className="font-semibold">{upgrade.title}</h4>
-                      <p>Cost: ${userUpgrade?.upgradePrice}</p>
-                      <p>
-                        Level: {userUpgrade?.level}
-                      </p>
-                    </div>
-                    <div className="ml-4 flex-end">
-                      <NeonButton
-                        onTouchStart={(e) => handleCardClick({
-                          category: EUpgradeCategory.DEALER,
-                          upgrade: key as EDealerUpgrade,
-                          upgradePrice: userUpgrade?.upgradePrice || 0
-                        }, e)}
-                      >
-                        Buy
-                      </NeonButton>
-                    </div>
-                  </div>
-                </div>
-                )
+                return renderUpgrade(
+                  upgrade,
+                  key as EDealerUpgrade,
+                  userUpgrade?.upgradePrice || upgrade.basePrice,
+                  userUpgrade?.level || 0
+                );
               })}
             </div>
           </div>
@@ -179,46 +204,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                   }
                 }
 
-                return (<div
-                  key={upgrade.title}
-                >
-                  <div className="flex justify-between items-center">
-                    <img
-                      src={upgrade.image}
-                      alt={upgrade.title}
-                      className="w-16 h-16"
-                    />
-                    <div className="ml-4 flex-1">
-                      <h4 className="font-semibold">{upgrade.title}</h4>
-                        {locked ? (
-                          <p className="text-red-500">Locked</p>
-                        ) : (
-                          <>
-                            <p>Cost: ${price}</p>
-                            <p>
-                              Level: {level}
-                            </p>
-                          </>
-                        )}
-                    </div>
-                    <div className="ml-4 flex-end">
-                        {locked ? (
-                        <Button>Locked</Button>
-                      ) : (
-                        <NeonButton
-                          onTouchStart={(e) => handleCardClick({
-                            category: EUpgradeCategory.PRODUCT,
-                            upgrade: key as EDealerUpgrade,
-                            upgradePrice: price
-                          }, e)}
-                        >
-                          Buy
-                        </NeonButton>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                )
+                return renderUpgrade(
+                  upgrade,
+                  key as EDealerUpgrade,
+                  price,
+                  level,
+                  locked
+                );
               })}
             </div>
           </div>
