@@ -16,11 +16,16 @@ import {
   SiteTitle,
 } from "./styles/supplier.css";
 import { IUserInfo, Product } from "../interfaces/user.interface";
-import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
+import { IMarketInfo } from "../interfaces/market.interface";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import useShipProduct from "../../hooks/useShipProduct";
 import { EShippingUpgrade } from "../interfaces/upgrade.interface";
-import { addSeconds, formatDistanceToNow, formatDistanceToNowStrict, formatDuration } from "date-fns";
+import { formatDuration } from "date-fns";
+import styled from "styled-components";
+
+const RightAlignedTd = styled.td`
+  text-align: right;
+`;
 
 interface ShippingModalProps {
   userInfo: IUserInfo;
@@ -166,39 +171,41 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
             </tbody>
           </Table>
           </ScrollableTableContainer>
-          <ShoppingCartFooter>
+          <FlexBoxRow>
             <ShoppingCartBalance>
               Containers: {batch.length}/{shippingContainers}
             </ShoppingCartBalance>
+          </FlexBoxRow>
+          <FlexBoxRow>
             <ShoppingCartTotal>
               Shipping Time: {duration()}
             </ShoppingCartTotal>
-          </ShoppingCartFooter>
+          </FlexBoxRow>
 
           <Table>
-              <thead>
-                <tr>
-                  <th style={{ width: "50%" }}></th>
-                  <th style={{ width: "50%" }}></th>
+            <thead>
+              <tr>
+                <th style={{ width: "50%" }}></th>
+                <th style={{ width: "50%" }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {batch.map((b) => (
+                <tr key={b.product}>
+                  <td>{b.product}</td>
+                  <RightAlignedTd>{b.amountToSell}</RightAlignedTd>
                 </tr>
-              </thead>
-              <tbody>
-                {batch.map((b) => (
-                  <tr key={b.product}>
-                    <td>{b.product}</td>
-                    <td>{b.amountToSell}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-            <FlexBoxRow>
-              <NeonButton
-                onClick={handleShip}
-                className="active"
-              >
-                Ship
-              </NeonButton>
-            </FlexBoxRow>
+              ))}
+            </tbody>
+          </Table>
+          <FlexBoxRow >
+            <NeonButton
+              onClick={handleShip}
+              className="active"
+            >
+              Ship
+            </NeonButton>
+          </FlexBoxRow>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <RoundButton onClick={onClose}>&times;</RoundButton>
       </ModalContainer>
