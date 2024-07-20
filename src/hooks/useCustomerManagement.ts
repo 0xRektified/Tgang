@@ -16,30 +16,41 @@ const useCustomerManagement = (
       .fill(null)
       .map(() => getRandomEmoji());
   });
+  const [customersAccumulator, setCustomersAccumulator] = useState<number>(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCustomers((prevCustomers) => {
         const { customersPerSecond, customerAmountMax } =
           calculateCustomersPerSecond(userInfo);
-        const newCustomerCount = Math.floor(customersPerSecond);
-        if (prevCustomers.length < customerAmountMax && newCustomerCount > 0) {
-          const newCustomers = Array(newCustomerCount)
-            .fill(null)
-            .map(() => getRandomEmoji());
-          return [...prevCustomers, ...newCustomers].slice(
-            0,
-            customerAmountMax
-          );
-        }
+        setCustomersAccumulator((prevAccumulator) => {
+          const newAccumulator = prevAccumulator + customersPerSecond;
+          const newCustomerCount = Math.floor(newAccumulator);
+          const remainder = newAccumulator - newCustomerCount;
+
+          if (
+            prevCustomers.length < customerAmountMax &&
+            newCustomerCount > 0
+          ) {
+            const newCustomers = Array(newCustomerCount)
+              .fill(null)
+              .map(() => getRandomEmoji());
+            const updatedCustomers = [...prevCustomers, ...newCustomers].slice(
+              0,
+              customerAmountMax
+            );
+            setCustomers(updatedCustomers);
+          }
+
+          return remainder;
+        });
+
         return prevCustomers;
       });
     }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [userInfo.dealerUpgrades]);
+    return () => clearInterval(interval);
+  }, [userInfo]);
 
   const calculateCustomersPerSecond = (
     userInfo: IUserInfo

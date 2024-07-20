@@ -134,6 +134,8 @@ const NeonButton = styled.button`
   color: #e4e4e7;
   border-radius: 6px;
   padding: 0.5rem 0.7rem;
+  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
+    0 0 10px #eab308;
   cursor: pointer;
   font-weight: bold;
   font-size: 0.8em;
@@ -211,7 +213,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
       <ProductsList>
         <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
-          <div>Buy Drugs</div>
+          <div>Market</div>
         </NeonButton>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);
