@@ -122,96 +122,106 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     switch (tab) {
       case "dealer":
         return <div className="space-y-4">
-          {Object.entries(upgradesData.dealer).map(([key, upgrade]) => {
-            const userUpgrade = userInfo.dealerUpgrades.find((u) => u.product === key);
+          <div key="Customers">
+            <h3 className="text-lg font-semibold capitalize">Customers</h3>
+            <div className="space-y-2">
+              {Object.entries(upgradesData.dealer).map(([key, upgrade]) => {
+                const userUpgrade = userInfo.dealerUpgrades.find((u) => u.product === key);
 
-            return (<div
-              key={upgrade.title}
-            >
-              <div className="flex justify-between items-center">
-                <img
-                  src={upgrade.image}
-                  alt={upgrade.title}
-                  className="w-16 h-16"
-                />
-                <div className="ml-4 flex-1">
-                  <h4 className="font-semibold">{upgrade.title}</h4>
-                  <p>Cost: ${userUpgrade?.upgradePrice}</p>
-                  <p>
-                    Level: {userUpgrade?.level}
-                  </p>
+                return (<div
+                  key={upgrade.title}
+                >
+                  <div className="flex justify-between items-center">
+                    <img
+                      src={upgrade.image}
+                      alt={upgrade.title}
+                      className="w-16 h-16"
+                    />
+                    <div className="ml-4 flex-1">
+                      <h4 className="font-semibold">{upgrade.title}</h4>
+                      <p>Cost: ${userUpgrade?.upgradePrice}</p>
+                      <p>
+                        Level: {userUpgrade?.level}
+                      </p>
+                    </div>
+                    <div className="ml-4 flex-end">
+                      <NeonButton
+                        onTouchStart={(e) => handleCardClick({
+                          category: EUpgradeCategory.DEALER,
+                          upgrade: key as EDealerUpgrade,
+                          upgradePrice: userUpgrade?.upgradePrice || 0
+                        }, e)}
+                      >
+                        Buy
+                      </NeonButton>
+                    </div>
+                  </div>
                 </div>
-                <div className="ml-4 flex-end">
-                  <NeonButton
-                    onTouchStart={(e) => handleCardClick({
-                      category: EUpgradeCategory.DEALER,
-                      upgrade: key as EDealerUpgrade,
-                      upgradePrice: userUpgrade?.upgradePrice || 0
-                    }, e)}
-                  >
-                    Buy
-                  </NeonButton>
-                </div>
-              </div>
+                )
+              })}
             </div>
-            )
-          })}
-          {Object.entries(upgradesData.product).map(([key, upgrade]) => {
-            const userUpgrade = userInfo.products.find((u) => u.name === key);
-            const price = userUpgrade?.upgradePrice || upgrade.basePrice;
-            const level = userUpgrade?.level || 0;
-            const upgradeRequirements = upgrade.requirement;
-            let locked = false;
-            if (upgradeRequirements) {
-              const requiredProduct = userInfo.products.find((u) => u.name === upgradeRequirements.product);
-              if (!requiredProduct) {
-                locked = true;
-              } else {
-                locked = requiredProduct.level < upgradeRequirements.level;
-              }
-            }
+          </div>
+          <div key="Products">
+            <h3 className="text-lg font-semibold capitalize">Products</h3>
+            <div className="space-y-2">
+              {Object.entries(upgradesData.product).map(([key, upgrade]) => {
+                const userUpgrade = userInfo.products.find((u) => u.name === key);
+                const price = userUpgrade?.upgradePrice || upgrade.basePrice;
+                const level = userUpgrade?.level || 0;
+                const upgradeRequirements = upgrade.requirement;
+                let locked = false;
+                if (upgradeRequirements) {
+                  const requiredProduct = userInfo.products.find((u) => u.name === upgradeRequirements.product);
+                  if (!requiredProduct) {
+                    locked = true;
+                  } else {
+                    locked = requiredProduct.level < upgradeRequirements.level;
+                  }
+                }
 
-            return (<div
-              key={upgrade.title}
-            >
-              <div className="flex justify-between items-center">
-                <img
-                  src={upgrade.image}
-                  alt={upgrade.title}
-                  className="w-16 h-16"
-                />
-                <div className="ml-4 flex-1">
-                  <h4 className="font-semibold">{upgrade.title}</h4>
-                    {locked ? (
-                      <p className="text-red-500">Locked</p>
-                    ) : (
-                      <>
-                        <p>Cost: ${price}</p>
-                        <p>
-                          Level: {level}
-                        </p>
-                      </>
-                    )}
+                return (<div
+                  key={upgrade.title}
+                >
+                  <div className="flex justify-between items-center">
+                    <img
+                      src={upgrade.image}
+                      alt={upgrade.title}
+                      className="w-16 h-16"
+                    />
+                    <div className="ml-4 flex-1">
+                      <h4 className="font-semibold">{upgrade.title}</h4>
+                        {locked ? (
+                          <p className="text-red-500">Locked</p>
+                        ) : (
+                          <>
+                            <p>Cost: ${price}</p>
+                            <p>
+                              Level: {level}
+                            </p>
+                          </>
+                        )}
+                    </div>
+                    <div className="ml-4 flex-end">
+                        {locked ? (
+                        <Button>Locked</Button>
+                      ) : (
+                        <NeonButton
+                          onTouchStart={(e) => handleCardClick({
+                            category: EUpgradeCategory.PRODUCT,
+                            upgrade: key as EDealerUpgrade,
+                            upgradePrice: price
+                          }, e)}
+                        >
+                          Buy
+                        </NeonButton>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="ml-4 flex-end">
-                    {locked ? (
-                    <Button>Locked</Button>
-                  ) : (
-                    <NeonButton
-                      onTouchStart={(e) => handleCardClick({
-                        category: EUpgradeCategory.PRODUCT,
-                        upgrade: key as EDealerUpgrade,
-                        upgradePrice: price
-                      }, e)}
-                    >
-                      Buy
-                    </NeonButton>
-                  )}
-                </div>
-              </div>
+                )
+              })}
             </div>
-            )
-          })}
+          </div>
         </div>
       case "gangster":
         return <></>;
