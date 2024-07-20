@@ -66,4 +66,6 @@ export interface IUserInfo {
   customerAmount: number;
   lastSell: Date;
   customerAmountRemaining: number;
+  robberyStrike: number;
+  lastRobbery?: Date;
 }

@@ -42,7 +42,7 @@ const FooterButton = styled.button<{ active: boolean }>`
   }
 `;
 
-type TViewType = "Base" | "Lab" | "Shop" | "Social" | "Pvp";
+type TViewType = "Base" | "Lab" | "Shop" | "Mission" | "Pvp";
 
 interface FooterMenuProps {
   setCurrentView: (view: TViewType) => void;
@@ -74,11 +74,11 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
         <span className="btm-nav-label">Shop</span>
       </FooterButton>
       <FooterButton
-        onClick={() => setCurrentView("Social")}
-        active={currentView === "Social"}
+        onClick={() => setCurrentView("Mission")}
+        active={currentView === "Mission"}
       >
         <GiThreeFriends />
-        <span className="btm-nav-label">Social</span>
+        <span className="btm-nav-label">Mission</span>
       </FooterButton>
       <FooterButton
         onClick={() => setCurrentView("Pvp")}

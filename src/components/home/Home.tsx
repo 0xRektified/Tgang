@@ -1,28 +1,18 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useRef,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { CustomersBoard, getRandomEmoji } from "./CustomersBoard";
+import { CustomersBoard } from "./CustomersBoard";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
-import { marketId } from "../../mocks/backend.mock";
 import { IMarketInfo } from "../interfaces/market.interface";
-import { getUnixTime } from "date-fns";
 import { EDealerUpgrade } from "../interfaces/upgrade.interface";
 import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
-import { FlexBoxRow } from "../styled/globalStyled";
 import { SupplierModal } from "./SupplierModal";
 
 const HomeContainer = styled.div`
@@ -66,7 +56,7 @@ export const Home: React.FC<HomeProps> = ({
 
   const { addToBatch } = useBatchSell(
     marketInfo?.id || "", // Pass marketId here
-    handleSell // Pass handleSell to synchronize customer count after selling
+    handleSell
   );
 
   useLayoutEffect(() => {

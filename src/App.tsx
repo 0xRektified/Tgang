@@ -9,7 +9,7 @@ import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
-import Social from "./components/social/Social";
+import Mission from "./components/social/Mission";
 import Lab from "./components/labs/Lab";
 
 const StyledApp = styled.div`
@@ -79,10 +79,12 @@ function App() {
         );
       default:
         return (
-          <Social
+          <Mission
             referralToken={userInfo!.referralToken}
             referredUsers={userInfo!.referredUsers}
             activeTab={activeTab}
+            userInfo={userInfo!}
+            setUserInfo={setUserInfo}
           />
         );
     }
