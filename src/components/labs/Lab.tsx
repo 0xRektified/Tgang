@@ -4,13 +4,12 @@ import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
 import LabModal from "./LabModal";
 import PurchasedLab from "./PurchasedLab";
-import { IUserInfo, LabPlot } from "../interfaces/user.interface";
-import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { IUserInfo, LabPlot, Product } from "../interfaces/user.interface";
+import { EProduct } from "../interfaces/product.interface";
 import LabPlotModal from "./LabPlotModal";
 import PurchasedLabModal from "./PurchasedLabModal";
 import { MdConstruction } from "react-icons/md";
-import Production from "./Production";
-import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
+import CombinedProduction from "./Production";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -32,7 +31,7 @@ const ProductionRecap = styled.div`
 
 const LabsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
   overflow-y: auto;
   max-height: calc(80vh - 150px);
@@ -206,12 +205,32 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     }
   });
 
+  const mapProductsToProduction = (products: Product[]) => {
+    const production = {
+      [EProduct.WEED]: 0,
+      [EProduct.COCAINE]: 0,
+      [EProduct.MDMA]: 0,
+      [EProduct.METH]: 0,
+      [EProduct.LSD]: 0,
+      [EProduct.HEROIN]: 0,
+    };
+
+    products.forEach((product) => {
+      if (production.hasOwnProperty(product.name)) {
+        production[product.name] = product.quantity;
+      }
+    });
+
+    return production;
+  };
+
   return (
     <LabContainer>
-      <ProductionRecap>
-        <h2 className="text-lg font-bold p-2">Current Production</h2>
-        <Production production={production} />
-      </ProductionRecap>
+      <h2 className="text-lg font-bold p-2">Current Production per hour</h2>
+      <CombinedProduction
+        currentAmount={mapProductsToProduction(userInfo.products)}
+        productionPerHour={production}
+      />
       <Divider />
       <LabsGrid>
         {userInfo.labPlots.map((labPlot) => {
