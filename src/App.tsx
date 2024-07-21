@@ -9,7 +9,7 @@ import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
-import Mission from "./components/social/Mission";
+import Mission from "./components/mission/Mission";
 import Lab from "./components/labs/Lab";
 
 const StyledApp = styled.div`
@@ -22,6 +22,7 @@ const StyledApp = styled.div`
 const AppContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
+  padding-bottom: 60px; /* Add padding to account for the footer */
 `;
 
 function App() {

@@ -24,7 +24,7 @@ const FooterButton = styled.button<{ active: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 1.2em;
+  font-size: 1em;
   cursor: pointer;
   transition: color 0.3s ease;
 

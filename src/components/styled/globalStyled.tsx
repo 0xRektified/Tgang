@@ -30,9 +30,9 @@ export const FlexBoxCol = styled.div`
 export const FlexBoxColNoGap = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px;
   gap: 0;
 `;
+
 export const Button = styled.button`
   background-color: ${(props) =>
     props.disabled ? "#6e6e6e" : "var(--tg-theme-button-color)"};

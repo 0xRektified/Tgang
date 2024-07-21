@@ -5,8 +5,7 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { RiShipLine } from "react-icons/ri";
-
+import { GiLockedChest } from "react-icons/gi";
 const NeonText = styled.div`
   font-size: 1.5rem;
   color: #fff;
@@ -36,7 +35,7 @@ const ClickableArea = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  height: 31em;
+  height: 29em;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
@@ -137,40 +136,6 @@ const Smoke = styled.div`
   }
 `;
 
-const NeonButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 6px;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.8em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  margin-bottom: 1em;
-  padding: 1em;
-`;
-
-const ShipButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 6px;
-  padding: 1rem 2rem;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1.2em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.1em;
-  justify-content: center;
-  width: 100%;
-`;
-
 const ButtonIcon = styled.span`
   font-size: 1.5em;
 `;
@@ -182,14 +147,20 @@ export const ButtonFlexBoxRow = styled.div`
   gap: 0px;
 `;
 
+const CenteredIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1em;
+`;
+
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
   pressed: boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
-  handleOpenSupplierModal: () => void;
-  handleOpenShippingModal: () => void;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -198,8 +169,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   pressed,
   selectedProduct,
   setSelectedProduct,
-  handleOpenSupplierModal,
-  handleOpenShippingModal,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
 
@@ -239,9 +208,9 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
       </ClickableArea>
 
       <ProductsList>
-        <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
-          Market{" "}
-        </NeonButton>
+        <CenteredIconContainer>
+          <GiLockedChest style={{ height: "1em", fontSize: "25px" }} />
+        </CenteredIconContainer>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);
           const quantity = product ? product.quantity : 0;
@@ -262,8 +231,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             </FlexBoxRow>
           );
         })}
-
-        <ShipButton onClick={handleOpenShippingModal}><RiShipLine /></ShipButton>
       </ProductsList>
     </>
   );

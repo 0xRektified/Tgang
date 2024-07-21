@@ -1,5 +1,5 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { getRandomEmoji } from "../components/home/CustomersBoard";
+import { getRandomEmoji } from "../components/home/HomeBoard";
 import { Transaction } from "../components/home/utils/types";
 import { EDealerUpgrade } from "../components/interfaces/upgrade.interface";
 import { IUserInfo } from "../components/interfaces/user.interface";

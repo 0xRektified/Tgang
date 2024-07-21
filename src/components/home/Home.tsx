@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { CustomersBoard } from "./CustomersBoard";
+import { HomeBoard } from "./HomeBoard";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
@@ -42,7 +42,9 @@ export const Home: React.FC<HomeProps> = ({
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.WEED);
-
+  const [animatingEmojis, setAnimatingEmojis] = useState<
+    { emoji: string; id: number; offset: string }[]
+  >([]);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const { customers, setCustomers, handleSell } = useCustomerManagement(
@@ -73,19 +75,24 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
+
   const handleCloseSupplierModal = () => {
     setIsSupplierModalOpen(false);
   };
+
   const handleCloseShippingModal = () => {
     setIsShippinhModalOpen(false);
   };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSlot(null);
   };
+
   const handleOpenSupplierModal = () => {
     setIsSupplierModalOpen(true);
   };
+
   const handleOpenShippingModal = () => {
     setIsShippinhModalOpen(true);
   };
@@ -140,6 +147,10 @@ export const Home: React.FC<HomeProps> = ({
     };
   })();
 
+  const getRandomOffset = () => {
+    return `${Math.floor(Math.random() * 41) - 20}px`;
+  };
+
   const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
 
@@ -188,7 +199,23 @@ export const Home: React.FC<HomeProps> = ({
         };
 
         addToBatch(selectedProduct, amountToSell);
+
+        // Move the customer emoji to the animating array
+        const nextCustomer = customers[0];
+        const newAnimatingEmoji = {
+          emoji: nextCustomer,
+          id: Date.now(),
+          offset: getRandomOffset(),
+        };
+        setAnimatingEmojis((prev) => [...prev, newAnimatingEmoji]);
         setCustomers((prevCustomers) => prevCustomers.slice(1));
+
+        setTimeout(() => {
+          setAnimatingEmojis((prev) =>
+            prev.filter((emoji) => emoji.id !== newAnimatingEmoji.id)
+          );
+        }, 1000);
+
         setUserInfo((prevUser) => ({
           ...prevUser,
           cashAmount: cashState,
@@ -219,10 +246,14 @@ export const Home: React.FC<HomeProps> = ({
         pressed={pressed}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
+      />
+      <HomeBoard
+        customers={customers}
+        transaction={lastTransaction}
         handleOpenSupplierModal={handleOpenSupplierModal}
         handleOpenShippingModal={handleOpenShippingModal}
+        animatingEmojis={animatingEmojis}
       />
-      <CustomersBoard customers={customers} transaction={lastTransaction} />
       <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (
         <InventoryModal

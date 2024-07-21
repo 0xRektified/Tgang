@@ -34,6 +34,12 @@ export default {
           "50%": { transform: "scale(1.2)" },
           "100%": { transform: "scale(1)" },
         },
+        moveUpRandomX: {
+          "0%": { transform: "translate(-50%, 0)" },
+          "100%": {
+            transform: "translate(calc(-50% + var(--random-offset)), -200px)",
+          },
+        },
       },
       animation: {
         "fade-out": "fadeOut 1s forwards",
@@ -43,6 +49,7 @@ export default {
         "slide-in-from-right-bounce": "slideInFromRightBounce 1s ease",
         "move-up": "moveUp 1s forwards",
         resize: "resize 0.5s forwards",
+        "move-up-random-x": "moveUpRandomX 1s forwards",
       },
     },
   },
