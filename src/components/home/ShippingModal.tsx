@@ -20,11 +20,19 @@ import { IMarketInfo } from "../interfaces/market.interface";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import useShipProduct from "../../hooks/useShipProduct";
 import { EShippingUpgrade } from "../interfaces/upgrade.interface";
-import { formatDuration } from "date-fns";
+import { addSeconds, differenceInSeconds, formatDuration, subSeconds } from "date-fns";
 import styled from "styled-components";
 
 const RightAlignedTd = styled.td`
   text-align: right;
+`;
+
+const Countdown = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
 `;
 
 interface ShippingModalProps {
@@ -52,6 +60,12 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
   const [shippingTime, setShippingTime] = useState<number>(0);
   const [shippingContainers, setShippingContainers] = useState<number>(0);
   const [batch, setBatch] = useState<{ product: EProduct; amountToSell: number }[]>([]);
+  const [nextShipCountdown, setnextShipCountdown] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    timeLeft: 0,
+  });
 
   useEffect(() => {
     const shippingTime = userInfo.shippingUpgrades.find((s) => s.product === EShippingUpgrade.SHIPPING_TIME);
@@ -59,7 +73,36 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
 
     setShippingTime(shippingTime?.amount || 24 * 3600);
     setShippingContainers(containerCount?.amount || 0);
+
+    if (new Date(userInfo.lastShipment!) < new Date()) {
+      const interval = setInterval(() => {
+        const countdown = calculateCountdown(userInfo.lastShipment!);
+        setnextShipCountdown(countdown);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
   });
+
+  const calculateCountdown = (lastShipment: Date) => {
+    const now = new Date();
+    const timeLeft = differenceInSeconds(addSeconds(lastShipment, shippingTime), now);
+
+    if (timeLeft <= 0) {
+      return {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        timeLeft: 0,
+      };
+    }
+  
+    const hours = Math.floor((timeLeft / (60 * 60)) % 24);
+    const minutes = Math.floor((timeLeft / (60)) % 60);
+    const seconds = Math.floor((timeLeft) % 60);
+  
+    return { hours, minutes, seconds, timeLeft };
+  };
 
   const getMaxQuantity = (product: Product) => {
     return Math.min(product.quantity, 10000);
@@ -98,6 +141,53 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
       hours,
       minutes,
     });
+  }
+
+  const renderShippingTime = () => {
+    if (nextShipCountdown.timeLeft > 0) {
+      return (
+        <Countdown>
+          <span className="countdown">
+            Next shipment in:
+            <span
+              style={
+                {
+                  "--value": nextShipCountdown.hours,
+                } as React.CSSProperties
+              }
+            ></span>
+            h
+            <span
+              style={
+                {
+                  "--value": nextShipCountdown.minutes,
+                } as React.CSSProperties
+              }
+            ></span>
+            m
+            <span
+              style={
+                {
+                  "--value": nextShipCountdown.seconds,
+                } as React.CSSProperties
+              }
+            ></span>
+            s
+          </span>
+        </Countdown>
+
+
+        // <ShoppingCartTotal>
+        //   Next shipment in: {nextShipCountdown.hours}h {nextShipCountdown.minutes}m {nextShipCountdown.seconds}s
+        // </ShoppingCartTotal>
+      );
+    } else {
+      return (
+        <ShoppingCartTotal>
+          Shipping time: {duration()}
+        </ShoppingCartTotal>
+      );
+    }
   }
 
   if (!isOpen) return null;
@@ -177,9 +267,7 @@ export const ShippingModal: React.FC<ShippingModalProps> = ({
             </ShoppingCartBalance>
           </FlexBoxRow>
           <FlexBoxRow>
-            <ShoppingCartTotal>
-              Shipping Time: {duration()}
-            </ShoppingCartTotal>
+            {renderShippingTime()}
           </FlexBoxRow>
 
           <Table>

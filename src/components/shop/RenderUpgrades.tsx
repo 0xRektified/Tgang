@@ -8,6 +8,7 @@ import {
   EUpgradeCategory,
   IUpgrade,
   ProductUpgrade,
+  ShippingUpgrade,
 } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import {
@@ -92,8 +93,15 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   };
 
   const renderRequirements = (
-    requirements: { product: string; level: number }[]
+    requirements: { product: string; level: number }[] | null,
+    key?: EProduct | EDealerUpgrade | EShippingUpgrade
   ) => {
+    if (key === EShippingUpgrade.SHIPPING_CONTAINERS) {
+      return renderContainerRequirements(userInfo.shippingUpgrades.find((u) => u.product === key)!.level);
+    }
+
+    if (!requirements) return <></>;
+
     return (
       <div>
         {requirements.map((req, index) => (
@@ -105,8 +113,20 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     );
   };
 
+  const renderContainerRequirements = (
+    level: number
+  ) => {
+    return (
+      <div>
+        <CardRequirement>
+          Requires {level} referrals to unlock next level
+        </CardRequirement>
+      </div>
+    );
+  }
+
   const renderUpgrade = (
-    upgrade: ProductUpgrade | DealerUpgrade,
+    upgrade: ProductUpgrade | DealerUpgrade | ShippingUpgrade,
     key: EProduct | EDealerUpgrade | EShippingUpgrade,
     category: EUpgradeCategory,
     price: number,
@@ -147,7 +167,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         </CardHeader>
         <CardContent>
           <CardDescription>{upgrade.description}</CardDescription>
-          {upgrade.requirements && renderRequirements(upgrade.requirements)}
+          {renderRequirements(upgrade.requirements, key)}
         </CardContent>
       </CardContainer>
     );
@@ -192,6 +212,42 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     </div>
   );
 
+  const renderShippingCategory = <
+    T extends { level: number; product: string; upgradePrice: number }
+  >(
+    categoryTitle: string,
+    upgrades: Record<string, ShippingUpgrade>,
+    category: EUpgradeCategory,
+    userUpgrades: T[]
+  ) => (
+    <div key={categoryTitle}>
+      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <div className="space-y-2">
+        {Object.entries(upgrades).map(([key, upgrade]) => {
+          const userUpgrade = userUpgrades.find((u) => u.product === key);
+          const price = userUpgrade?.upgradePrice || upgrade.basePrice;
+          const level = userUpgrade?.level || 0;
+          let locked = false;
+          if (key === EShippingUpgrade.SHIPPING_CONTAINERS) {
+            const referrals = userInfo.referredUsers.length;
+            if (userUpgrade?.level! - 1 >= referrals) {
+              locked = true;
+            }
+          }
+
+          return renderUpgrade(
+            upgrade,
+            key as EProduct | EDealerUpgrade | EShippingUpgrade,
+            category,
+            price,
+            level,
+            locked
+          );
+        })}
+      </div>
+    </div>
+  );
+
   if (!upgradesData) return <></>;
 
   const renderAllDealerCategories = () => (
@@ -208,7 +264,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         EUpgradeCategory.PRODUCT,
         userInfo.products
       )}
-      {renderUpgradeCategory<UserShippingUpgrade>(
+      {renderShippingCategory<UserShippingUpgrade>(
         "Shipping",
         upgradesData.shipping,
         EUpgradeCategory.SHIPPING,
