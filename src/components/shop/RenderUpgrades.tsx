@@ -97,7 +97,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     key?: EProduct | EDealerUpgrade | EShippingUpgrade
   ) => {
     if (key === EShippingUpgrade.SHIPPING_CONTAINERS) {
-      return renderContainerRequirements(userInfo.shippingUpgrades.find((u) => u.product === key)!.level);
+      const containerUpgrade = userInfo.shippingUpgrades.find((u) => u.product === key);
+      return renderContainerRequirements(containerUpgrade ? containerUpgrade.level : 0);
     }
 
     if (!requirements) return <></>;
@@ -167,7 +168,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         </CardHeader>
         <CardContent>
           <CardDescription>{upgrade.description}</CardDescription>
-          {renderRequirements(upgrade.requirements, key)}
+          { locked ? (renderRequirements(upgrade.requirements, key)) : <></> }
         </CardContent>
       </CardContainer>
     );
