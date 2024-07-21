@@ -24,14 +24,9 @@ const LabContainer = styled.div`
   position: relative;
 `;
 
-const ProductionRecap = styled.div`
-  width: 100%;
-  margin-bottom: 1rem;
-`;
-
 const LabsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
   overflow-y: auto;
   max-height: calc(80vh - 150px);
