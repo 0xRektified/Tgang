@@ -21,6 +21,7 @@ export interface LabPlot {
 }
 
 export interface Product {
+  product: EProduct;
   name: EProduct;
   quantity: number;
   image: string;

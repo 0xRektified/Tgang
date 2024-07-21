@@ -1,20 +1,20 @@
 import { EProduct } from "./product.interface";
 
 export enum EUpgradeCategory {
-  PRODUCT = 'product',
-  DEALER = 'dealer',
-  SHIPPING = 'shipping',
-  GANGSTER = 'gangster', // TODO: Implement gangster upgrades
+  PRODUCT = "product",
+  DEALER = "dealer",
+  SHIPPING = "shipping",
+  GANGSTER = "gangster", // TODO: Implement gangster upgrades
 }
 
 export enum EDealerUpgrade {
-  CUSTOMER_AMOUNT = 'customer_amount',
-  CUSTOMER_NEEDS = 'customer_needs',
+  CUSTOMER_AMOUNT = "customer_amount",
+  CUSTOMER_NEEDS = "customer_needs",
 }
 
 export enum EShippingUpgrade {
-  SHIPPING_TIME = 'shipping_time',
-  SHIPPING_CONTAINERS = 'shipping_containers',
+  SHIPPING_TIME = "shipping_time",
+  SHIPPING_CONTAINERS = "shipping_containers",
 }
 
 export interface IRequirement {
@@ -30,7 +30,7 @@ export interface DealerUpgrade {
   baseAmount: number;
   amountMultiplier: number;
   image: string;
-  requirement: IRequirement | null;
+  requirements: IRequirement[] | null;
 }
 
 export interface ProductUpgrade {
@@ -39,7 +39,7 @@ export interface ProductUpgrade {
   basePrice: number;
   upgradeMultiplier: number;
   image: string;
-  requirement: IRequirement | null;
+  requirements: IRequirement[] | null;
 }
 
 export interface ShippingUpgrade {
@@ -50,7 +50,7 @@ export interface ShippingUpgrade {
   baseAmount: number;
   amountMultiplier: number;
   image: string;
-  requirement: IRequirement | null;
+  requirements: IRequirement[] | null;
 }
 
 export interface IUpgrade {

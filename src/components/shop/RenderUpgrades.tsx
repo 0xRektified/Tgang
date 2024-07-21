@@ -1,63 +1,35 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
-import { DealerUpgrade, EDealerUpgrade, EShippingUpgrade, EUpgradeCategory, IUpgrade, ProductUpgrade } from "../interfaces/upgrade.interface";
+import {
+  DealerUpgrade,
+  EDealerUpgrade,
+  EShippingUpgrade,
+  EUpgradeCategory,
+  IUpgrade,
+  ProductUpgrade,
+} from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
-import styled from "styled-components";
-import { IUserInfo, Product } from "../interfaces/user.interface";
+import {
+  IUserInfo,
+  Product,
+  UserDealerUpgrade,
+  UserShippingUpgrade,
+} from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
-
-const NeonButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  border: 2px solid #eab308;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease, transform 0.1s ease;
-
-  &:hover {
-    background-color: rgb(24 24 27);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-const Button = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  border: 2px solid;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: rgb(24 24 27);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;
+import {
+  Button,
+  CardContainer,
+  CardContent,
+  CardDescription,
+  CardDetails,
+  CardHeader,
+  CardImage,
+  CardInfoColumn,
+  CardRequirement,
+  CardTitle,
+  NeonButton,
+} from "../styled/renderUpgradesStyled";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -65,9 +37,7 @@ interface RenderUpgradesProps {
   upgradesData: IUpgrade | undefined;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  setUpgrades: React.Dispatch<
-    React.SetStateAction<IUpgrade | undefined>
-  >;
+  setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
@@ -79,11 +49,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 }) => {
   const { buyUpgrade } = useBuyUpgrades();
 
-  const handleBuyUpgrade = async (params: {
-    category: EUpgradeCategory;
-    upgrade: EProduct | EDealerUpgrade | EShippingUpgrade;
-    upgradePrice: number;
-  }, touch: React.Touch) => {
+  const handleBuyUpgrade = async (
+    params: {
+      category: EUpgradeCategory;
+      upgrade: EProduct | EDealerUpgrade | EShippingUpgrade;
+      upgradePrice: number;
+    },
+    touch: React.Touch
+  ) => {
     const cost = params.upgradePrice;
     if (userInfo.cashAmount >= cost) {
       await buyUpgrade(params, setUserInfo);
@@ -118,6 +91,20 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     handleBuyUpgrade(params, touch);
   };
 
+  const renderRequirements = (
+    requirements: { product: string; level: number }[]
+  ) => {
+    return (
+      <div>
+        {requirements.map((req, index) => (
+          <CardRequirement key={index}>
+            Requires {req.product} Level {req.level}
+          </CardRequirement>
+        ))}
+      </div>
+    );
+  };
+
   const renderUpgrade = (
     upgrade: ProductUpgrade | DealerUpgrade,
     key: EProduct | EDealerUpgrade | EShippingUpgrade,
@@ -126,132 +113,113 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     level: number,
     locked?: boolean
   ) => {
-    return (<div
-      key={upgrade.title}
-    >
-      <div className="flex justify-between items-center">
-        <img
-          src={upgrade.image}
-          alt={upgrade.title}
-          className="w-16 h-16"
-        />
-        <div className="ml-4 flex-1">
-          <h4 className="font-semibold">{upgrade.title}</h4>
-            {locked ? (
-              <p className="text-red-500">Locked</p>
-            ) : (
-              <>
-                <p>Cost: ${price}</p>
-                <p>
-                  Level: {level}
-                </p>
-              </>
-            )}
-        </div>
-        <div className="ml-4 flex-end">
-            {locked ? (
-            <Button>Locked</Button>
-          ) : (
-            <NeonButton
-              onTouchStart={(e) => handleCardClick({
-                category,
-                upgrade: key,
-                upgradePrice: price
-              }, e)}
-            >
-              Buy
-            </NeonButton>
-          )}
-        </div>
+    return (
+      <CardContainer key={upgrade.title} locked={locked}>
+        <CardHeader>
+          <CardImage src={upgrade.image} alt={upgrade.title} />
+          <CardDetails>
+            <CardInfoColumn>
+              <CardTitle>{upgrade.title}</CardTitle>
+              <p>Cost: ${price}</p>
+              <p>Level: {level}</p>
+            </CardInfoColumn>
+            <CardInfoColumn>
+              {locked ? (
+                <Button>Locked</Button>
+              ) : (
+                <NeonButton
+                  onTouchStart={(e) =>
+                    handleCardClick(
+                      {
+                        category,
+                        upgrade: key,
+                        upgradePrice: price,
+                      },
+                      e
+                    )
+                  }
+                >
+                  Buy
+                </NeonButton>
+              )}
+            </CardInfoColumn>
+          </CardDetails>
+        </CardHeader>
+        <CardContent>
+          <CardDescription>{upgrade.description}</CardDescription>
+          {upgrade.requirements && renderRequirements(upgrade.requirements)}
+        </CardContent>
+      </CardContainer>
+    );
+  };
+
+  const renderUpgradeCategory = <
+    T extends { level: number; product: string; upgradePrice: number }
+  >(
+    categoryTitle: string,
+    upgrades: Record<string, ProductUpgrade | DealerUpgrade>,
+    category: EUpgradeCategory,
+    userUpgrades: T[]
+  ) => (
+    <div key={categoryTitle}>
+      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <div className="space-y-2">
+        {Object.entries(upgrades).map(([key, upgrade]) => {
+          const userUpgrade = userUpgrades.find((u) => u.product === key);
+          const price = userUpgrade?.upgradePrice || upgrade.basePrice;
+          const level = userUpgrade?.level || 0;
+          const upgradeRequirements = upgrade.requirements;
+          let locked = false;
+          if (upgradeRequirements) {
+            locked = upgradeRequirements.some((req) => {
+              const requiredProduct = userInfo.products.find(
+                (u) => u.name === req.product
+              );
+              return !requiredProduct || requiredProduct.level < req.level;
+            });
+          }
+
+          return renderUpgrade(
+            upgrade,
+            key as EProduct | EDealerUpgrade | EShippingUpgrade,
+            category,
+            price,
+            level,
+            locked
+          );
+        })}
       </div>
     </div>
-    )
-  }
+  );
 
-  if (upgradesData) {
-    switch (tab) {
-      case "dealer":
-        return <div className="space-y-4">
-          <div key="Customers">
-            <h3 className="text-lg font-semibold capitalize">Customers</h3>
-            <div className="space-y-2">
-              {Object.entries(upgradesData.dealer).map(([key, upgrade]) => {
-                const userUpgrade = userInfo.dealerUpgrades.find((u) => u.product === key);
+  if (!upgradesData) return <></>;
 
-                return renderUpgrade(
-                  upgrade,
-                  key as EDealerUpgrade,
-                  EUpgradeCategory.DEALER,
-                  userUpgrade?.upgradePrice || upgrade.basePrice,
-                  userUpgrade?.level || 0
-                );
-              })}
-            </div>
-          </div>
-          <div key="Products">
-            <h3 className="text-lg font-semibold capitalize">Products</h3>
-            <div className="space-y-2">
-              {Object.entries(upgradesData.product).map(([key, upgrade]) => {
-                const userUpgrade = userInfo.products.find((u) => u.name === key);
-                const price = userUpgrade?.upgradePrice || upgrade.basePrice;
-                const level = userUpgrade?.level || 0;
-                const upgradeRequirements = upgrade.requirement;
-                let locked = false;
-                if (upgradeRequirements) {
-                  const requiredProduct = userInfo.products.find((u) => u.name === upgradeRequirements.product);
-                  if (!requiredProduct) {
-                    locked = true;
-                  } else {
-                    locked = requiredProduct.level < upgradeRequirements.level;
-                  }
-                }
+  const renderAllDealerCategories = () => (
+    <>
+      {renderUpgradeCategory<UserDealerUpgrade>(
+        "Customers",
+        upgradesData.dealer,
+        EUpgradeCategory.DEALER,
+        userInfo.dealerUpgrades
+      )}
+      {renderUpgradeCategory<Product>(
+        "Products",
+        upgradesData.product,
+        EUpgradeCategory.PRODUCT,
+        userInfo.products
+      )}
+      {renderUpgradeCategory<UserShippingUpgrade>(
+        "Shipping",
+        upgradesData.shipping,
+        EUpgradeCategory.SHIPPING,
+        userInfo.shippingUpgrades
+      )}
+    </>
+  );
 
-                return renderUpgrade(
-                  upgrade,
-                  key as EProduct,
-                  EUpgradeCategory.PRODUCT,
-                  price,
-                  level,
-                  locked
-                );
-              })}
-            </div>
-          </div>
-          <div key="Shipping">
-            <h3 className="text-lg font-semibold capitalize">Shipping</h3>
-            <div className="space-y-2">
-              {Object.entries(upgradesData.shipping).map(([key, upgrade]) => {
-                const userUpgrade = userInfo.shippingUpgrades.find((u) => u.product === key);
-                const price = userUpgrade?.upgradePrice || upgrade.basePrice;
-                const level = userUpgrade?.level || 0;
-                const upgradeRequirements = upgrade.requirement;
-                let locked = false;
-                if (upgradeRequirements) {
-                  const requiredProduct = userInfo.products.find((u) => u.name === upgradeRequirements.product);
-                  if (!requiredProduct) {
-                    locked = true;
-                  } else {
-                    locked = requiredProduct.level < upgradeRequirements.level;
-                  }
-                }
-
-                return renderUpgrade(
-                  upgrade,
-                  key as EShippingUpgrade,
-                  EUpgradeCategory.SHIPPING,
-                  price,
-                  level,
-                  locked
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      case "gangster":
-        return <></>;
-      default:
-        return <></>;
-    }
-  }
-  return <></>;
+  return (
+    <div className="space-y-4">
+      {tab === "dealer" && renderAllDealerCategories()}
+    </div>
+  );
 };

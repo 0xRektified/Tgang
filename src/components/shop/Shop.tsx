@@ -17,9 +17,7 @@ interface ShopProps {
   activeTab: string;
   upgradesData: IUpgrade | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  setUpgrades: React.Dispatch<
-    React.SetStateAction<IUpgrade | undefined>
-  >;
+  setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
 }
 
 export const Shop: React.FC<ShopProps> = ({
@@ -35,13 +33,14 @@ export const Shop: React.FC<ShopProps> = ({
     setCurrentTab(activeTab);
   }, [activeTab]);
 
-  const handleTabClick = (tab: string) => {
-    setCurrentTab(tab);
-  };
+  // const handleTabClick = (tab: string) => {
+  //   setCurrentTab(tab);
+  // };
 
   return (
     <ShopContainer>
       <FlexBoxRow>
+        {/* @note temporary disable the tab
         <Tabs role="tablist">
           <Tab
             role="tab"
@@ -57,7 +56,8 @@ export const Shop: React.FC<ShopProps> = ({
           >
             Gangster
           </Tab>
-        </Tabs>
+        </Tabs> 
+        */}
       </FlexBoxRow>
       <FlexBoxRow>
         <UpgradeContainer>
