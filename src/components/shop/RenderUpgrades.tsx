@@ -213,6 +213,43 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     </div>
   );
 
+  const renderProductCategory = (
+    categoryTitle: string,
+    upgrades: Record<string, ProductUpgrade | DealerUpgrade>,
+    category: EUpgradeCategory,
+    userUpgrades: Product[]
+  ) => (
+    <div key={categoryTitle}>
+      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <div className="space-y-2">
+        {Object.entries(upgrades).map(([key, upgrade]) => {
+          const userUpgrade = userUpgrades.find((u) => u.name === key);
+          const price = userUpgrade?.upgradePrice || upgrade.basePrice;
+          const level = userUpgrade?.level || 0;
+          const upgradeRequirements = upgrade.requirements;
+          let locked = false;
+          if (upgradeRequirements) {
+            locked = upgradeRequirements.some((req) => {
+              const requiredProduct = userInfo.products.find(
+                (u) => u.name === req.product
+              );
+              return !requiredProduct || requiredProduct.level < req.level;
+            });
+          }
+
+          return renderUpgrade(
+            upgrade,
+            key as EProduct | EDealerUpgrade | EShippingUpgrade,
+            category,
+            price,
+            level,
+            locked
+          );
+        })}
+      </div>
+    </div>
+  );
+
   const renderShippingCategory = <
     T extends { level: number; product: string; upgradePrice: number }
   >(
@@ -259,7 +296,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         EUpgradeCategory.DEALER,
         userInfo.dealerUpgrades
       )}
-      {renderUpgradeCategory<Product>(
+      {renderProductCategory<Product>(
         "Products",
         upgradesData.product,
         EUpgradeCategory.PRODUCT,
