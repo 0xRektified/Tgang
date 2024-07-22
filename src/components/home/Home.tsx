@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
-import { HomeBoard } from "./HomeBoard";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
@@ -246,14 +245,13 @@ export const Home: React.FC<HomeProps> = ({
         pressed={pressed}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
-      />
-      <HomeBoard
-        customers={customers}
-        transaction={lastTransaction}
         handleOpenSupplierModal={handleOpenSupplierModal}
         handleOpenShippingModal={handleOpenShippingModal}
+        customers={customers}
+        transaction={lastTransaction}
         animatingEmojis={animatingEmojis}
       />
+
       <TouchPoints touchPoints={touchPoints} />
       {isModalOpen && (
         <InventoryModal

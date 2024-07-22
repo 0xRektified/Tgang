@@ -1,11 +1,13 @@
 import userCharacter from "/assets/user_no_background.png";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
-import { FlexBoxRow } from "../styled/globalStyled";
+import { FlexBoxRow, FlexBoxCol } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { GiLockedChest } from "react-icons/gi";
+import { Transaction } from "./utils/types";
+import { HomeBoard } from "./HomeBoard";
+
 const NeonText = styled.div`
   font-size: 1.5rem;
   color: #fff;
@@ -34,8 +36,9 @@ const NeonText = styled.div`
 const ClickableArea = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 29em;
+  height: auto;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
@@ -47,14 +50,30 @@ const ClickableArea = styled.div`
 const ImageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 32em;
-  flex: 0 0 75%;
+  align-items: left;
+  justify-content: left;
+  width: 100%;
   transition: transform 0.15s ease-in-out;
   &.pressed {
     transform: scale(1.15);
   }
+`;
+
+const HomeBoardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  margin-top: 25px;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: flex-start; /* Ensure it aligns with ProductsList */
+  position: absolute;
+  bottom: 0; /* Ensure it's positioned at the bottom */
+  right: 0;
+  z-index: 1; /* Adjust z-index if necessary */
 `;
 
 const ProductsList = styled.div`
@@ -70,9 +89,9 @@ const ProductsList = styled.div`
   flex-shrink: 0;
   align-self: flex-start;
   position: absolute;
-  bottom: 100;
+  bottom: 100; /* Align at the bottom */
   right: 0;
-  z-index: 2;
+  z-index: 2; /* Ensure it's above HomeBoardContainer */
 `;
 
 const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
@@ -136,11 +155,7 @@ const Smoke = styled.div`
   }
 `;
 
-const ButtonIcon = styled.span`
-  font-size: 1.5em;
-`;
-
-export const ButtonFlexBoxRow = styled.div`
+const ButtonFlexBoxRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -155,12 +170,50 @@ const CenteredIconContainer = styled.div`
   margin-bottom: 1em;
 `;
 
+const NeonButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 6px;
+  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
+    0 0 10px #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  margin: 1em;
+  padding: 0.8em;
+  flex: 1;
+`;
+
+const ShipButton = styled.button`
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 6px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+`;
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
   pressed: boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
+  handleOpenSupplierModal: () => void;
+  handleOpenShippingModal: () => void;
+  customers: string[];
+  transaction: Transaction | null;
+  animatingEmojis: { emoji: string; id: number; offset: string }[];
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -169,6 +222,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   pressed,
   selectedProduct,
   setSelectedProduct,
+  handleOpenSupplierModal,
+  handleOpenShippingModal,
+  customers,
+  transaction,
+  animatingEmojis,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
 
@@ -196,20 +254,31 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
     <>
       <ClickableArea onTouchStart={handleTouchStart}>
         {smokes}
-        <NeonText>TAP TO SELL</NeonText>
+        <FlexBoxRow className="w-full justify-center">
+          <NeonText>TAP TO SELL</NeonText>
+          <ImageContainer className={pressed ? "pressed" : ""}>
+            <img
+              src={userCharacter}
+              alt="Logo"
+              style={{ maxWidth: "250px", paddingTop: "25px" }}
+            />
+          </ImageContainer>
+        </FlexBoxRow>
 
-        <ImageContainer className={pressed ? "pressed" : ""}>
-          <img
-            src={userCharacter}
-            alt="Logo"
-            style={{ maxWidth: "220px", paddingTop: "25px" }}
+        <HomeBoardContainer>
+          <HomeBoard
+            customers={customers}
+            transaction={transaction}
+            animatingEmojis={animatingEmojis}
           />
-        </ImageContainer>
+        </HomeBoardContainer>
       </ClickableArea>
 
       <ProductsList>
         <CenteredIconContainer>
-          <GiLockedChest style={{ height: "1em", fontSize: "25px" }} />
+          <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
+            Market
+          </NeonButton>
         </CenteredIconContainer>
         {Object.values(EProduct).map((productName, index) => {
           const product = products.find((p) => p.name === productName);

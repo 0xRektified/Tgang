@@ -15,23 +15,15 @@ const TransactionContainer = styled.div`
 const TransactionStatus = styled.p`
   flex: 1;
   color: #cbd5e0;
-  font-size: 1rem;
-`;
-
-const WaitingCustomers = styled.p`
-  color: #cbd5e0;
-  font-size: 1rem;
-  text-align: right;
+  font-size: 0.8rem;
 `;
 
 interface LastTransactionProps {
   transaction: Transaction | null;
-  waitingCustomersCount: number;
 }
 
 export const LastTransaction: React.FC<LastTransactionProps> = ({
   transaction,
-  waitingCustomersCount,
 }) => {
   return (
     <TransactionContainer className="rounded shadow-lg w-full ">
@@ -49,7 +41,6 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
       ) : (
         <TransactionStatus>No transactions yet.</TransactionStatus>
       )}
-      <WaitingCustomers>Customers: {waitingCustomersCount}</WaitingCustomers>
     </TransactionContainer>
   );
 };
