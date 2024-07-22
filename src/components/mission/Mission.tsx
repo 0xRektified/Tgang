@@ -217,7 +217,9 @@ const Mission: React.FC<MissionProps> = ({
   };
 
   const handleRefClick = () => {
-    navigator.clipboard.writeText(referralToken);
+    navigator.clipboard.writeText(
+      `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`
+    );
   };
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const handleDailyReward = () => {
