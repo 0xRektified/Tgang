@@ -62,6 +62,7 @@ export const WebPageTitle = styled.div`
   background-color: white;
   color: black;
   font-size: 1rem;
+  margin: 5px;
 `;
 
 export const RoundButton = styled.button`

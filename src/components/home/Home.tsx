@@ -12,7 +12,7 @@ import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
-import { SupplierModal } from "./SupplierModal";
+import { CombinedModal } from "./SupplierModal";
 import { ShippingModal } from "./ShippingModal";
 
 const HomeContainer = styled.div`
@@ -262,21 +262,11 @@ export const Home: React.FC<HomeProps> = ({
         />
       )}
       {isSupplierModalOpen && (
-        <SupplierModal
+        <CombinedModal
           userInfo={userInfo}
           marketInfo={marketInfo}
           isOpen={isSupplierModalOpen}
           onClose={handleCloseSupplierModal}
-          onUnlockClick={onUnlockClick}
-          setUserInfo={setUserInfo}
-        />
-      )}
-      {isShippinhModalOpen && (
-        <ShippingModal
-          userInfo={userInfo}
-          marketInfo={marketInfo}
-          isOpen={isShippinhModalOpen}
-          onClose={handleCloseShippingModal}
           onUnlockClick={onUnlockClick}
           setUserInfo={setUserInfo}
         />
