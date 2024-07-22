@@ -288,3 +288,33 @@ export const SiteTitle = styled.div`
   font-weight: 600;
   font-size: 1rem;
 `;
+
+export const RightAlignedTd = styled.td`
+  text-align: right;
+`;
+
+export const Countdown = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+`;
+
+export const TabContainer = styled.div`
+  display: flex;
+  border-bottom: 1px solid #e4e4e7;
+`;
+
+export const Tab = styled.button<{ active?: boolean }>`
+  padding: 0.5rem;
+  cursor: pointer;
+  background-color: ${(props) => (props.active ? "#4a5568" : "#1b1a1a")};
+  color: white;
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  &:hover {
+    background-color: #4a5568;
+  }
+`;

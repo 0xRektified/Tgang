@@ -12,8 +12,7 @@ import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
-import { CombinedModal } from "./SupplierModal";
-import { ShippingModal } from "./ShippingModal";
+import { CombinedModal } from "./CombinedModal";
 
 const HomeContainer = styled.div`
   display: flex;
