@@ -5,6 +5,19 @@ import { ILab } from "../interfaces/lab.interface";
 import { EProduct } from "../interfaces/product.interface";
 import { useBuyLab } from "../../hooks/useBuyLab";
 import { LabPlot, IUserInfo, Product } from "../interfaces/user.interface";
+import {
+  Button,
+  CardContainer,
+  CardContent,
+  CardDescription,
+  CardDetails,
+  CardHeader,
+  CardImage,
+  CardInfoColumn,
+  CardRequirement,
+  CardTitle,
+  NeonButton,
+} from "../styled/renderUpgradesStyled";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -20,7 +33,7 @@ const ModalBackground = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: #1f2937;
+  background-color: black;
   padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -31,42 +44,22 @@ const ModalContent = styled.div`
   position: relative;
 `;
 
-const LabItem = styled.div`
-  background-color: #374151;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.75rem;
-`;
+const LabItem = styled(CardContainer)``;
 
-const LabButton = styled.button`
+const LabButton = styled(NeonButton)`
   padding: 0.5rem 1rem;
   margin-top: 0.5rem;
-  background-color: #10b981;
-  border-radius: 0.5rem;
-  color: white;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.2s;
-
-  &:hover {
-    background-color: #059669;
-    transform: scale(1.05);
-  }
 `;
 
-const LockedButton = styled.button`
+const LockedButton = styled(Button)`
   padding: 0.5rem 1rem;
   margin-top: 0.5rem;
   background-color: #cf2400;
-  border-radius: 0.5rem;
-  color: white;
-  font-weight: bold;
+  border-color: #cf2400;
 `;
 
 const CloseButton = styled.button`
-  position: fixed;
+  position: absolute;
   top: 1rem;
   right: 1rem;
   background-color: #ef44449c;
@@ -87,15 +80,37 @@ const CloseButton = styled.button`
     background-color: #dc2626;
   }
 `;
-const LabImage = styled.img`
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: 0.5rem;
+
+const LabImage = styled(CardImage)`
+  width: 80px;
+  height: 80px;
 `;
 
 const LabInfo = styled.div`
   color: white;
+  text-align: left;
+`;
+
+const LabTitle = styled.h2`
   text-align: center;
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+`;
+
+const LabGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 interface LabModalProps {
@@ -128,43 +143,60 @@ const LabModal: React.FC<LabModalProps> = ({
 
   return (
     <ModalBackground onClick={onClose}>
-      <ModalContent>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-        <h2 className="text-lg font-bold text-white mb-4">Select a Lab</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.entries(labs).map((lab) => {
-            const levelRequirement = lab[1].levelRequirement;
+        <LabTitle>Select a Lab</LabTitle>
+        <LabGrid>
+          {Object.entries(labs).map(([labKey, lab]) => {
+            const levelRequirement = lab.levelRequirement;
             let locked = false;
-            const requiredProduct = products.find((u) => u.name === lab[0]);
+            const requiredProduct = products.find((u) => u.name === labKey);
             if (!requiredProduct) {
               locked = true;
             } else {
               locked = requiredProduct.level < levelRequirement;
             }
             return (
-              <LabItem key={lab[0]}>
-                <LabImage src={lab[1].image} alt={lab[0]} />
-                <LabInfo>Type: {lab[0]}</LabInfo>
-                <LabInfo>Capacity: {lab[1].baseCapacity}</LabInfo>
-                <LabInfo>Production: {lab[1].baseProduction}</LabInfo>
-                <LabInfo>Price: ${lab[1].labPrice}</LabInfo>
-                {locked ? (
-                  <LockedButton
-                    disabled = {locked}
-                  >
-                    Locked
-                  </LockedButton>
-                ) : (
-                  <LabButton
-                  onClick={() => buyAndClose(lab[0] as EProduct, plotId)}
-                  >
-                    Buy
-                  </LabButton>
-                )}
+              <LabItem key={labKey} locked={locked}>
+                <CardHeader>
+                  <LabImage src={lab.image} alt={labKey} />
+                  <CardDetails>
+                    <CardInfoColumn>
+                      <CardTitle>{labKey}</CardTitle>
+                      <p>Cost: ${lab.labPrice}</p>
+                      <p>Capacity: {lab.baseCapacity}</p>
+                      <p>Production {lab.baseProduction}</p>
+                    </CardInfoColumn>
+                    <CardInfoColumn>
+                      {locked ? (
+                        <LockedButton disabled={locked}>Locked</LockedButton>
+                      ) : (
+                        <LabButton
+                          onTouchStart={() =>
+                            buyAndClose(labKey as EProduct, plotId)
+                          }
+                        >
+                          Buy
+                        </LabButton>
+                      )}
+                    </CardInfoColumn>
+                  </CardDetails>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{lab.description}</CardDescription>
+                  {locked ? (
+                    <CardRequirement>
+                      Requires {requiredProduct ? requiredProduct.name : labKey}{" "}
+                      Level {levelRequirement}
+                    </CardRequirement>
+                  ) : (
+                    <></>
+                  )}
+                </CardContent>
               </LabItem>
-            )}
-          )}
-        </div>
+            );
+          })}
+        </LabGrid>
       </ModalContent>
     </ModalBackground>
   );

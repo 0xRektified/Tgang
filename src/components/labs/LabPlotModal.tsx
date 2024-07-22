@@ -4,6 +4,7 @@ import "tailwindcss/tailwind.css";
 import { IUserInfo } from "../interfaces/user.interface";
 import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
 import { formatPrice } from "../utils/formater";
+import { NeonButton, Button, CardTitle } from "../styled/renderUpgradesStyled";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -30,33 +31,29 @@ const ModalContent = styled.div`
   position: relative;
 `;
 
-const LabButton = styled.button`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  background-color: #10b981;
-  border-radius: 0.5rem;
+const ModalHeader = styled(CardTitle)`
+  text-align: center;
   color: white;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.2s;
-
-  &:hover {
-    background-color: #059669;
-    transform: scale(1.05);
-  }
+  margin-bottom: 1rem;
 `;
 
-const CloseButton = styled.button`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+`;
+
+const StyledNeonButton = styled(NeonButton)`
+  padding: 0.75rem 1.5rem;
+`;
+
+const StyledCloseButton = styled(Button)`
+  padding: 0.75rem 1.5rem;
   background-color: #ef4444;
-  border-radius: 0.5rem;
-  color: white;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.2s;
+  border-color: #ef4444;
 
   &:hover {
     background-color: #dc2626;
-    transform: scale(1.05);
   }
 `;
 
@@ -80,14 +77,14 @@ const LabModal: React.FC<LabModalProps> = ({
 
   return (
     <ModalBackground onClick={onClose}>
-      <ModalContent>
-        <h2 className="text-lg font-bold text-white mb-4">
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        <ModalHeader>
           Buy a new Lab Plot for {formatPrice(plotPrice, false)}
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <LabButton onClick={() => buyAndClose()}>Buy</LabButton>
-          <CloseButton onClick={onClose}>Cancel</CloseButton>
-        </div>
+        </ModalHeader>
+        <ButtonContainer>
+          <StyledNeonButton onClick={buyAndClose}>Buy</StyledNeonButton>
+          <StyledCloseButton onClick={onClose}>Cancel</StyledCloseButton>
+        </ButtonContainer>
       </ModalContent>
     </ModalBackground>
   );

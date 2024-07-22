@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import { LabPlot, IUserInfo, UserLab } from "../interfaces/user.interface";
 import { useUpgradeLabCapacity } from "../../hooks/useUpgradeLabCapacity";
 import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
+import { NeonButton, Button, CardTitle } from "../styled/renderUpgradesStyled";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -32,23 +33,24 @@ const ModalContent = styled.div`
   position: relative;
 `;
 
-const LabButton = styled.button`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  background-color: #3b82f6; /* Creative blue color */
-  border-radius: 0.5rem;
+const ModalHeader = styled(CardTitle)`
+  text-align: center;
   color: white;
-  font-weight: bold;
+  margin-bottom: 1rem;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const StyledNeonButton = styled(NeonButton)`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: background-color 0.3s, transform 0.2s;
-
-  &:hover {
-    background-color: #2563eb;
-    transform: scale(1.05);
-  }
 
   & > svg {
     font-size: 1.25rem;
@@ -111,20 +113,19 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
 
   return (
     <ModalBackground onClick={onClose}>
-      <ModalContent>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
-
-        <h2 className="text-lg font-bold text-white mb-4">Lab details</h2>
-        <div className="grid grid-cols-1 gap-4">
-          <LabButton onClick={() => upgradeCapacity()}>
+        <ModalHeader>Lab Details</ModalHeader>
+        <ButtonContainer>
+          <StyledNeonButton onClick={upgradeCapacity}>
             Upgrade Capacity <LuPackagePlus />{" "}
             {formatPrice(plot.lab?.upgradeCapacityPrice || 0)}
-          </LabButton>
-          <LabButton onClick={() => upgradeProduction()}>
+          </StyledNeonButton>
+          <StyledNeonButton onClick={upgradeProduction}>
             Upgrade Production <MdConveyorBelt />{" "}
             {formatPrice(plot.lab?.upgradeProductionPrice || 0)}
-          </LabButton>
-        </div>
+          </StyledNeonButton>
+        </ButtonContainer>
       </ModalContent>
     </ModalBackground>
   );
