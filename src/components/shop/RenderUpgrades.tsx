@@ -296,7 +296,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         EUpgradeCategory.DEALER,
         userInfo.dealerUpgrades
       )}
-      {renderProductCategory<Product>(
+      {renderProductCategory(
         "Products",
         upgradesData.product,
         EUpgradeCategory.PRODUCT,

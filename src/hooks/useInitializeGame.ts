@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useMarketData } from "./useMarketData";
-import { IUserInfo, Product } from "../components/interfaces/user.interface";
-import { EProduct } from "../components/interfaces/product.interface";
-import { ILab } from "../components/interfaces/lab.interface";
+import { IUserInfo } from "../components/interfaces/user.interface";
 import { useFetchLabs } from "./useFetchLabs";
 
 const defaultUserInfo: IUserInfo = {
