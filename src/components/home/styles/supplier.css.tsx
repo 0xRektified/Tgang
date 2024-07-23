@@ -61,7 +61,7 @@ export const Notch = styled.div`
 export const WebPageTitle = styled.div`
   background-color: white;
   color: black;
-  font-size: 1rem;
+  font-size: 0.7rem;
   margin: 5px;
 `;
 
@@ -110,9 +110,9 @@ export const ModalContainer = styled.div`
   padding: 2rem 1rem;
   border-radius: 2rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  width: 90%;
+  width: 95%;
   max-width: 400px;
-  height: 80%;
+  height: 83%;
   position: relative;
   z-index: 1001;
   display: flex;
