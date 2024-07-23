@@ -135,7 +135,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                                   type="range"
                                   min={0}
                                   max={Math.floor(
-                                    remainingCash / product.price
+                                    remainingCash / product.discountPrice
                                   )}
                                   value={quantity}
                                   className="range"

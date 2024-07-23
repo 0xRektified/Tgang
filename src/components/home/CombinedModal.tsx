@@ -53,18 +53,14 @@ export const CombinedModal: React.FC<ModalProps> = ({
   >([]);
 
   useEffect(() => {
-    setTotalCost(
-      selectedProduct && "discountPrice" in selectedProduct
-        ? selectedProduct.discountPrice * quantity
-        : 0
-    );
-    setRemainingCash(
-      userInfo.cashAmount -
-        (selectedProduct && "discountPrice" in selectedProduct
-          ? selectedProduct.discountPrice * quantity
-          : 0)
-    );
-  }, [selectedProduct, quantity, userInfo]);
+    if (selectedProduct && "discountPrice" in selectedProduct) {
+      const newTotalCost = selectedProduct.discountPrice * quantity;
+      setTotalCost(newTotalCost);
+    } else {
+      setTotalCost(0);
+    }
+    setRemainingCash(userInfo.cashAmount);
+  }, [selectedProduct, quantity, userInfo.cashAmount]);
 
   const handleBuy = async () => {
     if (totalCost > userInfo.cashAmount) {
