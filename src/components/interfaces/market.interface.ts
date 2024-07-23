@@ -4,6 +4,7 @@ export interface MarketProduct {
   name: EProduct;
   price: number;
   discountPrice: number;
+  previousPrice: number;
 }
 
 export interface IMarketInfo {

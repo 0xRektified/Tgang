@@ -318,3 +318,8 @@ export const Tab = styled.button<{ active?: boolean }>`
     background-color: #4a5568;
   }
 `;
+
+export const PriceVariation = styled.span`
+  font-size: 0.7em;
+  margin-left: 5px;
+`;

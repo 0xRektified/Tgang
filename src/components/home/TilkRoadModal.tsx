@@ -5,6 +5,7 @@ import { IUserInfo, Product } from "../interfaces/user.interface";
 import { FlexBoxRow } from "../styled/globalStyled";
 import {
   NeonButton,
+  PriceVariation,
   ScrollableTableContainer,
   ShoppingCartBalance,
   ShoppingCartFooter,
@@ -76,17 +77,28 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   const productIcon =
                     (product.name as keyof typeof EProductIcon) &&
                     EProductIcon[product.name as keyof typeof EProductIcon];
+
+                  const priceChangePercent =
+                    ((product.price - product.previousPrice) /
+                      product.previousPrice) *
+                    100;
+                  const priceChangeColor =
+                    priceChangePercent > 0 ? "red" : "green";
+                  const priceChangeSign = priceChangePercent > 0 ? "+" : "";
                   return (
                     <React.Fragment key={product.name}>
                       <tr
                         className={!userProduct ? "disabled" : ""}
                         onClick={() => handleProductSelect(product)}
                       >
+                        <td>{productIcon}</td>
                         <td>
-                          {product.name + ` `}
-                          {productIcon}
+                          ${product.discountPrice.toFixed(2)}{" "}
+                          <PriceVariation style={{ color: priceChangeColor }}>
+                            ({priceChangeSign}
+                            {priceChangePercent.toFixed(2)}%)
+                          </PriceVariation>
                         </td>
-                        <td>${product.discountPrice}</td>
                         <td className="text-right">
                           {selectedProduct?.name === product.name
                             ? quantity
@@ -123,7 +135,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                                   type="range"
                                   min={0}
                                   max={Math.floor(
-                                    remainingCash / product.discountPrice
+                                    remainingCash / product.price
                                   )}
                                   value={quantity}
                                   className="range"

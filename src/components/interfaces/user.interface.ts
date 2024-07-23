@@ -1,5 +1,9 @@
 import { EProduct } from "./product.interface";
-import { EDealerUpgrade, EShippingUpgrade } from "./upgrade.interface";
+import {
+  EDealerUpgrade,
+  EShippingUpgrade,
+  IUpgrade,
+} from "./upgrade.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -73,6 +77,7 @@ export interface IUserInfo {
   id: string;
   username: string;
   cashAmount: number;
+  upgrades: IUpgrade[];
   products: Product[];
   dealerUpgrades: UserDealerUpgrade[];
   shippingUpgrades: UserShippingUpgrade[];

@@ -3,7 +3,9 @@ import axiosInstance from "../api/axiosConfig";
 import { IMarketInfo } from "../components/interfaces/market.interface";
 
 export function useMarketData() {
-  const [marketInfo, setMarketInfo] = useState<IMarketInfo | undefined>(undefined);
+  const [marketInfo, setMarketInfo] = useState<IMarketInfo | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
