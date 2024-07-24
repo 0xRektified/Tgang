@@ -229,7 +229,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   animatingEmojis,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
   useEffect(() => {
     const createSmoke = () => {
       const newSmokes: JSX.Element[] = [];
@@ -261,6 +265,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
               src={userCharacter}
               alt="Logo"
               style={{ maxWidth: "250px", paddingTop: "50px" }}
+              className={imageLoaded ? "animate-fade-in" : ""}
+              onLoad={handleImageLoad}
             />
           </ImageContainer>
         </FlexBoxRow>

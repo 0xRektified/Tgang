@@ -14,9 +14,10 @@ import Lab from "./components/labs/Lab";
 
 const StyledApp = styled.div`
   background-image: url("/assets/street.webp");
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
+  background-position-y: 450px;
 `;
 
 const AppContainer = styled.div`
@@ -40,12 +41,19 @@ function App() {
   } = useInitializeGame();
   const [currentView, setCurrentView] = useState("Base");
   const [activeTab, setActiveTab] = useState<string>("dealer");
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const test = document.getElementById("mainView");
     if (test) {
       test.scrollIntoView();
     }
+
+    const timeout = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleUnlockClick = (tab: string) => {
@@ -91,7 +99,7 @@ function App() {
     }
   };
 
-  if (loading) {
+  if (loading || isInitialLoading) {
     return <Loading />;
   }
 

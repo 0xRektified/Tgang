@@ -4,6 +4,10 @@ export default {
   theme: {
     extend: {
       keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
         fadeOut: {
           "0%": { opacity: 1, transform: "translateY(0)" },
           "100%": { opacity: 0, transform: "translateY(-20px)" },
@@ -42,6 +46,7 @@ export default {
         },
       },
       animation: {
+        "fade-in": "fadeIn 1s forwards",
         "fade-out": "fadeOut 1s forwards",
         "fade-out-toast": "fadeOutToast 3s forwards",
         "slide-in-from-left": "slideInFromLeft 1s forwards",
