@@ -1,4 +1,5 @@
 import { EProduct } from "./product.interface";
+import { EShippingMethod, Requirement } from "./shipping.interface";
 import {
   EDealerUpgrade,
   IUpgrade,
@@ -21,6 +22,21 @@ export interface UserLab {
 export interface LabPlot {
   plotId: number;
   lab?: UserLab;
+}
+
+export interface UserShipping {
+  method: EShippingMethod;
+  title: string;
+  image: string;
+  capacityLevel: number;
+  shippingTimeLevel: number;
+  capacity: number;
+  shippingTime: number;
+  upgradeCapacityPrice: number;
+  upgradeShippingTimePrice: number;
+  lastShipment: Date;
+  nextShipment: Date;
+  requiredReputation: Requirement | null;
 }
 
 export interface Product {
@@ -63,6 +79,7 @@ export interface IReputationLevel {
   maxReputation: number;
   title: string;
 }
+
 export interface IUserInfo {
   id: string;
   username: string;
@@ -70,6 +87,7 @@ export interface IUserInfo {
   upgrades: IUpgrade[];
   products: Product[];
   dealerUpgrades: UserDealerUpgrade[];
+  shipping: UserShipping[];
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;

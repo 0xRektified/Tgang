@@ -90,7 +90,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
   };
 
   const handleShip = () => {
-    shipProduct("NY", batch, setUserInfo);
+    // shipProduct("NY", batch, setUserInfo); // TODO
   };
 
   if (!isOpen) return null;

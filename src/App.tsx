@@ -33,9 +33,9 @@ function App() {
     upgrades,
     marketInfo,
     labs,
+    shippingMethods,
     setUserInfo,
     setUpgrades,
-    setLabs,
     loading,
     error,
   } = useInitializeGame();
@@ -82,6 +82,7 @@ function App() {
             userInfo={userInfo}
             activeTab={activeTab}
             upgradesData={upgrades}
+            shippingMethods={shippingMethods}
             setUserInfo={setUserInfo}
             setUpgrades={setUpgrades}
           />

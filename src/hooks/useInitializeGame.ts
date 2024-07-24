@@ -4,12 +4,14 @@ import { useFetchUpgrades } from "./useFetchUpgrades";
 import { useMarketData } from "./useMarketData";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { useFetchLabs } from "./useFetchLabs";
+import { useFetchShippingMethods } from "./useFetchShippingMethods";
 
 const defaultUserInfo: IUserInfo = {
   id: "",
   username: "",
   cashAmount: 1000,
   products: [],
+  shipping: [],
   labPlots: [],
   labPlotPrice: 0,
   referralToken: "",
@@ -55,6 +57,14 @@ export function useInitializeGame() {
   } = useFetchLabs();
 
   const {
+    shippingMethods,
+    setShippingMethods,
+    loading: shippingLoading,
+    error: shippingError,
+    fetchShippingMethods,
+  } = useFetchShippingMethods();
+
+  const {
     marketInfo,
     setMarketInfo,
     loading: marketLoading,
@@ -75,10 +85,11 @@ export function useInitializeGame() {
         throw new Error("User info is not available");
       }
 
-      const [upgradesData, marketData, labs] = await Promise.all([
+      const [upgradesData, marketData, labs, shippingMethods] = await Promise.all([
         fetchUpgrades(),
         fetchMarketData(),
         fetchLabs(),
+        fetchShippingMethods(),
       ]);
 
       if (upgradesError || marketError || labsError) {
@@ -88,10 +99,7 @@ export function useInitializeGame() {
       setUpgrades(upgradesData?.upgrades);
       setMarketInfo(marketData?.marketInfo);
       setLabs(labs?.labs);
-
-      console.log("setUserInfo (initializeGame):", user);
-      console.log("setUpgrades:", upgradesData?.upgrades);
-      console.log("setMarketInfo:", marketData?.marketInfo);
+      setShippingMethods(shippingMethods?.shippingMethods);
     } catch (error) {
       setError("Failed to initialize game");
       console.error(error);
@@ -111,10 +119,12 @@ export function useInitializeGame() {
     upgrades,
     marketInfo,
     labs,
+    shippingMethods,
     setUserInfo: setUser,
     setUpgrades,
     setMarketInfo,
     setLabs,
+    setShippingMethods,
     loading,
     error,
   };
