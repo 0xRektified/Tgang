@@ -24,7 +24,7 @@ export interface LabPlot {
   lab?: UserLab;
 }
 
-export interface UserShipping {
+export interface IUserShipping {
   method: EShippingMethod;
   title: string;
   image: string;
@@ -36,7 +36,7 @@ export interface UserShipping {
   upgradeShippingTimePrice: number;
   lastShipment: Date;
   nextShipment: Date;
-  requiredReputation: Requirement | null;
+  requirement: Requirement | null;
 }
 
 export interface Product {
@@ -87,7 +87,7 @@ export interface IUserInfo {
   upgrades: IUpgrade[];
   products: Product[];
   dealerUpgrades: UserDealerUpgrade[];
-  shipping: UserShipping[];
+  shipping: IUserShipping[];
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;

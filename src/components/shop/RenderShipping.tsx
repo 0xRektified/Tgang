@@ -11,6 +11,7 @@ import {
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import {
   IUserInfo,
+  IUserShipping,
   Product,
   UserDealerUpgrade,
 } from "../interfaces/user.interface";
@@ -28,7 +29,7 @@ import {
   CardTitle,
   NeonButton,
 } from "../styled/renderUpgradesStyled";
-import { EShippingMethod, IShippingMethod } from "../interfaces/shipping.interface";
+import { EShippingMethod, IShippingMethod, Requirement } from "../interfaces/shipping.interface";
 import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
 
 interface RenderShippingProps {
@@ -86,18 +87,15 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   };
 
   const renderRequirements = (
-    requirements: { product: string; level: number }[] | null,
-    key?: EProduct | EDealerUpgrade
+    requirement?: Requirement | null,
   ) => {
-    if (!requirements) return <></>;
+    if (!requirement) return <></>;
 
     return (
       <div>
-        {requirements.map((req, index) => (
-          <CardRequirement key={index}>
-            Requires {req.product} Level {req.level}
-          </CardRequirement>
-        ))}
+        <CardRequirement>
+          Requires {requirement.referredUsers} User Invites
+        </CardRequirement>
       </div>
     );
   };
@@ -105,10 +103,19 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   const renderUpgrade = (
     upgrade: IShippingMethod,
     key: EShippingMethod,
-    price: number,
-    level: number,
-    locked?: boolean
+    capacityLevel: number,
+    shippingTimeLevel: number,
+    price?: number,
+    capacityPrice?: number,
+    shippingTimePrice?: number,
+    locked?: boolean,
+    requirement?: Requirement | null
   ) => {
+    let bought = false;
+    if (capacityLevel > 0 || shippingTimeLevel > 0) {
+      bought = true;
+    }
+
     return (
       <CardContainer key={upgrade.title} locked={locked}>
         <CardHeader>
@@ -116,34 +123,40 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           <CardDetails>
             <CardInfoColumn>
               <CardTitle>{upgrade.title}</CardTitle>
-              <p>Cost: ${price}</p>
-              <p>Level: {level}</p>
+              {bought ? 
+                <>
+                  <p>Capacity Level: {capacityLevel}</p>
+                  <p>Shipping Time Level: {shippingTimeLevel}</p>
+                </>
+                  :
+                <>
+                  <p>Cost: ${price}</p>
+                </>
+              }
             </CardInfoColumn>
             <CardInfoColumn>
-              {/* {locked ? (
+              {locked ? (
                 <Button>Locked</Button>
               ) : (
+                // TODO: show upgrade modal if upgrade is already bought
                 <NeonButton
                   onTouchStart={(e) =>
                     handleCardClick(
-                      {
-                        category,
-                        upgrade: key,
-                        upgradePrice: price,
-                      },
+                      key,
+                      price as number,
                       e
                     )
                   }
                 >
                   Buy
                 </NeonButton>
-              )} */}
+              )}
             </CardInfoColumn>
           </CardDetails>
         </CardHeader>
         <CardContent>
           <CardDescription>{upgrade.description}</CardDescription>
-          {/* {locked ? renderRequirements(upgrade.requirements, key) : <></>} */}
+          {locked ? renderRequirements(requirement) : <></>}
         </CardContent>
       </CardContainer>
     );
@@ -151,31 +164,48 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
 
   const renderUpgradeCategory = (
     categoryTitle: string,
-    upgrades: Record<EShippingMethod, IShippingMethod>,
+    shippingMethods: Record<EShippingMethod, IShippingMethod>,
+    userShipping: IUserShipping[]
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
-        {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
-          // const userUpgrade = userUpgrades.find((u) => u.product === key);
-          // const price = userUpgrade?.upgradePrice || upgrade.basePrice;
-          // const level = userUpgrade?.level || 0;
-          // const upgradeRequirements = upgrade.requirements;
-          // let locked = false;
-          // if (upgradeRequirements) {
-          //   locked = upgradeRequirements.some((req) => {
-          //     const requiredProduct = userInfo.products.find(
-          //       (u) => u.name === req.product
-          //     );
-          //     return !requiredProduct || requiredProduct.level < req.level;
-          //   });
-          // }
+        {Object.entries(shippingMethods ?? {}).map(([key, method]) => {
+          const userUpgrade = userShipping.find((u) => u.method === key);
+          let price;
+          let capacityLevel = 0;
+          let capacityPrice;
+          let shippingTimeLevel = 0;
+          let shippingTimePrice;
+          let requirement: Requirement | null = null;
+
+          if (!userUpgrade) {
+            price = method.basePrice;
+            requirement = method.requirement;
+          } else {
+            capacityLevel = userUpgrade.capacityLevel;
+            capacityPrice = userUpgrade.upgradeCapacityPrice;
+            shippingTimeLevel = userUpgrade.shippingTimeLevel;
+            shippingTimePrice = userUpgrade.upgradeShippingTimePrice;
+            requirement = userUpgrade.requirement;
+          }
+
+          let locked = false;
+          if (requirement) {
+            const referredUsers = userInfo.referredUsers.length;
+            locked = referredUsers < requirement.referredUsers;
+          }
 
           return renderUpgrade(
-            upgrade,
+            method,
             key as EShippingMethod,
-            0,
-            0,
+            capacityLevel,
+            shippingTimeLevel,
+            price,
+            capacityPrice,
+            shippingTimePrice,
+            locked,
+            requirement,
           );
         })}
       </div>
@@ -189,6 +219,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
       {renderUpgradeCategory(
         "Methods",
         shippingMethods,
+        userInfo.shipping
       )}
     </>
   );
