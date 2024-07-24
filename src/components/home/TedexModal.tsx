@@ -16,7 +16,6 @@ import {
   RightAlignedTd,
   Countdown,
 } from "./styles/supplier.css";
-import { EShippingUpgrade } from "../interfaces/upgrade.interface";
 
 interface TedexProps {
   userInfo: IUserInfo;
@@ -58,26 +57,26 @@ export const TedexModal: React.FC<TedexProps> = ({
     timeLeft: 0,
   });
 
-  useEffect(() => {
-    const shippingTime = userInfo.shippingUpgrades.find(
-      (s) => s.product === EShippingUpgrade.SHIPPING_TIME
-    );
-    const containerCount = userInfo.shippingUpgrades.find(
-      (s) => s.product === EShippingUpgrade.SHIPPING_CONTAINERS
-    );
+  // useEffect(() => {
+  //   const shippingTime = userInfo.shippingUpgrades.find(
+  //     (s) => s.product === EShippingUpgrade.SHIPPING_TIME
+  //   );
+  //   const containerCount = userInfo.shippingUpgrades.find(
+  //     (s) => s.product === EShippingUpgrade.SHIPPING_CONTAINERS
+  //   );
 
-    setShippingTime(shippingTime?.amount || 24 * 3600);
-    setShippingContainers(containerCount?.amount || 0);
+  //   setShippingTime(shippingTime?.amount || 24 * 3600);
+  //   setShippingContainers(containerCount?.amount || 0);
 
-    if (new Date(userInfo.lastShipment!) < new Date()) {
-      const interval = setInterval(() => {
-        const countdown = calculateCountdown(userInfo.lastShipment!);
-        setnextShipCountdown(countdown);
-      }, 1000);
+  //   if (new Date(userInfo.lastShipment!) < new Date()) {
+  //     const interval = setInterval(() => {
+  //       const countdown = calculateCountdown(userInfo.lastShipment!);
+  //       setnextShipCountdown(countdown);
+  //     }, 1000);
 
-      return () => clearInterval(interval);
-    }
-  }, [selectedProduct, quantity, userInfo]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [selectedProduct, quantity, userInfo]);
 
   const pushToBatch = () => {
     if (selectedProduct && "quantity" in selectedProduct) {

@@ -173,6 +173,7 @@ const Mission: React.FC<MissionProps> = ({
     setUserInfo
   );
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [nextRobberyCountdown, setNextRobberyCountdown] = useState({
     hours: 0,
     minutes: 0,
@@ -195,12 +196,14 @@ const Mission: React.FC<MissionProps> = ({
         const countdown = calculateCountdown(userInfo.lastRobbery!);
         if (countdown.timeLeft > 0) {
           setNextRobberyCountdown(countdown);
+          setIsButtonDisabled(true);
         } else {
           setExpireCountdown(
             calculateCountdown(
               new Date(userInfo.lastRobbery!.getTime() + 24 * 60 * 60 * 1000)
             )
           );
+          setIsButtonDisabled(false);
         }
       }, 1000);
 
@@ -221,12 +224,13 @@ const Mission: React.FC<MissionProps> = ({
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`
     );
   };
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
   const handleDailyReward = () => {
     const audio = new Audio("/assets/ak_robbery.mp3");
     audio.volume = 0.4;
     audio.play();
     setIsButtonDisabled(true);
+
     setTimeout(() => {
       claimDailyReward();
       const hapticCount = 5;
@@ -240,7 +244,6 @@ const Mission: React.FC<MissionProps> = ({
       const audioCash = new Audio("/assets/cash_register.mp3");
       audioCash.volume = 0.4;
       audioCash.play();
-      setIsButtonDisabled(false);
     }, 2000);
   };
 
@@ -266,7 +269,7 @@ const Mission: React.FC<MissionProps> = ({
                 nextRobberyCountdown.minutes > 0 ||
                 nextRobberyCountdown.seconds > 0 ? (
                   <>
-                    <GreenDot />{" "}
+                    <RedDot />{" "}
                     <span className="countdown font-mono text-1xl">
                       <span
                         style={
@@ -296,7 +299,7 @@ const Mission: React.FC<MissionProps> = ({
                   </>
                 ) : (
                   <>
-                    <RedDot />{" "}
+                    <GreenDot />{" "}
                     <span className="countdown font-mono text-1xl">
                       <span
                         style={

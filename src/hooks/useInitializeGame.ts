@@ -19,7 +19,6 @@ const defaultUserInfo: IUserInfo = {
   lastSell: new Date(),
   customerAmountRemaining: 3600,
   dealerUpgrades: [],
-  shippingUpgrades: [],
   robberyStrike: 0,
   nextShipment: new Date(),
   reputation: 0,
