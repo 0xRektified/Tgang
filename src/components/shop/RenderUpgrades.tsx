@@ -97,8 +97,12 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     key?: EProduct | EDealerUpgrade | EShippingUpgrade
   ) => {
     if (key === EShippingUpgrade.SHIPPING_CONTAINERS) {
-      const containerUpgrade = userInfo.shippingUpgrades.find((u) => u.product === key);
-      return renderContainerRequirements(containerUpgrade ? containerUpgrade.level : 0);
+      const containerUpgrade = userInfo.shippingUpgrades.find(
+        (u) => u.product === key
+      );
+      return renderContainerRequirements(
+        containerUpgrade ? containerUpgrade.level : 0
+      );
     }
 
     if (!requirements) return <></>;
@@ -114,9 +118,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     );
   };
 
-  const renderContainerRequirements = (
-    level: number
-  ) => {
+  const renderContainerRequirements = (level: number) => {
     return (
       <div>
         <CardRequirement>
@@ -124,7 +126,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         </CardRequirement>
       </div>
     );
-  }
+  };
 
   const renderUpgrade = (
     upgrade: ProductUpgrade | DealerUpgrade | ShippingUpgrade,
@@ -168,7 +170,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         </CardHeader>
         <CardContent>
           <CardDescription>{upgrade.description}</CardDescription>
-          { locked ? (renderRequirements(upgrade.requirements, key)) : <></> }
+          {locked ? renderRequirements(upgrade.requirements, key) : <></>}
         </CardContent>
       </CardContainer>
     );
@@ -178,14 +180,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     T extends { level: number; product: string; upgradePrice: number }
   >(
     categoryTitle: string,
-    upgrades: Record<string, ProductUpgrade | DealerUpgrade>,
+    upgrades: Record<string, ProductUpgrade | DealerUpgrade> | undefined,
     category: EUpgradeCategory,
     userUpgrades: T[]
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
-        {Object.entries(upgrades).map(([key, upgrade]) => {
+        {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const userUpgrade = userUpgrades.find((u) => u.product === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
@@ -215,14 +217,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
   const renderProductCategory = (
     categoryTitle: string,
-    upgrades: Record<string, ProductUpgrade | DealerUpgrade>,
+    upgrades: Record<string, ProductUpgrade | DealerUpgrade> | undefined,
     category: EUpgradeCategory,
     userUpgrades: Product[]
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
-        {Object.entries(upgrades).map(([key, upgrade]) => {
+        {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const userUpgrade = userUpgrades.find((u) => u.name === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
@@ -254,14 +256,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     T extends { level: number; product: string; upgradePrice: number }
   >(
     categoryTitle: string,
-    upgrades: Record<string, ShippingUpgrade>,
+    upgrades: Record<string, ShippingUpgrade> | undefined,
     category: EUpgradeCategory,
     userUpgrades: T[]
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
-        {Object.entries(upgrades).map(([key, upgrade]) => {
+        {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const userUpgrade = userUpgrades.find((u) => u.product === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
@@ -292,19 +294,19 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     <>
       {renderUpgradeCategory<UserDealerUpgrade>(
         "Customers",
-        upgradesData.dealer,
+        upgradesData?.dealer ?? {},
         EUpgradeCategory.DEALER,
         userInfo.dealerUpgrades
       )}
       {renderProductCategory(
         "Products",
-        upgradesData.product,
+        upgradesData?.product ?? {},
         EUpgradeCategory.PRODUCT,
         userInfo.products
       )}
       {renderShippingCategory<UserShippingUpgrade>(
         "Shipping",
-        upgradesData.shipping,
+        upgradesData?.shipping ?? {},
         EUpgradeCategory.SHIPPING,
         userInfo.shippingUpgrades
       )}

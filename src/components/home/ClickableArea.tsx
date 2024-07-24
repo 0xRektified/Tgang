@@ -260,7 +260,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             <img
               src={userCharacter}
               alt="Logo"
-              style={{ maxWidth: "250px", paddingTop: "25px" }}
+              style={{ maxWidth: "250px", paddingTop: "50px" }}
             />
           </ImageContainer>
         </FlexBoxRow>
