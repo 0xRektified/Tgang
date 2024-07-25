@@ -156,10 +156,7 @@ export const Home: React.FC<HomeProps> = ({
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
     if (userInfo.customerAmount) {
-      const customerProductUpgrade = userInfo.dealerUpgrades.find(
-        (p) => p.product === EDealerUpgrade.CUSTOMER_NEEDS
-      );
-      const amountToSell = customerProductUpgrade?.amount || 1;
+      const amountToSell = userInfo.customerNeeds;
 
       const slottedProductToSell = slottedProducts.find(
         (p) => p.name === selectedProduct

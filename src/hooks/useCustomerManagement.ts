@@ -55,13 +55,7 @@ const useCustomerManagement = (
   const calculateCustomersPerSecond = (
     userInfo: IUserInfo
   ): { customersPerSecond: number; customerAmountMax: number } => {
-    const customerAmountUpgrade = userInfo.dealerUpgrades.find(
-      (upgrade) => upgrade.product === EDealerUpgrade.CUSTOMER_AMOUNT
-    );
-    if (!customerAmountUpgrade) {
-      return { customersPerSecond: 0, customerAmountMax: 0 };
-    }
-    const customerAmountMax = customerAmountUpgrade.amount;
+    const customerAmountMax = userInfo.customerAmount;
     const customersPerSecond = customerAmountMax / 3600;
     return { customersPerSecond, customerAmountMax };
   };

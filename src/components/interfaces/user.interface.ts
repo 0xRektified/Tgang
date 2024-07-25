@@ -92,6 +92,7 @@ export interface IUserInfo {
   labPlotPrice: number;
   referralToken: string;
   referredUsers: string[];
+  customerNeeds: number;
   customerAmount: number;
   lastSell: Date;
   customerAmountRemaining: number;
