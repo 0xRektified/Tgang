@@ -17,11 +17,11 @@ const StyledApp = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  background-position-y: 450px;
+  background-position-y: 35em;
 `;
 
 const AppContainer = styled.div`
-  max-width: 900px;
+  max-width: 750px;
   margin: 0 auto;
   padding-bottom: 60px; /* Add padding to account for the footer */
 `;
