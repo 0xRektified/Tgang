@@ -173,7 +173,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     [EProduct.WEED]: 0,
     [EProduct.COCAINE]: 0,
     [EProduct.METH]: 0,
-    [EProduct.HEROIN]: 0,
+    [EProduct.MUSHROOM]: 0,
     [EProduct.LSD]: 0,
     [EProduct.MDMA]: 0,
   };
@@ -188,8 +188,8 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
       case EProduct.METH:
         production[EProduct.METH] += labPlot.lab.production;
         break;
-      case EProduct.HEROIN:
-        production[EProduct.HEROIN] += labPlot.lab.production;
+      case EProduct.MUSHROOM:
+        production[EProduct.MUSHROOM] += labPlot.lab.production;
         break;
       case EProduct.LSD:
         production[EProduct.LSD] += labPlot.lab.production;
@@ -207,7 +207,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
       [EProduct.MDMA]: 0,
       [EProduct.METH]: 0,
       [EProduct.LSD]: 0,
-      [EProduct.HEROIN]: 0,
+      [EProduct.MUSHROOM]: 0,
     };
 
     products.forEach((product) => {

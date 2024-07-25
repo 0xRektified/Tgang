@@ -4,11 +4,10 @@ export const tabMapping: { [key: string]: string } = {
   Weed: "dealer",
   Coke: "dealer",
   Meth: "dealer",
-  Heroin: "dealer",
+  Mushroom: "dealer",
   MDMA: "dealer",
   LSD: "dealer",
   Ketamine: "dealer",
-  "Psilocybin Mushrooms": "dealer",
   PCP: "dealer",
   DMT: "dealer",
 };

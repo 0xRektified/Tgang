@@ -13,7 +13,7 @@ import Mission from "./components/mission/Mission";
 import Lab from "./components/labs/Lab";
 
 const StyledApp = styled.div`
-  background-image: url("/assets/street.webp");
+  background-image: url("/assets/home/street.webp");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;

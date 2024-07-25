@@ -46,7 +46,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
 
       <FlexBoxRow>
         <img
-          src={`/assets/market_logo.webp`}
+          src={`/assets/home/market_logo.webp`}
           alt="Logo"
           style={{ maxWidth: "50px", padding: "10px" }}
         />
@@ -74,6 +74,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   const userProduct = userInfo?.products.find(
                     (p) => p.name === product.name
                   );
+                  console.log(product.name);
                   const productIcon =
                     (product.name as keyof typeof EProductIcon) &&
                     EProductIcon[product.name as keyof typeof EProductIcon];

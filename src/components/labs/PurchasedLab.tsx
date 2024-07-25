@@ -6,6 +6,7 @@ import { IUserInfo, LabPlot } from "../interfaces/user.interface";
 import { getUnixTime } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 import WebApp from "@twa-dev/sdk";
+import { EProductIcon } from "../interfaces/product.interface";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -153,13 +154,10 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         onClick={collectProduct}
         className={noProductAnimation ? "animate-resize" : ""}
       >
-        <PlaceholderImage
-          poster={`/assets/weed_lab_2.png`}
-          isVideoLoaded={isVideoLoaded}
-        />
+        <PlaceholderImage poster={lab.image} isVideoLoaded={isVideoLoaded} />
         <StyledVideo
-          src={`/assets/weed_lab_video.mp4`}
-          poster={`/assets/weed_lab_2.png`}
+          // src={`/assets/labs/weed_lab_video.mp4`}
+          poster={lab.image}
           autoPlay
           loop
           muted
@@ -198,7 +196,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
                 animationDelay: `${delay}ms`,
               }}
             >
-              🌱
+              {EProductIcon[lab.product as keyof typeof EProductIcon]}
             </div>
           );
         })}

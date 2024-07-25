@@ -1,4 +1,4 @@
-import userCharacter from "/assets/user_no_background.png";
+import userCharacter from "/assets/home/user_no_background.png";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { FlexBoxRow, FlexBoxCol } from "../styled/globalStyled";
@@ -137,7 +137,7 @@ const Smoke = styled.div`
   position: absolute;
   width: 500px;
   height: 500px;
-  background: url("/assets/smoke.png") no-repeat;
+  background: url("/assets/home/smoke.png") no-repeat;
   background-size: contain;
   bottom: 0;
   opacity: 0.5;
