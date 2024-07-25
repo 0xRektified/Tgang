@@ -74,7 +74,6 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   const userProduct = userInfo?.products.find(
                     (p) => p.name === product.name
                   );
-                  console.log(product.name);
                   const productIcon =
                     (product.name as keyof typeof EProductIcon) &&
                     EProductIcon[product.name as keyof typeof EProductIcon];
