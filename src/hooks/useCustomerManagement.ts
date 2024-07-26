@@ -62,7 +62,7 @@ const useCustomerManagement = (
 
   const handleSell = async (
     marketId: string,
-    batch: { product: string; amountToSell: number }[]
+    batch: { product: string; customers: number }[]
   ) => {
     try {
       const response = await axiosInstance.post(`/products/${marketId}/sell`, {

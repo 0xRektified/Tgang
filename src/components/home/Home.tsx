@@ -161,9 +161,8 @@ export const Home: React.FC<HomeProps> = ({
     const touch = e.touches[0];
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
+    console.log("userInfo.customerAmount", userInfo.customerAmount);
     if (userInfo.customerAmount) {
-      const amountToSell = userInfo.customerNeeds;
-
       const slottedProductToSell = slottedProducts.find(
         (p) => p.name === selectedProduct
       );
@@ -177,19 +176,17 @@ export const Home: React.FC<HomeProps> = ({
 
       if (
         !slottedProductToSell ||
-        slottedProductToSell.quantity < amountToSell
+        slottedProductToSell.quantity < userInfo.customerAmount
       ) {
         setLastTransaction({
           type: "missed",
           product: selectedProduct || "Unknown",
-          quantity: amountToSell,
+          quantity: userInfo.customerNeeds,
         });
       } else {
         const { updatedProducts, transaction, cashState } = handleTransaction(
           userInfo,
-          slottedProducts,
-          selectedProduct,
-          amountToSell,
+          slottedProductToSell,
           marketInfo
         );
         setLastTransaction(transaction);
@@ -201,7 +198,7 @@ export const Home: React.FC<HomeProps> = ({
           amountEarned: transaction?.amountEarned || 0,
         };
 
-        addToBatch(selectedProduct, amountToSell);
+        addToBatch(selectedProduct);
 
         // Move the customer emoji to the animating array
         const nextCustomer = customers[0];
@@ -221,6 +218,7 @@ export const Home: React.FC<HomeProps> = ({
 
         setUserInfo((prevUser) => ({
           ...prevUser,
+          customerAmount: prevUser.customerAmount - 1,
           cashAmount: cashState,
           products: updatedProducts,
         }));
