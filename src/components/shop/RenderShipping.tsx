@@ -1,21 +1,8 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
 import WebApp from "@twa-dev/sdk";
-import {
-  DealerUpgrade,
-  EDealerUpgrade,
-  EUpgradeCategory,
-  IUpgrade,
-  ProductUpgrade,
-} from "../interfaces/upgrade.interface";
-import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
-import {
-  IUserInfo,
-  IUserShipping,
-  Product,
-  UserDealerUpgrade,
-} from "../interfaces/user.interface";
-import { EProduct } from "../interfaces/product.interface";
+
+import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
 import {
   Button,
   CardContainer,
@@ -29,7 +16,11 @@ import {
   CardTitle,
   NeonButton,
 } from "../styled/renderUpgradesStyled";
-import { EShippingMethod, IShippingMethod, Requirement } from "../interfaces/shipping.interface";
+import {
+  EShippingMethod,
+  IShippingMethod,
+  Requirement,
+} from "../interfaces/shipping.interface";
 import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
 
 interface RenderShippingProps {
@@ -38,6 +29,7 @@ interface RenderShippingProps {
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const RenderShipping: React.FC<RenderShippingProps> = ({
@@ -46,6 +38,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   shippingMethods,
   setTouchPoints,
   setUserInfo,
+  setShowBalanceErrorToast,
 }) => {
   const { buyShippingMethod } = useBuyShippingMethod();
 
@@ -73,6 +66,8 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
         );
       }, 3000);
       WebApp.HapticFeedback.impactOccurred("heavy");
+    } else {
+      setShowBalanceErrorToast(true);
     }
   };
 
@@ -86,9 +81,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     handleBuyShippingMethod(method, price, touch);
   };
 
-  const renderRequirements = (
-    requirement?: Requirement | null,
-  ) => {
+  const renderRequirements = (requirement?: Requirement | null) => {
     if (!requirement) return <></>;
 
     return (
@@ -123,16 +116,16 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           <CardDetails>
             <CardInfoColumn>
               <CardTitle>{upgrade.title}</CardTitle>
-              {bought ? 
+              {bought ? (
                 <>
                   <p>Capacity Level: {capacityLevel}</p>
                   <p>Shipping Time Level: {shippingTimeLevel}</p>
                 </>
-                  :
+              ) : (
                 <>
                   <p>Cost: ${price}</p>
                 </>
-              }
+              )}
             </CardInfoColumn>
             <CardInfoColumn>
               {locked ? (
@@ -140,13 +133,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
               ) : (
                 // TODO: show upgrade modal if upgrade is already bought
                 <NeonButton
-                  onTouchStart={(e) =>
-                    handleCardClick(
-                      key,
-                      price as number,
-                      e
-                    )
-                  }
+                  onTouchStart={(e) => handleCardClick(key, price as number, e)}
                 >
                   Buy
                 </NeonButton>
@@ -205,7 +192,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             capacityPrice,
             shippingTimePrice,
             locked,
-            requirement,
+            requirement
           );
         })}
       </div>
@@ -215,13 +202,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   if (!shippingMethods) return <></>;
 
   const renderAllShippingCategories = () => (
-    <>
-      {renderUpgradeCategory(
-        "Methods",
-        shippingMethods,
-        userInfo.shipping
-      )}
-    </>
+    <>{renderUpgradeCategory("Methods", shippingMethods, userInfo.shipping)}</>
   );
 
   return (

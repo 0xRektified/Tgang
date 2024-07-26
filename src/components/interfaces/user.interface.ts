@@ -1,9 +1,6 @@
 import { EProduct } from "./product.interface";
 import { EShippingMethod, Requirement } from "./shipping.interface";
-import {
-  EDealerUpgrade,
-  IUpgrade,
-} from "./upgrade.interface";
+import { EDealerUpgrade, IUpgrade } from "./upgrade.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -94,6 +91,7 @@ export interface IUserInfo {
   referredUsers: string[];
   customerNeeds: number;
   customerAmount: number;
+  customerAmountMax: number;
   lastSell: Date;
   customerAmountRemaining: number;
   robberyStrike: number;

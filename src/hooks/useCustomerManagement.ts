@@ -55,7 +55,7 @@ const useCustomerManagement = (
   const calculateCustomersPerSecond = (
     userInfo: IUserInfo
   ): { customersPerSecond: number; customerAmountMax: number } => {
-    const customerAmountMax = userInfo.customerAmount;
+    const customerAmountMax = userInfo.customerAmountMax;
     const customersPerSecond = customerAmountMax / 3600;
     return { customersPerSecond, customerAmountMax };
   };

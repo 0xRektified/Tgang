@@ -36,6 +36,7 @@ interface RenderUpgradesProps {
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
+  setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
@@ -44,6 +45,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   upgradesData,
   setTouchPoints,
   setUserInfo,
+  setShowBalanceErrorToast,
 }) => {
   const { buyUpgrade } = useBuyUpgrades();
 
@@ -73,6 +75,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         );
       }, 3000);
       WebApp.HapticFeedback.impactOccurred("heavy");
+    } else {
+      setShowBalanceErrorToast(true);
     }
   };
 

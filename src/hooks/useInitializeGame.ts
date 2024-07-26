@@ -18,9 +18,10 @@ const defaultUserInfo: IUserInfo = {
   upgrades: [],
   referredUsers: [],
   customerNeeds: 1,
-  customerAmount: 3600,
   lastSell: new Date(),
-  customerAmountRemaining: 3600,
+  customerAmount: 100,
+  customerAmountRemaining: 0,
+  customerAmountMax: 1000,
   dealerUpgrades: [],
   robberyStrike: 0,
   nextShipment: new Date(),
@@ -86,12 +87,13 @@ export function useInitializeGame() {
         throw new Error("User info is not available");
       }
 
-      const [upgradesData, marketData, labs, shippingMethods] = await Promise.all([
-        fetchUpgrades(),
-        fetchMarketData(),
-        fetchLabs(),
-        fetchShippingMethods(),
-      ]);
+      const [upgradesData, marketData, labs, shippingMethods] =
+        await Promise.all([
+          fetchUpgrades(),
+          fetchMarketData(),
+          fetchLabs(),
+          fetchShippingMethods(),
+        ]);
 
       if (upgradesError || marketError || labsError) {
         throw new Error("Failed to fetch one or more game data");
