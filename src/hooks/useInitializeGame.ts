@@ -103,6 +103,11 @@ export function useInitializeGame() {
       setMarketInfo(marketData?.marketInfo);
       setLabs(labs?.labs);
       setShippingMethods(shippingMethods?.shippingMethods);
+
+      console.log(`upgradesData:`, upgradesData);
+      console.log(`marketData:`, marketData);
+      console.log(`labs:`, labs);
+      console.log(`shippingMethods:`, shippingMethods);
     } catch (error) {
       setError("Failed to initialize game");
       console.error(error);
