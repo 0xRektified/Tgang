@@ -70,6 +70,7 @@ function App() {
             marketInfo={marketInfo}
             setUserInfo={setUserInfo}
             onUnlockClick={handleUnlockClick}
+            shippingMethods={shippingMethods}
           />
         );
       case "Lab":

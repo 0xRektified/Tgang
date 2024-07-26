@@ -13,6 +13,10 @@ import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
 import { EProduct } from "../interfaces/product.interface";
 import { CombinedModal } from "./CombinedModal";
+import {
+  EShippingMethod,
+  IShippingMethod,
+} from "../interfaces/shipping.interface";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -30,6 +34,7 @@ interface HomeProps {
   marketInfo: IMarketInfo | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   onUnlockClick: (tab: string) => void;
+  shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -37,6 +42,7 @@ export const Home: React.FC<HomeProps> = ({
   marketInfo,
   setUserInfo,
   onUnlockClick,
+  shippingMethods,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -267,6 +273,7 @@ export const Home: React.FC<HomeProps> = ({
           onClose={handleCloseSupplierModal}
           onUnlockClick={onUnlockClick}
           setUserInfo={setUserInfo}
+          shippingMethods={shippingMethods}
         />
       )}
     </HomeContainer>

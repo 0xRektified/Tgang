@@ -323,3 +323,5 @@ export const PriceVariation = styled.span`
   font-size: 0.7em;
   margin-left: 5px;
 `;
+
+/******* SHIPPING  /*******/

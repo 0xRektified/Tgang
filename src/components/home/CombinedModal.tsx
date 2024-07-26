@@ -17,6 +17,10 @@ import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProduct } from "../interfaces/product.interface";
 import { TilkRoadModal } from "./TilkRoadModal";
 import { TedexModal } from "./TedexModal";
+import {
+  EShippingMethod,
+  IShippingMethod,
+} from "../interfaces/shipping.interface";
 
 interface ModalProps {
   userInfo: IUserInfo;
@@ -25,6 +29,7 @@ interface ModalProps {
   onClose: () => void;
   onUnlockClick: (tab: string) => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
 }
 
 export const CombinedModal: React.FC<ModalProps> = ({
@@ -34,6 +39,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
   onClose,
   onUnlockClick,
   setUserInfo,
+  shippingMethods,
 }) => {
   const [activeTab, setActiveTab] = useState("Tilk Road");
   const { buyProduct, loading, error } = useBuyProduct();
@@ -48,9 +54,15 @@ export const CombinedModal: React.FC<ModalProps> = ({
     userInfo.cashAmount
   );
 
-  const [batch, setBatch] = useState<
-    { product: EProduct; amountToSell: number }[]
-  >([]);
+  const [shippingBatch, setShippingBatch] = useState<{
+    shippingMethod: EShippingMethod;
+    product: EProduct;
+    amount: number;
+  }>({
+    shippingMethod: "" as EShippingMethod,
+    product: "" as EProduct,
+    amount: 0,
+  });
 
   useEffect(() => {
     if (selectedProduct && "discountPrice" in selectedProduct) {
@@ -90,7 +102,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
   };
 
   const handleShip = () => {
-    // shipProduct("NY", batch, setUserInfo); // TODO
+    shipProduct("NY", shippingBatch, setUserInfo); // TODO
   };
 
   if (!isOpen) return null;
@@ -133,11 +145,11 @@ export const CombinedModal: React.FC<ModalProps> = ({
             userInfo={userInfo}
             selectedProduct={selectedProduct}
             quantity={quantity}
-            batch={batch}
             handleShip={handleShip}
             setQuantity={setQuantity}
             handleProductSelect={handleProductSelect}
-            setBatch={setBatch}
+            setShippingBatch={setShippingBatch}
+            shippingMethods={shippingMethods}
           ></TedexModal>
         )}
 
