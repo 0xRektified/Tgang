@@ -111,6 +111,10 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
     });
   };
 
+  const upgradeCapacityDiff = plot.lab?.upgradeCapacity! - plot.lab?.capacity!;
+  const upgradeProductionDiff =
+    plot.lab?.upgradeProduction! - plot.lab?.production!;
+
   return (
     <ModalBackground onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
@@ -118,11 +122,11 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
         <ModalHeader>Lab Details</ModalHeader>
         <ButtonContainer>
           <StyledNeonButton onClick={upgradeCapacity}>
-            Upgrade Capacity <LuPackagePlus />{" "}
+            Capacity +{upgradeCapacityDiff}<LuPackagePlus />{" "}
             {formatPrice(plot.lab?.upgradeCapacityPrice || 0)}
           </StyledNeonButton>
           <StyledNeonButton onClick={upgradeProduction}>
-            Upgrade Production <MdConveyorBelt />{" "}
+            Production +{upgradeProductionDiff}<MdConveyorBelt />{" "}
             {formatPrice(plot.lab?.upgradeProductionPrice || 0)}
           </StyledNeonButton>
         </ButtonContainer>

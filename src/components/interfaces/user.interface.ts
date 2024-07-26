@@ -11,7 +11,9 @@ export interface UserLab {
   capacity: number;
   production: number;
   upgradeCapacityPrice: number;
+  upgradeCapacity: number;
   upgradeProductionPrice: number;
+  upgradeProduction: number;
   collectTime: Date;
   produced: number;
 }
@@ -30,7 +32,9 @@ export interface IUserShipping {
   capacity: number;
   shippingTime: number;
   upgradeCapacityPrice: number;
+  upgradeCapacity: number;
   upgradeShippingTimePrice: number;
+  upgradeShippingTime: number;
   lastShipment: Date;
   nextShipment: Date;
   requirement: Requirement | null;
@@ -44,21 +48,9 @@ export interface Product {
   level: number;
   upgradePrice: number;
   marketDiscount: number;
+  upgradeMarketDiscount: number;
   selected: boolean;
   slot: number | null;
-}
-
-export interface IUserUpgrade {
-  id: number;
-  title: string;
-  description: string;
-  level: number;
-  maxLevel: number;
-  levelPrices: number[];
-  value: number[];
-  image: string;
-  locked: boolean;
-  group: string;
 }
 
 export interface UserDealerUpgrade {
@@ -66,8 +58,9 @@ export interface UserDealerUpgrade {
   title: string;
   image: number;
   level: number;
-  upgradePrice: number;
   amount: number;
+  upgradePrice: number;
+  upgradeAmount: number;
 }
 
 export interface IReputationLevel {
