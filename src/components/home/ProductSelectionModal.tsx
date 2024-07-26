@@ -12,18 +12,31 @@ import {
   CardDetails,
   CardInfoColumn,
   ScrollableTableContainer,
+  ClickableText,
 } from "./styles/shipping.css";
+import { EShippingMethod } from "../interfaces/shipping.interface";
+import { EProduct } from "../interfaces/product.interface";
 
 interface ProductSelectionModalProps {
   userInfo: IUserInfo;
   onClose: () => void;
-  onSelectProduct: (product: Product) => void;
+  shippingMethod: EShippingMethod;
+  amount: number;
+  handleShip: (
+    shippingMethod: EShippingMethod,
+    product: EProduct,
+    amount: number
+  ) => void;
+  onRedirectToTilkRoad: () => void; // Add this prop for redirection
 }
 
 const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
   userInfo,
   onClose,
-  onSelectProduct,
+  shippingMethod,
+  amount,
+  handleShip,
+  onRedirectToTilkRoad, // Destructure the new prop
 }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -31,37 +44,62 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
     setSelectedProduct(product);
   };
 
+  const userHasProducts = userInfo.products.some(
+    (product) => product.quantity > 0
+  );
+
+  const calculateAmountToShip = async (
+    shippingMethod: EShippingMethod,
+    selectedProduct: Product
+  ) => {
+    await handleShip(
+      shippingMethod,
+      selectedProduct.name,
+      Math.min(selectedProduct.quantity, amount)
+    );
+    onClose();
+  };
+
   return (
     <ModalContainer>
       <CloseButton onClick={onClose}>×</CloseButton>
       <h3>Select a Product to Ship</h3>
-      <ScrollableTableContainer>
-        {userInfo.products
-          .filter((product) => product.quantity > 0)
-          .map((product) => (
-            <CardContainer
-              key={product.name}
-              onClick={() => handleSelect(product)}
-              style={{
-                backgroundColor:
-                  selectedProduct?.name === product.name ? "#0056b3" : "",
-              }}
-            >
-              <CardHeader>
-                <CardImage src={product.image} alt={product.name} />
-                <CardDetails>
-                  <CardInfoColumn>
-                    <CardTitle>{product.name}</CardTitle>
-                    <p>Quantity: {product.quantity}</p>
-                  </CardInfoColumn>
-                </CardDetails>
-              </CardHeader>
-            </CardContainer>
-          ))}
-      </ScrollableTableContainer>
+      {userHasProducts ? (
+        <ScrollableTableContainer>
+          {userInfo.products
+            .filter((product) => product.quantity > 0)
+            .map((product) => (
+              <CardContainer
+                key={product.name}
+                onClick={() => handleSelect(product)}
+                style={{
+                  backgroundColor:
+                    selectedProduct?.name === product.name ? "#0056b3" : "",
+                }}
+              >
+                <CardHeader>
+                  <CardImage src={product.image} alt={product.name} />
+                  <CardDetails>
+                    <CardInfoColumn>
+                      <CardTitle>{product.name}</CardTitle>
+                      <p>Quantity: {product.quantity}</p>
+                    </CardInfoColumn>
+                  </CardDetails>
+                </CardHeader>
+              </CardContainer>
+            ))}
+        </ScrollableTableContainer>
+      ) : (
+        <ClickableText onClick={onRedirectToTilkRoad}>
+          You have no products. Click here to go to Tilk Road to buy some.
+        </ClickableText>
+      )}
       <FlexBoxRow>
         <NeonButton
-          onClick={() => selectedProduct && onSelectProduct(selectedProduct)}
+          onClick={() =>
+            selectedProduct &&
+            calculateAmountToShip(shippingMethod, selectedProduct)
+          }
           className={selectedProduct ? "active" : "disabled"}
           disabled={!selectedProduct}
         >

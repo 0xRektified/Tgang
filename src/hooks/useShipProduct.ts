@@ -11,7 +11,11 @@ const useShipProduct = () => {
 
   const shipProduct = async (
     marketId: string,
-    batch: { shippingMethod: EShippingMethod; product: EProduct, amount: number },
+    batch: {
+      shippingMethod: EShippingMethod;
+      product: EProduct;
+      amount: number;
+    },
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ): Promise<boolean> => {
     setLoading(true);
@@ -21,7 +25,7 @@ const useShipProduct = () => {
       const response = await axiosInstance.post<IUserInfo>(
         `/shipping/${marketId}/ship`,
         {
-          batch,
+          ...batch,
         }
       );
       setUserInfo(response.data);

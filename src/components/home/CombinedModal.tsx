@@ -54,16 +54,6 @@ export const CombinedModal: React.FC<ModalProps> = ({
     userInfo.cashAmount
   );
 
-  const [shippingBatch, setShippingBatch] = useState<{
-    shippingMethod: EShippingMethod;
-    product: EProduct;
-    amount: number;
-  }>({
-    shippingMethod: "" as EShippingMethod,
-    product: "" as EProduct,
-    amount: 0,
-  });
-
   useEffect(() => {
     if (selectedProduct && "discountPrice" in selectedProduct) {
       const newTotalCost = selectedProduct.discountPrice * quantity;
@@ -101,8 +91,24 @@ export const CombinedModal: React.FC<ModalProps> = ({
     onClose();
   };
 
-  const handleShip = () => {
-    shipProduct("NY", shippingBatch, setUserInfo); // TODO
+  const handleRedirectToTilkRoad = () => {
+    setActiveTab("Tilk Road");
+  };
+
+  const handleShip = (
+    shippingMethod: EShippingMethod,
+    product: EProduct,
+    amount: number
+  ) => {
+    shipProduct(
+      "NY",
+      {
+        shippingMethod,
+        product,
+        amount,
+      },
+      setUserInfo
+    ); // TODO
   };
 
   if (!isOpen) return null;
@@ -143,13 +149,9 @@ export const CombinedModal: React.FC<ModalProps> = ({
         {activeTab === "Tedex" && (
           <TedexModal
             userInfo={userInfo}
-            selectedProduct={selectedProduct}
-            quantity={quantity}
             handleShip={handleShip}
-            setQuantity={setQuantity}
-            handleProductSelect={handleProductSelect}
-            setShippingBatch={setShippingBatch}
             shippingMethods={shippingMethods}
+            handleRedirectToTilkRoad={handleRedirectToTilkRoad}
           ></TedexModal>
         )}
 

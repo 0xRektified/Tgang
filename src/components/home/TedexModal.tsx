@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { MarketProduct } from "../interfaces/market.interface";
 import { EProduct } from "../interfaces/product.interface";
-import { IUserInfo, Product } from "../interfaces/user.interface";
-import { addSeconds, differenceInSeconds } from "date-fns";
+import {
+  IUserInfo,
+  IUserShipping,
+  Product,
+} from "../interfaces/user.interface";
+import { addSeconds } from "date-fns";
 import {
   ScrollableTableContainer,
   WebPageTitle,
@@ -30,57 +34,27 @@ import ProductSelectionModal from "./ProductSelectionModal";
 
 interface TedexProps {
   userInfo: IUserInfo;
-  selectedProduct: Product | MarketProduct | null;
-  quantity: number;
-  handleShip: () => void;
-  setQuantity: React.Dispatch<React.SetStateAction<number>>;
-  handleProductSelect: (product: Product | MarketProduct) => void;
-  setShippingBatch: React.Dispatch<
-    React.SetStateAction<{
-      shippingMethod: EShippingMethod;
-      product: EProduct;
-      amount: number;
-    }>
-  >;
+  handleShip: (
+    shippingMethod: EShippingMethod,
+    product: EProduct,
+    amount: number
+  ) => void;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
+  handleRedirectToTilkRoad: () => void;
 }
-
-const calculateCountdown = (lastShipment: Date, shippingTime: number) => {
-  const now = new Date();
-  const timeLeft = differenceInSeconds(
-    addSeconds(lastShipment, shippingTime),
-    now
-  );
-
-  if (timeLeft <= 0) {
-    return {
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      timeLeft: 0,
-    };
-  }
-
-  const hours = Math.floor((timeLeft / (60 * 60)) % 24);
-  const minutes = Math.floor((timeLeft / 60) % 60);
-  const seconds = Math.floor(timeLeft % 60);
-
-  return { hours, minutes, seconds, timeLeft };
-};
 
 export const TedexModal: React.FC<TedexProps> = ({
   userInfo,
-  selectedProduct,
-  quantity,
   handleShip,
-  setQuantity,
-  handleProductSelect,
-  setShippingBatch,
   shippingMethods,
+  handleRedirectToTilkRoad,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedShippingMethod, setSelectedShippingMethod] =
+    useState<IUserShipping | null>(null);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (userShipping: IUserShipping) => {
+    setSelectedShippingMethod(userShipping);
     setIsModalOpen(true);
   };
 
@@ -88,13 +62,28 @@ export const TedexModal: React.FC<TedexProps> = ({
     setIsModalOpen(false);
   };
 
-  const handleSelectProduct = (product: Product) => {
-    setShippingBatch({
-      shippingMethod: "" as EShippingMethod,
-      product: product.name,
-      amount: product.quantity,
-    });
-    setIsModalOpen(false);
+  const calculateCountdown = (nextShipment: Date, shippingTime: number) => {
+    const now = new Date().getTime();
+    const nextShipmentTime = nextShipment.getTime();
+
+    if (nextShipmentTime < now) {
+      return {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        timeLeft: 0,
+      };
+    }
+
+    const shippingTimeInMillis = shippingTime * 1000;
+    const unixTimeStampShipping = nextShipmentTime + shippingTimeInMillis;
+    const timeLeft = unixTimeStampShipping - now;
+
+    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+    const seconds = Math.floor((timeLeft / 1000) % 60);
+
+    return { hours, minutes, seconds, timeLeft };
   };
 
   return (
@@ -128,8 +117,10 @@ export const TedexModal: React.FC<TedexProps> = ({
                       {locked ? (
                         <NeonButtonShipping disabled>Locked</NeonButtonShipping>
                       ) : (
-                        <NeonButtonShipping onClick={handleOpenModal}>
-                          Ship {method.baseCapacity} unit
+                        <NeonButtonShipping
+                          onClick={() => handleOpenModal(userShipping!)}
+                        >
+                          Ship up to {method.baseCapacity}
                         </NeonButtonShipping>
                       )}
                     </CardInfoColumn>
@@ -167,11 +158,14 @@ export const TedexModal: React.FC<TedexProps> = ({
             })}
         </ShippingCardsContainer>
       </ScrollableTableContainer>
-      {isModalOpen && (
+      {isModalOpen && selectedShippingMethod && (
         <ProductSelectionModal
           userInfo={userInfo}
           onClose={handleCloseModal}
-          onSelectProduct={handleSelectProduct}
+          shippingMethod={selectedShippingMethod.method}
+          amount={selectedShippingMethod.capacity}
+          handleShip={handleShip}
+          onRedirectToTilkRoad={handleRedirectToTilkRoad}
         />
       )}
     </>

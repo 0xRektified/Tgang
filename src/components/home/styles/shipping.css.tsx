@@ -3,8 +3,7 @@ import styled from "styled-components";
 export const CardContainer = styled.div<{ locked?: boolean }>`
   display: flex;
   flex-direction: column;
-  background-color: ${({ locked }) =>
-    locked ? "rgba(128, 128, 128, 0.15)" : "#10346e3d"};
+  background-color: rgba(128, 128, 128, 0.15);
   border-radius: 0.8rem;
   padding: 1rem;
   box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
@@ -60,6 +59,7 @@ export const NeonButtonShipping = styled.button`
   color: #e4e4e7;
   border-radius: 8px;
   padding: 0.5rem 1rem;
+  margin: 1rem;
   border: 1px solid #eab308;
   cursor: pointer;
   font-weight: bold;
@@ -166,5 +166,18 @@ export const ScrollableTableContainer = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: #4a5568;
     border-radius: 4px;
+  }
+`;
+
+export const ClickableText = styled.div`
+  color: #007bff;
+  font-size: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: center;
+  margin: 1rem 0;
+
+  &:hover {
+    color: #0056b3;
   }
 `;
