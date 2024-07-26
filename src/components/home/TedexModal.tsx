@@ -131,21 +131,21 @@ export const TedexModal: React.FC<TedexProps> = ({
                           {
                             calculateCountdown(
                               new Date(userShipping.nextShipment),
-                              method.basShippingTime
+                              method.baseShippingTime
                             ).hours
                           }
                           h{" "}
                           {
                             calculateCountdown(
                               new Date(userShipping.nextShipment),
-                              method.basShippingTime
+                              method.baseShippingTime
                             ).minutes
                           }
                           m{" "}
                           {
                             calculateCountdown(
                               new Date(userShipping.nextShipment),
-                              method.basShippingTime
+                              method.baseShippingTime
                             ).seconds
                           }
                           s
