@@ -254,6 +254,7 @@ export const Home: React.FC<HomeProps> = ({
         customers={customers}
         transaction={lastTransaction}
         animatingEmojis={animatingEmojis}
+        marketInfo={marketInfo}
       />
 
       <TouchPoints touchPoints={touchPoints} />

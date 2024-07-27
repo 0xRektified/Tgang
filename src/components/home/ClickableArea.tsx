@@ -7,6 +7,7 @@ import { Product } from "../interfaces/user.interface";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
+import { IMarketInfo } from "../interfaces/market.interface";
 
 const NeonText = styled.div`
   font-size: 1.5rem;
@@ -33,12 +34,18 @@ const NeonText = styled.div`
   }
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+`;
+
 const ClickableArea = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: auto;
+  width: 75%;
+  height: 100%;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
@@ -50,7 +57,7 @@ const ClickableArea = styled.div`
 const ImageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
   justify-content: left;
   width: 100%;
   transition: transform 0.15s ease-in-out;
@@ -59,21 +66,13 @@ const ImageContainer = styled.div`
   }
 `;
 
-const HomeBoardContainer = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 10px;
-  margin-top: 25px;
-  border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.8);
-  flex-grow: 0;
-  flex-shrink: 0;
-  align-self: flex-start; /* Ensure it aligns with ProductsList */
-  position: absolute;
-  bottom: 0; /* Ensure it's positioned at the bottom */
-  right: 0;
-  z-index: 1; /* Adjust z-index if necessary */
+  align-items: flex-end; /* Align children to the right */
+  width: 25%;
+  height: 80%;
+  position: relative;
 `;
 
 const ProductsList = styled.div`
@@ -81,17 +80,12 @@ const ProductsList = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 10px;
-  margin-top: 25px;
   border-radius: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
-  width: 25%;
+  width: 100%; /* Ensure it takes full width of Container */
   flex-grow: 0;
   flex-shrink: 0;
-  align-self: flex-start;
-  position: absolute;
-  bottom: 100; /* Align at the bottom */
-  right: 0;
-  z-index: 2; /* Ensure it's above HomeBoardContainer */
+  z-index: 1;
 `;
 
 const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
@@ -155,13 +149,6 @@ const Smoke = styled.div`
   }
 `;
 
-const ButtonFlexBoxRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  gap: 0px;
-`;
-
 const CenteredIconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -214,6 +201,7 @@ interface ClickableAreaWithSmokeProps {
   customers: string[];
   transaction: Transaction | null;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
+  marketInfo: IMarketInfo | undefined;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -227,6 +215,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   customers,
   transaction,
   animatingEmojis,
+  marketInfo,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -255,7 +244,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   }, []);
 
   return (
-    <>
+    <Wrapper>
       <ClickableArea onTouchStart={handleTouchStart}>
         {smokes}
         <FlexBoxRow className="w-full justify-center">
@@ -264,49 +253,60 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             <img
               src={userCharacter}
               alt="Logo"
-              style={{ maxWidth: "250px", paddingTop: "50px" }}
+              style={{ maxWidth: "12rem", paddingTop: "10em" }}
               className={imageLoaded ? "animate-fade-in" : ""}
               onLoad={handleImageLoad}
             />
           </ImageContainer>
         </FlexBoxRow>
+      </ClickableArea>
 
-        <HomeBoardContainer>
+      <Container>
+        <ProductsList>
+          <CenteredIconContainer>
+            <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
+              Market
+            </NeonButton>
+          </CenteredIconContainer>
+          {Object.values(EProduct).map((productName, index) => {
+            const product = products.find((p) => p.name === productName);
+            let productMarketprice = 0;
+            if (marketInfo && marketInfo.products.length > 0) {
+              const productMarket = marketInfo.products.find(
+                (m) => m.name === productName
+              );
+              productMarketprice = productMarket?.price || 0;
+            }
+            const quantity = product ? product.quantity : 0;
+            return (
+              <FlexBoxRow key={productName} style={{ alignItems: "center" }}>
+                <ProductRow
+                  isSelected={selectedProduct === productName}
+                  onClick={() => setSelectedProduct(productName)}
+                >
+                  <ProductNameD>
+                    <FlexBoxRow className="w-full justify-center">
+                      {selectedProduct === productName && (
+                        <FaArrowRightLong className="h-6" />
+                      )}
+                      ${productMarketprice}
+                    </FlexBoxRow>
+                    <FlexBoxRow className="w-full justify-center">
+                      {EProductIcon[productName as keyof typeof EProductIcon]}
+                      {quantity}
+                    </FlexBoxRow>
+                  </ProductNameD>
+                </ProductRow>
+              </FlexBoxRow>
+            );
+          })}
           <HomeBoard
             customers={customers}
             transaction={transaction}
             animatingEmojis={animatingEmojis}
           />
-        </HomeBoardContainer>
-      </ClickableArea>
-
-      <ProductsList>
-        <CenteredIconContainer>
-          <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
-            Market
-          </NeonButton>
-        </CenteredIconContainer>
-        {Object.values(EProduct).map((productName, index) => {
-          const product = products.find((p) => p.name === productName);
-          const quantity = product ? product.quantity : 0;
-          return (
-            <FlexBoxRow key={productName} style={{ alignItems: "center" }}>
-              <ProductRow
-                isSelected={selectedProduct === productName}
-                onClick={() => setSelectedProduct(productName)}
-              >
-                {selectedProduct === productName && (
-                  <FaArrowRightLong className="h-6" />
-                )}
-                <ProductNameD>
-                  {EProductIcon[productName as keyof typeof EProductIcon]}{" "}
-                  {quantity}
-                </ProductNameD>
-              </ProductRow>
-            </FlexBoxRow>
-          );
-        })}
-      </ProductsList>
-    </>
+        </ProductsList>
+      </Container>
+    </Wrapper>
   );
 };
