@@ -17,6 +17,7 @@ import {
   IShippingMethod,
 } from "../interfaces/shipping.interface";
 import { CombinedModal } from "./CombinedModal";
+import { getRandomEmoji } from "./HomeBoard";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -48,12 +49,13 @@ export const Home: React.FC<HomeProps> = ({
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.WEED);
+  const [nextCustomer, setNextCustomer] = useState<string>(getRandomEmoji());
   const [animatingEmojis, setAnimatingEmojis] = useState<
     { emoji: string; id: number; offset: string }[]
   >([]);
   const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const { customers, setCustomers, handleSell } = useCustomerManagement(
+  const { handleSell } = useCustomerManagement(
     userInfo,
     setUserInfo
   );
@@ -162,81 +164,88 @@ export const Home: React.FC<HomeProps> = ({
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
     console.log("userInfo.customerAmount", userInfo.customerAmount);
-    if (userInfo.customerAmount) {
-      const slottedProductToSell = slottedProducts.find(
-        (p) => p.name === selectedProduct
-      );
+    console.log("userInfo.customerNeeds", userInfo.customerNeeds);
+    const slottedProductToSell = slottedProducts.find(
+      (p) => p.name === selectedProduct
+    );
 
-      let newTouchPoint = {
+    let newTouchPoint = {
+      id: Date.now(),
+      x: touch.clientX,
+      y: touch.clientY,
+      amountEarned: 0,
+    };
+
+    if (
+      userInfo.customerAmount === 0 ||
+      !slottedProductToSell ||
+      slottedProductToSell.quantity < userInfo.customerNeeds
+    ) {
+      setLastTransaction({
+        type: "missed",
+        product: selectedProduct || "Unknown",
+        quantity: userInfo.customerNeeds,
+      });
+    } else {
+      const { updatedProducts, transaction, cashState } = handleTransaction(
+        userInfo,
+        slottedProductToSell,
+        marketInfo
+      );
+      setLastTransaction(transaction);
+
+      newTouchPoint = {
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
-        amountEarned: 0,
+        amountEarned: transaction?.amountEarned || 0,
       };
 
-      if (
-        !slottedProductToSell ||
-        slottedProductToSell.quantity < userInfo.customerAmount
-      ) {
-        setLastTransaction({
-          type: "missed",
-          product: selectedProduct || "Unknown",
-          quantity: userInfo.customerNeeds,
-        });
-      } else {
-        const { updatedProducts, transaction, cashState } = handleTransaction(
-          userInfo,
-          slottedProductToSell,
-          marketInfo
+      addToBatch(selectedProduct);
+
+      // Move the customer emoji to the animating array
+      setNextCustomer(getRandomEmoji());
+      const newAnimatingEmoji = {
+        emoji: nextCustomer,
+        id: Date.now(),
+        offset: getRandomOffset(),
+      };
+      setAnimatingEmojis((prev) => [...prev, newAnimatingEmoji]);
+
+      setTimeout(() => {
+        setAnimatingEmojis((prev) =>
+          prev.filter((emoji) => emoji.id !== newAnimatingEmoji.id)
         );
-        setLastTransaction(transaction);
+      }, 1000);
 
-        newTouchPoint = {
-          id: Date.now(),
-          x: touch.clientX,
-          y: touch.clientY,
-          amountEarned: transaction?.amountEarned || 0,
-        };
-
-        addToBatch(selectedProduct);
-
-        // Move the customer emoji to the animating array
-        const nextCustomer = customers[0];
-        const newAnimatingEmoji = {
-          emoji: nextCustomer,
-          id: Date.now(),
-          offset: getRandomOffset(),
-        };
-        setAnimatingEmojis((prev) => [...prev, newAnimatingEmoji]);
-        setCustomers((prevCustomers) => prevCustomers.slice(1));
-
-        setTimeout(() => {
-          setAnimatingEmojis((prev) =>
-            prev.filter((emoji) => emoji.id !== newAnimatingEmoji.id)
-          );
-        }, 1000);
-
-        setUserInfo((prevUser) => ({
+      setUserInfo((prevUser) => {
+        const customerAmount = 
+          prevUser.customerAmount - 1 < 0 ? 0 : prevUser.customerAmount - 1;
+        const customerAmountRemaining = 
+          prevUser.customerAmountRemaining - 1 < 0 ? 0 : prevUser.customerAmountRemaining - 1;
+        return {
           ...prevUser,
-          customerAmount: prevUser.customerAmount - 1,
+          customerAmount,
+          customerAmountRemaining,
+          lastSell: new Date(),
           cashAmount: cashState,
           products: updatedProducts,
-        }));
-      }
-      setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
-      setPressed(true);
-
-      if (newTouchPoint.amountEarned) {
-        playSound();
-      }
-      WebApp.HapticFeedback.impactOccurred("heavy");
-      setTimeout(() => setPressed(false), 50);
-      setTimeout(() => {
-        setTouchPoints((prevTouchPoints) =>
-          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
-        );
-      }, 3000);
+        }
+      });
     }
+    setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
+    setPressed(true);
+
+    if (newTouchPoint.amountEarned) {
+      playSound();
+    }
+    WebApp.HapticFeedback.impactOccurred("heavy");
+    setTimeout(() => setPressed(false), 50);
+    setTimeout(() => {
+      setTouchPoints((prevTouchPoints) =>
+        prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+      );
+    }, 3000);
   };
 
   return (
@@ -249,7 +258,8 @@ export const Home: React.FC<HomeProps> = ({
         setSelectedProduct={setSelectedProduct}
         handleOpenSupplierModal={handleOpenSupplierModal}
         handleOpenShippingModal={handleOpenShippingModal}
-        customers={customers}
+        customer={nextCustomer}
+        customerAmount={userInfo.customerAmount}
         transaction={lastTransaction}
         animatingEmojis={animatingEmojis}
         marketInfo={marketInfo}
