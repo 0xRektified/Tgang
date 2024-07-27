@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { LastTransaction } from "./LastTransaction";
 import { Transaction } from "./utils/types";
-import { FlexBoxRow } from "../styled/globalStyled";
 
 const CustomerEmojiContainer = styled.div`
   width: 100%;
@@ -20,7 +19,7 @@ const FlexBoxColNoGap = styled.div`
 `;
 
 const CustomerEmoji = styled.span`
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   margin: 0rem;
   &.customer-emoji {
     position: relative;
@@ -98,6 +97,16 @@ const WaitingCustomers = styled.p`
   text-align: right;
 `;
 
+export const FlexBoxRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  margin-top: 2em;
+  background-color: #00000069;
+  padding: 0.1em;
+`;
+
 interface CustomersBoardProps {
   customer: string;
   customerAmount: number;
@@ -117,7 +126,7 @@ export const HomeBoard: React.FC<CustomersBoardProps> = ({
 }) => {
   return (
     <FlexBoxRow className="w-full justify-center">
-      <FlexBoxColNoGap className="bg-zinc-800 ">
+      <FlexBoxColNoGap className="">
         <WaitingCustomers>Customers</WaitingCustomers>
         <WaitingCustomers>{customerAmount}</WaitingCustomers>
 

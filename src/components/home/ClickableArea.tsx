@@ -86,6 +86,7 @@ const ProductsList = styled.div`
   flex-grow: 0;
   flex-shrink: 0;
   z-index: 1;
+  margin-top: 1em;
 `;
 
 const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
@@ -302,13 +303,12 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
               </FlexBoxRow>
             );
           })}
-          <HomeBoard
-            customer={customer}
-            customerAmount={customerAmount}
-            transaction={transaction}
-            animatingEmojis={animatingEmojis}
-          />
         </ProductsList>
+        <HomeBoard
+          customers={customers}
+          transaction={transaction}
+          animatingEmojis={animatingEmojis}
+        />
       </Container>
     </Wrapper>
   );
