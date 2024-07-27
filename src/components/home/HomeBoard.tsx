@@ -106,6 +106,7 @@ export const FlexBoxRow = styled.div`
   background-color: rgba(0, 0, 0, 0.8);
   padding: 0.1em;
   border-radius: 0.5rem;
+  z-index: 2;
 `;
 
 interface CustomersBoardProps {
