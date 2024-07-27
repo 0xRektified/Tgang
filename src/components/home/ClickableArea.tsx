@@ -243,7 +243,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   return (
     <Wrapper>
       <ClickableArea onTouchStart={handleTouchStart}>
-        {/* {smokes} */}
+        {smokes}
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
           <ImageContainer className={pressed ? "pressed" : ""}>
