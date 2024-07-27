@@ -36,9 +36,7 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
             {transaction.amountEarned?.toFixed(0)}
           </TransactionStatus>
         ) : (
-          <TransactionStatus>
-            🤬 No more {transaction.product}
-          </TransactionStatus>
+          <></>
         ))}
     </TransactionContainer>
   );
