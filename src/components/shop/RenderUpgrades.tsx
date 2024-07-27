@@ -182,6 +182,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           const level = userUpgrade?.level || 0;
           const upgradeRequirements = upgrade.requirements as IRequirement[];
           let upgradeTo = upgrade.upgradeMultiplier;
+          const upgradeDiff = userUpgrade?.upgradeAmount! - userUpgrade?.amount!;
 
           if (userUpgrade?.upgradeAmount && userUpgrade?.amount) {
             upgradeTo = userUpgrade?.amount;
@@ -191,16 +192,12 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             case EDealerUpgrade.SOCIAL_MEDIA_CAMPAGIN:
             case EDealerUpgrade.STREET_PROMOTION_TEAM:
             case EDealerUpgrade.CLUB_PARTNERSHIP:
-              upgradeEffect = `From ${userInfo.customerAmount} to ${
-                userInfo.customerAmount + upgradeTo
-              } customers`;
+              upgradeEffect = `Adds ${upgradeDiff || 100} customers`;
               break;
             case EDealerUpgrade.PRODUCT_QUALITY:
             case EDealerUpgrade.LUXURY_PACKAGING:
             case EDealerUpgrade.HIGH_VALUE_CUSTOMERS:
-              upgradeEffect = `Customers buy from ${
-                userInfo.customerNeeds
-              } to ${userInfo.customerNeeds + upgradeTo} more product`;
+              upgradeEffect = `Customers buy ${upgradeDiff || 1} more product`;
               break;
           }
 
@@ -260,9 +257,9 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             price,
             level,
             userUpgrade?.upgradeMarketDiscount
-              ? `Market discount from ${userUpgrade?.marketDiscount.toFixed(
+              ? `Discount from ${userUpgrade?.marketDiscount.toFixed(
                   2
-                )} to ${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
+                )}% to ${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
               : undefined,
             locked
           );
