@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { EProductIcon } from "../interfaces/product.interface";
 import { Transaction } from "./utils/types";
 
 const TransactionContainer = styled.div`
@@ -27,20 +28,18 @@ export const LastTransaction: React.FC<LastTransactionProps> = ({
 }) => {
   return (
     <TransactionContainer className="rounded shadow-lg w-full ">
-      {transaction ? (
-        transaction.type === "success" ? (
+      {transaction &&
+        (transaction.type === "success" ? (
           <TransactionStatus>
-            🤑 Sold {transaction.quantity} {transaction.product} $
+            Sold {transaction.quantity}{" "}
+            {EProductIcon[transaction.product as keyof typeof EProductIcon]} $
             {transaction.amountEarned?.toFixed(0)}
           </TransactionStatus>
         ) : (
           <TransactionStatus>
             🤬 No more {transaction.product}
           </TransactionStatus>
-        )
-      ) : (
-        <TransactionStatus>No transactions yet.</TransactionStatus>
-      )}
+        ))}
     </TransactionContainer>
   );
 };

@@ -108,7 +108,12 @@ export const FlexBoxRow = styled.div`
   border-radius: 0.5rem;
   z-index: 2;
 `;
-
+const CustomerAmount = styled.p`
+  color: #cbd5e0;
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 0.5em;
+`;
 interface CustomersBoardProps {
   customer: string;
   customerAmount: number;
@@ -130,10 +135,9 @@ export const HomeBoard: React.FC<CustomersBoardProps> = ({
     <FlexBoxRow className="w-full justify-center">
       <FlexBoxColNoGap className="">
         <WaitingCustomers>Customers</WaitingCustomers>
-        <WaitingCustomers>{customerAmount}</WaitingCustomers>
-
         <CustomerEmojiContainer>
           <CustomerListContainer>
+            <CustomerAmount>{customerAmount}</CustomerAmount>
             {customerAmount > 0 ? (
               <CustomerEmoji className="customer-emoji">
                 {customer}
@@ -152,7 +156,7 @@ export const HomeBoard: React.FC<CustomersBoardProps> = ({
             {emoji}
           </div>
         ))}
-        {/* <LastTransaction transaction={transaction} /> */}
+        <LastTransaction transaction={transaction} />
       </FlexBoxColNoGap>
     </FlexBoxRow>
   );

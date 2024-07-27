@@ -173,6 +173,12 @@ const NeonButton = styled.button`
   flex: 1;
 `;
 
+export const FlexBoxRowPriceNeon = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.3em;
+  align-items: center;
+`;
 const NeonGoldText = styled.span`
   color: #ffd700;
   text-shadow: 0 0 2px #ffd700,  0 0 6px #ffd700,
@@ -300,12 +306,12 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                 >
                   <Arrow isSelected={selectedProduct === productName} />
                   <ProductNameD>
-                    <FlexBoxRow className="w-full justify-center">
+                    <FlexBoxRowPriceNeon className="w-full justify-center gap-1px">
                       <NeonGoldText>
                         ${productMarketDiscountedPrice}
                       </NeonGoldText>
                       /<NeonGreenText>${productMarketprice}</NeonGreenText>
-                    </FlexBoxRow>
+                    </FlexBoxRowPriceNeon>
                     <FlexBoxRow className="w-full justify-center">
                       {EProductIcon[productName as keyof typeof EProductIcon]}
                       {quantity}
