@@ -28,6 +28,7 @@ import {
   CardTitle,
   NeonButton,
 } from "../styled/renderUpgradesStyled";
+import { UserInfo } from "os";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -129,9 +130,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               <p>Cost: ${price}</p>
               <p>Level: {level}</p>
               {upgradeDiff ? (
-                <p style={{ fontSize: '0.7rem' }}>
-                  {upgradeDiff}
-                </p>
+                <p style={{ fontSize: "0.7rem" }}>{upgradeDiff}</p>
               ) : (
                 <></>
               )}
@@ -170,28 +169,37 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     categoryTitle: string,
     upgrades: Record<string, ProductUpgrade | DealerUpgrade> | undefined,
     category: EUpgradeCategory,
-    userUpgrades: UserDealerUpgrade[]
+    userInfo: IUserInfo
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
+          const userUpgrades = userInfo.dealerUpgrades;
           const userUpgrade = userUpgrades.find((u) => u.product === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
           const upgradeRequirements = upgrade.requirements;
-          const upgradeDiff = userUpgrade?.upgradeAmount! - userUpgrade?.amount!;
+          let upgradeTo = upgrade.upgradeMultiplier;
+
+          if (userUpgrade?.upgradeAmount && userUpgrade?.amount) {
+            upgradeTo = userUpgrade?.amount;
+          }
           let upgradeEffect: string | undefined;
           switch (key) {
             case EDealerUpgrade.SOCIAL_MEDIA_CAMPAGIN:
             case EDealerUpgrade.STREET_PROMOTION_TEAM:
             case EDealerUpgrade.CLUB_PARTNERSHIP:
-              upgradeEffect = `Adds ${upgradeDiff} customers`;
+              upgradeEffect = `From ${userInfo.customerAmount} to ${
+                userInfo.customerAmount + upgradeTo
+              } customers`;
               break;
             case EDealerUpgrade.PRODUCT_QUALITY:
             case EDealerUpgrade.LUXURY_PACKAGING:
             case EDealerUpgrade.HIGH_VALUE_CUSTOMERS:
-              upgradeEffect = `Customers buy ${upgradeDiff} more product`;
+              upgradeEffect = `Customers buy from ${
+                userInfo.customerNeeds
+              } to ${userInfo.customerNeeds + upgradeTo} more product`;
               break;
           }
 
@@ -223,16 +231,18 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     categoryTitle: string,
     upgrades: Record<string, ProductUpgrade | DealerUpgrade> | undefined,
     category: EUpgradeCategory,
-    userUpgrades: Product[]
+    userInfo: IUserInfo
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
+          const userUpgrades = userInfo.products;
           const userUpgrade = userUpgrades.find((u) => u.name === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
-          let upgradeDiff = userUpgrade?.upgradeMarketDiscount! - userUpgrade?.marketDiscount!;
+          let upgradeDiff =
+            userUpgrade?.upgradeMarketDiscount! - userUpgrade?.marketDiscount!;
           const upgradeRequirements = upgrade.requirements;
           let locked = false;
           if (upgradeRequirements) {
@@ -250,7 +260,9 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             category,
             price,
             level,
-            upgradeDiff ? `Market discount: ${upgradeDiff.toFixed(2)}%` : undefined,
+            upgradeDiff
+              ? `Market discount: ${upgradeDiff.toFixed(2)}%`
+              : undefined,
             locked
           );
         })}
@@ -266,13 +278,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         "Customers",
         upgradesData?.dealer ?? {},
         EUpgradeCategory.DEALER,
-        userInfo.dealerUpgrades
+        userInfo
       )}
       {renderProductCategory(
         "Products",
         upgradesData?.product ?? {},
         EUpgradeCategory.PRODUCT,
-        userInfo.products
+        userInfo
       )}
     </>
   );
