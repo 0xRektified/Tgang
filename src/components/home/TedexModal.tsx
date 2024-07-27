@@ -65,7 +65,6 @@ export const TedexModal: React.FC<TedexProps> = ({
   const calculateCountdown = (nextShipment: Date, shippingTime: number) => {
     const now = new Date().getTime();
     const nextShipmentTime = nextShipment.getTime();
-
     if (nextShipmentTime < now) {
       return {
         hours: 0,

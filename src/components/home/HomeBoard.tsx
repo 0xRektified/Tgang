@@ -2,22 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { LastTransaction } from "./LastTransaction";
 import { Transaction } from "./utils/types";
-import {
-  FlexBoxCol,
-  FlexBoxColNoGap,
-  FlexBoxRow,
-} from "../styled/globalStyled";
-
-const CustomerBoardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 4em;
-  width: 100%;
-  border-radius: 0.375rem;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
-  padding: 0 !important;
-`;
+import { FlexBoxRow } from "../styled/globalStyled";
 
 const CustomerEmojiContainer = styled.div`
   width: 100%;
@@ -25,6 +10,13 @@ const CustomerEmojiContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+`;
+
+const FlexBoxColNoGap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
 `;
 
 const CustomerEmoji = styled.span`
@@ -102,7 +94,7 @@ const emojiList = [
 
 const WaitingCustomers = styled.p`
   color: #cbd5e0;
-  font-size: 1rem;
+  font-size: 0.8rem;
   text-align: right;
 `;
 
@@ -124,36 +116,35 @@ export const HomeBoard: React.FC<CustomersBoardProps> = ({
   animatingEmojis,
 }) => {
   return (
-    <CustomerBoardContainer className=" m-100px">
-      <FlexBoxRow className="w-full justify-end">
-        <FlexBoxColNoGap className="bg-zinc-800 ">
-          <WaitingCustomers>Customers: {customers.length}</WaitingCustomers>
+    <FlexBoxRow className="w-full justify-center">
+      <FlexBoxColNoGap className="bg-zinc-800 ">
+        <WaitingCustomers>Customers</WaitingCustomers>
+        <WaitingCustomers>{customers.length}</WaitingCustomers>
 
-          <CustomerEmojiContainer>
-            <CustomerListContainer>
-              {customers.length > 0 ? (
-                <CustomerEmoji className="customer-emoji">
-                  {customers[0]}
-                </CustomerEmoji>
-              ) : (
-                <CustomerEmoji>
-                  it's night time no more customers... Please wait
-                </CustomerEmoji>
-              )}
-            </CustomerListContainer>
-            {animatingEmojis.map(({ emoji, id, offset }) => (
-              <div
-                key={`${id}${offset}`}
-                className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-2xl text-white animate-move-up-random-x"
-                style={{ "--random-offset": offset } as React.CSSProperties}
-              >
-                {emoji}
-              </div>
-            ))}
-          </CustomerEmojiContainer>
-          <LastTransaction transaction={transaction} />
-        </FlexBoxColNoGap>
-      </FlexBoxRow>
-    </CustomerBoardContainer>
+        <CustomerEmojiContainer>
+          <CustomerListContainer>
+            {customers.length > 0 ? (
+              <CustomerEmoji className="customer-emoji">
+                {customers[0]}
+              </CustomerEmoji>
+            ) : (
+              <CustomerEmoji>
+                it's night time no more customers... Please wait
+              </CustomerEmoji>
+            )}
+          </CustomerListContainer>
+        </CustomerEmojiContainer>
+        {animatingEmojis.map(({ emoji, id, offset }) => (
+          <div
+            key={`${id}${offset}`}
+            className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-2xl text-white animate-move-up-random-x "
+            style={{ "--random-offset": offset } as React.CSSProperties}
+          >
+            {emoji}
+          </div>
+        ))}
+        {/* <LastTransaction transaction={transaction} /> */}
+      </FlexBoxColNoGap>
+    </FlexBoxRow>
   );
 };

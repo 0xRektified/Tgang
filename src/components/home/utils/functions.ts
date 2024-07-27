@@ -42,6 +42,8 @@ export const handleTransaction = (
     const productMarket = marketInfo.products.find(
       (e) => e.name === productName
     );
+    console.log(`marketInfo`);
+    console.log(marketInfo);
     if (productMarket && userInfo) {
       let productPrice = productMarket.price;
       amountEarned = amountToSell * productPrice;

@@ -1,11 +1,11 @@
 export enum EShippingMethod {
-  ENVELOPE = 'Envelope',
-  PACKAGE = 'Package',
-  PALLET = 'Pallet',
-  TRUCK = 'Truck',
-  CONTAINER = 'Container',
-  PLANE = 'Plane',
-  ROCKET = 'Rocket',
+  ENVELOPE = "Envelope",
+  PACKAGE = "Package",
+  PALLET = "Pallet",
+  TRUCK = "Truck",
+  CONTAINER = "Container",
+  PLANE = "Plane",
+  ROCKET = "Rocket",
 }
 
 export interface IShippingMethod {
@@ -20,7 +20,7 @@ export interface IShippingMethod {
   requirement: Requirement | null;
 }
 
-export type UpgradeRequirementType = 'fixed' | 'linear';
+export type UpgradeRequirementType = "fixed" | "linear";
 
 export interface Requirement {
   referredUsers: number;

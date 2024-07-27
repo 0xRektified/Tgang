@@ -39,9 +39,10 @@ export default {
           "100%": { transform: "scale(1)" },
         },
         moveUpRandomX: {
-          "0%": { transform: "translate(-50%, 0)" },
+          "0%": { transform: "translate(-50%, 0)", opacity: 1 },
           "100%": {
             transform: "translate(calc(-50% + var(--random-offset)), -200px)",
+            opacity: 0,
           },
         },
       },
