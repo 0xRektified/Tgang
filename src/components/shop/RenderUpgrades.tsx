@@ -5,6 +5,7 @@ import {
   DealerUpgrade,
   EDealerUpgrade,
   EUpgradeCategory,
+  IRequirement,
   IUpgrade,
   ProductUpgrade,
 } from "../interfaces/upgrade.interface";
@@ -179,7 +180,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           const userUpgrade = userUpgrades.find((u) => u.product === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
-          const upgradeRequirements = upgrade.requirements;
+          const upgradeRequirements = upgrade.requirements as IRequirement[];
           let upgradeTo = upgrade.upgradeMultiplier;
 
           if (userUpgrade?.upgradeAmount && userUpgrade?.amount) {
@@ -241,8 +242,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           const userUpgrade = userUpgrades.find((u) => u.name === key);
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
-          let upgradeDiff =
-            userUpgrade?.upgradeMarketDiscount! - userUpgrade?.marketDiscount!;
           const upgradeRequirements = upgrade.requirements;
           let locked = false;
           if (upgradeRequirements) {
@@ -260,8 +259,10 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             category,
             price,
             level,
-            upgradeDiff
-              ? `Market discount: ${upgradeDiff.toFixed(2)}%`
+            userUpgrade?.upgradeMarketDiscount
+              ? `Market discount from ${userUpgrade?.marketDiscount.toFixed(
+                  2
+                )} to ${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
               : undefined,
             locked
           );
