@@ -9,11 +9,11 @@ export const calculateTotalQuantity = (products: Product[]): number => {
 export const updateProducts = (
   products: Product[],
   productName: string,
-  amountToSell: number
+  quantity: number
 ): Product[] => {
   return products.map((product) => {
-    if (product.name === productName && product.quantity >= amountToSell) {
-      return { ...product, quantity: product.quantity - amountToSell };
+    if (product.name === productName && product.quantity >= quantity) {
+      return { ...product, quantity: product.quantity - quantity };
     }
     return product;
   });
@@ -21,9 +21,7 @@ export const updateProducts = (
 
 export const handleTransaction = (
   userInfo: IUserInfo,
-  slottedProducts: Product[],
-  productName: string,
-  amountToSell: number,
+  productToSell: Product,
   marketInfo: IMarketInfo | undefined
 ): {
   updatedProducts: Product[];
@@ -32,9 +30,7 @@ export const handleTransaction = (
 } => {
   let amountEarned = 0;
   let cashState = userInfo.cashAmount;
-  const productToSell = slottedProducts.find(
-    (product) => product.name === productName
-  );
+  const amountToSell = userInfo.customerNeeds;
   if (
     productToSell &&
     marketInfo &&

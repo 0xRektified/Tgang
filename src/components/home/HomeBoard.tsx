@@ -99,9 +99,9 @@ const WaitingCustomers = styled.p`
 `;
 
 interface CustomersBoardProps {
-  customers: string[];
+  customer: string;
+  customerAmount: number;
   transaction: Transaction | null;
-
   animatingEmojis: { emoji: string; id: number; offset: string }[];
 }
 
@@ -110,22 +110,22 @@ export const getRandomEmoji = () => {
 };
 
 export const HomeBoard: React.FC<CustomersBoardProps> = ({
-  customers,
+  customer,
+  customerAmount,
   transaction,
-
   animatingEmojis,
 }) => {
   return (
     <FlexBoxRow className="w-full justify-center">
       <FlexBoxColNoGap className="bg-zinc-800 ">
         <WaitingCustomers>Customers</WaitingCustomers>
-        <WaitingCustomers>{customers.length}</WaitingCustomers>
+        <WaitingCustomers>{customerAmount}</WaitingCustomers>
 
         <CustomerEmojiContainer>
           <CustomerListContainer>
-            {customers.length > 0 ? (
+            {customerAmount > 0 ? (
               <CustomerEmoji className="customer-emoji">
-                {customers[0]}
+                {customer}
               </CustomerEmoji>
             ) : (
               <CustomerEmoji>

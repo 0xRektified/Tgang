@@ -198,7 +198,8 @@ interface ClickableAreaWithSmokeProps {
   setSelectedProduct: Dispatch<SetStateAction<string>>;
   handleOpenSupplierModal: () => void;
   handleOpenShippingModal: () => void;
-  customers: string[];
+  customer: string;
+  customerAmount: number;
   transaction: Transaction | null;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
   marketInfo: IMarketInfo | undefined;
@@ -212,7 +213,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   setSelectedProduct,
   handleOpenSupplierModal,
   handleOpenShippingModal,
-  customers,
+  customer,
+  customerAmount,
   transaction,
   animatingEmojis,
   marketInfo,
@@ -301,7 +303,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             );
           })}
           <HomeBoard
-            customers={customers}
+            customer={customer}
+            customerAmount={customerAmount}
             transaction={transaction}
             animatingEmojis={animatingEmojis}
           />
