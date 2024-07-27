@@ -96,18 +96,6 @@ const ClickableArea = styled.div`
   touch-action: none;
 `;
 
-const ImageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: left;
-  width: 100%;
-  transition: transform 0.15s ease-in-out;
-  &.pressed {
-    transform: scale(1.15);
-  }
-`;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -185,10 +173,22 @@ const NeonButton = styled.button`
   flex: 1;
 `;
 
+const NeonGoldText = styled.span`
+  color: #ffd700;
+  text-shadow: 0 0 2px #ffd700,  0 0 6px #ffd700,
+    0 0 8px #ffd700,
+  font-weight: bold;
+`;
+
+const NeonGreenText = styled.span`
+  color: #32cd32;
+  text-shadow: 0 0 2px #32cd32,  0 0 6px #32cd32,
+    0 0 8px #32cd32, 
+  font-weight: bold;
+`;
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
-  pressed: boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
   handleOpenSupplierModal: () => void;
@@ -203,7 +203,6 @@ interface ClickableAreaWithSmokeProps {
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   products,
   handleTouchStart,
-  pressed,
   selectedProduct,
   setSelectedProduct,
   handleOpenSupplierModal,
@@ -216,10 +215,21 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [pressed, setPressed] = useState(false);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
+
+  const handleClick = () => {
+    if (!pressed) {
+      setPressed(true);
+      setTimeout(() => {
+        setPressed(false);
+      }, 100);
+    }
+  };
+
   useEffect(() => {
     const createSmoke = () => {
       const newSmokes: JSX.Element[] = [];
@@ -242,19 +252,24 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
   return (
     <Wrapper>
-      <ClickableArea onTouchStart={handleTouchStart}>
+      <ClickableArea onTouchStart={handleTouchStart} onClick={handleClick}>
         {smokes}
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
-          <ImageContainer className={pressed ? "pressed" : ""}>
+          <div
+            className={`flex flex-col items-center justify-left w-full transition-transform ease-in-out duration-150 ${
+              pressed ? "animate-scale-up-down" : ""
+            }`}
+          >
             <img
               src={userCharacter}
               alt="Logo"
-              style={{ maxWidth: "14rem", paddingTop: "7em" }}
-              className={imageLoaded ? "animate-fade-in" : ""}
+              className={`max-w-[14rem] pt-28 ${
+                imageLoaded ? "animate-fade-in" : ""
+              }`}
               onLoad={handleImageLoad}
             />
-          </ImageContainer>
+          </div>
         </FlexBoxRow>
       </ClickableArea>
 
@@ -268,11 +283,13 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           {Object.values(EProduct).map((productName, index) => {
             const product = products.find((p) => p.name === productName);
             let productMarketprice = 0;
+            let productMarketDiscountedPrice = 0;
             if (marketInfo && marketInfo.products.length > 0) {
               const productMarket = marketInfo.products.find(
                 (m) => m.name === productName
               );
               productMarketprice = productMarket?.price || 0;
+              productMarketDiscountedPrice = productMarket?.discountPrice || 0;
             }
             const quantity = product ? product.quantity : 0;
             return (
@@ -284,7 +301,10 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                   <Arrow isSelected={selectedProduct === productName} />
                   <ProductNameD>
                     <FlexBoxRow className="w-full justify-center">
-                      ${productMarketprice}
+                      <NeonGoldText>
+                        ${productMarketDiscountedPrice}
+                      </NeonGoldText>
+                      /<NeonGreenText>${productMarketprice}</NeonGreenText>
                     </FlexBoxRow>
                     <FlexBoxRow className="w-full justify-center">
                       {EProductIcon[productName as keyof typeof EProductIcon]}

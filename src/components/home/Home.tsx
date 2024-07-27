@@ -53,12 +53,8 @@ export const Home: React.FC<HomeProps> = ({
   const [animatingEmojis, setAnimatingEmojis] = useState<
     { emoji: string; id: number; offset: string }[]
   >([]);
-  const [pressed, setPressed] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const { handleSell } = useCustomerManagement(
-    userInfo,
-    setUserInfo
-  );
+  const { handleSell } = useCustomerManagement(userInfo, setUserInfo);
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
   const [isShippinhModalOpen, setIsShippinhModalOpen] =
@@ -219,10 +215,12 @@ export const Home: React.FC<HomeProps> = ({
       }, 1000);
 
       setUserInfo((prevUser) => {
-        const customerAmount = 
+        const customerAmount =
           prevUser.customerAmount - 1 < 0 ? 0 : prevUser.customerAmount - 1;
-        const customerAmountRemaining = 
-          prevUser.customerAmountRemaining - 1 < 0 ? 0 : prevUser.customerAmountRemaining - 1;
+        const customerAmountRemaining =
+          prevUser.customerAmountRemaining - 1 < 0
+            ? 0
+            : prevUser.customerAmountRemaining - 1;
         return {
           ...prevUser,
           customerAmount,
@@ -230,17 +228,14 @@ export const Home: React.FC<HomeProps> = ({
           lastSell: new Date(),
           cashAmount: cashState,
           products: updatedProducts,
-        }
+        };
       });
     }
     setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
-    setPressed(true);
-
     if (newTouchPoint.amountEarned) {
       playSound();
     }
     WebApp.HapticFeedback.impactOccurred("heavy");
-    setTimeout(() => setPressed(false), 50);
     setTimeout(() => {
       setTouchPoints((prevTouchPoints) =>
         prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
@@ -253,7 +248,6 @@ export const Home: React.FC<HomeProps> = ({
       <ClickableAreaWithSmoke
         products={userInfo.products}
         handleTouchStart={handleTouchStart}
-        pressed={pressed}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
         handleOpenSupplierModal={handleOpenSupplierModal}

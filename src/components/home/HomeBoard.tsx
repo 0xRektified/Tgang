@@ -139,9 +139,7 @@ export const HomeBoard: React.FC<CustomersBoardProps> = ({
                 {customer}
               </CustomerEmoji>
             ) : (
-              <CustomerEmoji>
-                it's night time no more customers... Please wait
-              </CustomerEmoji>
+              <CustomerEmoji>🫥</CustomerEmoji>
             )}
           </CustomerListContainer>
         </CustomerEmojiContainer>

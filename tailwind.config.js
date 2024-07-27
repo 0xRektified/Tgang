@@ -38,6 +38,10 @@ export default {
           "50%": { transform: "scale(1.2)" },
           "100%": { transform: "scale(1)" },
         },
+        scaleUpDown: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.15)" },
+        },
         moveUpRandomX: {
           "0%": { transform: "translate(-50%, 0)", opacity: 1 },
           "100%": {
@@ -56,6 +60,7 @@ export default {
         "move-up": "moveUp 1s forwards",
         resize: "resize 0.5s forwards",
         "move-up-random-x": "moveUpRandomX 1s forwards",
+        "scale-up-down": "scaleUpDown 0.1s ease-in-out",
       },
     },
   },
