@@ -4,10 +4,52 @@ import styled from "styled-components";
 import { FlexBoxRow, FlexBoxCol } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
-import { FaArrowRightLong } from "react-icons/fa6";
+import { MdArrowCircleRight } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
+
+const Arrow = styled(MdArrowCircleRight)<{ isSelected: boolean }>`
+  position: absolute;
+  left: -1.5rem;
+  font-size: 1.5rem;
+  color: ${(props) => (props.isSelected ? "#ffd700" : "transparent")};
+  transition: color 0.2s;
+`;
+
+const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem;
+  margin-bottom: 0.3rem;
+  transition: transform 0.2s;
+  border: ${(props) =>
+    props.isSelected ? "2px solid #ffd70012" : "2px solid #595757"};
+  border-radius: 5px;
+  background-color: ${(props) =>
+    props.isSelected ? "#ffd7001a" : "#59575742"};
+  width: 100%; // Ensure the ProductRow takes full width
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &.disabled {
+    background-color: #1a202c;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+    }
+
+    div {
+      color: #718096;
+    }
+  }
+`;
 
 const NeonText = styled.div`
   font-size: 1.5rem;
@@ -87,39 +129,6 @@ const ProductsList = styled.div`
   flex-shrink: 0;
   z-index: 1;
   margin-top: 1em;
-`;
-
-const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.3rem;
-  margin-bottom: 0.3rem;
-  transition: transform 0.2s;
-  border: ${(props) =>
-    props.isSelected ? "2px solid  #ffd70012" : "2px solid #595757"};
-  border-radius: 5px;
-  background-color: ${(props) =>
-    props.isSelected ? " #ffd7001a" : "##59575742"};
-  width: 100%; // Ensure the ProductRow takes full width
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  &.disabled {
-    background-color: #1a202c;
-    cursor: not-allowed;
-
-    &:hover {
-      transform: none;
-    }
-
-    div {
-      color: #718096;
-    }
-  }
 `;
 
 const ProductNameD = styled.div`
@@ -234,7 +243,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   return (
     <Wrapper>
       <ClickableArea onTouchStart={handleTouchStart}>
-        {smokes}
+        {/* {smokes} */}
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
           <ImageContainer className={pressed ? "pressed" : ""}>
@@ -272,11 +281,9 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                   isSelected={selectedProduct === productName}
                   onClick={() => setSelectedProduct(productName)}
                 >
+                  <Arrow isSelected={selectedProduct === productName} />
                   <ProductNameD>
                     <FlexBoxRow className="w-full justify-center">
-                      {selectedProduct === productName && (
-                        <FaArrowRightLong className="h-6" />
-                      )}
                       ${productMarketprice}
                     </FlexBoxRow>
                     <FlexBoxRow className="w-full justify-center">
