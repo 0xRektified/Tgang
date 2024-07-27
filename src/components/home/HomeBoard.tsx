@@ -103,8 +103,9 @@ export const FlexBoxRow = styled.div`
   gap: 10px;
   align-items: center;
   margin-top: 2em;
-  background-color: #00000069;
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 0.1em;
+  border-radius: 0.5rem;
 `;
 
 interface CustomersBoardProps {

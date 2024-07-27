@@ -171,26 +171,11 @@ const NeonButton = styled.button`
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  margin: 1em;
+  margin: 0.5em;
   padding: 0.8em;
   flex: 1;
 `;
 
-const ShipButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 6px;
-  padding: 1rem 2rem;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1.2em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-`;
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
@@ -256,7 +241,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             <img
               src={userCharacter}
               alt="Logo"
-              style={{ maxWidth: "12rem", paddingTop: "10em" }}
+              style={{ maxWidth: "14rem", paddingTop: "7em" }}
               className={imageLoaded ? "animate-fade-in" : ""}
               onLoad={handleImageLoad}
             />
@@ -305,7 +290,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           })}
         </ProductsList>
         <HomeBoard
-          customers={customers}
+          customer={customer}
+          customerAmount={customerAmount}
           transaction={transaction}
           animatingEmojis={animatingEmojis}
         />
