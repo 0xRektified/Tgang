@@ -17,6 +17,8 @@ const useCustomerManagement = (
         userInfo.customerAmountMax
       );
 
+      console.log(userInfo.lastSell, userInfo.customerAmountRemaining, newCustomers);
+
       setUserInfo({ ...userInfo, customerAmount });
     }, 1000);
     return () => clearInterval(interval);

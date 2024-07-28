@@ -9,13 +9,14 @@ import {
 } from "../styled/shopStyled";
 import { TouchPoint } from "./utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
-import { IUserInfo } from "../interfaces/user.interface";
+import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
 import { IUpgrade } from "../interfaces/upgrade.interface";
 import {
   EShippingMethod,
   IShippingMethod,
 } from "../interfaces/shipping.interface";
 import { RenderShipping } from "./RenderShipping";
+import PurchasedShippingModal from "./PurchasedShippingModal";
 
 interface ShopProps {
   userInfo: IUserInfo;
@@ -38,6 +39,19 @@ export const Shop: React.FC<ShopProps> = ({
     useState<boolean>(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
+  const [selectedShipping, setSelectedShipping] = useState<IUserShipping>();
+  const [isPurchasedShippingModalOpen, setIsPurchasedShippingModalOpen] =
+    useState<boolean>(false);
+
+  const handleOpenPurchasedShippingModal = (shipping: IUserShipping) => {
+    setSelectedShipping(shipping);
+    setIsPurchasedShippingModalOpen(true);
+  };
+
+  const handleClosePurchasedShippingModal = () => {
+    setIsPurchasedShippingModalOpen(false);
+  };
+
   useEffect(() => {
     setCurrentTab(activeTab);
   }, [activeTab]);
@@ -81,6 +95,7 @@ export const Shop: React.FC<ShopProps> = ({
         setTouchPoints={setTouchPoints}
         setUserInfo={setUserInfo}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
+        handleOpenPurchasedShippingModal={handleOpenPurchasedShippingModal}
       />
     );
   };
@@ -112,6 +127,13 @@ export const Shop: React.FC<ShopProps> = ({
         </UpgradeContainer>
       </FlexBoxRow>
       <TouchPoints touchPoints={touchPoints} />
+      {isPurchasedShippingModalOpen && (
+        <PurchasedShippingModal
+          shipping={selectedShipping!}
+          onClose={handleClosePurchasedShippingModal}
+          setUserInfo={setUserInfo}
+        />
+      )}
       {showBalanceErrorToast && (
         <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
           <div className="toast toast-top toast-end">

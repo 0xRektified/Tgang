@@ -30,6 +30,7 @@ interface RenderShippingProps {
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
+  handleOpenPurchasedShippingModal: (shipping: IUserShipping) => void;
 }
 
 export const RenderShipping: React.FC<RenderShippingProps> = ({
@@ -39,6 +40,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   setTouchPoints,
   setUserInfo,
   setShowBalanceErrorToast,
+  handleOpenPurchasedShippingModal,
 }) => {
   const { buyShippingMethod } = useBuyShippingMethod();
 
@@ -94,6 +96,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   };
 
   const renderUpgrade = (
+    shiping: IUserShipping | undefined,
     upgrade: IShippingMethod,
     key: EShippingMethod,
     capacityLevel: number,
@@ -132,11 +135,21 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
                 <Button>Locked</Button>
               ) : (
                 // TODO: show upgrade modal if upgrade is already bought
-                <NeonButton
-                  onTouchStart={(e) => handleCardClick(key, price as number, e)}
-                >
-                  Buy
-                </NeonButton>
+                <>
+                {bought ? (
+                  <NeonButton
+                    onClick={() => handleOpenPurchasedShippingModal(shiping!)}
+                  >
+                    Upgrade
+                  </NeonButton>
+                ) : (
+                  <NeonButton
+                    onTouchStart={(e) => handleCardClick(key, price as number, e)}
+                  >
+                    Buy
+                  </NeonButton>
+                  )}
+                </>
               )}
             </CardInfoColumn>
           </CardDetails>
@@ -184,6 +197,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           }
 
           return renderUpgrade(
+            userUpgrade,
             method,
             key as EShippingMethod,
             capacityLevel,

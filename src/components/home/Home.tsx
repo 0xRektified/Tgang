@@ -159,8 +159,6 @@ export const Home: React.FC<HomeProps> = ({
     const touch = e.touches[0];
 
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
-    console.log("userInfo.customerAmount", userInfo.customerAmount);
-    console.log("userInfo.customerNeeds", userInfo.customerNeeds);
     const slottedProductToSell = slottedProducts.find(
       (p) => p.name === selectedProduct
     );

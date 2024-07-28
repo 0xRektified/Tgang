@@ -8,11 +8,11 @@ import {
 } from "../components/interfaces/user.interface";
 import { EShippingMethod } from "../components/interfaces/shipping.interface";
 
-export function useUpgradeShippingCapacity() {
+export function useUpgradeShippingShippingTime() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const upgradeShippingCapacity = async (
+  const upgradeShippingShippingTime = async (
     method: EShippingMethod,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
@@ -35,5 +35,5 @@ export function useUpgradeShippingCapacity() {
     }
   };
 
-  return { upgradeShippingCapacity, loading, error };
+  return { upgradeShippingShippingTime, loading, error };
 }
