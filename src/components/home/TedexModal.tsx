@@ -119,7 +119,7 @@ export const TedexModal: React.FC<TedexProps> = ({
                         <NeonButtonShipping
                           onClick={() => handleOpenModal(userShipping!)}
                         >
-                          Ship up to {method.baseCapacity}
+                          Ship up to {userShipping.capacity}
                         </NeonButtonShipping>
                       )}
                     </CardInfoColumn>
