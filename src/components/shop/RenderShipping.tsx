@@ -102,8 +102,6 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     capacityLevel: number,
     shippingTimeLevel: number,
     price?: number,
-    capacityPrice?: number,
-    shippingTimePrice?: number,
     locked?: boolean,
     requirement?: Requirement | null
   ) => {
@@ -121,8 +119,8 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
               <CardTitle>{upgrade.title}</CardTitle>
               {bought ? (
                 <>
-                  <p>Capacity Level: {capacityLevel}</p>
-                  <p>Shipping Time Level: {shippingTimeLevel}</p>
+                  <p style={{ fontSize: "0.7rem" }}>Capacity Level: {capacityLevel}</p>
+                  <p style={{ fontSize: "0.7rem" }}>Shipping Time Level: {shippingTimeLevel}</p>
                 </>
               ) : (
                 <>
@@ -203,8 +201,6 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             capacityLevel,
             shippingTimeLevel,
             price,
-            capacityPrice,
-            shippingTimePrice,
             locked,
             requirement
           );
