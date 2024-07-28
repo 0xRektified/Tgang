@@ -24,6 +24,7 @@ import {
   CardInfoColumn,
   NeonButtonShipping,
   ShippingCardsContainer,
+  NeonButtonShippingLocked,
 } from "./styles/shipping.css";
 
 import {
@@ -114,7 +115,7 @@ export const TedexModal: React.FC<TedexProps> = ({
                   <CardContent>
                     <CardInfoColumn>
                       {locked ? (
-                        <NeonButtonShipping disabled>Locked</NeonButtonShipping>
+                        <NeonButtonShippingLocked disabled>Locked</NeonButtonShippingLocked>
                       ) : (
                         <NeonButtonShipping
                           onClick={() => handleOpenModal(userShipping!)}
