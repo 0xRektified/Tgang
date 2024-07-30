@@ -29,7 +29,7 @@ const useCustomerManagement = (
     batch: { product: string; customers: number }[]
   ) => {
     try {
-      const response = await axiosInstance.post(`/products/${marketId}/sell`, {
+      const response = await axiosInstance.post(`/markets/${marketId}/sell`, {
         batch,
       });
       setUserInfo(response.data);

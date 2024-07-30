@@ -18,7 +18,7 @@ const useBuyProduct = () => {
 
     try {
       const response = await axiosInstance.post<IUserInfo>(
-        `/products/${marketId}/buy`,
+        `/markets/${marketId}/buy`,
         {
           product: productName,
           quantity,
