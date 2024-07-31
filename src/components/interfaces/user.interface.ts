@@ -41,7 +41,6 @@ export interface IUserShipping {
 }
 
 export interface Product {
-  product: EProduct;
   name: EProduct;
   quantity: number;
   image: string;

@@ -19,3 +19,12 @@ export enum EProductIcon {
   Mushroom = "🍄",
   // Amphetamine = "💊",
 }
+
+export const ProductImage: Record<EProduct, string> = {
+  [EProduct.WEED]: "assets/product/seedling.svg",
+  [EProduct.COCAINE]: "assets/product/salt.svg",
+  [EProduct.MDMA]: "assets/product/pill.svg",
+  [EProduct.METH]: "assets/product/gem.svg",
+  [EProduct.LSD]: "assets/product/testtube.svg",
+  [EProduct.MUSHROOM]: "assets/product/mushroom.svg",
+}

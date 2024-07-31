@@ -6,7 +6,6 @@ import {
   CloseButton,
   CardContainer,
   CardHeader,
-  CardContent,
   CardTitle,
   CardImage,
   CardDetails,
@@ -15,7 +14,7 @@ import {
   ClickableText,
 } from "./styles/shipping.css";
 import { EShippingMethod } from "../interfaces/shipping.interface";
-import { EProduct } from "../interfaces/product.interface";
+import { EProduct, ProductImage } from "../interfaces/product.interface";
 
 interface ProductSelectionModalProps {
   userInfo: IUserInfo;
@@ -78,7 +77,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 }}
               >
                 <CardHeader>
-                  <CardImage src={product.image} alt={product.name} />
+                  <CardImage src={ProductImage[product.name]} alt={product.name} />
                   <CardDetails>
                     <CardInfoColumn>
                       <CardTitle>{product.name}</CardTitle>
