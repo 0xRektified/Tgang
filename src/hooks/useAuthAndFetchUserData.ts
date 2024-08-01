@@ -3,7 +3,7 @@ import queryString from "query-string";
 import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance, { setAuthToken } from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
@@ -62,9 +62,7 @@ export function useAuthAndFetchUserData(
         console.log(response);
 
         const { access_token } = response.data;
-
-        localStorage.setItem("jwtToken", access_token);
-
+        setAuthToken(access_token);
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
         setUser(userInfoResponse.data);
 
