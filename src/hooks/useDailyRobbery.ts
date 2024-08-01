@@ -20,7 +20,7 @@ const useDailyRobbery = (
     setError(null);
     setSuccessMessage(null);
     try {
-      const response = await axiosInstance.get(`/users/claimDailyReward`);
+      const response = await axiosInstance.post(`/users/robbery`);
       setRobberyStrike(response.data.robberyStrike);
       setUserInfo(response.data);
       setSuccessMessage("Daily robbery successful!");
