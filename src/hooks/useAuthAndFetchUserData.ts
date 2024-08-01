@@ -4,11 +4,7 @@ import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
-import {
-  IUserInfo,
-  LabPlot,
-  Product,
-} from "../components/interfaces/user.interface";
+import { IUserInfo } from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
   setUser: React.Dispatch<React.SetStateAction<IUserInfo>>
@@ -19,8 +15,16 @@ export function useAuthAndFetchUserData(
   useEffect(() => {
     const login = async () => {
       try {
+        console.log(`WebApp.initData`);
+        console.log(WebApp.initData);
         const decodedInput = decodeURIComponent(WebApp.initData);
+        console.log(`decodedInput`);
+        console.log(decodedInput);
+
         const parsedQuery = queryString.parse(decodedInput);
+        console.log(`parsedQuery`);
+        console.log(parsedQuery);
+
         const sanitizeQuery = (query: Record<string, any>) => {
           const sanitizedQuery: Record<string, any> = {};
           if (query.query_id && typeof query.query_id === "string") {
@@ -47,10 +51,16 @@ export function useAuthAndFetchUserData(
           return sanitizedQuery;
         };
         const sanitizedResult = sanitizeQuery(parsedQuery);
+        console.log(`sanitizedResult`);
+        console.log(sanitizedResult);
+
         const response = await axios.post<{ access_token: string }>(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
           sanitizedResult
         );
+        console.log(`response`);
+        console.log(response);
+
         const { access_token } = response.data;
 
         localStorage.setItem("jwtToken", access_token);
