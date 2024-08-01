@@ -128,36 +128,13 @@ export const Home: React.FC<HomeProps> = ({
     setIsModalOpen(false);
   };
 
-  const playSound = (() => {
-    let lastPlayTime = 0;
-    let concurrentSounds = 0;
-    const maxConcurrentSounds = 3;
-    const minInterval = 200;
-
-    return () => {
-      const now = Date.now();
-      if (
-        concurrentSounds < maxConcurrentSounds &&
-        now - lastPlayTime > minInterval
-      ) {
-        concurrentSounds++;
-        lastPlayTime = now;
-        const audio = new Audio("/assets/cash.mp3");
-        audio.play();
-        audio.onended = () => {
-          concurrentSounds--;
-        };
-      }
-    };
-  })();
-
   const getRandomOffset = () => {
     return `${Math.floor(Math.random() * 41) - 20}px`;
   };
 
-  const handleTouchStart = async (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
-
+    let result = false;
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
     const slottedProductToSell = slottedProducts.find(
       (p) => p.name === selectedProduct
@@ -228,17 +205,16 @@ export const Home: React.FC<HomeProps> = ({
           products: updatedProducts,
         };
       });
+      result = true;
     }
     setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
-    if (newTouchPoint.amountEarned) {
-      playSound();
-    }
     WebApp.HapticFeedback.impactOccurred("heavy");
     setTimeout(() => {
       setTouchPoints((prevTouchPoints) =>
         prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
       );
     }, 3000);
+    return result;
   };
 
   return (

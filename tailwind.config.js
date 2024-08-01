@@ -40,7 +40,7 @@ export default {
         },
         scaleUpDown: {
           "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.15)" },
+          "50%": { transform: "scale(1.2)" },
         },
         moveUpRandomX: {
           "0%": { transform: "translate(-50%, 0)", opacity: 1 },

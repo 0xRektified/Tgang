@@ -1,5 +1,13 @@
 import userCharacter from "/assets/home/user_no_background.png";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { FlexBoxRow, FlexBoxCol } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
@@ -8,6 +16,7 @@ import { MdArrowCircleRight } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
+import { useDebouncedCallback } from "use-debounce";
 
 const Arrow = styled(MdArrowCircleRight)<{ isSelected: boolean }>`
   position: absolute;
@@ -194,7 +203,7 @@ const NeonGreenText = styled.span`
 `;
 interface ClickableAreaWithSmokeProps {
   products: Product[];
-  handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => void;
+  handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
   handleOpenSupplierModal: () => void;
@@ -223,18 +232,71 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [pressed, setPressed] = useState(false);
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
+  const playSound = (() => {
+    let lastPlayTime = 0;
+    let concurrentSounds = 0;
+    const maxConcurrentSounds = 3;
+    const minInterval = 200;
+
+    return () => {
+      const now = Date.now();
+      if (
+        concurrentSounds < maxConcurrentSounds &&
+        now - lastPlayTime > minInterval
+      ) {
+        concurrentSounds++;
+        lastPlayTime = now;
+        const audio = new Audio("/assets/cash.mp3");
+        audio.play();
+        audio.onended = () => {
+          concurrentSounds--;
+        };
+      }
+    };
+  })();
+
+  const debouncedPlaySound = useDebouncedCallback(() => {}, 100);
+
+  const throttle = (func: (...args: any[]) => void, limit: number) => {
+    let inThrottle: boolean;
+    return function (this: any, ...args: any[]) {
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => (inThrottle = false), limit);
+      }
+    };
   };
 
-  const handleClick = () => {
-    if (!pressed) {
-      setPressed(true);
-      setTimeout(() => {
-        setPressed(false);
-      }, 100);
+  const animationTargetRef = useRef<HTMLDivElement>(null);
+  const handleAnimation = (e: React.TouchEvent<HTMLDivElement>) => {
+    const result = handleTouchStart(e);
+
+    if (result) {
+      playSound();
+      if (!pressed) {
+        setPressed(true);
+
+        const element = animationTargetRef.current;
+        if (element) {
+          element.style.animation = "none";
+          void element.offsetWidth;
+          element.style.animation = `scaleUpDown 0.1s ease-in-out`;
+        }
+
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            setPressed(false);
+          }, 10);
+        });
+      }
     }
   };
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
 
   useEffect(() => {
     const createSmoke = () => {
@@ -258,14 +320,16 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
   return (
     <Wrapper>
-      <ClickableArea onTouchStart={handleTouchStart} onClick={handleClick}>
+      <ClickableArea onTouchStart={handleAnimation}>
         {smokes}
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
           <div
-            className={`flex flex-col items-center justify-left w-full transition-transform ease-in-out duration-150 ${
+            ref={animationTargetRef}
+            className={`flex flex-col items-center justify-left w-full ${
               pressed ? "animate-scale-up-down" : ""
             }`}
+            style={{ height: "100%" }}
           >
             <img
               src={userCharacter}
