@@ -184,8 +184,8 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
         </div>
       </ProgressContainer>
       {collecting &&
-        Array.from({ length: produced }).map((_, index) => {
-          const delay = (index * 1000) / produced;
+        Array.from({ length: Math.min(produced, 15) }).map((_, index) => {
+          const delay = (index * 1000) / Math.min(produced, 15);
           return (
             <div
               key={index}
