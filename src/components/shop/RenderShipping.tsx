@@ -1,27 +1,15 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
-import WebApp from "@twa-dev/sdk";
 
 import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
-import {
-  Button,
-  CardContainer,
-  CardContent,
-  CardDescription,
-  CardDetails,
-  CardHeader,
-  CardImage,
-  CardInfoColumn,
-  CardRequirement,
-  CardTitle,
-  NeonButton,
-} from "../styled/renderUpgradesStyled";
+import { CardRequirement } from "../styled/cardStyled";
+
 import {
   EShippingMethod,
   IShippingMethod,
   Requirement,
 } from "../interfaces/shipping.interface";
-import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
+import BuyCard from "../BuyCard";
 
 interface RenderShippingProps {
   userInfo: IUserInfo;
@@ -57,7 +45,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     if (userInfo.cashAmount >= price) {
       await buyShippingMethod(method, setUserInfo);
 
-      const newTouchPoint = {
+      const newTouchPoint: TouchPoint = {
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
@@ -80,25 +68,28 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     price: number,
     e: React.TouchEvent<HTMLButtonElement>
   ) => {
-    const touch = e.touches[0];
+    console.log(`Render Shipping handleCardClick`);
 
+    const touch = e.touches[0];
     handleBuyShippingMethod(method, price, touch);
   };
 
-  const renderRequirements = (requirement?: Requirement | null) => {
-    if (!requirement) return <></>;
+  const renderRequirements = (
+    requirements?: { name: string; level: number } | null
+  ) => {
+    if (!requirements) return <></>;
 
     return (
       <div>
         <CardRequirement>
-          Requires {requirement.referredUsers} User Invites
+          Requires {requirements.name} Level {requirements.level}
         </CardRequirement>
       </div>
     );
   };
 
   const renderUpgrade = (
-    shiping: IUserShipping | undefined,
+    shipping: IUserShipping | undefined,
     upgrade: IShippingMethod,
     key: EShippingMethod,
     capacityLevel: number,
@@ -113,58 +104,25 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     }
 
     return (
-      <CardContainer key={upgrade.title} locked={locked}>
-        <CardHeader>
-          <CardImage src={upgrade.image} alt={upgrade.title} />
-          <CardDetails>
-            <CardInfoColumn>
-              <CardTitle>{upgrade.title}</CardTitle>
-              {bought ? (
-                <>
-                  <p style={{ fontSize: "0.7rem" }}>
-                    Capacity Level: {capacityLevel}
-                  </p>
-                  <p style={{ fontSize: "0.7rem" }}>
-                    Shipping Time Level: {shippingTimeLevel}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p>Cost: ${price}</p>
-                </>
-              )}
-            </CardInfoColumn>
-            <CardInfoColumn>
-              {locked ? (
-                <Button>Locked</Button>
-              ) : (
-                // TODO: show upgrade modal if upgrade is already bought
-                <>
-                  {bought ? (
-                    <NeonButton
-                      onClick={() => handleOpenPurchasedShippingModal(shiping!)}
-                    >
-                      Upgrade
-                    </NeonButton>
-                  ) : (
-                    <NeonButton
-                      onTouchStart={(e) =>
-                        handleCardClick(key, price as number, e)
-                      }
-                    >
-                      Buy
-                    </NeonButton>
-                  )}
-                </>
-              )}
-            </CardInfoColumn>
-          </CardDetails>
-        </CardHeader>
-        <CardContent>
-          <CardDescription>{upgrade.description}</CardDescription>
-          {locked ? renderRequirements(requirement) : <></>}
-        </CardContent>
-      </CardContainer>
+      <BuyCard
+        key={key}
+        item={{
+          image: upgrade.image,
+          title: upgrade.title,
+          cost: price || 0,
+          capacityLevel: capacityLevel,
+          shippingTimeLevel: shippingTimeLevel,
+          description: upgrade.description,
+          requirements: requirement
+            ? { name: key.toString(), level: requirement.referredUsers }
+            : null,
+        }}
+        locked={locked || false}
+        onBuyClick={(e) => handleCardClick(key, price || 0, e)}
+        onUpgradeClick={(e) => handleOpenPurchasedShippingModal(shipping!)}
+        bought={bought}
+        renderRequirements={renderRequirements}
+      />
     );
   };
 
@@ -180,9 +138,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           const userUpgrade = userShipping.find((u) => u.method === key);
           let price;
           let capacityLevel = 0;
-          let capacityPrice;
           let shippingTimeLevel = 0;
-          let shippingTimePrice;
           let requirement: Requirement | null = null;
 
           if (!userUpgrade) {
@@ -190,9 +146,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             requirement = method.requirement;
           } else {
             capacityLevel = userUpgrade.capacityLevel;
-            capacityPrice = userUpgrade.upgradeCapacityPrice;
             shippingTimeLevel = userUpgrade.shippingTimeLevel;
-            shippingTimePrice = userUpgrade.upgradeShippingTimePrice;
             requirement = userUpgrade.requirement;
           }
 

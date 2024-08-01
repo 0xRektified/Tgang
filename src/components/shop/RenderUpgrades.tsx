@@ -1,6 +1,5 @@
 import React from "react";
 import { TouchPoint } from "./utils/types";
-import WebApp from "@twa-dev/sdk";
 import {
   DealerUpgrade,
   EDealerUpgrade,
@@ -9,23 +8,10 @@ import {
   IUpgrade,
   ProductUpgrade,
 } from "../interfaces/upgrade.interface";
-import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import { IUserInfo } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
-import {
-  Button,
-  CardContainer,
-  CardContent,
-  CardDescription,
-  CardDetails,
-  CardHeader,
-  CardImage,
-  CardInfoColumn,
-  CardRequirement,
-  CardTitle,
-  NeonButton,
-} from "../styled/renderUpgradesStyled";
-import { UserInfo } from "os";
+import BuyCard from "../BuyCard";
+import { CardRequirement } from "../styled/cardStyled";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -65,7 +51,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     if (userInfo.cashAmount >= cost) {
       await buyUpgrade(params, setUserInfo);
 
-      const newTouchPoint = {
+      const newTouchPoint: TouchPoint = {
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
@@ -91,24 +77,21 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     },
     e: React.TouchEvent<HTMLButtonElement>
   ) => {
+    console.log(`Render Upgrade handleCardClick`);
     const touch = e.touches[0];
-
     handleBuyUpgrade(params, touch);
   };
 
   const renderRequirements = (
-    requirements: { product: string; level: number }[] | null,
-    key?: EProduct | EDealerUpgrade
+    requirements?: { name: string; level: number } | null
   ) => {
     if (!requirements) return <></>;
 
     return (
       <div>
-        {requirements.map((req, index) => (
-          <CardRequirement key={index}>
-            Requires {req.product} Level {req.level}
-          </CardRequirement>
-        ))}
+        <CardRequirement>
+          Requires {requirements.name} Level {requirements.level}
+        </CardRequirement>
       </div>
     );
   };
@@ -123,47 +106,42 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     locked?: boolean
   ) => {
     return (
-      <CardContainer key={upgrade.title} locked={locked}>
-        <CardHeader>
-          <CardImage src={upgrade.image} alt={upgrade.title} />
-          <CardDetails>
-            <CardInfoColumn>
-              <CardTitle>{upgrade.title}</CardTitle>
-              <p>Cost: ${price}</p>
-              <p>Level: {level}</p>
-              {upgradeDiff ? (
-                <p style={{ fontSize: "0.7rem" }}>{upgradeDiff}</p>
-              ) : (
-                <></>
-              )}
-            </CardInfoColumn>
-            <CardInfoColumn>
-              {locked ? (
-                <Button>Locked</Button>
-              ) : (
-                <NeonButton
-                  onTouchStart={(e) =>
-                    handleCardClick(
-                      {
-                        category,
-                        upgrade: key,
-                        upgradePrice: price,
-                      },
-                      e
-                    )
-                  }
-                >
-                  Buy
-                </NeonButton>
-              )}
-            </CardInfoColumn>
-          </CardDetails>
-        </CardHeader>
-        <CardContent>
-          <CardDescription>{upgrade.description}</CardDescription>
-          {locked ? renderRequirements(upgrade.requirements, key) : <></>}
-        </CardContent>
-      </CardContainer>
+      <BuyCard
+        key={key}
+        item={{
+          image: upgrade.image,
+          title: upgrade.title,
+          cost: price,
+          level: level,
+          description: upgrade.description,
+          requirements: upgrade.requirements
+            ? { name: key as string, level: level }
+            : null,
+        }}
+        locked={locked || false}
+        onBuyClick={(e) =>
+          handleCardClick(
+            {
+              category,
+              upgrade: key,
+              upgradePrice: price,
+            },
+            e
+          )
+        }
+        onUpgradeClick={(e) =>
+          handleCardClick(
+            {
+              category,
+              upgrade: key,
+              upgradePrice: price,
+            },
+            e
+          )
+        }
+        bought={!locked}
+        renderRequirements={renderRequirements}
+      />
     );
   };
 
@@ -182,27 +160,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           const price = userUpgrade?.upgradePrice || upgrade.basePrice;
           const level = userUpgrade?.level || 0;
           const upgradeRequirements = upgrade.requirements as IRequirement[];
-          let upgradeTo = upgrade.upgradeMultiplier;
-          const upgradeDiff =
-            userUpgrade?.upgradeAmount! - userUpgrade?.amount!;
-
-          if (userUpgrade?.upgradeAmount && userUpgrade?.amount) {
-            upgradeTo = userUpgrade?.amount;
-          }
-          let upgradeEffect: string | undefined;
-          switch (key) {
-            case EDealerUpgrade.SOCIAL_MEDIA_CAMPAGIN:
-            case EDealerUpgrade.STREET_PROMOTION_TEAM:
-            case EDealerUpgrade.CLUB_PARTNERSHIP:
-              upgradeEffect = `Adds ${upgradeDiff || 100} customers`;
-              break;
-            case EDealerUpgrade.PRODUCT_QUALITY:
-            case EDealerUpgrade.LUXURY_PACKAGING:
-            case EDealerUpgrade.HIGH_VALUE_CUSTOMERS:
-              upgradeEffect = `Customers buy ${upgradeDiff || 1} more product`;
-              break;
-          }
-
           let locked = false;
           if (upgradeRequirements) {
             locked = upgradeRequirements.some((req) => {
@@ -212,14 +169,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               return !requiredProduct || requiredProduct.level < req.level;
             });
           }
-
           return renderUpgrade(
             upgrade,
             key as EProduct | EDealerUpgrade,
             category,
             price,
             level,
-            upgradeEffect,
+            "",
             locked
           );
         })}
@@ -251,18 +207,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               return !requiredProduct || requiredProduct.level < req.level;
             });
           }
-
           return renderUpgrade(
             upgrade,
             key as EProduct | EDealerUpgrade,
             category,
             price,
             level,
-            userUpgrade?.upgradeMarketDiscount
-              ? `Discount from ${userUpgrade?.marketDiscount.toFixed(
-                  2
-                )}% to ${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
-              : undefined,
+            "",
             locked
           );
         })}
@@ -295,3 +246,5 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     </div>
   );
 };
+
+export default RenderUpgrades;

@@ -16,4 +16,6 @@ export interface ILab {
   baseProductionUpgradePrice: number;
   image: string;
   levelRequirement: number;
+  capacityLevel: number;
+  productionLevel: number;
 }

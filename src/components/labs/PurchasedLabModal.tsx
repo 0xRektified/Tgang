@@ -6,7 +6,7 @@ import "tailwindcss/tailwind.css";
 import { LabPlot, IUserInfo, UserLab } from "../interfaces/user.interface";
 import { useUpgradeLabCapacity } from "../../hooks/useUpgradeLabCapacity";
 import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
-import { NeonButton, Button, CardTitle } from "../styled/renderUpgradesStyled";
+import { CardTitle, NeonButton } from "../styled/cardStyled";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -122,11 +122,12 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
         <ModalHeader>Lab Details</ModalHeader>
         <ButtonContainer>
           <StyledNeonButton onClick={upgradeCapacity}>
-            Capacity +{upgradeCapacityDiff}<LuPackagePlus />{" "}
-            {formatPrice(plot.lab?.upgradeCapacityPrice || 0)}
+            Capacity +{upgradeCapacityDiff}
+            <LuPackagePlus /> {formatPrice(plot.lab?.upgradeCapacityPrice || 0)}
           </StyledNeonButton>
           <StyledNeonButton onClick={upgradeProduction}>
-            Production +{upgradeProductionDiff}<MdConveyorBelt />{" "}
+            Production +{upgradeProductionDiff}
+            <MdConveyorBelt />{" "}
             {formatPrice(plot.lab?.upgradeProductionPrice || 0)}
           </StyledNeonButton>
         </ButtonContainer>

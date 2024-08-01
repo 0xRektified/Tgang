@@ -4,9 +4,9 @@ import { FaShippingFast } from "react-icons/fa";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
-import { NeonButton, CardTitle } from "../styled/renderUpgradesStyled";
 import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
 import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
+import { CardTitle, NeonButton } from "../styled/cardStyled";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -82,8 +82,8 @@ const CloseButton = styled.button`
 
 export const formatSeconds = (time: number) => {
   const hours = Math.floor((time / (60 * 60)) % 24);
-  const minutes = Math.floor((time / (60)) % 60);
-  const seconds = Math.floor((time) % 60);
+  const minutes = Math.floor((time / 60) % 60);
+  const seconds = Math.floor(time % 60);
 
   return { hours, minutes, seconds };
 };
@@ -120,7 +120,9 @@ const PurchasedShippingModal: React.FC<PurchasedShippingModalProps> = ({
   };
 
   const upgradeCapacityDiff = shipping.upgradeCapacity! - shipping.capacity!;
-  const upgradeShippingTimeDiff = Math.abs(shipping.upgradeShippingTime! - shipping.shippingTime!);
+  const upgradeShippingTimeDiff = Math.abs(
+    shipping.upgradeShippingTime! - shipping.shippingTime!
+  );
   const formatedShippingSeconds = formatSeconds(upgradeShippingTimeDiff);
   // format a string to display the time in the format HH:MM:SS
   const formatedShippingTime = `${formatedShippingSeconds.hours}:${formatedShippingSeconds.minutes}:${formatedShippingSeconds.seconds}`;
@@ -132,11 +134,12 @@ const PurchasedShippingModal: React.FC<PurchasedShippingModalProps> = ({
         <ModalHeader>Upgrade {shipping.method}</ModalHeader>
         <ButtonContainer>
           <StyledNeonButton onClick={upgradeCapacity}>
-            Capacity +{upgradeCapacityDiff}<LuPackagePlus />{" "}
-            {formatPrice(shipping.upgradeCapacityPrice || 0)}
+            Capacity +{upgradeCapacityDiff}
+            <LuPackagePlus /> {formatPrice(shipping.upgradeCapacityPrice || 0)}
           </StyledNeonButton>
           <StyledNeonButton onClick={upgradeShippingTime}>
-            ShippingTime -{formatedShippingTime}<FaShippingFast />{" "}
+            ShippingTime -{formatedShippingTime}
+            <FaShippingFast />{" "}
             {formatPrice(shipping.upgradeShippingTimePrice || 0)}
           </StyledNeonButton>
         </ButtonContainer>

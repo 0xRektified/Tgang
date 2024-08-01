@@ -1,116 +1,17 @@
 import React from "react";
-import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IBuyLab, ILab } from "../interfaces/lab.interface";
 import { EProduct } from "../interfaces/product.interface";
-import { LabPlot, IUserInfo, Product } from "../interfaces/user.interface";
+import { IUserInfo, Product } from "../interfaces/user.interface";
+import BuyCard from "../BuyCard";
 import {
-  Button,
-  CardContainer,
-  CardContent,
-  CardDescription,
-  CardDetails,
-  CardHeader,
-  CardImage,
-  CardInfoColumn,
-  CardRequirement,
-  CardTitle,
-  NeonButton,
+  ModalBackground,
+  ModalContent,
+  LabTitle,
+  LabGrid,
+  CloseButton,
 } from "../styled/renderUpgradesStyled";
-
-const ModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background-color: black;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 90%;
-  max-height: 90%;
-  width: 100%;
-  overflow-y: auto;
-  position: relative;
-`;
-
-const LabItem = styled(CardContainer)``;
-
-const LabButton = styled(NeonButton)`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-`;
-
-const LockedButton = styled(Button)`
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  background-color: #cf2400;
-  border-color: #cf2400;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: #ef44449c;
-  border: none;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s, background-color 0.3s;
-
-  &:hover {
-    transform: scale(1.2);
-    background-color: #dc2626;
-  }
-`;
-
-const LabImage = styled(CardImage)`
-  width: 80px;
-  height: 80px;
-`;
-
-const LabInfo = styled.div`
-  color: white;
-  text-align: left;
-`;
-
-const LabTitle = styled.h2`
-  text-align: center;
-  color: white;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-`;
-
-const LabGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
+import { CardRequirement } from "../styled/cardStyled";
 
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
@@ -132,7 +33,11 @@ const LabModal: React.FC<LabModalProps> = ({
   setUserInfo,
   buyLab,
 }) => {
-  const buyAndClose = (labProduct: EProduct, plotId: number) => {
+  const buyAndClose = (
+    labProduct: EProduct,
+    plotId: number,
+    e: React.TouchEvent<HTMLButtonElement>
+  ) => {
     buyLab(
       {
         labProduct,
@@ -142,6 +47,15 @@ const LabModal: React.FC<LabModalProps> = ({
     );
     onClose();
   };
+
+  const renderRequirements = (
+    requirements?: { name: string; level: number } | null
+  ) => (
+    <CardRequirement>
+      Requires {requirements?.name || "Unknown"} Level{" "}
+      {requirements?.level || 0}
+    </CardRequirement>
+  );
 
   return (
     <ModalBackground onClick={onClose}>
@@ -159,43 +73,29 @@ const LabModal: React.FC<LabModalProps> = ({
               locked = requiredProduct.level < levelRequirement;
             }
             return (
-              <LabItem key={labKey} locked={locked}>
-                <CardHeader>
-                  <LabImage src={lab.image} alt={labKey} />
-                  <CardDetails>
-                    <CardInfoColumn>
-                      <CardTitle>{labKey}</CardTitle>
-                      <p>Cost: ${lab.labPrice}</p>
-                      <p>Capacity: {lab.baseCapacity}</p>
-                      <p>Production {lab.baseProduction}</p>
-                    </CardInfoColumn>
-                    <CardInfoColumn>
-                      {locked ? (
-                        <LockedButton disabled={locked}>Locked</LockedButton>
-                      ) : (
-                        <LabButton
-                          onTouchStart={() =>
-                            buyAndClose(labKey as EProduct, plotId)
-                          }
-                        >
-                          Buy
-                        </LabButton>
-                      )}
-                    </CardInfoColumn>
-                  </CardDetails>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{lab.description}</CardDescription>
-                  {locked ? (
-                    <CardRequirement>
-                      Requires {requiredProduct ? requiredProduct.name : labKey}{" "}
-                      Level {levelRequirement}
-                    </CardRequirement>
-                  ) : (
-                    <></>
-                  )}
-                </CardContent>
-              </LabItem>
+              <BuyCard
+                key={labKey}
+                item={{
+                  image: lab.image,
+                  title: labKey,
+                  cost: lab.labPrice,
+                  productionLevel: lab.productionLevel,
+                  labCapacity: lab.baseCapacity,
+                  labProduction: lab.baseProduction,
+                  description: lab.description,
+                  requirements: {
+                    name: requiredProduct?.name || "Unknown",
+                    level: levelRequirement,
+                  },
+                }}
+                locked={locked}
+                onBuyClick={(e) => buyAndClose(labKey as EProduct, plotId, e)}
+                onUpgradeClick={(e) =>
+                  buyAndClose(labKey as EProduct, plotId, e)
+                }
+                bought={!locked}
+                renderRequirements={renderRequirements}
+              />
             );
           })}
         </LabGrid>
