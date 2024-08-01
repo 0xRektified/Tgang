@@ -6,6 +6,7 @@ import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IUserInfo } from "../interfaces/user.interface";
 import { GiAk47 } from "react-icons/gi";
 import { FlexBoxRow } from "../styled/globalStyled";
+import { ApiToast } from "../ApiToast";
 
 const MissionContainer = styled.div`
   background-color: #1c1c1e;
@@ -168,10 +169,8 @@ const Mission: React.FC<MissionProps> = ({
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>(activeTab);
-  const { robberyStrike, claimDailyReward, loading, error } = useDailyRobbery(
-    userInfo,
-    setUserInfo
-  );
+  const { robberyStrike, claimDailyReward, loading, error, successMessage } =
+    useDailyRobbery(userInfo, setUserInfo);
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [nextRobberyCountdown, setNextRobberyCountdown] = useState({
@@ -226,13 +225,11 @@ const Mission: React.FC<MissionProps> = ({
   };
 
   const handleDailyReward = () => {
-    const audio = new Audio("/assets/ak_robbery.mp3");
-    audio.volume = 0.4;
-    audio.play();
     setIsButtonDisabled(true);
-
     setTimeout(() => {
-      claimDailyReward();
+      const audio = new Audio("/assets/ak_robbery.mp3");
+      audio.volume = 0.4;
+      audio.play();
       const hapticCount = 5;
       const interval = 500 / hapticCount;
       for (let i = 0; i < hapticCount; i++) {
@@ -241,6 +238,7 @@ const Mission: React.FC<MissionProps> = ({
           i * interval
         );
       }
+      claimDailyReward();
       const audioCash = new Audio("/assets/cash_register.mp3");
       audioCash.volume = 0.4;
       audioCash.play();
@@ -260,7 +258,15 @@ const Mission: React.FC<MissionProps> = ({
             </StatValue>
             <Button onClick={handleDailyReward} disabled={isButtonDisabled}>
               <FlexBoxRow>
-                <GiAk47 className="text-2xl" /> Commit a robbery
+                {isButtonDisabled ? (
+                  <>
+                    <GiAk47 className="text-2xl" /> Wait for reward
+                  </>
+                ) : (
+                  <>
+                    <GiAk47 className="text-2xl" /> Commit a robbery
+                  </>
+                )}
               </FlexBoxRow>
             </Button>
             {userInfo.lastRobbery && (
@@ -372,6 +378,11 @@ const Mission: React.FC<MissionProps> = ({
           </Table>
         </TableContainer>
       </Card>
+      <ApiToast
+        loading={loading}
+        error={error}
+        successMessage={successMessage}
+      />
     </MissionContainer>
   );
 };

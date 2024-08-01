@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import axiosInstance from "../api/axiosConfig";
 
@@ -13,12 +13,17 @@ const useDailyRobbery = (
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const claimDailyReward = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
     try {
       const response = await axiosInstance.get(`/users/claimDailyReward`);
       setRobberyStrike(response.data.robberyStrike);
       setUserInfo(response.data);
+      setSuccessMessage("Daily robbery successful!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
@@ -30,7 +35,7 @@ const useDailyRobbery = (
     }
   };
 
-  return { robberyStrike, claimDailyReward, loading, error };
+  return { robberyStrike, claimDailyReward, loading, error, successMessage };
 };
 
 export default useDailyRobbery;

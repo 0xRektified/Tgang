@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { ILab } from "../interfaces/lab.interface";
+import { IBuyLab, ILab } from "../interfaces/lab.interface";
 import { EProduct } from "../interfaces/product.interface";
-import { useBuyLab } from "../../hooks/useBuyLab";
 import { LabPlot, IUserInfo, Product } from "../interfaces/user.interface";
 import {
   Button,
@@ -119,6 +118,10 @@ interface LabModalProps {
   products: Product[];
   onClose: () => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  buyLab: (
+    lab: IBuyLab,
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
 }
 
 const LabModal: React.FC<LabModalProps> = ({
@@ -127,9 +130,8 @@ const LabModal: React.FC<LabModalProps> = ({
   products,
   onClose,
   setUserInfo,
+  buyLab,
 }) => {
-  const { buyLab } = useBuyLab();
-
   const buyAndClose = (labProduct: EProduct, plotId: number) => {
     buyLab(
       {

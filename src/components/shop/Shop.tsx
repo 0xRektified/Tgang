@@ -17,6 +17,9 @@ import {
 } from "../interfaces/shipping.interface";
 import { RenderShipping } from "./RenderShipping";
 import PurchasedShippingModal from "./PurchasedShippingModal";
+import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
+import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
+import { ApiToast } from "../ApiToast";
 
 interface ShopProps {
   userInfo: IUserInfo;
@@ -55,6 +58,18 @@ export const Shop: React.FC<ShopProps> = ({
   useEffect(() => {
     setCurrentTab(activeTab);
   }, [activeTab]);
+  const {
+    buyShippingMethod,
+    loading: shippingLoading,
+    error: shippingError,
+    successMessage: shippingSuccess,
+  } = useBuyShippingMethod();
+  const {
+    buyUpgrade,
+    loading: upgradeLoading,
+    error: upgradeError,
+    successMessage: upgradeSuccess,
+  } = useBuyUpgrades();
 
   useEffect(() => {
     if (showBalanceErrorToast) {
@@ -70,8 +85,6 @@ export const Shop: React.FC<ShopProps> = ({
   };
 
   const renderUpgrades = () => {
-    console.log("upgradesData", currentTab, currentTab === "dealer");
-    console.log("upgradesData", currentTab, currentTab === "dealer");
     return (
       <RenderUpgrades
         userInfo={userInfo}
@@ -81,12 +94,12 @@ export const Shop: React.FC<ShopProps> = ({
         setUserInfo={setUserInfo}
         setUpgrades={setUpgrades}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
+        buyUpgrade={buyUpgrade}
       />
     );
   };
 
   const renderShipping = () => {
-    console.log("shippingMethods", currentTab);
     return (
       <RenderShipping
         userInfo={userInfo}
@@ -96,6 +109,7 @@ export const Shop: React.FC<ShopProps> = ({
         setUserInfo={setUserInfo}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
         handleOpenPurchasedShippingModal={handleOpenPurchasedShippingModal}
+        buyShippingMethod={buyShippingMethod}
       />
     );
   };
@@ -134,15 +148,11 @@ export const Shop: React.FC<ShopProps> = ({
           setUserInfo={setUserInfo}
         />
       )}
-      {showBalanceErrorToast && (
-        <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
-          <div className="toast toast-top toast-end">
-            <div className="alert alert-error p-4 rounded shadow-lg text-white bg-red-600 font-bold">
-              <span> `Not enough cash.</span>
-            </div>
-          </div>
-        </div>
-      )}
+      <ApiToast
+        loading={shippingLoading || upgradeLoading}
+        error={shippingError || upgradeError}
+        successMessage={shippingSuccess || upgradeSuccess}
+      />
     </ShopContainer>
   );
 };

@@ -5,14 +5,13 @@ import {
   EDealerUpgrade,
   EUpgradeCategory,
 } from "../components/interfaces/upgrade.interface";
-import {
-  IUserInfo,
-} from "../components/interfaces/user.interface";
+import { IUserInfo } from "../components/interfaces/user.interface";
 import { EProduct } from "../components/interfaces/product.interface";
 
 export function useBuyUpgrades() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const buyUpgrade = async (
     params: {
@@ -23,6 +22,7 @@ export function useBuyUpgrades() {
   ) => {
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
       const response = await axiosInstance.post(`/upgrades/buy`, {
         category: params.category,
@@ -30,6 +30,7 @@ export function useBuyUpgrades() {
       });
       const newUserInfo = response.data as IUserInfo;
       setUserInfo(newUserInfo);
+      setSuccessMessage("Upgrade purchased successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
@@ -41,5 +42,5 @@ export function useBuyUpgrades() {
     }
   };
 
-  return { buyUpgrade, loading, error };
+  return { buyUpgrade, loading, error, successMessage };
 }

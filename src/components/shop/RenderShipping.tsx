@@ -31,6 +31,10 @@ interface RenderShippingProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
   handleOpenPurchasedShippingModal: (shipping: IUserShipping) => void;
+  buyShippingMethod: (
+    method: EShippingMethod,
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
 }
 
 export const RenderShipping: React.FC<RenderShippingProps> = ({
@@ -41,9 +45,8 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   setUserInfo,
   setShowBalanceErrorToast,
   handleOpenPurchasedShippingModal,
+  buyShippingMethod,
 }) => {
-  const { buyShippingMethod } = useBuyShippingMethod();
-
   console.log("shippingMethods", shippingMethods);
 
   const handleBuyShippingMethod = async (
@@ -67,7 +70,6 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
         );
       }, 3000);
-      WebApp.HapticFeedback.impactOccurred("heavy");
     } else {
       setShowBalanceErrorToast(true);
     }
@@ -119,8 +121,12 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
               <CardTitle>{upgrade.title}</CardTitle>
               {bought ? (
                 <>
-                  <p style={{ fontSize: "0.7rem" }}>Capacity Level: {capacityLevel}</p>
-                  <p style={{ fontSize: "0.7rem" }}>Shipping Time Level: {shippingTimeLevel}</p>
+                  <p style={{ fontSize: "0.7rem" }}>
+                    Capacity Level: {capacityLevel}
+                  </p>
+                  <p style={{ fontSize: "0.7rem" }}>
+                    Shipping Time Level: {shippingTimeLevel}
+                  </p>
                 </>
               ) : (
                 <>
@@ -134,18 +140,20 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
               ) : (
                 // TODO: show upgrade modal if upgrade is already bought
                 <>
-                {bought ? (
-                  <NeonButton
-                    onClick={() => handleOpenPurchasedShippingModal(shiping!)}
-                  >
-                    Upgrade
-                  </NeonButton>
-                ) : (
-                  <NeonButton
-                    onTouchStart={(e) => handleCardClick(key, price as number, e)}
-                  >
-                    Buy
-                  </NeonButton>
+                  {bought ? (
+                    <NeonButton
+                      onClick={() => handleOpenPurchasedShippingModal(shiping!)}
+                    >
+                      Upgrade
+                    </NeonButton>
+                  ) : (
+                    <NeonButton
+                      onTouchStart={(e) =>
+                        handleCardClick(key, price as number, e)
+                      }
+                    >
+                      Buy
+                    </NeonButton>
                   )}
                 </>
               )}

@@ -5,6 +5,7 @@ import { IUserInfo } from "../interfaces/user.interface";
 import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
 import { formatPrice } from "../utils/formater";
 import { NeonButton, Button, CardTitle } from "../styled/renderUpgradesStyled";
+import { ApiToast } from "../ApiToast";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -61,15 +62,17 @@ interface LabModalProps {
   plotPrice: number;
   onClose: () => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  buyLabPlot: (
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
 }
 
 const LabModal: React.FC<LabModalProps> = ({
   plotPrice,
   onClose,
   setUserInfo,
+  buyLabPlot,
 }) => {
-  const { buyLabPlot } = useBuyLabPlot();
-
   const buyAndClose = () => {
     buyLabPlot(setUserInfo);
     onClose();

@@ -10,6 +10,9 @@ import LabPlotModal from "./LabPlotModal";
 import PurchasedLabModal from "./PurchasedLabModal";
 import { MdConstruction } from "react-icons/md";
 import CombinedProduction from "./Production";
+import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
+import { ApiToast } from "../ApiToast";
+import { useBuyLab } from "../../hooks/useBuyLab";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -142,6 +145,18 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] =
     useState<boolean>(false);
   const [selectedPlot, setSelectedPlot] = useState<LabPlot>();
+  const {
+    buyLabPlot,
+    loading: labPlotLoading,
+    error: labPlotError,
+    successMessage: labPlotSuccessMessage,
+  } = useBuyLabPlot();
+  const {
+    buyLab,
+    loading: labLoading,
+    error: labError,
+    successMessage: labSuccessMessage,
+  } = useBuyLab();
 
   const handleOpenLabModal = (plot: LabPlot) => {
     setSelectedPlot(plot);
@@ -177,6 +192,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     [EProduct.LSD]: 0,
     [EProduct.MDMA]: 0,
   };
+
   userInfo.labPlots.forEach((labPlot) => {
     switch (labPlot.lab?.product) {
       case EProduct.WEED:
@@ -262,6 +278,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
           products={userInfo.products}
           onClose={handleCloseLabModal}
           setUserInfo={setUserInfo}
+          buyLab={buyLab}
         />
       )}
       {isLabPlotModalOpen && (
@@ -269,6 +286,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
           plotPrice={userInfo.labPlotPrice}
           onClose={handleCloseLabPlotModal}
           setUserInfo={setUserInfo}
+          buyLabPlot={buyLabPlot}
         />
       )}
       {isPurchasedLabModalOpen && (
@@ -278,6 +296,11 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
           setUserInfo={setUserInfo}
         />
       )}
+      <ApiToast
+        loading={labPlotLoading || labLoading}
+        error={labPlotError || labError}
+        successMessage={labPlotSuccessMessage || labSuccessMessage}
+      />
     </LabContainer>
   );
 };

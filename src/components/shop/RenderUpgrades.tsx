@@ -10,11 +10,7 @@ import {
   ProductUpgrade,
 } from "../interfaces/upgrade.interface";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
-import {
-  IUserInfo,
-  Product,
-  UserDealerUpgrade,
-} from "../interfaces/user.interface";
+import { IUserInfo } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import {
   Button,
@@ -39,6 +35,13 @@ interface RenderUpgradesProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
+  buyUpgrade: (
+    params: {
+      category: EUpgradeCategory;
+      upgrade: EProduct | EDealerUpgrade;
+    },
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
 }
 
 export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
@@ -48,9 +51,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   setTouchPoints,
   setUserInfo,
   setShowBalanceErrorToast,
+  buyUpgrade,
 }) => {
-  const { buyUpgrade } = useBuyUpgrades();
-
   const handleBuyUpgrade = async (
     params: {
       category: EUpgradeCategory;
@@ -76,7 +78,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
         );
       }, 3000);
-      WebApp.HapticFeedback.impactOccurred("heavy");
     } else {
       setShowBalanceErrorToast(true);
     }
@@ -182,7 +183,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           const level = userUpgrade?.level || 0;
           const upgradeRequirements = upgrade.requirements as IRequirement[];
           let upgradeTo = upgrade.upgradeMultiplier;
-          const upgradeDiff = userUpgrade?.upgradeAmount! - userUpgrade?.amount!;
+          const upgradeDiff =
+            userUpgrade?.upgradeAmount! - userUpgrade?.amount!;
 
           if (userUpgrade?.upgradeAmount && userUpgrade?.amount) {
             upgradeTo = userUpgrade?.amount;
