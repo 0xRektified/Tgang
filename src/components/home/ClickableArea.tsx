@@ -1,6 +1,5 @@
 import userCharacter from "/assets/home/user_no_background.png";
 import React, {
-  CSSProperties,
   Dispatch,
   SetStateAction,
   useCallback,
@@ -9,14 +8,13 @@ import React, {
   useState,
 } from "react";
 import styled from "styled-components";
-import { FlexBoxRow, FlexBoxCol } from "../styled/globalStyled";
+import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 import { MdArrowCircleRight } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
-import { useDebouncedCallback } from "use-debounce";
 
 const Arrow = styled(MdArrowCircleRight)<{ isSelected: boolean }>`
   position: absolute;
@@ -207,7 +205,6 @@ interface ClickableAreaWithSmokeProps {
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
   handleOpenSupplierModal: () => void;
-  handleOpenShippingModal: () => void;
   customer: string;
   customerAmount: number;
   transaction: Transaction | null;
@@ -221,7 +218,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   selectedProduct,
   setSelectedProduct,
   handleOpenSupplierModal,
-  handleOpenShippingModal,
   customer,
   customerAmount,
   transaction,
@@ -254,20 +250,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
       }
     };
   })();
-
-  const debouncedPlaySound = useDebouncedCallback(() => {}, 100);
-
-  const throttle = (func: (...args: any[]) => void, limit: number) => {
-    let inThrottle: boolean;
-    return function (this: any, ...args: any[]) {
-      const context = this;
-      if (!inThrottle) {
-        func.apply(context, args);
-        inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
-      }
-    };
-  };
 
   const animationTargetRef = useRef<HTMLDivElement>(null);
   const handleAnimation = (e: React.TouchEvent<HTMLDivElement>) => {

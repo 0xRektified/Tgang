@@ -4,10 +4,9 @@ import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
-import { IUserInfo, Product } from "../interfaces/user.interface";
+import { IUserInfo } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
 import { IMarketInfo } from "../interfaces/market.interface";
-import { EDealerUpgrade } from "../interfaces/upgrade.interface";
 import styled from "styled-components";
 import useCustomerManagement from "../../hooks/useCustomerManagement";
 import { useBatchSell } from "../../hooks/useBatchSell";
@@ -57,8 +56,7 @@ export const Home: React.FC<HomeProps> = ({
   const { handleSell } = useCustomerManagement(userInfo, setUserInfo);
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
-  const [isShippinhModalOpen, setIsShippinhModalOpen] =
-    useState<boolean>(false);
+
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
     null
   );
@@ -84,10 +82,6 @@ export const Home: React.FC<HomeProps> = ({
     setIsSupplierModalOpen(false);
   };
 
-  const handleCloseShippingModal = () => {
-    setIsShippinhModalOpen(false);
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSlot(null);
@@ -95,10 +89,6 @@ export const Home: React.FC<HomeProps> = ({
 
   const handleOpenSupplierModal = () => {
     setIsSupplierModalOpen(true);
-  };
-
-  const handleOpenShippingModal = () => {
-    setIsShippinhModalOpen(true);
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -225,7 +215,6 @@ export const Home: React.FC<HomeProps> = ({
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
         handleOpenSupplierModal={handleOpenSupplierModal}
-        handleOpenShippingModal={handleOpenShippingModal}
         customer={nextCustomer}
         customerAmount={userInfo.customerAmount}
         transaction={lastTransaction}
