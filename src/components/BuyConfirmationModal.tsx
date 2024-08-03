@@ -81,7 +81,7 @@ const CloseButton = styled.button`
 interface BuyConfirmationModalProps {
   itemTitle: string;
   itemCost: number;
-  onConfirm: (e: React.TouchEvent<HTMLButtonElement>) => void;
+  onConfirm: () => void;
   onClose: () => void;
 }
 
@@ -101,8 +101,8 @@ const BuyConfirmationModal: React.FC<BuyConfirmationModalProps> = ({
           <PriceText>{formatPrice(itemCost, false)}</PriceText>?
         </ModalText>
         <ButtonContainer>
-          <NeonButton onTouchStart={onConfirm}>Confirm</NeonButton>
-          <NeonButton onTouchStart={onClose}>Cancel</NeonButton>
+          <NeonButton onClick={onConfirm}>Confirm</NeonButton>
+          <NeonButton onClick={onClose}>Cancel</NeonButton>
         </ButtonContainer>
       </ModalContent>
     </ModalBackground>

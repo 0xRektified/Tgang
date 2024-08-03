@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   CardContainer,
   CardHeader,
@@ -75,8 +75,6 @@ const BuyCard: React.FC<BuyCardProps> = ({
 }) => {
   const [showBuyConfirmation, setShowBuyConfirmation] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [touchEvent, setTouchEvent] =
-    useState<React.TouchEvent<HTMLButtonElement> | null>(null);
 
   const {
     image,
@@ -97,11 +95,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
     ? { ...requirements, name: requirements.name || "Unknown" }
     : null;
 
-  const handleCardClick = async (
-    price: number,
-    e: React.TouchEvent<HTMLButtonElement>
-  ) => {
-    const touch = e.touches[0];
+  const handleCardClick = async (price: number) => {
     if (userInfo.cashAmount >= price) {
       await onBuyClick(
         { category, upgrade: upgradeKey, upgradePrice: price },
@@ -110,8 +104,8 @@ const BuyCard: React.FC<BuyCardProps> = ({
 
       const newTouchPoint: TouchPoint = {
         id: Date.now(),
-        x: touch.clientX,
-        y: touch.clientY,
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
         amountEarned: -price,
       };
 
@@ -126,20 +120,16 @@ const BuyCard: React.FC<BuyCardProps> = ({
     }
   };
 
-  const handleConfirmBuy = (e: React.TouchEvent<HTMLButtonElement>) => {
+  const handleConfirmBuy = () => {
     setShowBuyConfirmation(false);
-    if (touchEvent) {
-      handleCardClick(item.cost, touchEvent);
-    }
+    handleCardClick(item.cost);
   };
 
-  const handleBuyClick = (e: React.TouchEvent<HTMLButtonElement>) => {
-    setTouchEvent(e);
+  const handleBuyClick = () => {
     setShowBuyConfirmation(true);
   };
 
-  const handleUpgradeClick = (e: React.TouchEvent<HTMLButtonElement>) => {
-    setTouchEvent(e);
+  const handleUpgradeClick = () => {
     setShowUpgradeModal(true);
   };
 
@@ -198,11 +188,11 @@ const BuyCard: React.FC<BuyCardProps> = ({
               ) : (
                 <>
                   {upgradeOption ? (
-                    <NeonButton onTouchStart={handleUpgradeClick}>
+                    <NeonButton onClick={handleUpgradeClick}>
                       Upgrade
                     </NeonButton>
                   ) : (
-                    <NeonButton onTouchStart={handleBuyClick}>Buy</NeonButton>
+                    <NeonButton onClick={handleBuyClick}>Buy</NeonButton>
                   )}
                 </>
               )}
