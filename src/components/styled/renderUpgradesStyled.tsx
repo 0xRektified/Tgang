@@ -1,102 +1,71 @@
 import styled from "styled-components";
 
-export const CardContainer = styled.div<{ locked?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  background-color: ${({ locked }) =>
-    locked ? "rgba(128, 128, 128, 15%)" : "#10346e3d"};
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: #e4e4e7;
-  margin-bottom: 1rem;
-`;
-
-export const CardHeader = styled.div`
+export const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
 `;
 
-export const CardContent = styled.div`
-  margin-top: 1rem;
+export const ModalContent = styled.div`
+  background-color: black;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
 `;
 
-export const CardTitle = styled.h4`
-  font-size: 1.2rem;
+export const LabTitle = styled.h2`
+  text-align: center;
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
   font-weight: bold;
 `;
 
-export const CardDescription = styled.p`
-  font-size: 0.9rem;
-  margin: 0.5rem 0;
+export const LabGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
-export const CardImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-  margin-right: 1rem;
-`;
-
-export const CardDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
-`;
-
-export const CardInfoColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const CardRequirement = styled.p`
-  font-size: 0.8rem;
-  color: #ff6b6b;
-`;
-
-export const NeonButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  border: 2px solid #eab308;
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ef44449c;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: white;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.3s;
 
   &:hover {
-    background-color: rgb(24 24 27);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-export const Button = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  border: 2px solid;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: rgb(24 24 27);
-  }
-
-  &:active {
-    transform: scale(0.95);
+    transform: scale(1.2);
+    background-color: #dc2626;
   }
 `;

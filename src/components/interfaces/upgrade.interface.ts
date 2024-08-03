@@ -34,6 +34,7 @@ export interface DealerUpgrade {
 
 export interface ProductUpgrade {
   title: string;
+  baseDiscount: number;
   description: string;
   basePrice: number;
   upgradeMultiplier: number;

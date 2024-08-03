@@ -16,6 +16,8 @@ export interface IShippingMethod {
   baseCapacity: number;
   baseShippingTimeUpgradePrice: number;
   baseShippingTime: number;
+  capacityLevel: number;
+  shippingTimeLevel: number;
   image: string;
   requirement: Requirement | null;
 }
