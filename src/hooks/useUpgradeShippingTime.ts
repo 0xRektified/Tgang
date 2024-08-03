@@ -7,6 +7,7 @@ import { EShippingMethod } from "../components/interfaces/shipping.interface";
 export function useUpgradeShippingShippingTime() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const upgradeShippingShippingTime = async (
     method: EShippingMethod,
@@ -14,12 +15,14 @@ export function useUpgradeShippingShippingTime() {
   ) => {
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
         `/shipping/${method}/time`
       );
       const newUserInfo = data;
       setUserInfo(newUserInfo);
+      setSuccessMessage("Shipping time upgraded successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
@@ -31,5 +34,5 @@ export function useUpgradeShippingShippingTime() {
     }
   };
 
-  return { upgradeShippingShippingTime, loading, error };
+  return { upgradeShippingShippingTime, loading, error, successMessage };
 }

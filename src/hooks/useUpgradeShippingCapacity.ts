@@ -7,6 +7,7 @@ import { EShippingMethod } from "../components/interfaces/shipping.interface";
 export function useUpgradeShippingCapacity() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const upgradeShippingCapacity = async (
     method: EShippingMethod,
@@ -14,13 +15,14 @@ export function useUpgradeShippingCapacity() {
   ) => {
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
         `/shipping/${method}/capacity`
       );
       const newUserInfo = data;
-
       setUserInfo(newUserInfo);
+      setSuccessMessage("Shipping capacity upgraded successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
@@ -32,5 +34,5 @@ export function useUpgradeShippingCapacity() {
     }
   };
 
-  return { upgradeShippingCapacity, loading, error };
+  return { upgradeShippingCapacity, loading, error, successMessage };
 }

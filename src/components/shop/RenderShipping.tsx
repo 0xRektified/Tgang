@@ -11,8 +11,6 @@ import {
 } from "../interfaces/shipping.interface";
 import BuyCard from "../BuyCard";
 import { convertSecondsToReadableTime } from "../utils/formater";
-import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
-import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
 
 interface RenderShippingProps {
   userInfo: IUserInfo;
@@ -22,6 +20,14 @@ interface RenderShippingProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
   buyShippingMethod: (
+    method: EShippingMethod,
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
+  upgradeShippingCapacity: (
+    method: EShippingMethod,
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+  ) => Promise<void>;
+  upgradeShippingShippingTime: (
     method: EShippingMethod,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => Promise<void>;
@@ -35,23 +41,9 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   setUserInfo,
   setShowBalanceErrorToast,
   buyShippingMethod,
+  upgradeShippingCapacity,
+  upgradeShippingShippingTime,
 }) => {
-  const { upgradeShippingCapacity } = useUpgradeShippingCapacity();
-  const { upgradeShippingShippingTime } = useUpgradeShippingShippingTime();
-
-  const upgradeCapacity = async (
-    method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
-  ) => {
-    await upgradeShippingCapacity(method, setUserInfo);
-  };
-
-  const upgradeShippingTime = async (
-    method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
-  ) => {
-    await upgradeShippingShippingTime(method, setUserInfo);
-  };
   const renderRequirements = (
     requirements?: { name: string; level: number } | null
   ) => {
@@ -91,7 +83,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             price: shipping.upgradeCapacityPrice || 0,
             icon: <LuPackagePlus />,
             onClick: async () => {
-              await upgradeCapacity(shipping.method, setUserInfo);
+              await upgradeShippingCapacity(shipping.method, setUserInfo);
             },
           },
           {
@@ -102,7 +94,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             price: shipping.upgradeShippingTimePrice || 0,
             icon: <FaShippingFast />,
             onClick: async () => {
-              await upgradeShippingTime(shipping.method, setUserInfo);
+              await upgradeShippingShippingTime(shipping.method, setUserInfo);
             },
           },
         ]

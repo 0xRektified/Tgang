@@ -19,6 +19,8 @@ import { RenderShipping } from "./RenderShipping";
 import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import { ApiToast } from "../ApiToast";
+import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
+import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
 
 interface ShopProps {
   userInfo: IUserInfo;
@@ -59,6 +61,20 @@ export const Shop: React.FC<ShopProps> = ({
     successMessage: upgradeSuccess,
   } = useBuyUpgrades();
 
+  const {
+    upgradeShippingCapacity,
+    loading: capacityLoading,
+    error: capacityError,
+    successMessage: capacitySuccess,
+  } = useUpgradeShippingCapacity();
+
+  const {
+    upgradeShippingShippingTime,
+    loading: shippingTimeLoading,
+    error: shippingTimeError,
+    successMessage: shippingTimeSuccess,
+  } = useUpgradeShippingShippingTime();
+
   useEffect(() => {
     if (showBalanceErrorToast) {
       const timeout = setTimeout(() => {
@@ -97,6 +113,8 @@ export const Shop: React.FC<ShopProps> = ({
         setUserInfo={setUserInfo}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
         buyShippingMethod={buyShippingMethod}
+        upgradeShippingCapacity={upgradeShippingCapacity}
+        upgradeShippingShippingTime={upgradeShippingShippingTime}
       />
     );
   };
@@ -129,9 +147,21 @@ export const Shop: React.FC<ShopProps> = ({
       </FlexBoxRow>
       <TouchPoints touchPoints={touchPoints} />
       <ApiToast
-        loading={shippingLoading || upgradeLoading}
-        error={shippingError || upgradeError}
-        successMessage={shippingSuccess || upgradeSuccess}
+        loading={
+          shippingLoading ||
+          upgradeLoading ||
+          capacityLoading ||
+          shippingTimeLoading
+        }
+        error={
+          shippingError || upgradeError || capacityError || shippingTimeError
+        }
+        successMessage={
+          shippingSuccess ||
+          upgradeSuccess ||
+          capacitySuccess ||
+          shippingTimeSuccess
+        }
       />
     </ShopContainer>
   );
