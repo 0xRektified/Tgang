@@ -104,7 +104,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const productUpgrade = upgrade as DealerUpgrade;
           const userUpgrades = userInfo.dealerUpgrades;
-          const userUpgrade = userUpgrades.find((u) => u.product === key);
+          const userUpgrade = userUpgrades.find((u) => u.upgrade === key);
           const price: number =
             userUpgrade?.upgradePrice || productUpgrade.basePrice;
           const level = userUpgrade?.level || 0;
@@ -131,9 +131,12 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
                 upgradeDiff || productUpgrade.amountMultiplier
               } customers`;
               break;
-            case EDealerUpgrade.PRODUCT_QUALITY:
-            case EDealerUpgrade.LUXURY_PACKAGING:
-            case EDealerUpgrade.HIGH_VALUE_CUSTOMERS:
+            case EDealerUpgrade.COMBO_PACKS:
+            case EDealerUpgrade.HIGH_END_PACKAGING:
+            case EDealerUpgrade.PARTY_PACKS:
+            case EDealerUpgrade.HIGH_DOSE_PACKAGES:
+            case EDealerUpgrade.FESTIVAL_BLOTTERS:
+            case EDealerUpgrade.BULK_BAGS:
               upgradeEffect = `Customers buy ${
                 upgradeDiff || productUpgrade.amountMultiplier
               } more product`;

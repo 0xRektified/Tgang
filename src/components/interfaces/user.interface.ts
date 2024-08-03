@@ -53,7 +53,8 @@ export interface Product {
 }
 
 export interface UserDealerUpgrade {
-  product: EDealerUpgrade;
+  upgrade: EDealerUpgrade;
+  product: EProduct | null;
   title: string;
   image: number;
   level: number;
@@ -81,7 +82,6 @@ export interface IUserInfo {
   labPlotPrice: number;
   referralToken: string;
   referredUsers: string[];
-  customerNeeds: number;
   customerAmount: number;
   customerAmountMax: number;
   lastSell: Date;

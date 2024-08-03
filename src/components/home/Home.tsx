@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
-import { calculateTotalQuantity, handleTransaction } from "./utils/functions";
+import { calculateTotalQuantity, getSellQuantity, handleTransaction } from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { IUserInfo } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
@@ -137,15 +137,17 @@ export const Home: React.FC<HomeProps> = ({
       amountEarned: 0,
     };
 
+    const sellQuantity = getSellQuantity(userInfo, slottedProductToSell!.name);
+
     if (
       userInfo.customerAmount === 0 ||
       !slottedProductToSell ||
-      slottedProductToSell.quantity < userInfo.customerNeeds
+      slottedProductToSell.quantity < sellQuantity
     ) {
       setLastTransaction({
         type: "missed",
         product: selectedProduct || "Unknown",
-        quantity: userInfo.customerNeeds,
+        quantity: sellQuantity,
       });
     } else {
       const { updatedProducts, transaction, cashState } = handleTransaction(

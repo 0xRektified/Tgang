@@ -1,4 +1,5 @@
 import { IMarketInfo } from "../../interfaces/market.interface";
+import { EProduct } from "../../interfaces/product.interface";
 import { IUserInfo, Product } from "../../interfaces/user.interface";
 import { Transaction } from "./types";
 
@@ -19,6 +20,11 @@ export const updateProducts = (
   });
 };
 
+export const getSellQuantity = (user: IUserInfo, product: EProduct) => {
+  const dealerUpgrade = user.dealerUpgrades.find((u) => u.product === product);
+  return dealerUpgrade ? dealerUpgrade.level + 1 : 1;
+};
+
 export const handleTransaction = (
   userInfo: IUserInfo,
   productToSell: Product,
@@ -30,7 +36,7 @@ export const handleTransaction = (
 } => {
   let amountEarned = 0;
   let cashState = userInfo.cashAmount;
-  const amountToSell = userInfo.customerNeeds;
+  const amountToSell = getSellQuantity(userInfo, productToSell.name);
   if (
     productToSell &&
     marketInfo &&

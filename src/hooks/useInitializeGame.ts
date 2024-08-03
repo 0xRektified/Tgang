@@ -17,7 +17,6 @@ const defaultUserInfo: IUserInfo = {
   referralToken: "",
   upgrades: [],
   referredUsers: [],
-  customerNeeds: 1,
   lastSell: new Date(),
   customerAmount: 100,
   customerAmountRemaining: 0,
