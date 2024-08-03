@@ -10,8 +10,8 @@ export enum EProduct {
 export enum EProductIcon {
   Weed = "🌱",
   Mushroom = "🍄",
-  LSD = "🧪",
-  MDMA = "💊",
+  Acid = "🧪",
+  Ecstasy = "💊",
   Meth = "💎",
   Coke = "🧂",
 }

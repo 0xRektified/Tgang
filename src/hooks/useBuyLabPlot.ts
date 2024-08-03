@@ -21,7 +21,8 @@ export function useBuyLabPlot() {
       setSuccessMessage("Lab plot purchased successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.message || error);
+        const message = error.response?.data?.message || error.message;
+        setError(message);
       } else {
         setError("An unexpected error occurred");
       }

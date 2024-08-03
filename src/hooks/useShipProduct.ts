@@ -32,7 +32,8 @@ const useShipProduct = () => {
       return true; // Indicate success
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.message);
+        const message = error.response?.data?.message || error.message;
+        setError(message);
       } else {
         setError("An unexpected error occurred");
       }

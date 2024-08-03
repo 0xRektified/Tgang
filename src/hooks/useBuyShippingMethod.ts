@@ -23,7 +23,8 @@ export function useBuyShippingMethod() {
       setSuccessMessage("Shipping method purchased successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.message);
+        const message = error.response?.data?.message || error.message;
+        setError(message);
       } else {
         setError("An unexpected error occurred");
       }

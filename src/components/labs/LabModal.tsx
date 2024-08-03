@@ -110,7 +110,7 @@ const LabModal: React.FC<LabModalProps> = ({
                   labProduction: lab.baseProduction,
                   description: lab.description,
                   requirements: {
-                    name: requiredProduct?.name || "Unknown",
+                    name: labKey,
                     level: levelRequirement,
                   },
                 }}
