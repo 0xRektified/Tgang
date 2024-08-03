@@ -1,15 +1,18 @@
-import React from "react";
-import { TouchPoint } from "./utils/types";
-
+import React, { useState } from "react";
+import { LuPackagePlus } from "react-icons/lu";
+import { FaShippingFast } from "react-icons/fa";
+import { TouchPoint } from "../utils/types";
 import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
 import { CardRequirement } from "../styled/cardStyled";
-
 import {
   EShippingMethod,
   IShippingMethod,
   Requirement,
 } from "../interfaces/shipping.interface";
 import BuyCard from "../BuyCard";
+import { convertSecondsToReadableTime } from "../utils/formater";
+import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
+import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
 
 interface RenderShippingProps {
   userInfo: IUserInfo;
@@ -18,7 +21,6 @@ interface RenderShippingProps {
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
-  handleOpenPurchasedShippingModal: (shipping: IUserShipping) => void;
   buyShippingMethod: (
     method: EShippingMethod,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
@@ -32,48 +34,24 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   setTouchPoints,
   setUserInfo,
   setShowBalanceErrorToast,
-  handleOpenPurchasedShippingModal,
   buyShippingMethod,
 }) => {
-  console.log("shippingMethods", shippingMethods);
+  const { upgradeShippingCapacity } = useUpgradeShippingCapacity();
+  const { upgradeShippingShippingTime } = useUpgradeShippingShippingTime();
 
-  const handleBuyShippingMethod = async (
+  const upgradeCapacity = async (
     method: EShippingMethod,
-    price: number,
-    touch: React.Touch
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
-    if (userInfo.cashAmount >= price) {
-      await buyShippingMethod(method, setUserInfo);
-
-      const newTouchPoint: TouchPoint = {
-        id: Date.now(),
-        x: touch.clientX,
-        y: touch.clientY,
-        amountEarned: -price,
-      };
-
-      setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
-      setTimeout(() => {
-        setTouchPoints((prevTouchPoints) =>
-          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
-        );
-      }, 3000);
-    } else {
-      setShowBalanceErrorToast(true);
-    }
+    await upgradeShippingCapacity(method, setUserInfo);
   };
 
-  const handleCardClick = (
+  const upgradeShippingTime = async (
     method: EShippingMethod,
-    price: number,
-    e: React.TouchEvent<HTMLButtonElement>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
-    console.log(`Render Shipping handleCardClick`);
-
-    const touch = e.touches[0];
-    handleBuyShippingMethod(method, price, touch);
+    await upgradeShippingShippingTime(method, setUserInfo);
   };
-
   const renderRequirements = (
     requirements?: { name: string; level: number } | null
   ) => {
@@ -88,20 +66,47 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     );
   };
 
-  const renderUpgrade = (
+  const render = (
     shipping: IUserShipping | undefined,
     upgrade: IShippingMethod,
     key: EShippingMethod,
-    capacityLevel: number,
-    shippingTimeLevel: number,
+    capacityLevel: string,
+    shippingTimeLevel: string,
     price?: number,
     locked?: boolean,
     requirement?: Requirement | null
   ) => {
     let bought = false;
-    if (capacityLevel > 0 || shippingTimeLevel > 0) {
+    if (shipping) {
       bought = true;
     }
+
+    const upgradeOptions = shipping
+      ? [
+          {
+            label: "Capacity +",
+            valueDiff: (
+              shipping.upgradeCapacity! - shipping.capacity!
+            ).toString(),
+            price: shipping.upgradeCapacityPrice || 0,
+            icon: <LuPackagePlus />,
+            onClick: async () => {
+              await upgradeCapacity(shipping.method, setUserInfo);
+            },
+          },
+          {
+            label: "Shipping Time -",
+            valueDiff: convertSecondsToReadableTime(
+              Math.abs(shipping.upgradeShippingTime! - shipping.shippingTime!)
+            ).toString(),
+            price: shipping.upgradeShippingTimePrice || 0,
+            icon: <FaShippingFast />,
+            onClick: async () => {
+              await upgradeShippingTime(shipping.method, setUserInfo);
+            },
+          },
+        ]
+      : [];
 
     return (
       <BuyCard
@@ -118,10 +123,18 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             : null,
         }}
         locked={locked || false}
-        onBuyClick={(e) => handleCardClick(key, price || 0, e)}
-        onUpgradeClick={(e) => handleOpenPurchasedShippingModal(shipping!)}
-        bought={bought}
+        onBuyClick={async (params, setUserInfo) => {
+          await buyShippingMethod(upgrade.title, setUserInfo);
+        }}
+        upgradeOption={bought}
         renderRequirements={renderRequirements}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+        setTouchPoints={setTouchPoints}
+        setShowBalanceErrorToast={setShowBalanceErrorToast}
+        category="shipping"
+        upgradeKey={key}
+        upgradeOptions={upgradeOptions}
       />
     );
   };
@@ -135,20 +148,27 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
       <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(shippingMethods ?? {}).map(([key, method]) => {
-          const userUpgrade = userShipping.find((u) => u.method === key);
-          let price;
-          let capacityLevel = 0;
-          let shippingTimeLevel = 0;
+          const userUpgrade: IUserShipping | undefined = userShipping.find(
+            (u) => u.method === key
+          );
+          let price = method.basePrice;
+          let capacityLevel: string;
+          let shippingTimeLevel: string;
           let requirement: Requirement | null = null;
-
-          if (!userUpgrade) {
-            price = method.basePrice;
-            requirement = method.requirement;
+          if (userUpgrade) {
+            capacityLevel = `${userUpgrade.capacity} to ${userUpgrade.upgradeCapacity}`;
+            shippingTimeLevel = `
+            ${convertSecondsToReadableTime(userUpgrade.shippingTime)} 
+            to
+            ${convertSecondsToReadableTime(userUpgrade.upgradeShippingTime)} `;
           } else {
-            capacityLevel = userUpgrade.capacityLevel;
-            shippingTimeLevel = userUpgrade.shippingTimeLevel;
-            requirement = userUpgrade.requirement;
+            capacityLevel = `${method.baseCapacity}`;
+            shippingTimeLevel = `${convertSecondsToReadableTime(
+              method.baseShippingTime
+            )}`;
           }
+
+          requirement = method.requirement;
 
           let locked = false;
           if (requirement) {
@@ -156,7 +176,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             locked = referredUsers < requirement.referredUsers;
           }
 
-          return renderUpgrade(
+          return render(
             userUpgrade,
             method,
             key as EShippingMethod,
@@ -173,13 +193,12 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
 
   if (!shippingMethods) return <></>;
 
-  const renderAllShippingCategories = () => (
-    <>{renderUpgradeCategory("Methods", shippingMethods, userInfo.shipping)}</>
-  );
-
   return (
     <div className="space-y-4">
-      {tab === "shipping" && renderAllShippingCategories()}
+      {tab === "shipping" &&
+        renderUpgradeCategory("Methods", shippingMethods, userInfo.shipping)}
     </div>
   );
 };
+
+export default RenderShipping;

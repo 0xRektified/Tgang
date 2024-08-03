@@ -86,6 +86,7 @@ export const NeonButton = styled(Button)`
   justify-content: center;
   text-align: center;
   gap: 0.5rem;
+  width: 8em;
   transition: background-color 0.3s ease, transform 0.1s ease;
   box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
     0 0 10px #eab308;

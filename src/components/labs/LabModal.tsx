@@ -12,13 +12,17 @@ import {
   CloseButton,
 } from "../styled/renderUpgradesStyled";
 import { CardRequirement } from "../styled/cardStyled";
+import { TouchPoint } from "../utils/types";
 
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
+  userInfo: IUserInfo;
   plotId: number;
   products: Product[];
   onClose: () => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
+  setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
   buyLab: (
     lab: IBuyLab,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
@@ -27,25 +31,47 @@ interface LabModalProps {
 
 const LabModal: React.FC<LabModalProps> = ({
   labs,
+  userInfo,
   plotId,
   products,
   onClose,
   setUserInfo,
+  setTouchPoints,
+  setShowBalanceErrorToast,
   buyLab,
 }) => {
-  const buyAndClose = (
+  const handleBuyClick = async (
     labProduct: EProduct,
     plotId: number,
-    e: React.TouchEvent<HTMLButtonElement>
+    price: number,
+    touch: React.Touch
   ) => {
-    buyLab(
-      {
-        labProduct,
-        plotId,
-      },
-      setUserInfo
-    );
-    onClose();
+    if (userInfo.cashAmount >= price) {
+      await buyLab(
+        {
+          labProduct,
+          plotId,
+        },
+        setUserInfo
+      );
+
+      const newTouchPoint: TouchPoint = {
+        id: Date.now(),
+        x: touch.clientX,
+        y: touch.clientY,
+        amountEarned: -price,
+      };
+
+      setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
+      setTimeout(() => {
+        setTouchPoints((prevTouchPoints) =>
+          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+        );
+      }, 3000);
+      onClose();
+    } else {
+      setShowBalanceErrorToast(true);
+    }
   };
 
   const renderRequirements = (
@@ -72,6 +98,8 @@ const LabModal: React.FC<LabModalProps> = ({
             } else {
               locked = requiredProduct.level < levelRequirement;
             }
+            const noop = () => {};
+
             return (
               <BuyCard
                 key={labKey}
@@ -89,12 +117,16 @@ const LabModal: React.FC<LabModalProps> = ({
                   },
                 }}
                 locked={locked}
-                onBuyClick={(e) => buyAndClose(labKey as EProduct, plotId, e)}
-                onUpgradeClick={(e) =>
-                  buyAndClose(labKey as EProduct, plotId, e)
+                onBuyClick={(e) =>
+                  handleBuyClick(labKey as EProduct, plotId, lab.labPrice, e)
                 }
-                bought={!locked}
+                upgradeOption={false}
                 renderRequirements={renderRequirements}
+                userInfo={userInfo}
+                setUserInfo={setUserInfo}
+                setTouchPoints={setTouchPoints}
+                setShowBalanceErrorToast={setShowBalanceErrorToast}
+                upgradeOptions={[]}
               />
             );
           })}

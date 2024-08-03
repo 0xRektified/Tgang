@@ -13,6 +13,7 @@ import CombinedProduction from "./Production";
 import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
 import { ApiToast } from "../ApiToast";
 import { useBuyLab } from "../../hooks/useBuyLab";
+import { TouchPoint } from "../utils/types";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -145,6 +146,10 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] =
     useState<boolean>(false);
   const [selectedPlot, setSelectedPlot] = useState<LabPlot>();
+  const [showBalanceErrorToast, setShowBalanceErrorToast] =
+    useState<boolean>(false);
+  const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
+
   const {
     buyLabPlot,
     loading: labPlotLoading,
@@ -274,10 +279,13 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
       {isLabModalOpen && (
         <LabModal
           labs={labs}
+          userInfo={userInfo}
           plotId={selectedPlot?.plotId!}
           products={userInfo.products}
           onClose={handleCloseLabModal}
           setUserInfo={setUserInfo}
+          setTouchPoints={setTouchPoints}
+          setShowBalanceErrorToast={setShowBalanceErrorToast}
           buyLab={buyLab}
         />
       )}
