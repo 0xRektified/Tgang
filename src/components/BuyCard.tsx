@@ -11,6 +11,7 @@ import {
   Button,
   NeonButton,
   CardInfoColumnText,
+  CardCost,
 } from "./styled/cardStyled";
 import BuyConfirmationModal from "./BuyConfirmationModal";
 import { IUserInfo } from "./interfaces/user.interface";
@@ -182,7 +183,9 @@ const BuyCard: React.FC<BuyCardProps> = ({
                     Production: {labProduction}
                   </CardInfoColumnText>
                 )}
-                <CardInfoColumnText>Cost: ${cost}</CardInfoColumnText>
+                <CardInfoColumnText>
+                  Cost: <CardCost>{cost}$</CardCost>
+                </CardInfoColumnText>
               </>
             </CardInfoColumn>
             <CardInfoColumn>

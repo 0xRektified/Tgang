@@ -70,7 +70,7 @@ const NeonText = styled.div`
   top: 0px;
   left: 90px;
   z-index: 1;
-
+  box-shadow: none !important;
   @keyframes glow {
     from {
       text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700,

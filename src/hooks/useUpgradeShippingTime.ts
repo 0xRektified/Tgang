@@ -1,11 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
-import {
-  IUserInfo,
-  LabPlot,
-  Product,
-} from "../components/interfaces/user.interface";
+import { IUserInfo } from "../components/interfaces/user.interface";
 import { EShippingMethod } from "../components/interfaces/shipping.interface";
 
 export function useUpgradeShippingShippingTime() {

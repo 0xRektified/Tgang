@@ -6,14 +6,14 @@ export const CardContainer = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 2px solid #285d90;
 `;
 
 export const CardHeader = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem;
   padding-bottom: 0.2rem;
 `;
 
@@ -39,6 +39,7 @@ export const CardInfoColumnText = styled.p`
   font-size: 0.8rem;
   color: #d1d5db;
 `;
+
 export const CardTitle = styled.h3`
   font-size: 1.2rem;
   font-weight: bold;
@@ -46,23 +47,51 @@ export const CardTitle = styled.h3`
 `;
 
 export const CardContent = styled.div`
-  padding: 1rem;
+  padding: 0.5rem;
   padding-top: 0.2rem;
 `;
 
 export const CardDescription = styled.p`
-  font-size: 1rem;
-  margin-top: 0.5rem;
+  font-size: 0.8rem;
   color: #d1d5db;
 `;
 
 export const CardRequirement = styled.div`
   margin-top: 1rem;
-  color: red;
+  color: #1e90ff;
+  text-shadow: 0 0 2px #1e90ff, 0 0 8px #1e90ff;
+
+  &:hover {
+    animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  @keyframes glow {
+    0% {
+      text-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff,
+        0 0 8px #1e90ff;
+    }
+    100% {
+      text-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff,
+        0 0 20px #1e90ff;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 `;
 
 export const Button = styled.button`
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
+  margin: 0.8rem;
   background-color: blue;
   color: white;
   border: none;
@@ -78,8 +107,8 @@ export const NeonButton = styled(Button)`
   background-color: rgb(39 39 42) !important;
   color: #e4e4e7;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
-  margin: 1rem 0rem;
+  padding: 0.5rem;
+  margin: 0.8rem;
   border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
@@ -131,4 +160,9 @@ export const NeonButton = styled(Button)`
       transform: scale(1);
     }
   }
+`;
+
+export const CardCost = styled.span`
+  font-size: 0.8rem;
+  color: #32cd32;
 `;
