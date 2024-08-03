@@ -14,6 +14,8 @@ import { useBuyLabPlot } from "../../hooks/useBuyLabPlot";
 import { ApiToast } from "../ApiToast";
 import { useBuyLab } from "../../hooks/useBuyLab";
 import { TouchPoint } from "../utils/types";
+import { useUpgradeLabCapacity } from "../../hooks/useUpgradeLabCapacity";
+import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -163,6 +165,19 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     successMessage: labSuccessMessage,
   } = useBuyLab();
 
+  const {
+    upgradeLabCapacity,
+    loading: labCapacityLoading,
+    error: labCapacityError,
+    successMessage: labCapacitySuccessMessage,
+  } = useUpgradeLabCapacity();
+  const {
+    upgradeLabProduction,
+    loading: labProductionLoading,
+    error: labProductionError,
+    successMessage: labProductionSuccessMessage,
+  } = useUpgradeLabProduction();
+
   const handleOpenLabModal = (plot: LabPlot) => {
     setSelectedPlot(plot);
     setIsLabModalOpen(true);
@@ -302,12 +317,26 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
           plot={selectedPlot!}
           onClose={handleClosePurchasedLabModal}
           setUserInfo={setUserInfo}
+          upgradeLabCapacity={upgradeLabCapacity}
+          upgradeLabProduction={upgradeLabProduction}
         />
       )}
       <ApiToast
-        loading={labPlotLoading || labLoading}
-        error={labPlotError || labError}
-        successMessage={labPlotSuccessMessage || labSuccessMessage}
+        loading={
+          labPlotLoading ||
+          labLoading ||
+          labCapacityLoading ||
+          labProductionLoading
+        }
+        error={
+          labPlotError || labError || labCapacityError || labProductionError
+        }
+        successMessage={
+          labPlotSuccessMessage ||
+          labSuccessMessage ||
+          labCapacitySuccessMessage ||
+          labProductionSuccessMessage
+        }
       />
     </LabContainer>
   );

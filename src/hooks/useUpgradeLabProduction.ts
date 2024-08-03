@@ -1,15 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
-import {
-  IUserInfo,
-  LabPlot,
-  Product,
-} from "../components/interfaces/user.interface";
+import { IUserInfo } from "../components/interfaces/user.interface";
 
 export function useUpgradeLabProduction() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const upgradeLabProduction = async (
     plotId: number,
@@ -17,12 +14,14 @@ export function useUpgradeLabProduction() {
   ) => {
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
         `/labs/${plotId}/production`
       );
       const newUserInfo = data;
       setUserInfo(newUserInfo);
+      setSuccessMessage("Lab production upgraded successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.message);
@@ -34,5 +33,5 @@ export function useUpgradeLabProduction() {
     }
   };
 
-  return { upgradeLabProduction, loading, error };
+  return { upgradeLabProduction, loading, error, successMessage };
 }

@@ -98,8 +98,6 @@ const LabModal: React.FC<LabModalProps> = ({
             } else {
               locked = requiredProduct.level < levelRequirement;
             }
-            const noop = () => {};
-
             return (
               <BuyCard
                 key={labKey}

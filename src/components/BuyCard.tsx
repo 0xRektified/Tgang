@@ -12,11 +12,13 @@ import {
   NeonButton,
   CardInfoColumnText,
   CardCost,
+  CardInfoColumnUpgradeValue,
 } from "./styled/cardStyled";
 import BuyConfirmationModal from "./BuyConfirmationModal";
 import { IUserInfo } from "./interfaces/user.interface";
 import { UpgradeConfirmationModal } from "./UpgradeConfirmationModal";
 import { TouchPoint } from "./utils/types";
+import { formatPrice } from "./utils/formater";
 
 interface BuyCardProps {
   item: {
@@ -156,7 +158,9 @@ const BuyCard: React.FC<BuyCardProps> = ({
                   ""
                 )}
                 {upgradeValue && (
-                  <CardInfoColumnText>{upgradeValue}</CardInfoColumnText>
+                  <CardInfoColumnUpgradeValue>
+                    {upgradeValue}
+                  </CardInfoColumnUpgradeValue>
                 )}
                 {shippingTimeLevel && (
                   <CardInfoColumnText>
@@ -184,7 +188,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
                   </CardInfoColumnText>
                 )}
                 <CardInfoColumnText>
-                  Cost: <CardCost>{cost}$</CardCost>
+                  Cost: <CardCost>{formatPrice(cost, false)}</CardCost>
                 </CardInfoColumnText>
               </>
             </CardInfoColumn>

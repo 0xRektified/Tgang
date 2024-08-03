@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { CardTitle, NeonButton } from "./styled/cardStyled";
+import { formatPrice } from "./utils/formater";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -139,7 +140,7 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
             <OptionContainer key={index}>
               <OptionLabel>{option.label}</OptionLabel>
               <OptionValue>{option.valueDiff}</OptionValue>
-              <OptionPrice>${option.price}</OptionPrice>
+              <OptionPrice>{formatPrice(option.price, false)}</OptionPrice>
               <StyledNeonButton onClick={() => handleState(option)}>
                 {option.icon} Purchase
               </StyledNeonButton>

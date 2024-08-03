@@ -40,6 +40,11 @@ export const CardInfoColumnText = styled.p`
   color: #d1d5db;
 `;
 
+export const CardInfoColumnUpgradeValue = styled.p`
+  font-size: 0.8rem;
+  color: white;
+`;
+
 export const CardTitle = styled.h3`
   font-size: 1.2rem;
   font-weight: bold;

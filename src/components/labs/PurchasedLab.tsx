@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { GiHandTruck } from "react-icons/gi";
+import { BsFillArrowUpSquareFill } from "react-icons/bs";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo, LabPlot } from "../interfaces/user.interface";
@@ -29,11 +29,11 @@ const ProgressContainer = styled.div`
 `;
 
 const UpdateButton = styled.button`
-  padding: 0.5rem;
-  font-size: 1rem;
+  padding: 0rem;
+  font-size: 2rem;
   font-weight: bold;
-  color: white;
-  background-color: #2563eb;
+  color: green;
+  background-color: white;
   border-radius: 0.375rem;
   transition: background-color 0.3s, transform 0.3s;
 
@@ -173,7 +173,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
       <ProgressContainer>
         <div className="flex items-center mt-2">
           <UpdateButton onClick={() => handleOpenPurchasedLabModal(plot)}>
-            <GiHandTruck />
+            <BsFillArrowUpSquareFill />
           </UpdateButton>
           <progress
             className="progress progress-accent w-56 ml-2"

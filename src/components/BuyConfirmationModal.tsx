@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { NeonButton } from "./styled/cardStyled";
+import { formatPrice } from "./utils/formater";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -97,7 +98,7 @@ const BuyConfirmationModal: React.FC<BuyConfirmationModalProps> = ({
         <ModalHeader>Confirm Purchase</ModalHeader>
         <ModalText>
           Are you sure you want to buy {itemTitle} for{" "}
-          <PriceText>${itemCost}</PriceText>?
+          <PriceText>{formatPrice(itemCost, false)}</PriceText>?
         </ModalText>
         <ButtonContainer>
           <NeonButton onTouchStart={onConfirm}>Confirm</NeonButton>
