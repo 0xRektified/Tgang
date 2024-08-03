@@ -63,6 +63,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     locked?: boolean
   ) => {
     const noop = () => {};
+
     return (
       <BuyCard
         key={key}
@@ -74,7 +75,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           upgradeValue: upgradeEffect,
           description: upgrade.description,
           requirements: upgrade.requirements
-            ? { name: key as string, level: level }
+            ? { name: upgrade.requirements[0].product, level: upgrade.requirements[0].level }
             : null,
         }}
         locked={locked || false}
