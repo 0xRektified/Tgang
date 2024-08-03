@@ -206,23 +206,17 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
 
   const production = {
     [EProduct.WEED]: 0,
-    [EProduct.COCAINE]: 0,
-    [EProduct.METH]: 0,
     [EProduct.MUSHROOM]: 0,
     [EProduct.LSD]: 0,
     [EProduct.MDMA]: 0,
+    [EProduct.METH]: 0,
+    [EProduct.COCAINE]: 0,
   };
 
   userInfo.labPlots.forEach((labPlot) => {
     switch (labPlot.lab?.product) {
       case EProduct.WEED:
         production[EProduct.WEED] += labPlot.lab.production;
-        break;
-      case EProduct.COCAINE:
-        production[EProduct.COCAINE] += labPlot.lab.production;
-        break;
-      case EProduct.METH:
-        production[EProduct.METH] += labPlot.lab.production;
         break;
       case EProduct.MUSHROOM:
         production[EProduct.MUSHROOM] += labPlot.lab.production;
@@ -233,17 +227,23 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
       case EProduct.MDMA:
         production[EProduct.MDMA] += labPlot.lab.production;
         break;
+      case EProduct.METH:
+        production[EProduct.METH] += labPlot.lab.production;
+        break;
+      case EProduct.COCAINE:
+        production[EProduct.COCAINE] += labPlot.lab.production;
+        break;
     }
   });
 
   const mapProductsToProduction = (products: Product[]) => {
     const production = {
       [EProduct.WEED]: 0,
-      [EProduct.COCAINE]: 0,
+      [EProduct.MUSHROOM]: 0,
+      [EProduct.LSD]: 0,
       [EProduct.MDMA]: 0,
       [EProduct.METH]: 0,
-      [EProduct.LSD]: 0,
-      [EProduct.MUSHROOM]: 0,
+      [EProduct.COCAINE]: 0,
     };
 
     products.forEach((product) => {
