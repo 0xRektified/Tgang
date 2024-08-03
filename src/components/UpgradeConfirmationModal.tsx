@@ -32,6 +32,35 @@ const ModalHeader = styled(CardTitle)`
   text-align: center;
   color: white;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
+`;
+
+const OptionContainer = styled.div`
+  background-color: #374151;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const OptionLabel = styled.div`
+  color: #e5e7eb;
+  font-size: 1.2rem;
+  text-align: center;
+`;
+
+const OptionValue = styled.div`
+  color: #10b981;
+  font-size: 1.5rem;
+  font-weight: bold;
+`;
+
+const OptionPrice = styled.div`
+  color: #22c55e;
+  font-size: 1rem;
 `;
 
 const ButtonContainer = styled.div`
@@ -46,6 +75,7 @@ const StyledNeonButton = styled(NeonButton)`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-top: 1rem;
 
   & > svg {
     font-size: 1.25rem;
@@ -106,9 +136,14 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
         <ModalHeader>{title}</ModalHeader>
         <ButtonContainer>
           {options.map((option, index) => (
-            <StyledNeonButton key={index} onClick={() => handleState(option)}>
-              {option.label} {option.valueDiff} {option.icon} ${option.price}
-            </StyledNeonButton>
+            <OptionContainer key={index}>
+              <OptionLabel>{option.label}</OptionLabel>
+              <OptionValue>{option.valueDiff}</OptionValue>
+              <OptionPrice>${option.price}</OptionPrice>
+              <StyledNeonButton onClick={() => handleState(option)}>
+                {option.icon} Purchase
+              </StyledNeonButton>
+            </OptionContainer>
           ))}
         </ButtonContainer>
       </ModalContent>

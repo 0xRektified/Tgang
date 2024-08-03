@@ -1,11 +1,13 @@
 import styled from "styled-components";
 
 export const CardContainer = styled.div`
-  background-color: #8989893d;
+  background: linear-gradient(135deg, #282c34, #3c3f45);
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
+  padding: 1rem;
+  border: 2px solid #285d90;
 `;
 
 export const CardHeader = styled.div`
@@ -35,10 +37,12 @@ export const CardInfoColumn = styled.div`
 
 export const CardInfoColumnText = styled.p`
   font-size: 0.8rem;
+  color: #d1d5db;
 `;
 export const CardTitle = styled.h3`
   font-size: 1.2rem;
   font-weight: bold;
+  color: white;
 `;
 
 export const CardContent = styled.div`
@@ -49,6 +53,7 @@ export const CardContent = styled.div`
 export const CardDescription = styled.p`
   font-size: 1rem;
   margin-top: 0.5rem;
+  color: #d1d5db;
 `;
 
 export const CardRequirement = styled.div`
@@ -75,7 +80,7 @@ export const NeonButton = styled(Button)`
   border-radius: 8px;
   padding: 0.5rem 1rem;
   margin: 1rem 0rem;
-  border: 1px solid #eab308;
+  border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
   font-size: 0.9em;
@@ -88,8 +93,7 @@ export const NeonButton = styled(Button)`
   gap: 0.5rem;
   width: 8em;
   transition: background-color 0.3s ease, transform 0.1s ease;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
+  box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
 
   &:hover {
     background-color: rgb(24 24 27);
@@ -103,5 +107,28 @@ export const NeonButton = styled(Button)`
   &.disabled {
     background-color: rgb(99 99 99) !important;
     border: none;
+  }
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff,
+        0 0 8px #1e90ff;
+    }
+    100% {
+      box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff,
+        0 0 20px #1e90ff;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 `;

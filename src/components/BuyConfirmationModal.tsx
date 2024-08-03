@@ -32,11 +32,24 @@ const ModalHeader = styled.h2`
   text-align: center;
   color: white;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
+`;
+
+const ModalText = styled.p`
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+`;
+
+const PriceText = styled.span`
+  color: #22c55e; /* Green color for the price */
+  font-weight: bold;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
 `;
@@ -82,9 +95,10 @@ const BuyConfirmationModal: React.FC<BuyConfirmationModalProps> = ({
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>Confirm Purchase</ModalHeader>
-        <p>
-          Are you sure you want to buy {itemTitle} for ${itemCost}?
-        </p>
+        <ModalText>
+          Are you sure you want to buy {itemTitle} for{" "}
+          <PriceText>${itemCost}</PriceText>?
+        </ModalText>
         <ButtonContainer>
           <NeonButton onTouchStart={onConfirm}>Confirm</NeonButton>
           <NeonButton onTouchStart={onClose}>Cancel</NeonButton>
