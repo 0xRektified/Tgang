@@ -192,7 +192,6 @@ export const Home: React.FC<HomeProps> = ({
           ...prevUser,
           customerAmount,
           customerAmountRemaining,
-          lastSell: new Date(),
           cashAmount: cashState,
           products: updatedProducts,
         };

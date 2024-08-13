@@ -11,13 +11,12 @@ const useCustomerManagement = (
     const interval = setInterval(() =>  {
       const now = new Date();
       const diff = getUnixTime(now) - getUnixTime(new Date(userInfo.lastSell));
+
       const newCustomers = Math.floor((diff / 3600) * userInfo.customerAmountMax);
       const customerAmount = Math.min(
         userInfo.customerAmountRemaining + newCustomers,
         userInfo.customerAmountMax
       );
-
-      console.log(userInfo.lastSell, userInfo.customerAmountRemaining, newCustomers);
 
       setUserInfo({ ...userInfo, customerAmount });
     }, 1000);
