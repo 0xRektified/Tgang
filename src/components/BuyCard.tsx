@@ -177,9 +177,9 @@ const BuyCard: React.FC<BuyCardProps> = ({
                     Production: {labProduction}
                   </CardInfoColumnText>
                 )}
-                <CardInfoColumnText>
+                {!upgradeOption ? <CardInfoColumnText>
                   Cost: <CardCost>{formatPrice(cost, false)}</CardCost>
-                </CardInfoColumnText>
+                </CardInfoColumnText> : <></>}
               </>
             </CardInfoColumn>
             <CardInfoColumn>
