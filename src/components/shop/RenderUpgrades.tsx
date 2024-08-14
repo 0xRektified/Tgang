@@ -207,16 +207,16 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
 
   const renderAllDealerCategories = () => (
     <>
-      {renderUpgradeCategory(
-        "Customers",
-        upgradesData?.dealer ?? {},
-        EUpgradeCategory.DEALER,
-        userInfo
-      )}
       {renderProductCategory(
         "Products",
         upgradesData?.product ?? {},
         EUpgradeCategory.PRODUCT,
+        userInfo
+      )}
+      {renderUpgradeCategory(
+        "Customers",
+        upgradesData?.dealer ?? {},
+        EUpgradeCategory.DEALER,
         userInfo
       )}
     </>
