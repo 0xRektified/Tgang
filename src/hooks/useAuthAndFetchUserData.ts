@@ -15,16 +15,8 @@ export function useAuthAndFetchUserData(
   useEffect(() => {
     const login = async () => {
       try {
-        console.log(`WebApp.initData`);
-        console.log(WebApp.initData);
         const decodedInput = decodeURIComponent(WebApp.initData);
-        console.log(`decodedInput`);
-        console.log(decodedInput);
-
         const parsedQuery = queryString.parse(decodedInput);
-        console.log(`parsedQuery`);
-        console.log(parsedQuery);
-
         const sanitizeQuery = (query: Record<string, any>) => {
           const sanitizedQuery: Record<string, any> = {};
           if (query.query_id && typeof query.query_id === "string") {
@@ -51,22 +43,14 @@ export function useAuthAndFetchUserData(
           return sanitizedQuery;
         };
         const sanitizedResult = sanitizeQuery(parsedQuery);
-        console.log(`sanitizedResult`);
-        console.log(sanitizedResult);
-
         const response = await axios.post<{ access_token: string }>(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
           sanitizedResult
         );
-        console.log(`response`);
-        console.log(response);
-
         const { access_token } = response.data;
         setAuthToken(access_token);
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
         setUser(userInfoResponse.data);
-
-        console.log("setUser:", userInfoResponse.data);
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
         setError("Failed to authenticate and fetch user data");

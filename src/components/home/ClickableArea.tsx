@@ -16,7 +16,9 @@ import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
 
-const Arrow = styled(MdArrowCircleRight)<{ isSelected: boolean }>`
+const Arrow = styled(({ isSelected, ...rest }) => (
+  <MdArrowCircleRight {...rest} />
+))<{ isSelected: boolean }>`
   position: absolute;
   left: -1.5rem;
   font-size: 1.5rem;
