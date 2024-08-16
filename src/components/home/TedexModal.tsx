@@ -103,7 +103,7 @@ export const TedexModal: React.FC<TedexProps> = ({
         <FlexBoxCol style={{ gap: "0px" }}>
           <SiteTitleTedex>
             Welcome to <span className="te">Te</span>
-            <span className="dex">dex</span>
+            <span className="dex">Dex</span>
           </SiteTitleTedex>
           <SiteDescription>
             Tedex is your global shipping platform, enabling you to ship any

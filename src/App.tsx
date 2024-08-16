@@ -11,6 +11,7 @@ import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
 import Mission from "./components/mission/Mission";
 import Lab from "./components/labs/Lab";
+import Pvp from "./components/pvp/Pvp";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -90,7 +91,7 @@ function App() {
             setUpgrades={setUpgrades}
           />
         );
-      default:
+      case "Mission":
         return (
           <Mission
             referralToken={userInfo!.referralToken}
@@ -98,6 +99,18 @@ function App() {
             activeTab={activeTab}
             userInfo={userInfo!}
             setUserInfo={setUserInfo}
+          />
+        );
+      case "Pvp":
+        return <Pvp userInfo={userInfo} />;
+      default:
+        return (
+          <Home
+            userInfo={userInfo}
+            marketInfo={marketInfo}
+            setUserInfo={setUserInfo}
+            onUnlockClick={handleUnlockClick}
+            shippingMethods={shippingMethods}
           />
         );
     }
