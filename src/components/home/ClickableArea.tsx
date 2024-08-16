@@ -40,7 +40,7 @@ const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
   border-radius: 5px;
   background-color: ${(props) =>
     props.isSelected ? "#ffd7001a" : "#59575742"};
-  width: 100%; // Ensure the ProductRow takes full width
+  width: 100%;
 
   &:hover {
     transform: translateY(-5px);
@@ -108,7 +108,7 @@ const ClickableArea = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align children to the right */
+  align-items: flex-end;
   width: 25%;
   height: 80%;
   position: relative;
@@ -121,7 +121,7 @@ const ProductsList = styled.div`
   padding: 10px;
   border-radius: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
-  width: 100%; /* Ensure it takes full width of Container */
+  width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
   z-index: 1;
@@ -318,7 +318,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             <img
               src={userCharacter}
               alt="Logo"
-              className={`max-w-[14rem] pt-28 ${
+              className={`max-w-[15rem] pt-28 ${
                 imageLoaded ? "animate-fade-in" : ""
               }`}
               onLoad={handleImageLoad}

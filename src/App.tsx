@@ -17,7 +17,7 @@ const StyledApp = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  background-position-y: 35em;
+  background-position-y: 36em;
 `;
 
 const AppContainer = styled.div`
