@@ -138,7 +138,9 @@ export const TedexModal: React.FC<TedexProps> = ({
                   <CardContent>
                     <CardInfoColumn>
                       {locked ? (
-                        <NeonButtonShippingLocked disabled>
+                        <NeonButtonShippingLocked
+                          onClick={() => handleUnlockClick()}
+                        >
                           Locked
                         </NeonButtonShippingLocked>
                       ) : (
