@@ -2,7 +2,11 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
-import { calculateTotalQuantity, getSellQuantity, handleTransaction } from "./utils/functions";
+import {
+  calculateTotalQuantity,
+  getSellQuantity,
+  handleTransaction,
+} from "./utils/functions";
 import { TouchPoints } from "../utils/touchPoints";
 import { IUserInfo } from "../interfaces/user.interface";
 import { ClickableAreaWithSmoke } from "./ClickableArea";
@@ -33,7 +37,7 @@ interface HomeProps {
   userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  onUnlockClick: (tab: string) => void;
+  onUnlockClick: (tab?: string | undefined) => void;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
 }
 

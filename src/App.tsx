@@ -56,8 +56,10 @@ function App() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleUnlockClick = (tab: string) => {
-    setActiveTab(tab);
+  const handleUnlockClick = (tab?: string) => {
+    if (tab) {
+      setActiveTab(tab);
+    }
     setCurrentView("Shop");
   };
 

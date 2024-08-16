@@ -27,7 +27,7 @@ interface ModalProps {
   marketInfo: IMarketInfo | undefined;
   isOpen: boolean;
   onClose: () => void;
-  onUnlockClick: (tab: string) => void;
+  onUnlockClick: (tab?: string | undefined) => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
 }
@@ -86,8 +86,12 @@ export const CombinedModal: React.FC<ModalProps> = ({
     setQuantity(1);
   };
 
-  const handleUnlockClick = (product: MarketProduct) => {
-    onUnlockClick(tabMapping[product.name]);
+  const handleUnlockClick = (product: MarketProduct | undefined) => {
+    if (product) {
+      onUnlockClick(tabMapping[product.name]);
+    } else {
+      onUnlockClick("shipping");
+    }
     onClose();
   };
 
@@ -152,6 +156,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
             handleShip={handleShip}
             shippingMethods={shippingMethods}
             handleRedirectToTilkRoad={handleRedirectToTilkRoad}
+            handleUnlockClick={handleUnlockClick}
           ></TedexModal>
         )}
 

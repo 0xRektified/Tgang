@@ -25,6 +25,9 @@ import {
   NeonButtonShipping,
   ShippingCardsContainer,
   NeonButtonShippingLocked,
+  SiteTitleTedex,
+  SiteDescription,
+  StyledLink,
 } from "./styles/shipping.css";
 
 import {
@@ -32,6 +35,7 @@ import {
   IShippingMethod,
 } from "../interfaces/shipping.interface";
 import ProductSelectionModal from "./ProductSelectionModal";
+import { FlexBoxCol } from "../styled/globalStyled";
 
 interface TedexProps {
   userInfo: IUserInfo;
@@ -42,6 +46,7 @@ interface TedexProps {
   ) => void;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   handleRedirectToTilkRoad: () => void;
+  handleUnlockClick: (product?: MarketProduct | undefined) => void;
 }
 
 export const TedexModal: React.FC<TedexProps> = ({
@@ -49,6 +54,7 @@ export const TedexModal: React.FC<TedexProps> = ({
   handleShip,
   shippingMethods,
   handleRedirectToTilkRoad,
+  handleUnlockClick,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShippingMethod, setSelectedShippingMethod] =
@@ -90,7 +96,24 @@ export const TedexModal: React.FC<TedexProps> = ({
     <>
       <WebPageTitle>https://mv09mn0u123m.onion</WebPageTitle>
       <FlexBoxRow>
-        <SiteTitle>Welcome to Tedex</SiteTitle>
+        <SiteTitle></SiteTitle>
+      </FlexBoxRow>
+
+      <FlexBoxRow style={{ margin: "10px" }}>
+        <FlexBoxCol style={{ gap: "0px" }}>
+          <SiteTitleTedex>
+            Welcome to <span className="te">Te</span>
+            <span className="dex">dex</span>
+          </SiteTitleTedex>
+          <SiteDescription>
+            Tedex is your global shipping platform, enabling you to ship any
+            product worldwide with ease.{" "}
+            <StyledLink onClick={() => handleUnlockClick()}>
+              Check the different shipping options available to ensure your
+              products arrive on time, every time.
+            </StyledLink>
+          </SiteDescription>
+        </FlexBoxCol>
       </FlexBoxRow>
       <ScrollableTableContainer>
         <ShippingCardsContainer>
@@ -115,7 +138,9 @@ export const TedexModal: React.FC<TedexProps> = ({
                   <CardContent>
                     <CardInfoColumn>
                       {locked ? (
-                        <NeonButtonShippingLocked disabled>Locked</NeonButtonShippingLocked>
+                        <NeonButtonShippingLocked disabled>
+                          Locked
+                        </NeonButtonShippingLocked>
                       ) : (
                         <NeonButtonShipping
                           onClick={() => handleOpenModal(userShipping!)}

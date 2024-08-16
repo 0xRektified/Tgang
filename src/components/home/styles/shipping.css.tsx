@@ -55,35 +55,35 @@ export const CardRequirement = styled.p`
 `;
 
 export const NeonButtonShipping = styled.button`
-background-color: rgb(39 39 42) !important;
-color: #e4e4e7;
-border-radius: 8px;
-padding: 0.5rem 1rem;
-margin: 1rem 0rem;
-border: 1px solid #eab308;
-cursor: pointer;
-font-weight: bold;
-font-size: 0.9em;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-display: flex;
-align-items: center;
-gap: 0.5rem;
-transition: background-color 0.3s ease, transform 0.1s ease;
+  background-color: rgb(39 39 42) !important;
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0rem;
+  border: 1px solid #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 
-&:hover {
-  background-color: rgb(24 24 27);
-  animation: glow 1.5s infinite alternate, pulse 2s infinite;
-}
+  &:hover {
+    background-color: rgb(24 24 27);
+    animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  }
 
-&:active {
-  animation: glow 1.5s infinite alternate, pulse 2s infinite;
-}
+  &:active {
+    animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  }
 
-&.disabled {
-  background-color: rgb(99 99 99) !important;
-  border: none;
-}
+  &.disabled {
+    background-color: rgb(99 99 99) !important;
+    border: none;
+  }
 `;
 
 export const NeonButtonShippingLocked = styled.button`
@@ -212,4 +212,38 @@ export const ClickableText = styled.div`
   &:hover {
     color: #0056b3;
   }
+`;
+
+export const SiteTitleTedex = styled.h1`
+  font-family: "Futura", sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+
+  .te {
+    color: #4d148c; /* FedEx Purple for "Te" */
+  }
+
+  .dex {
+    color: #ff6600; /* FedEx Orange for "dex" */
+  }
+`;
+export const SiteDescription = styled.p`
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #cbd5e0;
+`;
+
+export const StyledLink = styled.p`
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  font-size: 0.8rem;
+  color: #1e90ff;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
 `;
