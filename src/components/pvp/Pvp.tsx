@@ -235,7 +235,7 @@ const Pvp: React.FC<PvpProps> = ({ userInfo }) => {
           <Versus>VS</Versus>
           <Fighter>
             <GiCrossedSwords size={50} />
-            <FighterName>Player 2</FighterName>
+            <FighterName>Toni</FighterName>
           </Fighter>
         </FightScene>
         <p>Fight against other players to steal their resources!</p>

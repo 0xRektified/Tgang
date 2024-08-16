@@ -12,6 +12,7 @@ import { useInitializeGame } from "./hooks/useInitializeGame";
 import Mission from "./components/mission/Mission";
 import Lab from "./components/labs/Lab";
 import Pvp from "./components/pvp/Pvp";
+import { Airdrop } from "./components/airdrop/Airdrop";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -103,6 +104,8 @@ function App() {
         );
       case "Pvp":
         return <Pvp userInfo={userInfo} />;
+      case "Airdrop":
+        return <Airdrop />;
       default:
         return (
           <Home

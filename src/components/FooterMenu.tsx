@@ -42,7 +42,7 @@ const FooterButton = styled.button<{ active: boolean }>`
   }
 `;
 
-type TViewType = "Base" | "Lab" | "Shop" | "Mission" | "Pvp";
+type TViewType = "Base" | "Lab" | "Shop" | "Mission" | "Pvp" | "Airdrop";
 
 interface FooterMenuProps {
   setCurrentView: (view: TViewType) => void;
@@ -81,11 +81,18 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
         <span className="btm-nav-label">Mission</span>
       </FooterButton>
       <FooterButton
+        onClick={() => setCurrentView("Airdrop")}
+        active={currentView === "Airdrop"}
+      >
+        <img src={`/assets/coin.gif`} alt="Logo" style={{ maxWidth: "25px" }} />
+        <span className="btm-nav-label text-white-grey">Airdrop </span>
+      </FooterButton>
+      <FooterButton
         onClick={() => setCurrentView("Pvp")}
         active={currentView === "Pvp"}
       >
         <GiPistolGun />
-        <span className="btm-nav-label text-white-grey">Soon Pvp </span>
+        <span className="btm-nav-label text-white-grey">Pvp </span>
       </FooterButton>
     </FooterContainer>
   );
