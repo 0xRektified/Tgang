@@ -8,17 +8,27 @@ const useCustomerManagement = (
   setUserInfo: Dispatch<SetStateAction<IUserInfo>>
 ) => {
   useEffect(() => {
-    const interval = setInterval(() =>  {
+    const interval = setInterval(() => {
       const now = new Date();
       const diff = getUnixTime(now) - getUnixTime(new Date(userInfo.lastSell));
 
-      const newCustomers = Math.floor((diff / 3600) * userInfo.customerAmountMax);
+      const newCustomers = Math.floor(
+        (diff / 3600) * userInfo.customerAmountMax
+      );
       const customerAmount = Math.min(
         userInfo.customerAmountRemaining + newCustomers,
         userInfo.customerAmountMax
       );
-
-      setUserInfo({ ...userInfo, customerAmount });
+      console.log(`useCustomerManagement interval newCustomers`, newCustomers);
+      console.log(
+        `useCustomerManagement interval customerAmount`,
+        customerAmount
+      );
+      // @note If max value is reach do not sync, it put less update on the state
+      // and avoid bug where total customer is flipping to max during a sell
+      if (customerAmount < userInfo.customerAmountMax) {
+        setUserInfo({ ...userInfo, customerAmount });
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [userInfo]);
@@ -31,7 +41,10 @@ const useCustomerManagement = (
       const response = await axiosInstance.post(`/markets/${marketId}/sell`, {
         batch,
       });
-      setUserInfo(response.data);
+      // @note temporary not sync the return value as we could have a small diff
+      // and we are syncing the full state in other actions anyway
+
+      // setUserInfo(response.data);
     } catch (error) {
       console.error("Failed to sell products", error);
     }
