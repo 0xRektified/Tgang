@@ -37,10 +37,6 @@ export const BalanceAmount = styled.span`
 `;
 
 export const DigitalFont = styled.span`
-  @font-face {
-    font-family: "Digital";
-    src: url("/path/to/digital-font.ttf") format("truetype");
-  }
   font-family: "Digital", sans-serif;
 `;
 
