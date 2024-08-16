@@ -286,7 +286,7 @@ export const FlexBoxRow = styled.div`
 export const SiteTitle = styled.div`
   color: #cbd5e0;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.3rem;
 `;
 
 export const RightAlignedTd = styled.td`
@@ -303,22 +303,35 @@ export const Countdown = styled.div`
 
 export const TabContainer = styled.div`
   display: flex;
-  border-bottom: 1px solid #e4e4e7;
+  border-bottom: 1px solid #4a5568;
+  margin-bottom: 1rem; /* Add some spacing below the tabs */
 `;
 
 export const Tab = styled.button<{ active?: boolean }>`
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  background-color: ${(props) => (props.active ? "#4a5568" : "#1b1a1a")};
-  color: white;
-  border: none;
-  outline: none;
+  background-color: ${(props) => (props.active ? "#ffffff" : "#1b1a1a")};
+  color: ${(props) => (props.active ? "#000000" : "#cbd5e0")};
+  border: 1px solid #4a5568;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  font-weight: ${(props) => (props.active ? "bold" : "normal")};
   flex-grow: 1;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
   &:hover {
-    background-color: #4a5568;
+    background-color: ${(props) => (props.active ? "#ffffff" : "#2d2d2d")};
+  }
+
+  &:not(:last-child) {
+    margin-right: 2px;
+  }
+
+  &.active {
+    z-index: 2;
   }
 `;
-
 export const PriceVariation = styled.span`
   font-size: 0.7em;
   margin-left: 5px;
