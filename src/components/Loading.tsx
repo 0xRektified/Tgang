@@ -10,6 +10,17 @@ const Loading: React.FC = () => {
     >
       <div className="text-center text-white">
         <span className="loading loading-spinner loading-md"></span>
+        <p
+          style={{
+            color: "#1e90ff",
+            textShadow: "0 0 8px #1e90ff",
+            fontSize: "3rem",
+            fontWeight: "bold",
+            marginTop: "10px",
+          }}
+        >
+          BETA ACCESS
+        </p>
         <p className="mt-4">Loading...</p>
       </div>
     </div>
