@@ -55,8 +55,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         <FlexBoxCol style={{ gap: "0px" }}>
           <SiteTitle>Welcome to Tilk Road</SiteTitle>
           <p>
-            Market prices shift with global trends. Stay alert to capitalize on
-            every opportunity.
+            Market prices shift <b>daily</b> with global trends. Stay alert to
+            seize every opportunity.
           </p>
         </FlexBoxCol>
       </FlexBoxRow>
@@ -92,7 +92,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                       product.previousPrice) *
                     100;
                   const priceChangeColor =
-                    priceChangePercent > 0 ? "red" : "green";
+                    priceChangePercent > 0 ? "green" : "red";
                   const priceChangeSign = priceChangePercent > 0 ? "+" : "";
                   return (
                     <React.Fragment key={product.name}>
@@ -104,8 +104,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                         <td>
                           ${product.discountPrice.toFixed(2)}{" "}
                           <PriceVariation style={{ color: priceChangeColor }}>
-                            ({priceChangeSign}
-                            {priceChangePercent.toFixed(2)}%)
+                            {priceChangeSign}
+                            {priceChangePercent.toFixed(2)}%
                           </PriceVariation>
                         </td>
                         <td className="text-right">

@@ -258,7 +258,7 @@ export const ShoppingCartFooter = styled.div`
   background-color: #191e2b;
   display: flex;
   justify-content: space-between;
-  padding-top: 0.8rem;
+  padding: 0.8rem;
   border-top: 1px solid #2d3748;
   flex-direction: row;
   align-items: center;
