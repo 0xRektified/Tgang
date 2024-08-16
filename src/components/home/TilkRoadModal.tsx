@@ -2,7 +2,7 @@ import React from "react";
 import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProductIcon } from "../interfaces/product.interface";
 import { IUserInfo, Product } from "../interfaces/user.interface";
-import { FlexBoxRow } from "../styled/globalStyled";
+import { FlexBoxCol, FlexBoxRow } from "../styled/globalStyled";
 import {
   NeonButton,
   PriceVariation,
@@ -44,14 +44,23 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
     <>
       <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
 
-      <FlexBoxRow>
-        <img
-          src={`/assets/home/market_logo.webp`}
-          alt="Logo"
-          style={{ maxWidth: "50px", padding: "10px" }}
-        />
-        <SiteTitle>Welcome to Tilk Road</SiteTitle>
+      <FlexBoxRow style={{ margin: "10px" }}>
+        <FlexBoxCol>
+          <img
+            src={`/assets/home/market_logo.webp`}
+            alt="Logo"
+            style={{ maxWidth: "50px", padding: "10px" }}
+          />
+        </FlexBoxCol>
+        <FlexBoxCol style={{ gap: "0px" }}>
+          <SiteTitle>Welcome to Tilk Road</SiteTitle>
+          <p>
+            Market prices shift with global trends. Stay alert to capitalize on
+            every opportunity.
+          </p>
+        </FlexBoxCol>
       </FlexBoxRow>
+
       <ShoppingCartFooter>
         <ShoppingCartBalance>
           Balance: ${remainingCash.toFixed(0)}
@@ -62,9 +71,9 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         <Table>
           <thead>
             <tr>
-              <th style={{ width: "35%" }}></th>
-              <th style={{ width: "20%" }}></th>
               <th style={{ width: "10%" }}></th>
+              <th style={{ width: "40%" }}></th>
+              <th style={{ width: "15%" }}></th>
               <th style={{ width: "25%" }}></th>
             </tr>
           </thead>
@@ -129,7 +138,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                       {userProduct &&
                         selectedProduct?.name === product.name && (
                           <tr key={product.name + "_details"}>
-                            <td colSpan={5}>
+                            <td colSpan={4}>
                               <div className="flex items-center justify-between">
                                 <input
                                   type="range"

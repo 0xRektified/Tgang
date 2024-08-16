@@ -150,7 +150,7 @@ export const Table = styled.table`
   width: 100%;
   background-color: #2d3748;
   border-radius: 0.5rem;
-
+  table-layout: fixed;
   th,
   td {
     padding: 0.9rem;
@@ -323,5 +323,3 @@ export const PriceVariation = styled.span`
   font-size: 0.7em;
   margin-left: 5px;
 `;
-
-/******* SHIPPING  /*******/
