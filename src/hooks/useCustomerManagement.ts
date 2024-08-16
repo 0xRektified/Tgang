@@ -41,10 +41,8 @@ const useCustomerManagement = (
       const response = await axiosInstance.post(`/markets/${marketId}/sell`, {
         batch,
       });
-      // @note temporary not sync the return value as we could have a small diff
-      // and we are syncing the full state in other actions anyway
-
-      // setUserInfo(response.data);
+      // @note There is still a small diff between server and client causing a +/- 1 customer
+      setUserInfo(response.data);
     } catch (error) {
       console.error("Failed to sell products", error);
     }
