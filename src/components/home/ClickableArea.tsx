@@ -282,7 +282,18 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
     setImageLoaded(true);
   }, []);
 
+  const handleCombinedOnLoad = useCallback(() => {
+    console.log("Image loaded");
+    handleImageLoad();
+  }, [handleImageLoad]);
+
+  const preloadImage = (src: string) => {
+    const img = new Image();
+    img.src = src;
+  };
+
   useEffect(() => {
+    preloadImage(userCharacter);
     const createSmoke = () => {
       const newSmokes: JSX.Element[] = [];
       for (let i = 0; i < 12; i++) {
@@ -318,10 +329,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             <img
               src={userCharacter}
               alt="Logo"
-              className={`max-w-[15rem] pt-28 ${
-                imageLoaded ? "animate-fade-in" : ""
-              }`}
-              onLoad={handleImageLoad}
+              {...({
+                fetchpriority: "high",
+              } as React.ImgHTMLAttributes<HTMLImageElement>)}
+              className={`max-w-[15rem] pt-28 `}
+              onLoad={handleCombinedOnLoad}
             />
           </div>
         </FlexBoxRow>

@@ -137,7 +137,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
     <>
       <CardContainer>
         <CardHeader>
-          <CardImage src={image} alt={title} />
+          <CardImage src={image} alt={title} loading="lazy" />
           <CardDetails>
             <CardInfoColumn>
               <CardTitle>{title}</CardTitle>
@@ -177,9 +177,13 @@ const BuyCard: React.FC<BuyCardProps> = ({
                     Production: {labProduction}
                   </CardInfoColumnText>
                 )}
-                {!upgradeOption ? <CardInfoColumnText>
-                  Cost: <CardCost>{formatPrice(cost, false)}</CardCost>
-                </CardInfoColumnText> : <></>}
+                {!upgradeOption ? (
+                  <CardInfoColumnText>
+                    Cost: <CardCost>{formatPrice(cost, false)}</CardCost>
+                  </CardInfoColumnText>
+                ) : (
+                  <></>
+                )}
               </>
             </CardInfoColumn>
             <CardInfoColumn>
