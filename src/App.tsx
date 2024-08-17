@@ -9,10 +9,9 @@ import { Shop } from "./components/shop/Shop";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
-import Mission from "./components/mission/Mission";
 import Lab from "./components/labs/Lab";
 import Pvp from "./components/pvp/Pvp";
-import { Airdrop } from "./components/airdrop/Airdrop";
+import Airdrop from "./components/airdrop/Airdrop";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -92,9 +91,10 @@ function App() {
             setUpgrades={setUpgrades}
           />
         );
-      case "Mission":
+
+      case "Airdrop":
         return (
-          <Mission
+          <Airdrop
             referralToken={userInfo!.referralToken}
             referredUsers={userInfo!.referredUsers}
             activeTab={activeTab}
@@ -104,8 +104,6 @@ function App() {
         );
       case "Pvp":
         return <Pvp userInfo={userInfo} />;
-      case "Airdrop":
-        return <Airdrop />;
       default:
         return (
           <Home

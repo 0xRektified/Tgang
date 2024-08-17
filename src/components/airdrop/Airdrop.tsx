@@ -1,74 +1,85 @@
+import React, { useState, useEffect } from "react";
+import WebApp from "@twa-dev/sdk";
+import { PiCopySimple } from "react-icons/pi";
+import useDailyRobbery from "../../hooks/useDailyRobbery";
+import { IUserInfo } from "../interfaces/user.interface";
+import { GiAk47 } from "react-icons/gi";
+import { FlexBoxCol, FlexBoxRow } from "../styled/globalStyled";
+import { ApiToast } from "../ApiToast";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { useTonConnect } from "../../hooks/useTonConnect";
-import styled from "styled-components";
+import {
+  AirdropContainer,
+  Button,
+  Card,
+  Countdown,
+  Divider,
+  GreenDot,
+  GreenText,
+  ItalicText,
+  RedDot,
+  StatDesc,
+  Stats,
+  StatValue,
+  Table,
+  TableContainer,
+  WalletInfo,
+} from "./styles/airdrop.css";
+import WalletComponent from "./WalletComponent";
+import RobberyComponent from "./RobberyComponent";
+import FriendsComponent from "./FriendsComponent";
 
-import { FlexBoxCol, FlexBoxRow } from "../styled/globalStyled";
+interface AirdropProps {
+  referralToken: string;
+  referredUsers: string[];
+  activeTab: string;
+  userInfo: IUserInfo;
+  setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+}
 
-const AirdropContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-  background-size: cover;
-  background-position: center;
-  color: white;
-  padding: 1rem;
-`;
+const calculateCountdown = (time: Date) => {
+  const now = new Date().getTime();
+  const timeInMillis = new Date(time).getTime();
+  const timeLeft = 24 * 60 * 60 * 1000 - (now - timeInMillis);
 
-export const Card = styled.div`
-  padding: 18px 20px;
-  border-radius: 8px;
-  background-color: #2d3748;
-`;
+  const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+  const seconds = Math.floor((timeLeft / 1000) % 60);
 
-const WalletInfo = styled.div`
-  color: white;
-  font-family: "Roboto", sans-serif;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const WalletAddress = styled.div`
-  color: white;
-  font-family: "Courier New", monospace;
-  font-size: 1rem;
-  padding: 0.25rem;
-  background-color: #2d3748;
-  border-radius: 0.375rem;
-`;
-
-const AddressLabel = styled.b`
-  font-family: "Roboto", sans-serif;
-  font-size: 1rem;
-  color: white;
-  margin-right: 0.5rem;
-`;
-
-const formatAddress = (address: string) => {
-  if (!address) return "";
-  return `${address.slice(0, 5)}...${address.slice(-5)}`;
+  return { hours, minutes, seconds, timeLeft };
 };
 
-export const Airdrop: React.FC = () => {
-  const { connected, wallet } = useTonConnect();
+const Airdrop: React.FC<AirdropProps> = ({
+  referralToken,
+  referredUsers,
+  activeTab,
+  userInfo,
+  setUserInfo,
+}) => {
+  const { robberyStrike, claimDailyReward, loading, error, successMessage } =
+    useDailyRobbery(userInfo, setUserInfo);
 
   return (
     <AirdropContainer>
-      <Card>
-        <FlexBoxCol>
-          <WalletInfo>
-            Wallet {connected ? "connected" : "Not connected"}
-          </WalletInfo>
-          {/* <FlexBoxRow>
-            <AddressLabel>Address</AddressLabel>
-            <WalletAddress>
-              {formatAddress(wallet ? wallet : "0x000000000000")}
-            </WalletAddress>
-          </FlexBoxRow> */}
-          <TonConnectButton />
-        </FlexBoxCol>
-      </Card>
+      <WalletComponent />
+      <RobberyComponent
+        robberyStrike={robberyStrike}
+        claimDailyReward={claimDailyReward}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+        loading={loading}
+      />
+      <FriendsComponent
+        referralToken={referralToken}
+        referredUsers={referredUsers}
+      />
+      <ApiToast
+        loading={loading}
+        error={error}
+        successMessage={successMessage}
+      />
     </AirdropContainer>
   );
 };
+
+export default Airdrop;

@@ -74,13 +74,6 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
         <span className="btm-nav-label">Shop</span>
       </FooterButton>
       <FooterButton
-        onClick={() => setCurrentView("Mission")}
-        active={currentView === "Mission"}
-      >
-        <GiThreeFriends />
-        <span className="btm-nav-label">Mission</span>
-      </FooterButton>
-      <FooterButton
         onClick={() => setCurrentView("Airdrop")}
         active={currentView === "Airdrop"}
       >
