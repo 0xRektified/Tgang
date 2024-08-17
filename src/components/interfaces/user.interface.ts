@@ -92,4 +92,5 @@ export interface IUserInfo {
   nextShipment: Date;
   reputation: number;
   userLevel: IReputationLevel;
+  wallet?: string;
 }

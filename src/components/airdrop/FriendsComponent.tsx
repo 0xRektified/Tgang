@@ -36,40 +36,35 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   };
 
   return (
-    <>
-      <Card>
-        <div className="flex w-full place-items-center justify-center">
-          <Button onClick={handleRefForward}>Invite Friends</Button>
-          <Divider />
-          <Button onClick={handleRefClick}>
-            <PiCopySimple />
-          </Button>
-        </div>
-      </Card>
-      <Card>
-        <Stats>
-          <StatDesc>Invited users</StatDesc>
-          <StatValue>{referredUsers.length}</StatValue>
-          <StatDesc>Airdrop to be announced</StatDesc>
-        </Stats>
-        <TableContainer>
-          <Table>
-            <thead>
-              <tr>
-                <th>Referred Users</th>
+    <Card>
+      <Stats>
+        <StatDesc>Invited users</StatDesc>
+        <StatValue>{referredUsers.length}</StatValue>
+      </Stats>
+      <div className="flex w-full place-items-center justify-center">
+        <Button onClick={handleRefForward}>Invite Friends</Button>
+        <Divider />
+        <Button onClick={handleRefClick}>
+          <PiCopySimple />
+        </Button>
+      </div>
+      <TableContainer>
+        <Table>
+          <thead>
+            <tr>
+              <th>Referred Users</th>
+            </tr>
+          </thead>
+          <tbody>
+            {referredUsers.map((user) => (
+              <tr key={user}>
+                <td>{user}</td>
               </tr>
-            </thead>
-            <tbody>
-              {referredUsers.map((user) => (
-                <tr key={user}>
-                  <td>{user}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableContainer>
-      </Card>
-    </>
+            ))}
+          </tbody>
+        </Table>
+      </TableContainer>
+    </Card>
   );
 };
 
