@@ -91,7 +91,7 @@ export const NeonButtonShippingLocked = styled.button`
   color: #e4e4e7;
   border-radius: 8px;
   padding: 0.5rem 1rem;
-  margin: 1rem;
+  margin: 1rem 0rem;
   border: 1px solid #eab308;
   cursor: pointer;
   font-weight: bold;

@@ -69,6 +69,10 @@ export const TedexModal: React.FC<TedexProps> = ({
     setIsModalOpen(false);
   };
 
+  const shipmentInProgress = (nextShipment: Date) => {
+    return nextShipment.getTime() > new Date().getTime();
+  }
+
   const calculateCountdown = (nextShipment: Date, shippingTime: number) => {
     const now = new Date().getTime();
     const nextShipmentTime = nextShipment.getTime();
@@ -91,6 +95,26 @@ export const TedexModal: React.FC<TedexProps> = ({
 
     return { hours, minutes, seconds, timeLeft };
   };
+
+  const renderShippingButton = (userShipping: IUserShipping) => {
+    if (shipmentInProgress(new Date(userShipping.nextShipment))) {
+      return (
+        <NeonButtonShippingLocked
+          onClick={() => handleUnlockClick()}
+        >
+          In progress
+        </NeonButtonShippingLocked>
+      );
+    } else {
+      return (
+        <NeonButtonShipping
+          onClick={() => handleOpenModal(userShipping!)}
+        >
+          Ship up to {userShipping.capacity}
+        </NeonButtonShipping>
+      );
+    }
+  }
 
   return (
     <>
@@ -143,13 +167,7 @@ export const TedexModal: React.FC<TedexProps> = ({
                         >
                           Locked
                         </NeonButtonShippingLocked>
-                      ) : (
-                        <NeonButtonShipping
-                          onClick={() => handleOpenModal(userShipping!)}
-                        >
-                          Ship up to {userShipping.capacity}
-                        </NeonButtonShipping>
-                      )}
+                      ) : renderShippingButton(userShipping!)}
                     </CardInfoColumn>
                     {userShipping && (
                       <div>
