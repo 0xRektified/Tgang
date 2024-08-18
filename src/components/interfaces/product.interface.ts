@@ -7,13 +7,22 @@ export enum EProduct {
   COCAINE = "Coke",
 }
 
-export enum EProductIcon {
-  Weed = "🌱",
-  Mushroom = "🍄",
-  Acid = "🧪",
-  Ecstasy = "💊",
-  Meth = "💎",
-  Coke = "🧂",
+// export enum EProductIcon {
+//   Weed = "🌱",
+//   Mushroom = "🍄",
+//   Acid = "🧪",
+//   Ecstasy = "💊",
+//   Meth = "💎",
+//   Coke = "🧂",
+// }
+
+export const EProductIcon: Record<EProduct, string> = {
+  [EProduct.WEED]: "🌱",
+  [EProduct.MUSHROOM]: "🍄",
+  [EProduct.LSD]: "🧪",
+  [EProduct.MDMA]: "💊",
+  [EProduct.METH]: "💎",
+  [EProduct.COCAINE]: "🧂",
 }
 
 export const ProductImage: Record<EProduct, string> = {

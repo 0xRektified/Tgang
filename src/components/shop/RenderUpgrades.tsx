@@ -12,6 +12,7 @@ import { EProduct } from "../interfaces/product.interface";
 import BuyCard from "../BuyCard";
 import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
+import { getProductIcon } from "../utils/formater";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -47,7 +48,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     return (
       <div>
         <CardRequirement>
-          Requires {requirements.name} Level {requirements.level}
+          Requires {getProductIcon(requirements.name)} Level {requirements.level}
         </CardRequirement>
       </div>
     );
@@ -69,7 +70,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         key={key}
         item={{
           image: upgrade.image,
-          title: upgrade.title,
+          title: getProductIcon(upgrade.title),
           cost: price,
           level: level,
           upgradeValue: upgradeEffect,

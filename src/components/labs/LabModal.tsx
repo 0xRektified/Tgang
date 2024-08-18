@@ -13,6 +13,7 @@ import {
 } from "../styled/renderUpgradesStyled";
 import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
+import { getProductIcon } from "../utils/formater";
 
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
@@ -78,7 +79,7 @@ const LabModal: React.FC<LabModalProps> = ({
     requirements?: { name: string; level: number } | null
   ) => (
     <CardRequirement>
-      Requires {requirements?.name || "Unknown"} Level{" "}
+      Requires {getProductIcon(requirements!.name)} Level{" "}
       {requirements?.level || 0}
     </CardRequirement>
   );

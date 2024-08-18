@@ -1,3 +1,5 @@
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
+
 export const formatPrice = (price: number, showDecimals: boolean) => {
   return price.toLocaleString("en-US", {
     style: "currency",
@@ -6,6 +8,11 @@ export const formatPrice = (price: number, showDecimals: boolean) => {
     maximumFractionDigits: showDecimals ? 2 : 0,
   });
 };
+
+export const getProductIcon = (name: string) => {
+  const icon = EProductIcon[name as EProduct];
+  return icon || name;
+}
 
 export const convertSecondsToReadableTime = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);

@@ -7,6 +7,7 @@ import { getUnixTime } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 import WebApp from "@twa-dev/sdk";
 import { EProductIcon } from "../interfaces/product.interface";
+import { getProductIcon } from "../utils/formater";
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -166,7 +167,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
           isVideoLoaded={isVideoLoaded}
         />
       </VideoWrapper>
-      <LabInfo>{lab.product}</LabInfo>
+      <LabInfo>{getProductIcon(lab.product)}</LabInfo>
       <LabInfo>
         {produced}/{lab.capacity}
       </LabInfo>
