@@ -1,26 +1,26 @@
 export enum EProduct {
-  WEED = "Weed",
+  HERB = "Herb",
   MUSHROOM = "Mushroom",
-  LSD = "Acid",
-  MDMA = "Ecstasy",
-  METH = "Meth",
-  COCAINE = "Coke",
+  ACID = "Acid",
+  CRYSTAL = "Crystal",
+  PILL = "Pill",
+  POWDER = "Powder",
 }
 
 export enum EProductIcon {
-  Weed = "🌱",
+  Herb = "🌱",
   Mushroom = "🍄",
   Acid = "🧪",
-  Ecstasy = "💊",
-  Meth = "💎",
-  Coke = "🧂",
+  Pill = "💊",
+  Crystal = "💎",
+  Powder = "🧂",
 }
 
 export const ProductImage: Record<EProduct, string> = {
-  [EProduct.WEED]: "assets/product/seedling.svg",
+  [EProduct.HERB]: "assets/product/seedling.svg",
   [EProduct.MUSHROOM]: "assets/product/mushroom.svg",
-  [EProduct.LSD]: "assets/product/testtube.svg",
-  [EProduct.METH]: "assets/product/gem.svg",
-  [EProduct.MDMA]: "assets/product/pill.svg",
-  [EProduct.COCAINE]: "assets/product/salt.svg",
-}
+  [EProduct.ACID]: "assets/product/testtube.svg",
+  [EProduct.CRYSTAL]: "assets/product/gem.svg",
+  [EProduct.PILL]: "assets/product/pill.svg",
+  [EProduct.POWDER]: "assets/product/salt.svg",
+};

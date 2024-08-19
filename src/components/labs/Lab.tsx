@@ -205,45 +205,45 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
   };
 
   const production = {
-    [EProduct.WEED]: 0,
+    [EProduct.HERB]: 0,
     [EProduct.MUSHROOM]: 0,
-    [EProduct.LSD]: 0,
-    [EProduct.MDMA]: 0,
-    [EProduct.METH]: 0,
-    [EProduct.COCAINE]: 0,
+    [EProduct.ACID]: 0,
+    [EProduct.PILL]: 0,
+    [EProduct.CRYSTAL]: 0,
+    [EProduct.POWDER]: 0,
   };
 
   userInfo.labPlots.forEach((labPlot) => {
     switch (labPlot.lab?.product) {
-      case EProduct.WEED:
-        production[EProduct.WEED] += labPlot.lab.production;
+      case EProduct.HERB:
+        production[EProduct.HERB] += labPlot.lab.production;
         break;
       case EProduct.MUSHROOM:
         production[EProduct.MUSHROOM] += labPlot.lab.production;
         break;
-      case EProduct.LSD:
-        production[EProduct.LSD] += labPlot.lab.production;
+      case EProduct.ACID:
+        production[EProduct.ACID] += labPlot.lab.production;
         break;
-      case EProduct.MDMA:
-        production[EProduct.MDMA] += labPlot.lab.production;
+      case EProduct.PILL:
+        production[EProduct.PILL] += labPlot.lab.production;
         break;
-      case EProduct.METH:
-        production[EProduct.METH] += labPlot.lab.production;
+      case EProduct.CRYSTAL:
+        production[EProduct.CRYSTAL] += labPlot.lab.production;
         break;
-      case EProduct.COCAINE:
-        production[EProduct.COCAINE] += labPlot.lab.production;
+      case EProduct.POWDER:
+        production[EProduct.POWDER] += labPlot.lab.production;
         break;
     }
   });
 
   const mapProductsToProduction = (products: Product[]) => {
     const production = {
-      [EProduct.WEED]: 0,
+      [EProduct.HERB]: 0,
       [EProduct.MUSHROOM]: 0,
-      [EProduct.LSD]: 0,
-      [EProduct.MDMA]: 0,
-      [EProduct.METH]: 0,
-      [EProduct.COCAINE]: 0,
+      [EProduct.ACID]: 0,
+      [EProduct.PILL]: 0,
+      [EProduct.CRYSTAL]: 0,
+      [EProduct.POWDER]: 0,
     };
 
     products.forEach((product) => {

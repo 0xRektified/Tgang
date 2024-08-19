@@ -3,7 +3,7 @@ import { startOfMinute, getUnixTime } from "date-fns";
 
 const emojis = ["👨🏿", "👴🏻", "👩🏽", "👩‍🦳"];
 
-export type ProductName = "Weed" | "Coke" | "Meth";
+export type ProductName = "Herb" | "Powder" | "Meth";
 
 export function getIndexFromTimeStamp(timestamp: Date) {
   const roundedTimestamp = startOfMinute(timestamp);

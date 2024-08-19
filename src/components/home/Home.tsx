@@ -51,7 +51,7 @@ export const Home: React.FC<HomeProps> = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
-  const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.WEED);
+  const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.HERB);
   const [nextCustomer, setNextCustomer] = useState<string>(getRandomEmoji());
   const [animatingEmojis, setAnimatingEmojis] = useState<
     { emoji: string; id: number; offset: string }[]

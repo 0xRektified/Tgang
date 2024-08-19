@@ -156,7 +156,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
       >
         <PlaceholderImage poster={lab.image} isVideoLoaded={isVideoLoaded} />
         <StyledVideo
-          // src={`/assets/labs/weed_lab_video.mp4`}
+          // src={`/assets/labs/Herb_lab_video.mp4`}
           poster={lab.image}
           autoPlay
           loop
