@@ -6,25 +6,31 @@ import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    Checker({ typescript: true }),
-    nodePolyfills(),
-    ViteImageOptimizer({
-      png: {
-        // https://sharp.pixelplumbing.com/api-output#png
-        quality: 70,
-      },
-    }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: "assets/**/*",
-          dest: "assets",
+export default defineConfig(({ mode }) => {
+  return {
+    plugins: [
+      react(),
+      Checker({ typescript: true }),
+      nodePolyfills(),
+      ViteImageOptimizer({
+        png: {
+          // https://sharp.pixelplumbing.com/api-output#png
+          quality: 70,
         },
-      ],
-    }),
-  ],
-  base: ((process.env.GITHUB_REPOSITORY ?? "") + "/").match(/(\/.*)/)?.[1],
+      }),
+      ...(mode === "production"
+        ? [
+            viteStaticCopy({
+              targets: [
+                {
+                  src: "assets/**/*",
+                  dest: "assets",
+                },
+              ],
+            }),
+          ]
+        : []),
+    ],
+    base: ((process.env.GITHUB_REPOSITORY ?? "") + "/").match(/(\/.*)/)?.[1],
+  };
 });
