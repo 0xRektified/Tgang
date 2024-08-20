@@ -134,7 +134,7 @@ export const TedexModal: React.FC<TedexProps> = ({
           </SiteDescription>
         </FlexBoxCol>
       </FlexBoxRow>
-      <ScrollableTableContainer>
+      <ScrollableTableContainer className="scrollable-content">
         <ShippingCardsContainer>
           {shippingMethods &&
             Object.entries(shippingMethods).map(([key, method]) => {

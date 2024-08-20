@@ -103,7 +103,6 @@ const ClickableArea = styled.div`
   padding-right: 20px;
   cursor: pointer;
   overflow: hidden;
-  touch-action: none;
 `;
 
 const Container = styled.div`
@@ -390,8 +389,9 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
   return (
     <Wrapper>
+      {smokes}
+
       <ClickableArea onTouchStart={handleAnimation}>
-        {smokes}
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
           <div

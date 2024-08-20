@@ -19,7 +19,7 @@ import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
-  min-height: 80vh;
+  height: calc(100vh - 120px); // Adjust this value based on your layout
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -28,6 +28,8 @@ const LabContainer = styled.div`
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   position: relative;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   > * {
     width: 100%;
@@ -267,7 +269,7 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
         productionPerHour={production}
       />
       <Divider />
-      <LabsGrid>
+      <LabsGrid className="scrollable-content">
         {userInfo.labPlots.map((labPlot) => {
           if (labPlot.lab) {
             return (

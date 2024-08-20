@@ -1,65 +1,38 @@
 import WebApp from "@twa-dev/sdk";
 
-function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  wait: number,
-  immediate: boolean = false
-): (...args: Parameters<T>) => void {
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
-    const later = () => {
-      timeout = undefined;
-      if (!immediate) func.apply(this, args);
-    };
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(this, args);
-  };
+function setupDocument(enable: boolean) {
+  if (enable) {
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.removeProperty('position');
+    document.body.style.removeProperty('width');
+    document.body.style.removeProperty('height');
+    document.body.style.removeProperty('overflow');
+  }
 }
 
-export const handlePositionCheck = () => {
-  const scrollableEl = document.getElementById("mainView");
-  const bufferEl = document.getElementById("buffer");
-
-  if (scrollableEl && bufferEl) {
-    const bufferRect = bufferEl.getBoundingClientRect();
-    if (bufferRect.bottom > 0) {
-      scrollableEl.scrollIntoView();
-    }
+function preventBodyScroll(event: TouchEvent) {
+  if ((event.target as Element).closest('.scrollable-content')) {
+    return;
   }
-};
+  event.preventDefault();
+}
 
-const initializeApp = () => {
+export const initializeApp = () => {
   WebApp.ready();
   WebApp.expand();
   WebApp.isClosingConfirmationEnabled = true;
-  let stable = false;
+
+  setupDocument(true);
+  document.body.addEventListener('touchmove', preventBodyScroll, { passive: false });
 
   WebApp.onEvent("viewportChanged", (params) => {
-    stable = params.isStateStable;
-    if (!stable) {
+    if (!params.isStateStable) {
       WebApp.expand();
     }
-  });
-
-  const handleScroll = () => {
-    handlePositionCheck();
-  };
-
-  window.addEventListener("resize", debounce(handlePositionCheck, 100));
-
-  document.documentElement.addEventListener("touchstart", handlePositionCheck, {
-    passive: false,
-  });
-  document.documentElement.addEventListener("touchmove", handlePositionCheck, {
-    passive: false,
-  });
-  document.documentElement.addEventListener("touchend", handlePositionCheck, {
-    passive: false,
-  });
-  document.addEventListener("scroll", handleScroll, {
-    passive: true,
   });
 
   // Initial scroll into view
@@ -73,4 +46,7 @@ const initializeApp = () => {
   });
 };
 
-export { initializeApp };
+export const cleanupApp = () => {
+  setupDocument(false);
+  document.body.removeEventListener('touchmove', preventBodyScroll);
+};

@@ -120,50 +120,50 @@ export const Shop: React.FC<ShopProps> = ({
   };
 
   return (
-    <ShopContainer>
-      <FlexBoxRow>
-        <Tabs role="tablist">
-          <Tab
-            role="tab"
-            active={currentTab === "dealer"}
-            onClick={() => handleTabClick("dealer")}
-          >
-            Production
-          </Tab>
-          <Tab
-            role="tab"
-            active={currentTab === "shipping"}
-            onClick={() => handleTabClick("shipping")}
-          >
-            Shipping
-          </Tab>
-        </Tabs>
-      </FlexBoxRow>
-      <FlexBoxRow>
+    <>
+      <ShopContainer>
+        <FlexBoxRow>
+          <Tabs role="tablist">
+            <Tab
+              role="tab"
+              active={currentTab === "dealer"}
+              onClick={() => handleTabClick("dealer")}
+            >
+              Production
+            </Tab>
+            <Tab
+              role="tab"
+              active={currentTab === "shipping"}
+              onClick={() => handleTabClick("shipping")}
+            >
+              Shipping
+            </Tab>
+          </Tabs>
+        </FlexBoxRow>
         <UpgradeContainer>
           {currentTab === "dealer" && renderUpgrades()}
           {currentTab === "shipping" && renderShipping()}
         </UpgradeContainer>
-      </FlexBoxRow>
-      <TouchPoints touchPoints={touchPoints} />
-      <ApiToast
-        loading={
-          shippingLoading ||
-          upgradeLoading ||
-          capacityLoading ||
-          shippingTimeLoading
-        }
-        error={
-          shippingError || upgradeError || capacityError || shippingTimeError
-        }
-        successMessage={
-          shippingSuccess ||
-          upgradeSuccess ||
-          capacitySuccess ||
-          shippingTimeSuccess
-        }
-      />
-    </ShopContainer>
+        <TouchPoints touchPoints={touchPoints} />
+        <ApiToast
+          loading={
+            shippingLoading ||
+            upgradeLoading ||
+            capacityLoading ||
+            shippingTimeLoading
+          }
+          error={
+            shippingError || upgradeError || capacityError || shippingTimeError
+          }
+          successMessage={
+            shippingSuccess ||
+            upgradeSuccess ||
+            capacitySuccess ||
+            shippingTimeSuccess
+          }
+        />
+      </ShopContainer>
+    </>
   );
 };
 

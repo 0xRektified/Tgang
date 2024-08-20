@@ -1,8 +1,21 @@
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
+
+// Add global styles to prevent scrolling and bouncing
+export const GlobalStyle = createGlobalStyle`
+  html, body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    -webkit-overflow-scrolling: none;
+  }
+`;
 
 export const AirdropContainer = styled.div`
   background-color: #1c1c1e;
-  min-height: 80vh;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,8 +23,10 @@ export const AirdropContainer = styled.div`
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  touch-action: none;
 `;
-
 export const Card = styled.div`
   background-color: #2a2a2e;
   border-radius: 0.375rem;

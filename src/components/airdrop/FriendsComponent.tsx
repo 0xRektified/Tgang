@@ -36,7 +36,7 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   };
 
   return (
-    <Card>
+    <Card className="scrollable-content">
       <Stats>
         <StatDesc>Invited users</StatDesc>
         <StatValue>{referredUsers.length}</StatValue>

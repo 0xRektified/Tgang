@@ -67,7 +67,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         </ShoppingCartBalance>
         <ShoppingCartTotal>Total: ${totalCost.toFixed(0)}</ShoppingCartTotal>
       </ShoppingCartFooter>
-      <ScrollableTableContainer>
+      <ScrollableTableContainer className="scrollable-content">
         <Table>
           <thead>
             <tr>

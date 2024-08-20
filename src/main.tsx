@@ -4,11 +4,10 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import WebApp from "@twa-dev/sdk";
-import { handlePositionCheck, initializeApp } from "./appScreenHelper";
+import { initializeApp } from "./appScreenHelper";
 
 // Initialize the screen logic to avoid the app to be closed
 initializeApp();
-handlePositionCheck();
 // this manifest is used temporarily for development purposes
 const manifestUrl =
   "https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json";

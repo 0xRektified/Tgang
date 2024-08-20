@@ -8,6 +8,7 @@ export const TopMenuContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   font-family: "Digital", sans-serif;
   border: 1px solid #333;
+  touch-action: none;
 `;
 
 export const Container = styled.div`

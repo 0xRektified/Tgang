@@ -186,7 +186,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   if (!shippingMethods) return <></>;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 scrollable-content">
       {tab === "shipping" &&
         renderUpgradeCategory("Methods", shippingMethods, userInfo.shipping)}
     </div>

@@ -75,7 +75,10 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           upgradeValue: upgradeEffect,
           description: upgrade.description,
           requirements: upgrade.requirements
-            ? { name: upgrade.requirements[0].product, level: upgrade.requirements[0].level }
+            ? {
+                name: upgrade.requirements[0].product,
+                level: upgrade.requirements[0].level,
+              }
             : null,
         }}
         locked={locked || false}
@@ -223,7 +226,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 scrollable-content">
       {tab === "dealer" && renderAllDealerCategories()}
     </div>
   );

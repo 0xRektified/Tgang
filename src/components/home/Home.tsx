@@ -31,6 +31,7 @@ const HomeContainer = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   min-height: 80vh;
   height: auto;
+  touch-action: none;
 `;
 
 interface HomeProps {

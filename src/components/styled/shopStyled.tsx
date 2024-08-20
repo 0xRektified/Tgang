@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
+
 
 // Styled components
 export const FlexBoxRow = styled.div`
@@ -39,12 +40,14 @@ export const Tab = styled.button<{ active: boolean }>`
 export const UpgradeContainer = styled.div`
   background-color: #1c1c1e;
   width: 100%;
-  overflow-y: scroll;
-  height: 40rem;
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 120px);
 `;
 
 export const UpgradeCard = styled.div<{ locked: boolean }>`
@@ -105,7 +108,7 @@ export const CardDescription = styled.p`
 
 export const ShopContainer = styled.div`
   background-color: #1c1c1e;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,6 +117,7 @@ export const ShopContainer = styled.div`
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 `;
 
 // Styled components

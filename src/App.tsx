@@ -2,7 +2,7 @@ import "./App.css";
 import styled from "styled-components";
 import { FlexBoxColNoGap } from "./components/styled/globalStyled";
 import "@twa-dev/sdk";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
 import { Shop } from "./components/shop/Shop";
@@ -14,13 +14,13 @@ import Pvp from "./components/pvp/Pvp";
 import Airdrop from "./components/airdrop/Airdrop";
 import WebApp from "@twa-dev/sdk";
 import MobileOnly from "./components/MobileOnly";
+import { initializeApp, cleanupApp } from "./appScreenHelper";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  background-position-y: 36em;
 `;
 
 const AppContainer = styled.div`
@@ -30,7 +30,6 @@ const AppContainer = styled.div`
 `;
 
 function App() {
-  //@note handle loading and error properly
   const {
     userInfo,
     upgrades,
@@ -42,9 +41,17 @@ function App() {
     loading,
     error,
   } = useInitializeGame();
+
   const [currentView, setCurrentView] = useState("Base");
   const [activeTab, setActiveTab] = useState<string>("dealer");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    initializeApp();
+    return () => {
+      cleanupApp();
+    };
+  }, []);
 
   useEffect(() => {
     const test = document.getElementById("mainView");
@@ -59,14 +66,14 @@ function App() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleUnlockClick = (tab?: string) => {
+  const handleUnlockClick = useCallback((tab?: string) => {
     if (tab) {
       setActiveTab(tab);
     }
     setCurrentView("Shop");
-  };
+  }, []);
 
-  const renderCurrentView = () => {
+  const renderCurrentView = useCallback(() => {
     switch (currentView) {
       case "Base":
         return (
@@ -93,7 +100,6 @@ function App() {
             setUpgrades={setUpgrades}
           />
         );
-
       case "Airdrop":
         return (
           <Airdrop
@@ -117,12 +123,23 @@ function App() {
           />
         );
     }
-  };
+  }, [
+    currentView,
+    userInfo,
+    marketInfo,
+    setUserInfo,
+    handleUnlockClick,
+    shippingMethods,
+    labs,
+    activeTab,
+    upgrades,
+    setUpgrades,
+  ]);
 
   if (WebApp.platform !== "android" && WebApp.platform !== "ios") {
     return <MobileOnly />;
   }
-  
+
   if (loading || isInitialLoading) {
     return <Loading />;
   }
@@ -132,14 +149,10 @@ function App() {
   }
 
   return (
-    <StyledApp data-theme="dark">
+    <StyledApp data-theme="dark" id="buffer">
       <AppContainer>
-        <div
-          id="buffer"
-          style={{ height: "500px", backgroundColor: "#1e2734" }}
-        ></div>
         <TopMenu userInfo={userInfo} />
-        <FlexBoxColNoGap>{renderCurrentView()}</FlexBoxColNoGap>
+        <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
         <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
       </AppContainer>
     </StyledApp>

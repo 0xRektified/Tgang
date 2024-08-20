@@ -5,7 +5,7 @@ import { IUserInfo } from "../interfaces/user.interface";
 
 import { ApiToast } from "../ApiToast";
 
-import { AirdropContainer } from "./styles/airdrop.css";
+import { AirdropContainer, GlobalStyle } from "./styles/airdrop.css";
 import WalletComponent from "./WalletComponent";
 import RobberyComponent from "./RobberyComponent";
 import FriendsComponent from "./FriendsComponent";
@@ -29,25 +29,28 @@ const Airdrop: React.FC<AirdropProps> = ({
     useDailyRobbery(userInfo, setUserInfo);
 
   return (
-    <AirdropContainer>
-      <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
-      <FriendsComponent
-        referralToken={referralToken}
-        referredUsers={referredUsers}
-      />
-      <RobberyComponent
-        robberyStrike={robberyStrike}
-        claimDailyReward={claimDailyReward}
-        userInfo={userInfo}
-        setUserInfo={setUserInfo}
-        loading={loading}
-      />
-      <ApiToast
-        loading={loading}
-        error={error}
-        successMessage={successMessage}
-      />
-    </AirdropContainer>
+    <>
+      <GlobalStyle />
+      <AirdropContainer>
+        <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
+        <FriendsComponent
+          referralToken={referralToken}
+          referredUsers={referredUsers}
+        />
+        <RobberyComponent
+          robberyStrike={robberyStrike}
+          claimDailyReward={claimDailyReward}
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          loading={loading}
+        />
+        <ApiToast
+          loading={loading}
+          error={error}
+          successMessage={successMessage}
+        />
+      </AirdropContainer>
+    </>
   );
 };
 

@@ -8,12 +8,15 @@ const PvpContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 80vh;
+  justify-content: flex-start;
+  height: calc(100vh - 120px); // Adjust this value based on your layout
   background-size: cover;
   background-position: center;
   color: white;
   padding: 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: none;
 `;
 
 const Title = styled.div`
@@ -240,7 +243,7 @@ const Pvp: React.FC<PvpProps> = ({ userInfo }) => {
         </FightScene>
         <p>Fight against other players to steal their resources!</p>
       </FightContainer>
-      <PlayerListContainer>
+      <PlayerListContainer className="scrollable-content">
         <Title>Available Players</Title>
         <PlayerList>
           {players.map((player, index) => (
