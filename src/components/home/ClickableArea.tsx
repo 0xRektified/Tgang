@@ -96,7 +96,7 @@ const ClickableArea = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 75%;
+  width: 70%;
   height: 100%;
   padding-top: 20px;
   padding-left: 20px;
@@ -109,7 +109,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  width: 25%;
+  width: 30%;
   height: 80%;
   position: relative;
 `;
@@ -231,7 +231,7 @@ const EnhancedNeonButton = styled.button`
   display: flex;
   align-items: center;
   margin: 0.5em;
-  padding: 0.8em;
+  padding: 0.9em;
   flex: 1;
 `;
 
@@ -267,6 +267,7 @@ const NeonGoldText = styled.span`
   text-shadow: 0 0 2px #ffd700,  0 0 6px #ffd700,
     0 0 8px #ffd700, 
   font-weight: bold;
+  font-size: 0.6rem;
 `;
 
 const NeonGreenText = styled.span`
@@ -274,6 +275,8 @@ const NeonGreenText = styled.span`
   text-shadow: 0 0 2px #32cd32,  0 0 6px #32cd32,
     0 0 8px #32cd32, 
   font-weight: bold;
+  font-size: 0.6rem;
+
 `;
 interface ClickableAreaWithSmokeProps {
   products: Product[];
@@ -450,10 +453,10 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                   <ProductNameD>
                     <FlexBoxRowPriceNeon className="w-full justify-center gap-1px">
                       <NeonGoldText>
-                        ${productMarketDiscountedPrice.toFixed(0)}
+                        ${productMarketDiscountedPrice.toFixed(2)}
                       </NeonGoldText>
                       <NeonGreenText>
-                        /${productMarketprice.toFixed(0)}
+                        /${productMarketprice.toFixed(2)}
                       </NeonGreenText>
                     </FlexBoxRowPriceNeon>
                     <FlexBoxRow className="w-full justify-center">

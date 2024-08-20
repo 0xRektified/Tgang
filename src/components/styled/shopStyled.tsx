@@ -1,6 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
 
-
 // Styled components
 export const FlexBoxRow = styled.div`
   display: flex;
@@ -21,7 +20,7 @@ export const Tab = styled.button<{ active: boolean }>`
   padding: 0.75rem 0.5rem;
   border: none;
   background: none;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   color: ${({ active }) => (active ? "#ffffff" : "#8e8e93")};
   position: relative;
   transition: color 0.2s ease;
@@ -48,6 +47,7 @@ export const UpgradeContainer = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   -webkit-overflow-scrolling: touch;
   max-height: calc(100vh - 120px);
+  margin-bottom: 10em;
 `;
 
 export const UpgradeCard = styled.div<{ locked: boolean }>`

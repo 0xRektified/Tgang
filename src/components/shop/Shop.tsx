@@ -21,6 +21,7 @@ import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import { ApiToast } from "../ApiToast";
 import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
 import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
+import { IMarketInfo } from "../interfaces/market.interface";
 
 interface ShopProps {
   userInfo: IUserInfo;
@@ -29,6 +30,7 @@ interface ShopProps {
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
+  setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>;
 }
 
 export const Shop: React.FC<ShopProps> = ({
@@ -38,6 +40,7 @@ export const Shop: React.FC<ShopProps> = ({
   shippingMethods,
   setUserInfo,
   setUpgrades,
+  setMarketInfo,
 }) => {
   const [showBalanceErrorToast, setShowBalanceErrorToast] =
     useState<boolean>(false);
@@ -99,6 +102,7 @@ export const Shop: React.FC<ShopProps> = ({
         setUpgrades={setUpgrades}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
         buyUpgrade={buyUpgrade}
+        setMarketInfo={setMarketInfo}
       />
     );
   };

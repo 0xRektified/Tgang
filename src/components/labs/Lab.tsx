@@ -123,23 +123,17 @@ const AddPlotButton = styled.button`
   }
 `;
 
-const CollectIcon = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2rem;
-  color: white;
-  transition: transform 2s, opacity 2s;
-  opacity: 1;
-  background-color: red;
-  height: 25px;
-  width: 25px;
+const DescriptionContainer = styled.div`
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+`;
 
-  &.collected {
-    transform: translateX(-50%) translateY(-200px);
-    opacity: 0;
-  }
+const DescriptionText = styled.p`
+  color: #e2e8f0;
+  font-size: 1rem;
+  text-align: center;
 `;
 
 interface LabProps {
@@ -263,6 +257,11 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
 
   return (
     <LabContainer>
+      <DescriptionContainer>
+        <DescriptionText>
+          Expand your empire by producing resources
+        </DescriptionText>
+      </DescriptionContainer>
       <h2 className="text-lg font-bold p-2">Current Production per hour</h2>
       <CombinedProduction
         currentAmount={mapProductsToProduction(userInfo.products)}

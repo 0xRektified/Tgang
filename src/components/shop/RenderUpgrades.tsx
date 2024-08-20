@@ -12,6 +12,7 @@ import { EProduct } from "../interfaces/product.interface";
 import BuyCard from "../BuyCard";
 import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
+import { IMarketInfo } from "../interfaces/market.interface";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -21,12 +22,14 @@ interface RenderUpgradesProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
+  setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>;
   buyUpgrade: (
     params: {
       category: EUpgradeCategory;
       upgrade: EProduct | EDealerUpgrade;
     },
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
+    setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>
   ) => Promise<void>;
 }
 
@@ -38,6 +41,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   setUserInfo,
   setShowBalanceErrorToast,
   buyUpgrade,
+  setMarketInfo,
 }) => {
   const renderRequirements = (
     requirements?: { name: string; level: number } | null
@@ -62,8 +66,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     upgradeEffect?: string,
     locked?: boolean
   ) => {
-    const noop = () => {};
-
     return (
       <BuyCard
         key={key}
@@ -82,7 +84,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             : null,
         }}
         locked={locked || false}
-        onBuyClick={buyUpgrade}
+        onBuyClick={(params) => buyUpgrade(params, setUserInfo, setMarketInfo)}
         upgradeOption={false}
         renderRequirements={renderRequirements}
         userInfo={userInfo}
@@ -103,7 +105,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     userInfo: IUserInfo
   ) => (
     <div key={categoryTitle}>
-      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <h3 className="text-2xl font-semibold capitalize p-4">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const productUpgrade = upgrade as DealerUpgrade;
@@ -168,7 +170,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     userInfo: IUserInfo
   ) => (
     <div key={categoryTitle}>
-      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <h3 className="text-2xl font-semibold capitalize p-4">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(upgrades ?? {}).map(([key, upgrade]) => {
           const productUpgrade = upgrade as ProductUpgrade;
@@ -211,13 +213,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   const renderAllDealerCategories = () => (
     <>
       {renderProductCategory(
-        "Products",
+        "Products Discounts",
         upgradesData?.product ?? {},
         EUpgradeCategory.PRODUCT,
         userInfo
       )}
       {renderUpgradeCategory(
-        "Customers",
+        "Customers Boosters",
         upgradesData?.dealer ?? {},
         EUpgradeCategory.DEALER,
         userInfo

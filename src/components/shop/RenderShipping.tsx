@@ -137,7 +137,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     userShipping: IUserShipping[]
   ) => (
     <div key={categoryTitle}>
-      <h3 className="text-2xl font-semibold capitalize">{categoryTitle}</h3>
+      <h3 className="text-2xl font-semibold capitalize p-4">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(shippingMethods ?? {}).map(([key, method]) => {
           const userUpgrade: IUserShipping | undefined = userShipping.find(
@@ -188,7 +188,11 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   return (
     <div className="space-y-4 scrollable-content">
       {tab === "shipping" &&
-        renderUpgradeCategory("Methods", shippingMethods, userInfo.shipping)}
+        renderUpgradeCategory(
+          "Shipping Methods",
+          shippingMethods,
+          userInfo.shipping
+        )}
     </div>
   );
 };

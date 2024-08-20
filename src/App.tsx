@@ -38,6 +38,7 @@ function App() {
     shippingMethods,
     setUserInfo,
     setUpgrades,
+    setMarketInfo,
     loading,
     error,
   } = useInitializeGame();
@@ -98,6 +99,7 @@ function App() {
             shippingMethods={shippingMethods}
             setUserInfo={setUserInfo}
             setUpgrades={setUpgrades}
+            setMarketInfo={setMarketInfo}
           />
         );
       case "Airdrop":
@@ -128,6 +130,7 @@ function App() {
     userInfo,
     marketInfo,
     setUserInfo,
+    setMarketInfo,
     handleUnlockClick,
     shippingMethods,
     labs,
@@ -158,5 +161,4 @@ function App() {
     </StyledApp>
   );
 }
-
 export default App;
