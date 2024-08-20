@@ -25,7 +25,6 @@ export function useUpgradeShippingCapacity() {
       setSuccessMessage("Shipping capacity upgraded successfully!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data.message);
         const message = error.response?.data?.message || error.message;
         setError(message);
       } else {
