@@ -357,7 +357,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   }, []);
 
   const handleCombinedOnLoad = useCallback(() => {
-    console.log("Image loaded");
     handleImageLoad();
   }, [handleImageLoad]);
 
@@ -390,7 +389,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   return (
     <Wrapper>
       {smokes}
-
       <ClickableArea onTouchStart={handleAnimation}>
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
@@ -434,10 +432,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             const product = products.find((p) => p.name === productName);
             let productMarketprice = 0;
             let productMarketDiscountedPrice = 0;
-            console.log(`marketInfo`);
-            console.log(marketInfo);
-            console.log(`products`);
-            console.log(products);
             if (marketInfo && marketInfo.products.length > 0) {
               const productMarket = marketInfo.products.find(
                 (m) => m.name === productName
@@ -456,9 +450,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                   <ProductNameD>
                     <FlexBoxRowPriceNeon className="w-full justify-center gap-1px">
                       <NeonGoldText>
-                        ${productMarketDiscountedPrice}
+                        ${productMarketDiscountedPrice.toFixed(0)}
                       </NeonGoldText>
-                      /<NeonGreenText>${productMarketprice}</NeonGreenText>
+                      <NeonGreenText>
+                        /${productMarketprice.toFixed(0)}
+                      </NeonGreenText>
                     </FlexBoxRowPriceNeon>
                     <FlexBoxRow className="w-full justify-center">
                       {EProductIcon[productName as keyof typeof EProductIcon]}

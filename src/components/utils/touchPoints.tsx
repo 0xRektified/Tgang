@@ -14,7 +14,7 @@ export const TouchPoints: React.FC<TouchPointsProps> = ({ touchPoints }) => {
           className={`absolute font-bold animate-fade-out text-3xl pointer-events-none ${
             point.amountEarned > 0 ? "text-green-500" : "text-red-500"
           }`}
-          style={{ top: 500 + point.y - 50, left: point.x }}
+          style={{ top: point.y - 50, left: point.x }}
         >
           {point.amountEarned > 0
             ? `+${point.amountEarned}$`

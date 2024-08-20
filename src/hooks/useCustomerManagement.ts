@@ -19,11 +19,6 @@ const useCustomerManagement = (
         userInfo.customerAmountRemaining + newCustomers,
         userInfo.customerAmountMax
       );
-      console.log(`useCustomerManagement interval newCustomers`, newCustomers);
-      console.log(
-        `useCustomerManagement interval customerAmount`,
-        customerAmount
-      );
       // @note If max value is reach do not sync, it put less update on the state
       // and avoid bug where total customer is flipping to max during a sell
       if (customerAmount < userInfo.customerAmountMax) {

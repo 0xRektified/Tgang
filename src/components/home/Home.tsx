@@ -22,6 +22,8 @@ import {
 import { CombinedModal } from "./CombinedModal";
 import { getRandomEmoji } from "./HomeBoard";
 
+const formatNumber = (num: number) => num.toFixed(2);
+
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -166,7 +168,7 @@ export const Home: React.FC<HomeProps> = ({
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
-        amountEarned: transaction?.amountEarned || 0,
+        amountEarned: transaction?.amountEarned ? Number(formatNumber(transaction.amountEarned)) : 0,
       };
 
       addToBatch(selectedProduct);
@@ -197,7 +199,7 @@ export const Home: React.FC<HomeProps> = ({
           ...prevUser,
           customerAmount,
           customerAmountRemaining,
-          cashAmount: cashState,
+          cashAmount: Number(formatNumber(cashState)),
           products: updatedProducts,
         };
       });
