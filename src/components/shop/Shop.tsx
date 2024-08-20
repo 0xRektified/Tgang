@@ -128,7 +128,7 @@ export const Shop: React.FC<ShopProps> = ({
             active={currentTab === "dealer"}
             onClick={() => handleTabClick("dealer")}
           >
-            Dealer
+            Production
           </Tab>
           <Tab
             role="tab"

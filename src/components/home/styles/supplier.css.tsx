@@ -62,7 +62,7 @@ export const WebPageTitle = styled.div`
   background-color: white;
   color: black;
   font-size: 0.7rem;
-  margin: 5px;
+  margin-bottom: 2px;
 `;
 
 export const RoundButton = styled.button`
@@ -304,7 +304,7 @@ export const Countdown = styled.div`
 export const TabContainer = styled.div`
   display: flex;
   border-bottom: 1px solid #4a5568;
-  margin-bottom: 1rem; /* Add some spacing below the tabs */
+  margin-bottom: 0.2rem; /* Add some spacing below the tabs */
 `;
 
 export const Tab = styled.button<{ active?: boolean }>`

@@ -55,8 +55,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         <FlexBoxCol style={{ gap: "0px" }}>
           <SiteTitle>Welcome to Tilk Road</SiteTitle>
           <p>
-            Market prices shift <b>daily</b> with global trends. Stay alert to
-            seize every opportunity.
+            Market prices shift <b style={{ fontSize: "1.2em" }}>daily</b> with
+            global trends. Stay alert to seize every opportunity.
           </p>
         </FlexBoxCol>
       </FlexBoxRow>
@@ -127,7 +127,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                             )
                           ) : (
                             <span
-                              className="text-yellow-400 animate-pulse cursor-pointer"
+                              className="text-blue-400 bg-blue-900 bg-opacity-20 px-3 py-1 rounded-full cursor-pointer transition-all duration-300 hover:bg-opacity-30 animate-pulse-smooth"
                               onClick={() => handleUnlockClick(product)}
                             >
                               Unlock

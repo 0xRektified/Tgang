@@ -239,7 +239,6 @@ export const SiteDescription = styled.p`
 
 export const StyledLink = styled.p`
   margin-top: 0.5em;
-  margin-bottom: 0.5em;
   font-size: 0.8rem;
   color: #1e90ff;
   text-shadow: "0 0 8px #1e90ff";

@@ -165,26 +165,9 @@ const CenteredIconContainer = styled.div`
   margin-bottom: 1em;
 `;
 
-const NeonButton = styled.button`
-  background-color: rgb(39 39 42);
-  color: #e4e4e7;
-  border-radius: 6px;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.8em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  margin: 0.5em;
-  padding: 0.8em;
-  flex: 1;
-`;
-
-const EnhancedNeonButton = styled(NeonButton)`
+const EnhancedNeonButton = styled.button`
   background: linear-gradient(45deg, #2c3e50, #4a69bd);
+  color: white;
   border: 2px solid #74b9ff;
   padding: 0.6em 1em;
   font-size: 0.9em;
@@ -238,6 +221,19 @@ const EnhancedNeonButton = styled(NeonButton)`
   @media (max-width: 480px) {
     font-size: 0.6em;
   }
+  border-radius: 6px;
+  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
+    0 0 10px #eab308;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  margin: 0.5em;
+  padding: 0.8em;
+  flex: 1;
 `;
 
 const ButtonContent = styled.div`
@@ -438,6 +434,10 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             const product = products.find((p) => p.name === productName);
             let productMarketprice = 0;
             let productMarketDiscountedPrice = 0;
+            console.log(`marketInfo`);
+            console.log(marketInfo);
+            console.log(`products`);
+            console.log(products);
             if (marketInfo && marketInfo.products.length > 0) {
               const productMarket = marketInfo.products.find(
                 (m) => m.name === productName

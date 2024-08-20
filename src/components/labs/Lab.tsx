@@ -22,12 +22,16 @@ const LabContainer = styled.div`
   min-height: 80vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 1rem;
+  align-items: stretch;
+  padding: 1em;
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   position: relative;
+
+  > * {
+    width: 100%;
+  }
 `;
 
 const LabsGrid = styled.div`

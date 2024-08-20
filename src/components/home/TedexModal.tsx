@@ -71,7 +71,7 @@ export const TedexModal: React.FC<TedexProps> = ({
 
   const shipmentInProgress = (nextShipment: Date) => {
     return nextShipment.getTime() > new Date().getTime();
-  }
+  };
 
   const calculateCountdown = (nextShipment: Date, shippingTime: number) => {
     const now = new Date().getTime();
@@ -99,22 +99,18 @@ export const TedexModal: React.FC<TedexProps> = ({
   const renderShippingButton = (userShipping: IUserShipping) => {
     if (shipmentInProgress(new Date(userShipping.nextShipment))) {
       return (
-        <NeonButtonShippingLocked
-          onClick={() => handleUnlockClick()}
-        >
+        <NeonButtonShippingLocked onClick={() => handleUnlockClick()}>
           In progress
         </NeonButtonShippingLocked>
       );
     } else {
       return (
-        <NeonButtonShipping
-          onClick={() => handleOpenModal(userShipping!)}
-        >
+        <NeonButtonShipping onClick={() => handleOpenModal(userShipping!)}>
           Ship up to {userShipping.capacity}
         </NeonButtonShipping>
       );
     }
-  }
+  };
 
   return (
     <>
@@ -133,8 +129,7 @@ export const TedexModal: React.FC<TedexProps> = ({
             Tedex is your global shipping platform, enabling you to ship any
             product worldwide with ease.{" "}
             <StyledLink onClick={() => handleUnlockClick()}>
-              Check the different shipping options available to ensure your
-              products arrive on time, every time.
+              Check the different shipping options available.
             </StyledLink>
           </SiteDescription>
         </FlexBoxCol>
@@ -162,12 +157,15 @@ export const TedexModal: React.FC<TedexProps> = ({
                   <CardContent>
                     <CardInfoColumn>
                       {locked ? (
-                        <NeonButtonShippingLocked
+                        <span
+                          className="text-blue-400 bg-blue-900 bg-opacity-20 px-3 py-1 rounded-full cursor-pointer transition-all duration-300 hover:bg-opacity-30 animate-pulse-smooth"
                           onClick={() => handleUnlockClick()}
                         >
-                          Locked
-                        </NeonButtonShippingLocked>
-                      ) : renderShippingButton(userShipping!)}
+                          Unlock
+                        </span>
+                      ) : (
+                        renderShippingButton(userShipping!)
+                      )}
                     </CardInfoColumn>
                     {userShipping && (
                       <div>

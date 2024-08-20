@@ -5,6 +5,9 @@ import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
 const CombinedProductionGrid = styled.div`
   display: grid;
+  background-color: #10346e3d;
+  border-radius: 0.375rem;
+
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1rem;
 
@@ -15,8 +18,6 @@ const CombinedProductionGrid = styled.div`
 
 const CombinedProductionItem = styled.div`
   padding: 0.2rem;
-  background-color: #10346e3d;
-  border-radius: 0.375rem;
   text-align: center;
   color: white;
   display: flex;

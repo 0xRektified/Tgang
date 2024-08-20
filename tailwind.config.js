@@ -49,6 +49,10 @@ export default {
             opacity: 0,
           },
         },
+        pulseSmooth: {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.5 },
+        },
       },
       animation: {
         "fade-in": "fadeIn 1s forwards",
@@ -61,6 +65,7 @@ export default {
         resize: "resize 0.5s forwards",
         "move-up-random-x": "moveUpRandomX 1s forwards",
         "scale-up-down": "scaleUpDown 0.1s ease-in-out",
+        "pulse-smooth": "pulseSmooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },

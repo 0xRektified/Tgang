@@ -97,7 +97,7 @@ const BuyConfirmationModal: React.FC<BuyConfirmationModalProps> = ({
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>Confirm Purchase</ModalHeader>
         <ModalText>
-          Are you sure you want to buy {itemTitle} for{" "}
+          Are you sure you want to buy {itemTitle} upgrade for{" "}
           <PriceText>{formatPrice(itemCost, false)}</PriceText>?
         </ModalText>
         <ButtonContainer>
