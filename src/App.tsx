@@ -12,6 +12,8 @@ import { useInitializeGame } from "./hooks/useInitializeGame";
 import Lab from "./components/labs/Lab";
 import Pvp from "./components/pvp/Pvp";
 import Airdrop from "./components/airdrop/Airdrop";
+import WebApp from "@twa-dev/sdk";
+import MobileOnly from "./components/MobileOnly";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -117,6 +119,10 @@ function App() {
     }
   };
 
+  if (WebApp.platform !== "android" && WebApp.platform !== "ios") {
+    return <MobileOnly />;
+  }
+  
   if (loading || isInitialLoading) {
     return <Loading />;
   }
