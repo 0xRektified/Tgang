@@ -15,6 +15,7 @@ import { MdArrowCircleRight } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
+import { FaStore } from "react-icons/fa";
 
 const Arrow = styled(({ isSelected, ...rest }) => (
   <MdArrowCircleRight {...rest} />
@@ -65,8 +66,8 @@ const NeonText = styled.div`
   color: #fff;
   text-align: right;
   font-weight: bold;
-  text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700,
-    0 0 20px #ffd700, 0 0 25px #ffd700, 0 0 30px #ffd700, 0 0 35px #ffd700;
+  text-shadow: 0 0 5px #74b9ff, 0 0 10px #74b9ff, 0 0 15px #74b9ff,
+    0 0 20px #74b9ff, 0 0 25px #74b9ff, 0 0 30px #74b9ff, 0 0 35px #74b9ff;
   animation: glow 1.5s infinite alternate, pulse 2s infinite;
   position: absolute;
   top: 0px;
@@ -75,12 +76,12 @@ const NeonText = styled.div`
   box-shadow: none !important;
   @keyframes glow {
     from {
-      text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700,
-        0 0 20px #ffd700, 0 0 25px #ffd700, 0 0 30px #ffd700, 0 0 35px #ffd700;
+      text-shadow: 0 0 5px #74b9ff, 0 0 10px #74b9ff, 0 0 15px #74b9ff,
+        0 0 20px #74b9ff, 0 0 25px #74b9ff, 0 0 30px #74b9ff, 0 0 35px #74b9ff;
     }
     to {
-      text-shadow: 0 0 10px #ffdf00, 0 0 20px #ffdf00, 0 0 30px #ffdf00,
-        0 0 40px #ffdf00, 0 0 50px #ffdf00, 0 0 60px #ffdf00, 0 0 70px #ffdf00;
+      text-shadow: 0 0 10px #74b9ff, 0 0 20px #74b9ff, 0 0 30px #74b9ff,
+        0 0 40px #74b9ff, 0 0 50px #74b9ff, 0 0 60px #74b9ff, 0 0 70px #74b9ff;
     }
   }
 `;
@@ -182,6 +183,84 @@ const NeonButton = styled.button`
   flex: 1;
 `;
 
+const EnhancedNeonButton = styled(NeonButton)`
+  background: linear-gradient(45deg, #2c3e50, #4a69bd);
+  border: 2px solid #74b9ff;
+  padding: 0.6em 1em;
+  font-size: 0.9em;
+  text-shadow: 0 0 5px #74b9ff;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  margin: 0 auto;
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(116, 185, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0);
+    }
+  }
+
+  animation: pulse 2s infinite;
+
+  &:hover {
+    background: linear-gradient(45deg, #4a69bd, #2c3e50);
+    box-shadow: 0 0 10px #74b9ff, 0 0 20px #74b9ff;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    padding: 0.5em 0.8em;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 0.7em;
+    padding: 0.5em;
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.6em;
+  }
+`;
+
+const ButtonContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+`;
+
+const IconWrapper = styled.div`
+  font-size: 1.5em;
+  margin-bottom: 0.3em;
+`;
+
+const ButtonText = styled.span`
+  margin-left: 0.5em;
+  @media (max-width: 360px) {
+    display: none;
+  }
+`;
+
 export const FlexBoxRowPriceNeon = styled.div`
   display: flex;
   flex-direction: row;
@@ -191,7 +270,7 @@ export const FlexBoxRowPriceNeon = styled.div`
 const NeonGoldText = styled.span`
   color: #ffd700;
   text-shadow: 0 0 2px #ffd700,  0 0 6px #ffd700,
-    0 0 8px #ffd700,
+    0 0 8px #ffd700, 
   font-weight: bold;
 `;
 
@@ -342,9 +421,18 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
       <Container>
         <ProductsList>
           <CenteredIconContainer>
-            <NeonButton onClick={handleOpenSupplierModal} className="skeleton">
-              Market
-            </NeonButton>
+            <EnhancedNeonButton
+              onClick={handleOpenSupplierModal}
+              className="skeleton"
+            >
+              <ButtonContent>
+                <IconWrapper>
+                  <FaStore />
+                </IconWrapper>
+                <div>Trade</div>
+                <div>Market</div>
+              </ButtonContent>
+            </EnhancedNeonButton>
           </CenteredIconContainer>
           {Object.values(EProduct).map((productName, index) => {
             const product = products.find((p) => p.name === productName);
