@@ -88,7 +88,7 @@ const LabModal: React.FC<LabModalProps> = ({
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <LabTitle>Select a Lab</LabTitle>
-        <LabGrid>
+        <LabGrid className="scrollable-content">
           {Object.entries(labs).map(([labKey, lab]) => {
             const levelRequirement = lab.levelRequirement;
             let locked = false;
