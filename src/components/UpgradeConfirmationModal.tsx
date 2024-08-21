@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { CardTitle, NeonButton } from "./styled/cardStyled";
+import { Button, CardRequirement, CardTitle, NeonButton } from "./styled/cardStyled";
 import { formatPrice } from "./utils/formater";
+import { RequirementType } from "./interfaces/upgrade.interface";
 
 const ModalBackground = styled.div`
   position: fixed;

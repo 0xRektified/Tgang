@@ -13,6 +13,7 @@ import {
 } from "../styled/renderUpgradesStyled";
 import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
+import { RequirementType } from "../interfaces/upgrade.interface";
 
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
@@ -74,15 +75,6 @@ const LabModal: React.FC<LabModalProps> = ({
     }
   };
 
-  const renderRequirements = (
-    requirements?: { name: string; level: number } | null
-  ) => (
-    <CardRequirement>
-      Requires {requirements?.name || "Unknown"} Level{" "}
-      {requirements?.level || 0}
-    </CardRequirement>
-  );
-
   return (
     <ModalBackground onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
@@ -112,6 +104,7 @@ const LabModal: React.FC<LabModalProps> = ({
                   requirements: {
                     name: labKey,
                     level: levelRequirement,
+                    requirement: 'product',
                   },
                 }}
                 locked={locked}
@@ -119,7 +112,6 @@ const LabModal: React.FC<LabModalProps> = ({
                   handleBuyClick(labKey as EProduct, plotId, lab.labPrice, e)
                 }
                 upgradeOption={false}
-                renderRequirements={renderRequirements}
                 userInfo={userInfo}
                 setUserInfo={setUserInfo}
                 setTouchPoints={setTouchPoints}

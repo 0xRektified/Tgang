@@ -7,10 +7,10 @@ import { CardRequirement } from "../styled/cardStyled";
 import {
   EShippingMethod,
   IShippingMethod,
-  Requirement,
 } from "../interfaces/shipping.interface";
 import BuyCard from "../BuyCard";
 import { convertSecondsToReadableTime } from "../utils/formater";
+import { IRequirement, RequirementType } from "../interfaces/upgrade.interface";
 
 interface RenderShippingProps {
   userInfo: IUserInfo;
@@ -44,20 +44,6 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   upgradeShippingCapacity,
   upgradeShippingShippingTime,
 }) => {
-  const renderRequirements = (
-    requirements?: { name: string; level: number } | null
-  ) => {
-    if (!requirements) return <></>;
-
-    return (
-      <div>
-        <CardRequirement>
-          Requires {requirements.name} Level {requirements.level}
-        </CardRequirement>
-      </div>
-    );
-  };
-
   const render = (
     shipping: IUserShipping | undefined,
     upgrade: IShippingMethod,
@@ -66,7 +52,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     shippingTimeLevel: string,
     price?: number,
     locked?: boolean,
-    requirement?: Requirement | null
+    requirement?: IRequirement | null
   ) => {
     let bought = false;
     if (shipping) {
@@ -111,7 +97,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           shippingTimeLevel: shippingTimeLevel,
           description: upgrade.description,
           requirements: requirement
-            ? { name: key.toString(), level: requirement.referredUsers }
+            ? { name: key.toString(), level: requirement.level, requirement: requirement.requirement }
             : null,
         }}
         locked={locked || false}
@@ -119,7 +105,6 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           await buyShippingMethod(upgrade.title, setUserInfo);
         }}
         upgradeOption={bought}
-        renderRequirements={renderRequirements}
         userInfo={userInfo}
         setUserInfo={setUserInfo}
         setTouchPoints={setTouchPoints}
@@ -146,7 +131,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           let price = method.basePrice;
           let capacityLevel: string;
           let shippingTimeLevel: string;
-          let requirement: Requirement | null = null;
+          let requirement: IRequirement | null = null;
           if (userUpgrade) {
             capacityLevel = `${userUpgrade.capacity} to ${userUpgrade.upgradeCapacity}`;
             shippingTimeLevel = `
@@ -160,12 +145,16 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             )}`;
           }
 
-          requirement = method.requirement;
+          if (userUpgrade?.requirements) {
+            requirement = userUpgrade.requirements[0];
+          } else if (method.requirements) {
+            requirement = method.requirements[0];
+          }
 
           let locked = false;
           if (requirement) {
             const referredUsers = userInfo.referredUsers.length;
-            locked = referredUsers < requirement.referredUsers;
+            locked = referredUsers < requirement.level;
           }
 
           return render(

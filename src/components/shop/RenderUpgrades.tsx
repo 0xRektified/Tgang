@@ -6,6 +6,7 @@ import {
   IRequirement,
   IUpgrade,
   ProductUpgrade,
+  RequirementType,
 } from "../interfaces/upgrade.interface";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
@@ -43,20 +44,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   buyUpgrade,
   setMarketInfo,
 }) => {
-  const renderRequirements = (
-    requirements?: { name: string; level: number } | null
-  ) => {
-    if (!requirements) return <></>;
-
-    return (
-      <div>
-        <CardRequirement>
-          Requires {requirements.name} Level {requirements.level}
-        </CardRequirement>
-      </div>
-    );
-  };
-
   const render = (
     upgrade: ProductUpgrade | DealerUpgrade,
     key: EProduct | EDealerUpgrade,
@@ -80,13 +67,13 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             ? {
                 name: upgrade.requirements[0].product,
                 level: upgrade.requirements[0].level,
+                requirement: upgrade.requirements[0].requirement,
               }
             : null,
         }}
         locked={locked || false}
         onBuyClick={(params) => buyUpgrade(params, setUserInfo, setMarketInfo)}
         upgradeOption={false}
-        renderRequirements={renderRequirements}
         userInfo={userInfo}
         setUserInfo={setUserInfo}
         setTouchPoints={setTouchPoints}

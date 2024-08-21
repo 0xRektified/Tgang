@@ -13,12 +13,14 @@ import {
   CardInfoColumnText,
   CardCost,
   CardInfoColumnUpgradeValue,
+  CardRequirement,
 } from "./styled/cardStyled";
 import BuyConfirmationModal from "./BuyConfirmationModal";
 import { IUserInfo } from "./interfaces/user.interface";
 import { UpgradeConfirmationModal } from "./UpgradeConfirmationModal";
 import { TouchPoint } from "./utils/types";
 import { formatPrice } from "./utils/formater";
+import { RequirementType } from "./interfaces/upgrade.interface";
 
 interface BuyCardProps {
   item: {
@@ -33,7 +35,7 @@ interface BuyCardProps {
     labCapacity?: number | undefined;
     labProduction?: number | undefined;
     description: string;
-    requirements?: { name: string; level: number } | null;
+    requirements?: { name?: string; level: number, requirement: RequirementType } | null;
   };
   locked: boolean;
   onBuyClick: (
@@ -41,9 +43,6 @@ interface BuyCardProps {
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => Promise<void>;
   upgradeOption: boolean;
-  renderRequirements: (
-    requirements?: { name: string; level: number } | null
-  ) => React.ReactNode;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setTouchPoints: React.Dispatch<React.SetStateAction<TouchPoint[]>>;
@@ -64,7 +63,6 @@ const BuyCard: React.FC<BuyCardProps> = ({
   locked,
   onBuyClick,
   upgradeOption,
-  renderRequirements,
   userInfo,
   setUserInfo,
   setTouchPoints,
@@ -94,6 +92,27 @@ const BuyCard: React.FC<BuyCardProps> = ({
   const safeRequirements = requirements
     ? { ...requirements, name: requirements.name || "Unknown" }
     : null;
+
+  const renderRequirements = (
+    requirements?: { name?: string; level: number, requirement: RequirementType } | null
+  ) => {
+    if (!requirements) return <></>;
+  
+    if (requirements?.requirement == 'referredUsers') {
+      return (
+        <CardRequirement>
+          Requires {requirements?.level || 0} Referred Users
+        </CardRequirement>
+      );
+    } else {
+      return (
+        <CardRequirement>
+          Requires {requirements?.name || "Unknown"} Level{" "}
+          {requirements?.level || 0}
+        </CardRequirement>
+      );
+    }
+  };
 
   const handleCardClick = async (price: number) => {
     if (userInfo.cashAmount >= price) {

@@ -1,6 +1,6 @@
 import { EProduct } from "./product.interface";
-import { EShippingMethod, Requirement } from "./shipping.interface";
-import { EDealerUpgrade, IUpgrade } from "./upgrade.interface";
+import { EShippingMethod } from "./shipping.interface";
+import { EDealerUpgrade, IRequirement, IUpgrade } from "./upgrade.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -37,7 +37,7 @@ export interface IUserShipping {
   upgradeShippingTime: number;
   lastShipment: Date;
   nextShipment: Date;
-  requirement: Requirement | null;
+  requirements: IRequirement[] | null;
 }
 
 export interface Product {
@@ -61,6 +61,7 @@ export interface UserDealerUpgrade {
   amount: number;
   upgradePrice: number;
   upgradeAmount: number;
+  requirements: IRequirement[] | null;
 }
 
 export interface IReputationLevel {

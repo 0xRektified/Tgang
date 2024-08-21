@@ -22,9 +22,14 @@ export enum EDealerUpgrade {
   BULK_BAGS = "bulk_bags",
 }
 
+export type UpgradeRequirementType = 'fixed' | 'linear';
+export type RequirementType = 'product' | 'referredUsers';
+
 export interface IRequirement {
-  product: EProduct;
+  product?: EProduct;
   level: number;
+  requirement: RequirementType;
+  type: UpgradeRequirementType;
 }
 
 export interface DealerUpgrade {

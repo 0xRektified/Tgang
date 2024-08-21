@@ -1,3 +1,5 @@
+import { IRequirement } from "./upgrade.interface";
+
 export enum EShippingMethod {
   ENVELOPE = "Envelope",
   PACKAGE = "Package",
@@ -19,12 +21,5 @@ export interface IShippingMethod {
   capacityLevel: number;
   shippingTimeLevel: number;
   image: string;
-  requirement: Requirement | null;
-}
-
-export type UpgradeRequirementType = "fixed" | "linear";
-
-export interface Requirement {
-  referredUsers: number;
-  type: UpgradeRequirementType;
+  requirements: IRequirement[] | null;
 }
