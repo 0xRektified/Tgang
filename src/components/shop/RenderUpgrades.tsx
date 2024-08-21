@@ -118,8 +118,8 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           let upgradeEffect: string | undefined;
           switch (key) {
             case EDealerUpgrade.SOCIAL_MEDIA_CAMPAGIN:
-            case EDealerUpgrade.STREET_PROMOTION_TEAM:
-            case EDealerUpgrade.CLUB_PARTNERSHIP:
+            // case EDealerUpgrade.STREET_PROMOTION_TEAM:
+            // case EDealerUpgrade.CLUB_PARTNERSHIP:
               upgradeEffect = `Adds ${
                 upgradeDiff || productUpgrade.amountMultiplier
               } customers`;
