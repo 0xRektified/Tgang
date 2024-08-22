@@ -108,7 +108,7 @@ export function useInitializeGame() {
       console.log(`labs:`, labs);
       console.log(`shippingMethods:`, shippingMethods);
     } catch (error) {
-      setError("Failed to initialize game");
+      setError(`Failed to initialize game: ${error}`);
       console.error(error);
     } finally {
       setLoading(false);

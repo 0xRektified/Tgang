@@ -7,13 +7,14 @@ import axiosInstance, { setAuthToken } from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
 
 export function useAuthAndFetchUserData(
-  setUser: React.Dispatch<React.SetStateAction<IUserInfo>>
+  setUser: React.Dispatch<React.SetStateAction<IUserInfo>>,
 ) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const login = async () => {
+      let sanitizedResult: Record<string, any> = {};
       try {
         const decodedInput = decodeURIComponent(WebApp.initData);
         const parsedQuery = queryString.parse(decodedInput);
@@ -32,12 +33,14 @@ export function useAuthAndFetchUserData(
                 sanitizedQuery.user = {
                   id: user.id,
                   first_name: validator.escape(user.first_name),
-                  username: validator.escape(user.username),
+                  username: user.username
+                    ? validator.escape(user.username)
+                    : undefined,
                   language_code: validator.escape(user.language_code),
                 };
               }
             } catch (error) {
-              throw new Error("Invalid user JSON format");
+              throw new Error(`Invalid user JSON format ${error}`);
             }
           }
           return sanitizedQuery;
@@ -45,7 +48,7 @@ export function useAuthAndFetchUserData(
         const sanitizedResult = sanitizeQuery(parsedQuery);
         const response = await axios.post<{ access_token: string }>(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
-          sanitizedResult
+          sanitizedResult,
         );
         const { access_token } = response.data;
         setAuthToken(access_token);
@@ -53,7 +56,7 @@ export function useAuthAndFetchUserData(
         setUser(userInfoResponse.data);
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
-        setError("Failed to authenticate and fetch user data");
+        setError(`Failed to authenticate and fetch user data ${error}`);
       } finally {
         setLoading(false);
       }
