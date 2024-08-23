@@ -15,6 +15,7 @@ import Airdrop from "./components/airdrop/Airdrop";
 import WebApp from "@twa-dev/sdk";
 import MobileOnly from "./components/MobileOnly";
 import { initializeApp, cleanupApp } from "./appScreenHelper";
+import mixpanel from "mixpanel-browser";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -75,6 +76,9 @@ function App() {
   }, []);
 
   const renderCurrentView = useCallback(() => {
+    // Track the page view
+    // mixpanel.track('Page View', { page: currentView });
+
     switch (currentView) {
       case "Base":
         return (
