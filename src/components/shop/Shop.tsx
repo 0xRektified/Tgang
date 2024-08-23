@@ -22,6 +22,7 @@ import { ApiToast } from "../ApiToast";
 import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
 import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
 import { IMarketInfo } from "../interfaces/market.interface";
+import mixpanel from "mixpanel-browser";
 
 interface ShopProps {
   userInfo: IUserInfo;
@@ -89,6 +90,7 @@ export const Shop: React.FC<ShopProps> = ({
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
+    mixpanel.track("Shop Tab Changed", { tab });
   };
 
   const renderUpgrades = () => {

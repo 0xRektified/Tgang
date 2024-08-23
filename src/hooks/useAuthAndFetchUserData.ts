@@ -3,8 +3,9 @@ import queryString from "query-string";
 import validator from "validator";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import axiosInstance, { setAuthToken } from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
+import axiosInstance, { setAuthToken } from "../api/axiosConfig";
+import mixpanel from "mixpanel-browser";
 
 export function useAuthAndFetchUserData(
   setUser: React.Dispatch<React.SetStateAction<IUserInfo>>,
@@ -54,6 +55,13 @@ export function useAuthAndFetchUserData(
         setAuthToken(access_token);
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
         setUser(userInfoResponse.data);
+
+        mixpanel.identify(userInfoResponse.data.id.toString());
+        mixpanel.people.set({
+          $name: userInfoResponse.data.username,
+          $last_login: new Date(),
+        });
+        mixpanel.track("Login");
       } catch (error) {
         console.error("Failed to parse and sanitize query or login:", error);
         setError(`Failed to authenticate and fetch user data ${error}`);

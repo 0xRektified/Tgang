@@ -44,6 +44,16 @@ function App() {
     error,
   } = useInitializeGame();
 
+  useEffect(() => {
+    const mixpanelToken = import.meta.env.VITE_MIXPANEL_TOKEN;
+    if (mixpanelToken) {
+      mixpanel.init(mixpanelToken);
+      mixpanel.set_config({ debug: true });
+    } else {
+      console.warn("Mixpanel token not found in environment variables");
+    }
+  }, []);
+
   const [currentView, setCurrentView] = useState("Base");
   const [activeTab, setActiveTab] = useState<string>("dealer");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -76,8 +86,10 @@ function App() {
   }, []);
 
   const renderCurrentView = useCallback(() => {
-    // Track the page view
-    // mixpanel.track('Page View', { page: currentView });
+    if (userInfo && userInfo.id) {
+      mixpanel.identify(userInfo.id.toString());
+    }
+    mixpanel.track("Page View", { page: currentView });
 
     switch (currentView) {
       case "Base":
