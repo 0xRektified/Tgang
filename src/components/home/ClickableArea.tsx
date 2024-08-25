@@ -307,35 +307,35 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [pressed, setPressed] = useState(false);
 
-  const playSound = (() => {
-    let lastPlayTime = 0;
-    let concurrentSounds = 0;
-    const maxConcurrentSounds = 3;
-    const minInterval = 200;
+  // const playSound = (() => {
+  //   let lastPlayTime = 0;
+  //   let concurrentSounds = 0;
+  //   const maxConcurrentSounds = 3;
+  //   const minInterval = 200;
 
-    return () => {
-      const now = Date.now();
-      if (
-        concurrentSounds < maxConcurrentSounds &&
-        now - lastPlayTime > minInterval
-      ) {
-        concurrentSounds++;
-        lastPlayTime = now;
-        const audio = new Audio("/assets/cash.mp3");
-        audio.play();
-        audio.onended = () => {
-          concurrentSounds--;
-        };
-      }
-    };
-  })();
+  //   return () => {
+  //     const now = Date.now();
+  //     if (
+  //       concurrentSounds < maxConcurrentSounds &&
+  //       now - lastPlayTime > minInterval
+  //     ) {
+  //       concurrentSounds++;
+  //       lastPlayTime = now;
+  //       const audio = new Audio("/assets/cash.mp3");
+  //       audio.play();
+  //       audio.onended = () => {
+  //         concurrentSounds--;
+  //       };
+  //     }
+  //   };
+  // })();
 
   const animationTargetRef = useRef<HTMLDivElement>(null);
   const handleAnimation = (e: React.TouchEvent<HTMLDivElement>) => {
     const result = handleTouchStart(e);
 
     if (result) {
-      playSound();
+      // playSound();
       if (!pressed) {
         setPressed(true);
 
@@ -380,7 +380,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
               left: Math.random() * -500,
               animationDuration: `${Math.random() * 5 + 5}s`,
             }}
-          />
+          />,
         );
       }
       return newSmokes;
@@ -391,7 +391,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
 
   return (
     <Wrapper>
-      {smokes}
+      {/* {smokes} */}
       <ClickableArea onTouchStart={handleAnimation}>
         <FlexBoxRow className="w-full justify-center">
           <NeonText>TAP TO SELL</NeonText>
@@ -437,7 +437,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
             let productMarketDiscountedPrice = 0;
             if (marketInfo && marketInfo.products.length > 0) {
               const productMarket = marketInfo.products.find(
-                (m) => m.name === productName
+                (m) => m.name === productName,
               );
               productMarketprice = productMarket?.price || 0;
               productMarketDiscountedPrice = productMarket?.discountPrice || 0;

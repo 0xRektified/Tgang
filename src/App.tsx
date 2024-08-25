@@ -85,12 +85,15 @@ function App() {
     setCurrentView("Shop");
   }, []);
 
-  const renderCurrentView = useCallback(() => {
+  const handleSetCurrentView = (tab: string) => {
     if (userInfo && userInfo.id) {
       mixpanel.identify(userInfo.id.toString());
     }
     mixpanel.track("Page View", { page: currentView });
+    setCurrentView(tab);
+  };
 
+  const renderCurrentView = useCallback(() => {
     switch (currentView) {
       case "Base":
         return (
@@ -172,7 +175,10 @@ function App() {
       <AppContainer>
         <TopMenu userInfo={userInfo} />
         <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
-        <FooterMenu setCurrentView={setCurrentView} currentView={currentView} />
+        <FooterMenu
+          setCurrentView={handleSetCurrentView}
+          currentView={currentView}
+        />
       </AppContainer>
     </StyledApp>
   );
