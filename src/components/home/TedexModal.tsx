@@ -4,9 +4,8 @@ import { EProduct } from "../interfaces/product.interface";
 import {
   IUserInfo,
   IUserShipping,
-  Product,
 } from "../interfaces/user.interface";
-import { addSeconds } from "date-fns";
+import { intervalToDuration } from "date-fns";
 import {
   ScrollableTableContainer,
   WebPageTitle,
@@ -85,15 +84,10 @@ export const TedexModal: React.FC<TedexProps> = ({
       };
     }
 
-    const shippingTimeInMillis = shippingTime * 1000;
-    const unixTimeStampShipping = nextShipmentTime + shippingTimeInMillis;
-    const timeLeft = unixTimeStampShipping - now;
-
-    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-    const seconds = Math.floor((timeLeft / 1000) % 60);
-
-    return { hours, minutes, seconds, timeLeft };
+    return intervalToDuration({
+      start: new Date(),
+      end: nextShipment,
+    });
   };
 
   const renderShippingButton = (userShipping: IUserShipping) => {
