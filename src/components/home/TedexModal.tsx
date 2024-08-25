@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MarketProduct } from "../interfaces/market.interface";
 import { EProduct } from "../interfaces/product.interface";
 import {
   IUserInfo,
   IUserShipping,
 } from "../interfaces/user.interface";
-import { intervalToDuration } from "date-fns";
+import { Duration, intervalToDuration } from "date-fns";
 import {
   ScrollableTableContainer,
   WebPageTitle,
@@ -72,7 +72,36 @@ export const TedexModal: React.FC<TedexProps> = ({
     return nextShipment.getTime() > new Date().getTime();
   };
 
-  const calculateCountdown = (nextShipment: Date, shippingTime: number) => {
+  const [nextShipmentCountdown, setNextShipmentCountDown] = useState<Record<EShippingMethod, Duration>>({
+    Envelope: { hours: 0, minutes: 0, seconds: 0 },
+    Package: { hours: 0, minutes: 0, seconds: 0 },
+    Pallet: { hours: 0, minutes: 0, seconds: 0 },
+    Truck: { hours: 0, minutes: 0, seconds: 0 },
+    Container: { hours: 0, minutes: 0, seconds: 0 },
+    Plane: { hours: 0, minutes: 0, seconds: 0 },
+    Rocket: { hours: 0, minutes: 0, seconds: 0 },
+  });
+
+  useEffect(() => {
+    if (userInfo && userInfo.shipping) {
+      const interval = setInterval(() => {
+        // Create a new object to avoid direct mutation
+        const updatedCountdowns = { ...nextShipmentCountdown };
+  
+        userInfo.shipping.forEach((userShipping) => {
+          const countdown = calculateCountdown(new Date(userShipping.nextShipment));
+          updatedCountdowns[userShipping.method] = countdown;
+        });
+  
+        // Update the state with the new object
+        setNextShipmentCountDown(updatedCountdowns);
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+  }, [nextShipmentCountdown]);
+
+  const calculateCountdown = (nextShipment: Date) => {
     const now = new Date().getTime();
     const nextShipmentTime = nextShipment.getTime();
     if (nextShipmentTime < now) {
@@ -80,14 +109,19 @@ export const TedexModal: React.FC<TedexProps> = ({
         hours: 0,
         minutes: 0,
         seconds: 0,
-        timeLeft: 0,
       };
     }
 
-    return intervalToDuration({
+    const duration = intervalToDuration({
       start: new Date(),
       end: nextShipment,
     });
+
+    return {
+      hours: duration.hours || 0,
+      minutes: duration.minutes || 0,
+      seconds: duration.seconds || 0,
+    }
   };
 
   const renderShippingButton = (userShipping: IUserShipping) => {
@@ -166,26 +200,10 @@ export const TedexModal: React.FC<TedexProps> = ({
                         <div>Next shipment</div>
                         <div>
                           {
-                            calculateCountdown(
-                              new Date(userShipping.nextShipment),
-                              method.baseShippingTime
-                            ).hours
+                            nextShipmentCountdown[userShipping.method].hours + "h " +
+                            nextShipmentCountdown[userShipping.method].minutes + "m " +
+                            nextShipmentCountdown[userShipping.method].seconds + "s"
                           }
-                          h{" "}
-                          {
-                            calculateCountdown(
-                              new Date(userShipping.nextShipment),
-                              method.baseShippingTime
-                            ).minutes
-                          }
-                          m{" "}
-                          {
-                            calculateCountdown(
-                              new Date(userShipping.nextShipment),
-                              method.baseShippingTime
-                            ).seconds
-                          }
-                          s
                         </div>
                       </div>
                     )}
