@@ -34,16 +34,15 @@ const AirdropContainer = styled.div`
   color: white;
   padding: 0.3rem;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   font-family: "Digital", sans-serif;
   touch-action: none;
 `;
 const AirdropTabContainer = styled.div`
   height: 100vh;
 `;
-
 const DigitalFont = styled.span`
   font-family: "Digital", sans-serif;
+  font-size: 0.9rem;
 `;
 interface AirdropProps {
   referralToken: string;
@@ -83,8 +82,7 @@ const Airdrop: React.FC<AirdropProps> = ({
             </ReputationAmount>
           </LevelInfoContainer>
           <DigitalFont>
-            Invite users, complete missions and earn reputation to qualify for
-            the airdrop
+            Invite users and earn reputation to qualify for the airdrop
           </DigitalFont>
         </AirdropContainer>
 
@@ -113,6 +111,7 @@ const Airdrop: React.FC<AirdropProps> = ({
             </Tab>
           </Tabs>
         </FlexBoxRow>
+
         <AirdropTabContainer>
           {currentTab === "friends" && (
             <FriendsComponent
