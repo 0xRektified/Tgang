@@ -20,3 +20,13 @@ export const formatSeconds = (time: number) => {
 
   return { hours, minutes, seconds };
 };
+
+export const calculateProgress = (
+  reputation: number,
+  minReputation: number,
+  maxReputation: number,
+): number => {
+  const range = maxReputation - minReputation;
+  const progress = ((reputation - minReputation) / range) * 100;
+  return Math.min(Math.max(progress, 0), 100);
+};

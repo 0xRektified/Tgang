@@ -13,21 +13,13 @@ import {
   ProgressBar,
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
-import { formatPrice } from "./utils/formater";
+import { calculateProgress, formatPrice } from "./utils/formater";
 
 interface TopMenuProps {
   userInfo: IUserInfo;
 }
 
-const calculateProgress = (
-  reputation: number,
-  minReputation: number,
-  maxReputation: number
-): number => {
-  const range = maxReputation - minReputation;
-  const progress = ((reputation - minReputation) / range) * 100;
-  return Math.min(Math.max(progress, 0), 100);
-};
+
 
 export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
   useLayoutEffect(() => {
