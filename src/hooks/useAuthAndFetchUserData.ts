@@ -12,6 +12,7 @@ export function useAuthAndFetchUserData(
 ) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [signup, setSignup] = useState<boolean>(false);
 
   useEffect(() => {
     const login = async () => {
@@ -47,13 +48,22 @@ export function useAuthAndFetchUserData(
           return sanitizedQuery;
         };
         const sanitizedResult = sanitizeQuery(parsedQuery);
-        const response = await axios.post<{ access_token: string }>(
+        const response = await axios.post<{
+          access_token: string;
+          signup: boolean;
+        }>(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
           sanitizedResult,
         );
-        const { access_token } = response.data;
+        console.log(`response`);
+        console.log(response);
+        const { access_token, signup } = response.data;
+        setSignup(signup);
         setAuthToken(access_token);
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
+        console.log(`userInfoResponse`);
+        console.log(userInfoResponse);
+
         setUser(userInfoResponse.data);
 
         mixpanel.identify(userInfoResponse.data.id.toString());
@@ -72,5 +82,5 @@ export function useAuthAndFetchUserData(
 
     login();
   }, [setLoading, setError]);
-  return { loading, error };
+  return { loading, error, signup };
 }
