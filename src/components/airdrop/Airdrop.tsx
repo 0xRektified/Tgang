@@ -10,7 +10,6 @@ import RobberyComponent from "./RobberyComponent";
 import FriendsComponent from "./FriendsComponent";
 import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
-import { calculateProgress } from "../utils/formater";
 
 const LevelInfoContainer = styled.div`
   display: flex;
@@ -58,9 +57,8 @@ const Airdrop: React.FC<AirdropProps> = ({
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
-  const { reputation, userLevel } = userInfo;
-  const { level, title, minReputation, maxReputation } = userLevel;
-  const progress = calculateProgress(reputation, minReputation, maxReputation);
+  const { userLevel } = userInfo;
+  const { level } = userLevel;
 
   const { robberyStrike, claimDailyReward, loading, error, successMessage } =
     useDailyRobbery(userInfo, setUserInfo);

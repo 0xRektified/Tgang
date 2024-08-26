@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { Button, CardRequirement, CardTitle, NeonButton } from "./styled/cardStyled";
+import { CardTitle, NeonButton } from "./styled/cardStyled";
 import { formatPrice } from "./utils/formater";
-import { RequirementType } from "./interfaces/upgrade.interface";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -18,10 +17,65 @@ const ModalBackground = styled.div`
   z-index: 1000;
 `;
 
+const OptionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.2rem;
+  margin-top: 0.75rem;
+`;
+
+const OptionCard = styled.div`
+  background-color: #374151;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const OptionIcon = styled.div`
+  font-size: 1.5rem;
+  color: #10b981;
+  margin-bottom: 0.25rem;
+`;
+
+const OptionLabel = styled.div`
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+`;
+
+const OptionValue = styled.span`
+  color: #10b981;
+  font-size: 1.25rem;
+  font-weight: bold;
+`;
+
+const OptionPrice = styled.div`
+  color: #22c55e;
+  font-size: 0.875rem;
+`;
+
+const CostLabel = styled.span`
+  color: white;
+  font-size: 0.8rem;
+`;
+
 const ModalContent = styled.div`
   background-color: #1f2937;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
+  padding: 0.3rem;
+  border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-width: 90%;
   max-height: 90%;
@@ -33,55 +87,8 @@ const ModalContent = styled.div`
 const ModalHeader = styled(CardTitle)`
   text-align: center;
   color: white;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-`;
-
-const OptionContainer = styled.div`
-  background-color: #374151;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const OptionLabel = styled.div`
-  color: #e5e7eb;
-  font-size: 1.2rem;
-  text-align: center;
-`;
-
-const OptionValue = styled.div`
-  color: #10b981;
-  font-size: 1.5rem;
-  font-weight: bold;
-`;
-
-const OptionPrice = styled.div`
-  color: #22c55e;
-  font-size: 1rem;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const StyledNeonButton = styled(NeonButton)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-
-  & > svg {
-    font-size: 1.25rem;
-  }
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
 `;
 
 const CloseButton = styled.button`
@@ -107,6 +114,18 @@ const CloseButton = styled.button`
   }
 `;
 
+const StyledNeonButton = styled(NeonButton)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  & > svg {
+    font-size: 1.25rem;
+  }
+`;
+
 interface UpgradeOption {
   label: string;
   valueDiff: string;
@@ -120,6 +139,26 @@ interface GenericUpgradeModalProps {
   options: UpgradeOption[];
   onClose: () => void;
 }
+
+const formatTimeDiff = (value: string): string => {
+  const timeRegex = /^(\d+)h(\d+)m$/;
+  const match = value.match(timeRegex);
+
+  if (match) {
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+
+    if (hours === 0 && minutes < 2) {
+      return `${minutes * 60}s`;
+    } else if (hours === 0) {
+      return `${minutes}m`;
+    } else {
+      return `${hours}h${minutes}m`;
+    }
+  }
+
+  return value;
+};
 
 export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
   title,
@@ -136,18 +175,24 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>{title}</ModalHeader>
-        <ButtonContainer>
+        <OptionsGrid>
           {options.map((option, index) => (
-            <OptionContainer key={index}>
-              <OptionLabel>{option.label}</OptionLabel>
-              <OptionValue>{option.valueDiff}</OptionValue>
-              <OptionPrice>{formatPrice(option.price, false)}</OptionPrice>
+            <OptionCard key={index}>
+              <OptionIcon>{option.icon}</OptionIcon>
+              <OptionLabel>
+                {option.label}{" "}
+                <OptionValue>{formatTimeDiff(option.valueDiff)}</OptionValue>
+              </OptionLabel>
+              <OptionPrice>
+                <CostLabel>Cost: </CostLabel>
+                {formatPrice(option.price, false)}
+              </OptionPrice>
               <StyledNeonButton onClick={() => handleState(option)}>
                 {option.icon} Purchase
               </StyledNeonButton>
-            </OptionContainer>
+            </OptionCard>
           ))}
-        </ButtonContainer>
+        </OptionsGrid>
       </ModalContent>
     </ModalBackground>
   );
