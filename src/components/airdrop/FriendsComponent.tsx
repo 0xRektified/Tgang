@@ -53,12 +53,12 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               </h3>
               <p>Earn $1000 and 500 reputation</p>
             </div>
-            <div>
+            {/* <div>
               <h3 className="font-bold">
                 Invite Premium User <span className="text-2xl">💰💰💰</span>
               </h3>
               <p>Earn $2000 and 1000 reputation</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
