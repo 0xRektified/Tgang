@@ -57,8 +57,7 @@ const Airdrop: React.FC<AirdropProps> = ({
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
-  const { userLevel } = userInfo;
-  const { level } = userLevel;
+
 
   const { robberyStrike, claimDailyReward, loading, error, successMessage } =
     useDailyRobbery(userInfo, setUserInfo);
@@ -72,17 +71,7 @@ const Airdrop: React.FC<AirdropProps> = ({
     <>
       <GlobalStyle />
       <AirdropContainer>
-        <AirdropContainer>
-          <LevelInfoContainer>
-            <ReputationLabel>Reputation level {level}</ReputationLabel>
-            <ReputationAmount>
-              {userInfo.reputation} / {userInfo.userLevel.maxReputation}
-            </ReputationAmount>
-          </LevelInfoContainer>
-          <DigitalFont>
-            Invite users and earn reputation to qualify for the airdrop
-          </DigitalFont>
-        </AirdropContainer>
+
 
         <FlexBoxRow>
           <Tabs role="tablist">
@@ -115,6 +104,7 @@ const Airdrop: React.FC<AirdropProps> = ({
             <FriendsComponent
               referralToken={referralToken}
               referredUsers={referredUsers}
+              userInfo={userInfo}
             />
           )}
           {currentTab === "wallet" && (
