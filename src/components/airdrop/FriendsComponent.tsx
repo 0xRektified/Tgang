@@ -49,16 +49,16 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
           <div className=" flex flex-col justify-center">
             <div className="mb-4">
               <h3 className="font-bold">
-                Invite User <span className="text-2xl mb-4">💰</span>
+                <span className="text-2xl mb-4">💰</span> Invite User
               </h3>
               <p>Earn $1000 and 500 reputation</p>
             </div>
-            <div>
+            {/* <div>
               <h3 className="font-bold">
                 Invite Premium User <span className="text-2xl">💰💰💰</span>
               </h3>
               <p>Earn $2000 and 1000 reputation</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

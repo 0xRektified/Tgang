@@ -20,6 +20,8 @@ export function useAuthAndFetchUserData(
       try {
         const decodedInput = decodeURIComponent(WebApp.initData);
         const parsedQuery = queryString.parse(decodedInput);
+        console.log(`parsedQuery`);
+        console.log(parsedQuery);
         const sanitizeQuery = (query: Record<string, any>) => {
           const sanitizedQuery: Record<string, any> = {};
           if (query.query_id && typeof query.query_id === "string") {
