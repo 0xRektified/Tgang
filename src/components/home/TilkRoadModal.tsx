@@ -14,6 +14,7 @@ import {
   Table,
   WebPageTitle,
 } from "./styles/supplier.css";
+import { useTutorial } from "../../hooks/useTutorial";
 
 interface TilkRoadModalProps {
   remainingCash: number;
@@ -26,6 +27,7 @@ interface TilkRoadModalProps {
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
   handleProductSelect: (product: Product | MarketProduct) => void;
   handleUnlockClick: (product: MarketProduct) => void;
+  tutorial: ReturnType<typeof useTutorial>;
 }
 
 export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
@@ -39,9 +41,24 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
   setQuantity,
   handleProductSelect,
   handleUnlockClick,
+  tutorial,
 }) => {
   return (
-    <>
+    <div style={{ position: "relative" }}>
+      {tutorial.tutorialStep === 2 && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 10,
+            pointerEvents: "none",
+          }}
+        />
+      )}
       <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
 
       <FlexBoxRow style={{ margin: "10px" }}>
@@ -67,6 +84,26 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         </ShoppingCartBalance>
         <ShoppingCartTotal>Total: ${totalCost.toFixed(2)}</ShoppingCartTotal>
       </ShoppingCartFooter>
+
+      {tutorial.tutorialStep === 2 && (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 20,
+            backgroundColor: "black",
+            color: "white",
+            padding: "10px",
+            margin: "10px 0",
+            borderRadius: "5px",
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "20px",
+          }}
+        >
+          Click on the Buy button to buy 10 Herb
+        </div>
+      )}
+
       <ScrollableTableContainer className="scrollable-content">
         <Table>
           <thead>
@@ -81,7 +118,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
             {marketInfo
               ? marketInfo.products.map((product) => {
                   const userProduct = userInfo?.products.find(
-                    (p) => p.name === product.name
+                    (p) => p.name === product.name,
                   );
                   const productIcon =
                     (product.name as keyof typeof EProductIcon) &&
@@ -94,11 +131,19 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   const priceChangeColor =
                     priceChangePercent > 0 ? "green" : "red";
                   const priceChangeSign = priceChangePercent > 0 ? "+" : "";
+
+                  const isTutorialHerbProduct =
+                    tutorial.tutorialStep === 2 && product.name === "Herb";
+
                   return (
                     <React.Fragment key={product.name}>
                       <tr
                         className={!userProduct ? "disabled" : ""}
                         onClick={() => handleProductSelect(product)}
+                        style={{
+                          position: "relative",
+                          zIndex: isTutorialHerbProduct ? 20 : "auto",
+                        }}
                       >
                         <td>{productIcon}</td>
                         <td>
@@ -134,23 +179,46 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                             </span>
                           )}
                         </td>
+                        {isTutorialHerbProduct && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: -5,
+                              left: -5,
+                              right: -5,
+                              bottom: -5,
+                              pointerEvents: "none",
+                            }}
+                          />
+                        )}
                       </tr>
                       {userProduct &&
                         selectedProduct?.name === product.name && (
-                          <tr key={product.name + "_details"}>
+                          <tr
+                            key={product.name + "_details"}
+                            style={{
+                              position: "relative",
+                              zIndex: isTutorialHerbProduct ? 20 : "auto",
+                            }}
+                          >
                             <td colSpan={4}>
                               <div className="flex items-center justify-between">
                                 <input
                                   type="range"
                                   min={0}
-                                  max={Math.floor(
-                                    remainingCash / product.discountPrice
-                                  )}
+                                  max={
+                                    tutorial.tutorialStep === 2
+                                      ? 10
+                                      : Math.floor(
+                                          remainingCash / product.discountPrice,
+                                        )
+                                  }
                                   value={quantity}
                                   className="range"
                                   onChange={(e) => {
                                     setQuantity(Number(e.target.value));
                                   }}
+                                  disabled={tutorial.tutorialStep === 2}
                                 />
                               </div>
                             </td>
@@ -163,6 +231,6 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
           </tbody>
         </Table>
       </ScrollableTableContainer>
-    </>
+    </div>
   );
 };

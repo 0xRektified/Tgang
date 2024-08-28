@@ -21,6 +21,7 @@ import {
   EShippingMethod,
   IShippingMethod,
 } from "../interfaces/shipping.interface";
+import { useTutorial } from "../../hooks/useTutorial";
 
 interface ModalProps {
   userInfo: IUserInfo;
@@ -30,6 +31,8 @@ interface ModalProps {
   onUnlockClick: (tab?: string | undefined) => void;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
+  tutorial: ReturnType<typeof useTutorial>;
+  handleTutorialComplete: () => void;
 }
 
 export const CombinedModal: React.FC<ModalProps> = ({
@@ -40,6 +43,8 @@ export const CombinedModal: React.FC<ModalProps> = ({
   onUnlockClick,
   setUserInfo,
   shippingMethods,
+  tutorial,
+  handleTutorialComplete,
 }) => {
   const [activeTab, setActiveTab] = useState("Tilk Road");
   const { buyProduct, loading, error } = useBuyProduct();
@@ -51,8 +56,9 @@ export const CombinedModal: React.FC<ModalProps> = ({
   const [showToast, setShowToast] = useState<boolean>(false);
   const [totalCost, setTotalCost] = useState<number>(0);
   const [remainingCash, setRemainingCash] = useState<number>(
-    userInfo.cashAmount
+    userInfo.cashAmount,
   );
+  const [purchaseAmount, setPurchaseAmount] = useState(0);
 
   useEffect(() => {
     if (selectedProduct && "discountPrice" in selectedProduct) {
@@ -64,6 +70,12 @@ export const CombinedModal: React.FC<ModalProps> = ({
     setRemainingCash(userInfo.cashAmount);
   }, [selectedProduct, quantity, userInfo.cashAmount]);
 
+  useEffect(() => {
+    if (isOpen && tutorial.tutorialStep === 2) {
+      setActiveTab("Tilk Road");
+    }
+  }, [isOpen, tutorial.tutorialStep]);
+
   const handleBuy = async () => {
     if (totalCost > userInfo.cashAmount) {
       setShowToast(true);
@@ -72,6 +84,15 @@ export const CombinedModal: React.FC<ModalProps> = ({
     }
     if (selectedProduct && "discountPrice" in selectedProduct) {
       await buyProduct("NY", selectedProduct.name, quantity, setUserInfo);
+
+      if (
+        tutorial.tutorialStep === 2 &&
+        selectedProduct.name === EProduct.HERB &&
+        quantity === 10
+      ) {
+        tutorial.onTutorialProgress();
+        handleTutorialComplete()
+      }
     }
     setSelectedProduct(null);
     setQuantity(1);
@@ -80,10 +101,13 @@ export const CombinedModal: React.FC<ModalProps> = ({
 
   const handleProductSelect = (product: Product | MarketProduct) => {
     WebApp.HapticFeedback.impactOccurred("heavy");
+    if (tutorial.tutorialStep === 2 && product.name !== EProduct.HERB) {
+      return;
+    }
     setSelectedProduct((prevSelectedProduct) =>
       prevSelectedProduct?.name === product.name ? null : product
     );
-    setQuantity(1);
+    setQuantity(tutorial.tutorialStep === 2 ? 10 : 1);
   };
 
   const handleUnlockClick = (product: MarketProduct | undefined) => {
@@ -102,7 +126,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
   const handleShip = (
     shippingMethod: EShippingMethod,
     product: EProduct,
-    amount: number
+    amount: number,
   ) => {
     shipProduct(
       "NY",
@@ -111,7 +135,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
         product,
         amount,
       },
-      setUserInfo
+      setUserInfo,
     ); // TODO
   };
 
@@ -147,6 +171,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
             setQuantity={setQuantity}
             handleProductSelect={handleProductSelect}
             handleUnlockClick={handleUnlockClick}
+            tutorial={tutorial}
           ></TilkRoadModal>
         )}
 

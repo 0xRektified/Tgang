@@ -16,6 +16,7 @@ import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
 import { FaStore } from "react-icons/fa";
+import { useTutorial } from "../../hooks/useTutorial";
 
 const Arrow = styled(({ isSelected, ...rest }) => (
   <MdArrowCircleRight {...rest} />
@@ -213,7 +214,7 @@ const EnhancedNeonButton = styled.button`
 
   @media (max-width: 768px) {
     font-size: 0.7em;
-    padding: 0.5em;
+    padding: 0.5em 0.8em;
     max-width: 100%;
   }
 
@@ -278,6 +279,27 @@ const NeonGreenText = styled.span`
   font-size: 0.6rem;
 
 `;
+
+const TutorialOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TutorialText = styled.div`
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+`;
+
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => boolean;
@@ -289,6 +311,8 @@ interface ClickableAreaWithSmokeProps {
   transaction: Transaction | null;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
   marketInfo: IMarketInfo | undefined;
+  signup: boolean;
+  tutorial: ReturnType<typeof useTutorial>;
 }
 
 export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
@@ -302,40 +326,18 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   transaction,
   animatingEmojis,
   marketInfo,
+  signup,
+  tutorial,
 }) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [pressed, setPressed] = useState(false);
-
-  // const playSound = (() => {
-  //   let lastPlayTime = 0;
-  //   let concurrentSounds = 0;
-  //   const maxConcurrentSounds = 3;
-  //   const minInterval = 200;
-
-  //   return () => {
-  //     const now = Date.now();
-  //     if (
-  //       concurrentSounds < maxConcurrentSounds &&
-  //       now - lastPlayTime > minInterval
-  //     ) {
-  //       concurrentSounds++;
-  //       lastPlayTime = now;
-  //       const audio = new Audio("/assets/cash.mp3");
-  //       audio.play();
-  //       audio.onended = () => {
-  //         concurrentSounds--;
-  //       };
-  //     }
-  //   };
-  // })();
 
   const animationTargetRef = useRef<HTMLDivElement>(null);
   const handleAnimation = (e: React.TouchEvent<HTMLDivElement>) => {
     const result = handleTouchStart(e);
 
     if (result) {
-      // playSound();
       if (!pressed) {
         setPressed(true);
 
@@ -389,30 +391,53 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
     setSmokes(createSmoke());
   }, []);
 
+  const handleCombinedClick = (e: React.TouchEvent<HTMLDivElement>) => {
+    tutorial.handleTutorialClick();
+    handleAnimation(e);
+  };
+
+  const handleTutorialTwoClick = useCallback(() => {
+    if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
+      tutorial.onTutorialProgress();
+    }
+    handleOpenSupplierModal();
+  }, [signup, tutorial, handleOpenSupplierModal]);
+
+  useEffect(() => {
+    if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
+    }
+  }, [signup, tutorial.tutorialCompleted, tutorial.tutorialStep]);
+
+  useEffect(() => {
+    console.log("Component rendered. Tutorial step:", tutorial.tutorialStep);
+  }, [tutorial.tutorialStep]);
+
   return (
     <Wrapper>
-      {/* {smokes} */}
-      <ClickableArea onTouchStart={handleAnimation}>
-        <FlexBoxRow className="w-full justify-center">
-          <NeonText>TAP TO SELL</NeonText>
-          <div
-            ref={animationTargetRef}
-            className={`flex flex-col items-center justify-left w-full ${
-              pressed ? "animate-scale-up-down" : ""
-            }`}
-            style={{ height: "100%" }}
-          >
-            <img
-              src={userCharacter}
-              alt="Logo"
-              {...({
-                fetchpriority: "high",
-              } as React.ImgHTMLAttributes<HTMLImageElement>)}
-              className={`max-w-[15rem] pt-28 `}
-              onLoad={handleCombinedOnLoad}
-            />
-          </div>
-        </FlexBoxRow>
+      <ClickableArea onTouchStart={handleCombinedClick}>
+        {(!signup ||
+          tutorial.tutorialCompleted ||
+          tutorial.tutorialStep !== 0) && (
+          <FlexBoxRow className="w-full justify-center">
+            <div
+              ref={animationTargetRef}
+              className={`flex flex-col items-center justify-left w-full ${
+                pressed ? "animate-scale-up-down" : ""
+              }`}
+              style={{ height: "100%" }}
+            >
+              <img
+                src={userCharacter}
+                alt="Logo"
+                {...({
+                  fetchpriority: "high",
+                } as React.ImgHTMLAttributes<HTMLImageElement>)}
+                className={`max-w-[15rem] pt-28 `}
+                onLoad={handleCombinedOnLoad}
+              />
+            </div>
+          </FlexBoxRow>
+        )}
       </ClickableArea>
 
       <Container>
@@ -476,6 +501,83 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           animatingEmojis={animatingEmojis}
         />
       </Container>
+
+      {signup && !tutorial.tutorialCompleted && (
+        <TutorialOverlay>
+          {tutorial.tutorialStep === 0 ? (
+            <div>
+              <TutorialText>
+                Tap the gangster 10 times to sell your product! (
+                {tutorial.clickCount}/10)
+              </TutorialText>
+              <ClickableArea onTouchStart={handleCombinedClick}>
+                <FlexBoxRow className="w-full justify-center">
+                  <NeonText>TAP TO SELL</NeonText>
+                  <div
+                    ref={animationTargetRef}
+                    className={`flex flex-col items-center justify-left w-full ${
+                      pressed ? "animate-scale-up-down" : ""
+                    }`}
+                    style={{ height: "100%" }}
+                  >
+                    <img
+                      src={userCharacter}
+                      alt="Logo"
+                      className={`max-w-[15rem] pt-28 `}
+                    />
+                  </div>
+                </FlexBoxRow>
+              </ClickableArea>
+            </div>
+          ) : tutorial.tutorialStep === 1 ? (
+            <div>
+              <TutorialText>
+                Great! Now tap the 'Trade Market' button to buy more
+                merchandise.
+              </TutorialText>
+            </div>
+          ) : null}
+        </TutorialOverlay>
+      )}
+
+      {signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1 && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: "none",
+            zIndex: 1001,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "7.4em",
+              right: "0.8em",
+              width: "30%",
+            }}
+          >
+            <CenteredIconContainer>
+              <EnhancedNeonButton
+                onClick={handleTutorialTwoClick}
+                className="skeleton"
+                style={{ pointerEvents: "auto" }}
+              >
+                <ButtonContent>
+                  <IconWrapper>
+                    <FaStore />
+                  </IconWrapper>
+                  <div>Trade</div>
+                  <div>Market</div>
+                </ButtonContent>
+              </EnhancedNeonButton>
+            </CenteredIconContainer>
+          </div>
+        </div>
+      )}
     </Wrapper>
   );
 };

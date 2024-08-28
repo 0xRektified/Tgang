@@ -38,8 +38,11 @@ export function useInitializeGame() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { loading: authLoading, error: authError } =
-    useAuthAndFetchUserData(setUser);
+  const {
+    loading: authLoading,
+    error: authError,
+    signup,
+  } = useAuthAndFetchUserData(setUser);
 
   const {
     upgrades,
@@ -134,5 +137,6 @@ export function useInitializeGame() {
     setShippingMethods,
     loading,
     error,
+    signup,
   };
 }
