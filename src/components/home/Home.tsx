@@ -21,6 +21,7 @@ import {
 } from "../interfaces/shipping.interface";
 import { CombinedModal } from "./CombinedModal";
 import { getRandomEmoji } from "./HomeBoard";
+import { useTutorial } from "../../hooks/useTutorial";
 
 const formatNumber = (num: number) => num.toFixed(2);
 
@@ -42,6 +43,7 @@ interface HomeProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   onUnlockClick: (tab?: string | undefined) => void;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
+  signup: boolean;
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -50,6 +52,7 @@ export const Home: React.FC<HomeProps> = ({
   setUserInfo,
   onUnlockClick,
   shippingMethods,
+  signup,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -65,20 +68,15 @@ export const Home: React.FC<HomeProps> = ({
     useState<boolean>(false);
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
-    null
+    null,
   );
 
   const { addToBatch } = useBatchSell(
     marketInfo?.id || "", // Pass marketId here
-    handleSell
+    handleSell,
   );
 
-  useLayoutEffect(() => {
-    const scrollableEl = document.getElementById("mainView");
-    if (scrollableEl) {
-      scrollableEl.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
+  const tutorial = useTutorial();
 
   useEffect(() => {
     const value = calculateTotalQuantity(userInfo.products);
@@ -96,6 +94,7 @@ export const Home: React.FC<HomeProps> = ({
 
   const handleOpenSupplierModal = () => {
     setIsSupplierModalOpen(true);
+    // tutorial.onTutorialProgress()
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -113,7 +112,7 @@ export const Home: React.FC<HomeProps> = ({
           ? { ...p, slot: selectedSlot }
           : p.slot === selectedSlot
           ? { ...p, slot: null }
-          : p
+          : p,
       );
 
       return {
@@ -134,7 +133,7 @@ export const Home: React.FC<HomeProps> = ({
     let result = false;
     const slottedProducts = userInfo.products.filter((p) => p.slot !== null);
     const slottedProductToSell = slottedProducts.find(
-      (p) => p.name === selectedProduct
+      (p) => p.name === selectedProduct,
     );
 
     let newTouchPoint = {
@@ -160,7 +159,7 @@ export const Home: React.FC<HomeProps> = ({
       const { updatedProducts, transaction, cashState } = handleTransaction(
         userInfo,
         slottedProductToSell,
-        marketInfo
+        marketInfo,
       );
       setLastTransaction(transaction);
 
@@ -168,7 +167,9 @@ export const Home: React.FC<HomeProps> = ({
         id: Date.now(),
         x: touch.clientX,
         y: touch.clientY,
-        amountEarned: transaction?.amountEarned ? Number(formatNumber(transaction.amountEarned)) : 0,
+        amountEarned: transaction?.amountEarned
+          ? Number(formatNumber(transaction.amountEarned))
+          : 0,
       };
 
       addToBatch(selectedProduct);
@@ -184,7 +185,7 @@ export const Home: React.FC<HomeProps> = ({
 
       setTimeout(() => {
         setAnimatingEmojis((prev) =>
-          prev.filter((emoji) => emoji.id !== newAnimatingEmoji.id)
+          prev.filter((emoji) => emoji.id !== newAnimatingEmoji.id),
         );
       }, 1000);
 
@@ -209,7 +210,7 @@ export const Home: React.FC<HomeProps> = ({
     WebApp.HapticFeedback.impactOccurred("heavy");
     setTimeout(() => {
       setTouchPoints((prevTouchPoints) =>
-        prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+        prevTouchPoints.filter((point) => point.id !== newTouchPoint.id),
       );
     }, 3000);
     return result;
@@ -228,6 +229,8 @@ export const Home: React.FC<HomeProps> = ({
         transaction={lastTransaction}
         animatingEmojis={animatingEmojis}
         marketInfo={marketInfo}
+        signup={signup}
+        tutorial={tutorial}
       />
 
       <TouchPoints touchPoints={touchPoints} />

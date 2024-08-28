@@ -42,6 +42,7 @@ function App() {
     setMarketInfo,
     loading,
     error,
+    signup,
   } = useInitializeGame();
 
   useEffect(() => {
@@ -103,6 +104,7 @@ function App() {
             setUserInfo={setUserInfo}
             onUnlockClick={handleUnlockClick}
             shippingMethods={shippingMethods}
+            signup={signup}
           />
         );
       case "Lab":
@@ -141,6 +143,7 @@ function App() {
             setUserInfo={setUserInfo}
             onUnlockClick={handleUnlockClick}
             shippingMethods={shippingMethods}
+            signup={signup}
           />
         );
     }
