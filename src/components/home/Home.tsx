@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { InventoryModal } from "./modals/InventoryModal";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
@@ -44,6 +44,8 @@ interface HomeProps {
   onUnlockClick: (tab?: string | undefined) => void;
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   signup: boolean;
+  tutorial: ReturnType<typeof useTutorial>;
+  handleTutorialComplete: () => void;
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -53,6 +55,8 @@ export const Home: React.FC<HomeProps> = ({
   onUnlockClick,
   shippingMethods,
   signup,
+  tutorial,
+  handleTutorialComplete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -75,8 +79,6 @@ export const Home: React.FC<HomeProps> = ({
     marketInfo?.id || "", // Pass marketId here
     handleSell,
   );
-
-  const tutorial = useTutorial();
 
   useEffect(() => {
     const value = calculateTotalQuantity(userInfo.products);
@@ -251,6 +253,8 @@ export const Home: React.FC<HomeProps> = ({
           onUnlockClick={onUnlockClick}
           setUserInfo={setUserInfo}
           shippingMethods={shippingMethods}
+          tutorial={tutorial}
+          handleTutorialComplete={handleTutorialComplete}
         />
       )}
     </HomeContainer>

@@ -16,6 +16,7 @@ import WebApp from "@twa-dev/sdk";
 import MobileOnly from "./components/MobileOnly";
 import { initializeApp, cleanupApp } from "./appScreenHelper";
 import mixpanel from "mixpanel-browser";
+import { useTutorial } from "./hooks/useTutorial";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -44,6 +45,7 @@ function App() {
     error,
     signup,
   } = useInitializeGame();
+  const tutorial = useTutorial();
 
   useEffect(() => {
     const mixpanelToken = import.meta.env.VITE_MIXPANEL_TOKEN;
@@ -86,13 +88,21 @@ function App() {
     setCurrentView("Shop");
   }, []);
 
-  const handleSetCurrentView = (tab: string) => {
-    if (userInfo && userInfo.id) {
-      mixpanel.identify(userInfo.id.toString());
-    }
-    mixpanel.track("Page View", { page: currentView });
-    setCurrentView(tab);
-  };
+  const handleSetCurrentView = useCallback(
+    (tab: string) => {
+      if (userInfo && userInfo.id) {
+        mixpanel.identify(userInfo.id.toString());
+      }
+      mixpanel.track("Page View", { page: tab });
+      setCurrentView(tab);
+    },
+    [userInfo, tutorial],
+  );
+
+  const handleTutorialComplete = useCallback(() => {
+    tutorial.onTutorialProgress();
+    setCurrentView("Lab");
+  }, [tutorial]);
 
   const renderCurrentView = useCallback(() => {
     switch (currentView) {
@@ -105,11 +115,18 @@ function App() {
             onUnlockClick={handleUnlockClick}
             shippingMethods={shippingMethods}
             signup={signup}
+            tutorial={tutorial}
+            handleTutorialComplete={handleTutorialComplete}
           />
         );
       case "Lab":
         return (
-          <Lab userInfo={userInfo} labs={labs!} setUserInfo={setUserInfo} />
+          <Lab
+            userInfo={userInfo}
+            labs={labs!}
+            setUserInfo={setUserInfo}
+            tutorial={tutorial}
+          />
         );
       case "Shop":
         return (
@@ -144,6 +161,8 @@ function App() {
             onUnlockClick={handleUnlockClick}
             shippingMethods={shippingMethods}
             signup={signup}
+            tutorial={tutorial}
+            handleTutorialComplete={handleTutorialComplete}
           />
         );
     }

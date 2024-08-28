@@ -7,7 +7,7 @@ export function useTutorial() {
 
   const onTutorialProgress = () => {
     setTutorialStep((prevStep) => prevStep + 1);
-    if (tutorialStep >= 1) {
+    if (tutorialStep >= 3) {
       setTutorialCompleted(true);
     }
   };

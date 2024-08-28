@@ -397,22 +397,14 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   };
 
   const handleTutorialTwoClick = useCallback(() => {
-    console.log("handleTutorialTwoClick called");
-    handleOpenSupplierModal();
-    console.log("Tutorial conditions:", {
-      signup,
-      tutorialCompleted: tutorial.tutorialCompleted,
-      tutorialStep: tutorial.tutorialStep,
-    });
     if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
-      console.log("Progressing tutorial");
       tutorial.onTutorialProgress();
     }
+    handleOpenSupplierModal();
   }, [signup, tutorial, handleOpenSupplierModal]);
 
   useEffect(() => {
     if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
-
     }
   }, [signup, tutorial.tutorialCompleted, tutorial.tutorialStep]);
 

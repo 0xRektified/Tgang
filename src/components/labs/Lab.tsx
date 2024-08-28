@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { ILab } from "../interfaces/lab.interface";
@@ -16,6 +16,8 @@ import { useBuyLab } from "../../hooks/useBuyLab";
 import { TouchPoint } from "../utils/types";
 import { useUpgradeLabCapacity } from "../../hooks/useUpgradeLabCapacity";
 import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
+import { useTutorial } from "../../hooks/useTutorial";
+import { FlexBoxRow } from "../styled/globalStyled";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -136,13 +138,45 @@ const DescriptionText = styled.p`
   text-align: center;
 `;
 
+const TutorialOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TutorialText = styled.div`
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+`;
+
+const HighlightedPlotItem = styled(PlotItem)`
+  position: relative;
+  z-index: 1001;
+  pointer-events: auto;
+`;
+
 interface LabProps {
   userInfo: IUserInfo;
   labs: Record<string, ILab>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  tutorial: ReturnType<typeof useTutorial>;
 }
 
-export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
+export const Lab: React.FC<LabProps> = ({
+  userInfo,
+  labs,
+  setUserInfo,
+  tutorial,
+}) => {
   const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
   const [isPurchasedLabModalOpen, setIsPurchasedLabModalOpen] =
@@ -178,9 +212,22 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
     successMessage: labProductionSuccessMessage,
   } = useUpgradeLabProduction();
 
+  useEffect(() => {
+    if (tutorial.tutorialStep === 4) {
+      const newLabButton = document.querySelector(".build-new-lab-button");
+      if (newLabButton) {
+        newLabButton.classList.add("tutorial-highlight");
+      }
+    }
+  }, [tutorial.tutorialStep]);
+
   const handleOpenLabModal = (plot: LabPlot) => {
     setSelectedPlot(plot);
     setIsLabModalOpen(true);
+
+    if (tutorial.tutorialStep === 4) {
+      tutorial.onTutorialProgress();
+    }
   };
 
   const handleOpenPurchasedLabModal = (plot: LabPlot) => {
@@ -257,6 +304,36 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
 
   return (
     <LabContainer>
+      {tutorial.tutorialStep === 4 && (
+        <>
+          <TutorialOverlay>
+            <FlexBoxRow className="w-full justify-center">
+              {userInfo.labPlots.map((labPlot) => {
+                if (!labPlot.lab) {
+                  return (
+                    <HighlightedPlotItem key={labPlot.plotId}>
+                      <div>Build a new lab</div>
+                      <AddLabButton
+                        onClick={() => handleOpenLabModal(labPlot)}
+                        className="build-new-lab-button tutorial-highlight"
+                      >
+                        <MdConstruction />
+                      </AddLabButton>
+                    </HighlightedPlotItem>
+                  );
+                }
+                return null;
+              })}
+            </FlexBoxRow>
+            <FlexBoxRow className="w-full justify-center">
+              <TutorialText>
+                Great job! Now let's build your first lab. Click on the "Build a
+                new lab" button.
+              </TutorialText>
+            </FlexBoxRow>
+          </TutorialOverlay>
+        </>
+      )}
       <DescriptionContainer>
         <DescriptionText>
           Expand your empire by producing resources
@@ -268,34 +345,47 @@ export const Lab: React.FC<LabProps> = ({ userInfo, labs, setUserInfo }) => {
         productionPerHour={production}
       />
       <Divider />
-      <LabsGrid className="scrollable-content">
-        {userInfo.labPlots.map((labPlot) => {
-          if (labPlot.lab) {
+      {tutorial.tutorialStep === 4 ? (
+        <></>
+      ) : (
+        <LabsGrid className="scrollable-content">
+          {userInfo.labPlots.map((labPlot) => {
+            if (labPlot.lab) {
+              return (
+                <PurchasedLab
+                  key={labPlot.plotId}
+                  plot={labPlot}
+                  setUserInfo={setUserInfo}
+                  handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
+                />
+              );
+            }
             return (
-              <PurchasedLab
-                key={labPlot.plotId}
-                plot={labPlot}
-                setUserInfo={setUserInfo}
-                handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
-              />
+              <PlotItem key={labPlot.plotId}>
+                <div>Build a new lab</div>
+                <AddLabButton
+                  onClick={() => handleOpenLabModal(labPlot)}
+                  className={`build-new-lab-button ${
+                    tutorial.tutorialStep === 4 ? "tutorial-highlight" : ""
+                  }`}
+                >
+                  <MdConstruction />
+                </AddLabButton>
+              </PlotItem>
             );
-          }
-          return (
-            <PlotItem key={labPlot.plotId}>
-              <div>Build a new lab</div>
-              <AddLabButton onClick={() => handleOpenLabModal(labPlot)}>
-                <MdConstruction />
-              </AddLabButton>
-            </PlotItem>
-          );
-        })}
-        <PlotItem>
-          <div>Expand your territory</div>
-          <AddPlotButton onClick={handleOpenLabPlotModal} className="skeleton">
-            +
-          </AddPlotButton>
-        </PlotItem>
-      </LabsGrid>
+          })}
+          <PlotItem>
+            <div>Expand your territory</div>
+            <AddPlotButton
+              onClick={handleOpenLabPlotModal}
+              className="skeleton"
+            >
+              +
+            </AddPlotButton>
+          </PlotItem>
+        </LabsGrid>
+      )}
+
       {isLabModalOpen && (
         <LabModal
           labs={labs}
