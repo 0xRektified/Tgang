@@ -93,28 +93,33 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             <StatValue>{referredUsers.length}</StatValue>
           </Stats>
         </div>
-        <div className="flex w-full place-items-center justify-center">
-          <Button onClick={handleRefForward}>Invite Friends</Button>
-          <Divider />
-          <Button onClick={handleRefClick}>
-            <PiCopySimple />
-          </Button>
+        <div className="flex w-full lg:flex-row">
+          <div className="card grid place-items-center">
+            <Button onClick={handleRefForward}>Invite Friends</Button>
+          </div>
+          <div className="divider lg:divider-horizontal"> </div>
+          <div className="card grid place-items-center">
+            <Button onClick={handleRefClick}>
+              <PiCopySimple />
+            </Button>
+          </div>
         </div>
-        <div className="w-3/4 flex flex-col  ">
-          <div className="flex mb-4">
-            <div className=" flex flex-col ">
-              <div className="mb-4">
-                <h3 className="font-bold">
-                  Invite User <span className="text-2xl mb-4">💰</span>
-                </h3>
-                <p>Earn $1000 and 500 reputation</p>
-              </div>
-              {/* <div>
-        <h3 className="font-bold">
-          Invite Premium User <span className="text-2xl">💰💰💰</span>
-        </h3>
-        <p>Earn $2000 and 1000 reputation</p>
-      </div> */}
+        <div className="flex w-full lg:flex-row">
+          <div className="card grid h-16 flex-grow place-items-center">
+            <div className="mb-4">
+              <h3 className="font-bold">
+                Per invite <span className="text-2xl mb-4">💰</span>
+              </h3>
+              <p>$1000 & 100rep</p>
+            </div>
+          </div>
+          <div className="divider lg:divider-horizontal"> </div>
+          <div className="card grid h-16 flex-grow place-items-center">
+            <div className="mb-4">
+              <h3 className="font-bold">
+                Premium <span className="text-2xl">💰💰</span>
+              </h3>
+              <p>$2000 & 1000rep</p>
             </div>
           </div>
         </div>
