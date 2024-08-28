@@ -132,10 +132,10 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               {[...Array(Math.max(3, referredUsers.length))].map((_, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{referredUsers[index].username || "-"}</td>
+                  <td>{referredUsers[index]?.username || "-"}</td>
                   <td>
-                    {referredUsers[index].reward && (
-                      <span style={{ color: "#32cd32" }}>+{referredUsers[index].reward}$</span>
+                    {referredUsers[index]?.reward && (
+                      <span style={{ color: "#32cd32" }}>+{referredUsers[index]?.reward}$</span>
                     )}
                   </td>
                 </tr>
