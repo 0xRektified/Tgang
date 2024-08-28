@@ -71,6 +71,12 @@ export interface IReputationLevel {
   title: string;
 }
 
+export interface IReferredUsers {
+  id: string;
+  username: string;
+  reward: number;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
@@ -82,7 +88,7 @@ export interface IUserInfo {
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;
-  referredUsers: string[];
+  referredUsers: IReferredUsers[];
   customerAmount: number;
   customerAmountMax: number;
   lastSell: Date;

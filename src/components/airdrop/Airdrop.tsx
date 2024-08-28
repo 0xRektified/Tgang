@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import useDailyRobbery from "../../hooks/useDailyRobbery";
-import { IUserInfo } from "../interfaces/user.interface";
+import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import { ApiToast } from "../ApiToast";
 import { GlobalStyle } from "./styles/airdrop.css";
 import WalletComponent from "./WalletComponent";
@@ -45,7 +45,7 @@ const DigitalFont = styled.span`
 `;
 interface AirdropProps {
   referralToken: string;
-  referredUsers: string[];
+  referredUsers: IReferredUsers[];
   activeTab: string;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;

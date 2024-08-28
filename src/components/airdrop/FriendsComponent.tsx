@@ -1,6 +1,6 @@
 import React from "react";
 import WebApp from "@twa-dev/sdk";
-import { IUserInfo } from "../interfaces/user.interface";
+import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 
 import { PiCopySimpleBold } from "react-icons/pi";
 import {
@@ -47,7 +47,7 @@ const DigitalFont = styled.span`
 
 interface FriendsComponentProps {
   referralToken: string;
-  referredUsers: string[];
+  referredUsers: IReferredUsers[];
   userInfo: IUserInfo;
 }
 
@@ -132,10 +132,10 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               {[...Array(Math.max(3, referredUsers.length))].map((_, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{referredUsers[index] || "-"}</td>
+                  <td>{referredUsers[index].username || "-"}</td>
                   <td>
-                    {referredUsers[index] && (
-                      <span style={{ color: "#32cd32" }}>+1000$</span>
+                    {referredUsers[index].reward && (
+                      <span style={{ color: "#32cd32" }}>+{referredUsers[index].reward}$</span>
                     )}
                   </td>
                 </tr>
