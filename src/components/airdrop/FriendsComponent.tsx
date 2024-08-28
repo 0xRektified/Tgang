@@ -2,10 +2,9 @@ import React from "react";
 import WebApp from "@twa-dev/sdk";
 import { IUserInfo } from "../interfaces/user.interface";
 
-import { PiCopySimple } from "react-icons/pi";
+import { PiCopySimpleBold } from "react-icons/pi";
 import {
   Button,
-  Divider,
   Card,
   Stats,
   StatDesc,
@@ -93,29 +92,31 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             <StatValue>{referredUsers.length}</StatValue>
           </Stats>
         </div>
-        <div className="flex w-full place-items-center justify-center">
-          <Button onClick={handleRefForward}>Invite Friends</Button>
-          <Divider />
-          <Button onClick={handleRefClick}>
-            <PiCopySimple />
-          </Button>
+        <div className="flex w-full mb-4">
+          <div className="flex-grow">
+            <Button onClick={handleRefForward} className="w-full h-12">
+              Invite Friends
+            </Button>
+          </div>
+          <div className="ml-4">
+            <Button onClick={handleRefClick} className="h-12">
+              <PiCopySimpleBold className="text-xl font-bold" />
+            </Button>
+          </div>
         </div>
-        <div className="w-3/4 flex flex-col  ">
-          <div className="flex mb-4">
-            <div className=" flex flex-col ">
-              <div className="mb-4">
-                <h3 className="font-bold">
-                  Invite User <span className="text-2xl mb-4">💰</span>
-                </h3>
-                <p>Earn $1000 and 500 reputation</p>
-              </div>
-              {/* <div>
-        <h3 className="font-bold">
-          Invite Premium User <span className="text-2xl">💰💰💰</span>
-        </h3>
-        <p>Earn $2000 and 1000 reputation</p>
-      </div> */}
-            </div>
+
+        <div className="grid grid-cols-2 gap-4 w-full pb-4">
+          <div className="card flex flex-col justify-center items-center text-center">
+            <h3 className="font-bold">
+              Per invite <span className="text-2xl">💰</span>
+            </h3>
+            <p>$1000 & 100rep</p>
+          </div>
+          <div className="card flex flex-col justify-center items-center text-center">
+            <h3 className="font-bold">
+              Premium <span className="text-2xl">💰💰</span>
+            </h3>
+            <p>$2000 & 1000rep</p>
           </div>
         </div>
         <TableContainer>
