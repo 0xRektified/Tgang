@@ -507,7 +507,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           {tutorial.tutorialStep === 0 ? (
             <div>
               <TutorialText>
-                Tap the screen 10 times to sell your product! (
+                Tap the gangster 10 times to sell your product! (
                 {tutorial.clickCount}/10)
               </TutorialText>
               <ClickableArea onTouchStart={handleCombinedClick}>

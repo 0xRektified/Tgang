@@ -153,7 +153,7 @@ const TutorialOverlay = styled.div`
 
 const TutorialText = styled.div`
   color: white;
-  font-size: 1.5rem;
+  font-size: 1rem;
   text-align: center;
   margin-bottom: 1rem;
 `;
@@ -328,7 +328,8 @@ export const Lab: React.FC<LabProps> = ({
             <FlexBoxRow className="w-full justify-center">
               <TutorialText>
                 Great job! Now let's build your first lab. Click on the "Build a
-                new lab" button.
+                new lab" button. You will be able to collect resources from it
+                when supply start to accumulate
               </TutorialText>
             </FlexBoxRow>
           </TutorialOverlay>
