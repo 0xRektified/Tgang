@@ -1,3 +1,5 @@
+Pushing on main is not allowed 
+
 # twa-template
 
 > Starter template for a new TWA interacting with the TON blockchain
