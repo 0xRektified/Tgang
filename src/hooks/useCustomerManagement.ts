@@ -15,10 +15,13 @@ const useCustomerManagement = (
       const newCustomers = Math.floor(
         (diff / 3600) * userInfo.customerAmountMax
       );
-      const customerAmount = Math.min(
+      let customerAmount = Math.min(
         userInfo.customerAmountRemaining + newCustomers,
         userInfo.customerAmountMax
       );
+      if (customerAmount < 0) {
+        customerAmount = 0;
+      }
       // @note If max value is reach do not sync, it put less update on the state
       // and avoid bug where total customer is flipping to max during a sell
       if (customerAmount < userInfo.customerAmountMax) {
