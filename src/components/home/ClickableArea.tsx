@@ -17,6 +17,7 @@ import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
 import { FaStore } from "react-icons/fa";
 import { useTutorial } from "../../hooks/useTutorial";
+import { SkipButton } from "./Home";
 
 const Arrow = styled(({ isSelected, ...rest }) => (
   <MdArrowCircleRight {...rest} />
@@ -98,6 +99,19 @@ const ClickableArea = styled.div`
   display: flex;
   flex-direction: column;
   width: 70%;
+  height: 100%;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  cursor: pointer;
+  overflow: hidden;
+`;
+
+const ClickableAreaTutorial = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   height: 100%;
   padding-top: 20px;
   padding-left: 20px;
@@ -289,15 +303,52 @@ const TutorialOverlay = styled.div`
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 1000;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
 
 const TutorialText = styled.div`
+  position: absolute;
+  top: 5em;
+  left: 0;
+  right: 0;
   color: white;
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 1rem;
+  z-index: 1001;
+`;
+
+const TutorialTextTwo = styled.div`
+  position: absolute;
+  top: 10em;
+  left: 0;
+  right: 0;
+  color: white;
+  font-size: 1.3rem;
+  z-index: 1001;
+`;
+
+const SkipButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 5em;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+`;
+
+const GlowingImage = styled.img`
+  max-width: 15rem;
+  padding-top: 7rem;
+  filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.7));
+  transition: all 0.3s ease;
+
+  &:hover {
+    filter: drop-shadow(0 0 20px rgba(0, 123, 255, 0.9));
+    transform: scale(1.05);
+  }
 `;
 
 interface ClickableAreaWithSmokeProps {
@@ -412,6 +463,11 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
     console.log("Component rendered. Tutorial step:", tutorial.tutorialStep);
   }, [tutorial.tutorialStep]);
 
+  const handleSkipTutorial = () => {
+    tutorial.setTutorialCompleted(true);
+    tutorial.tutorialCompleted = true;
+  };
+
   return (
     <Wrapper>
       <ClickableArea onTouchStart={handleCombinedClick}>
@@ -419,6 +475,8 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           tutorial.tutorialCompleted ||
           tutorial.tutorialStep !== 0) && (
           <FlexBoxRow className="w-full justify-center">
+            <NeonText>TAP TO SELL</NeonText>
+
             <div
               ref={animationTargetRef}
               className={`flex flex-col items-center justify-left w-full ${
@@ -426,7 +484,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
               }`}
               style={{ height: "100%" }}
             >
-              <img
+              <GlowingImage
                 src={userCharacter}
                 alt="Logo"
                 {...({
@@ -507,12 +565,14 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
           {tutorial.tutorialStep === 0 ? (
             <div>
               <TutorialText>
-                Tap the gangster 10 times to sell your product! (
+                Tap on the Player 10 times to sell your product! (
                 {tutorial.clickCount}/10)
               </TutorialText>
-              <ClickableArea onTouchStart={handleCombinedClick}>
+              <SkipButton onClick={handleSkipTutorial}>
+                Skip Tutorial
+              </SkipButton>
+              <ClickableAreaTutorial onTouchStart={handleCombinedClick}>
                 <FlexBoxRow className="w-full justify-center">
-                  <NeonText>TAP TO SELL</NeonText>
                   <div
                     ref={animationTargetRef}
                     className={`flex flex-col items-center justify-left w-full ${
@@ -520,63 +580,67 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
                     }`}
                     style={{ height: "100%" }}
                   >
-                    <img
+                    <GlowingImage
                       src={userCharacter}
                       alt="Logo"
                       className={`max-w-[15rem] pt-28 `}
                     />
                   </div>
                 </FlexBoxRow>
-              </ClickableArea>
+              </ClickableAreaTutorial>
             </div>
           ) : tutorial.tutorialStep === 1 ? (
             <div>
-              <TutorialText>
-                Great! Now tap the 'Trade Market' button to buy more
-                merchandise.
-              </TutorialText>
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  pointerEvents: "none",
+                  zIndex: 1001,
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "7.4em",
+                    right: "0.8em",
+                    width: "30%",
+                  }}
+                >
+                  <CenteredIconContainer>
+                    <EnhancedNeonButton
+                      onClick={handleTutorialTwoClick}
+                      className="skeleton"
+                      style={{ pointerEvents: "auto" }}
+                    >
+                      <ButtonContent>
+                        <IconWrapper>
+                          <FaStore />
+                        </IconWrapper>
+                        <div>Trade</div>
+                        <div>Market</div>
+                      </ButtonContent>
+                    </EnhancedNeonButton>
+                  </CenteredIconContainer>
+                </div>
+              </div>
+
+              <TutorialTextTwo>
+                Great! Now let's buy more merchandise.
+                <br />
+                Tap the TRADE MARKET button to access the market.
+              </TutorialTextTwo>
+              <SkipButtonWrapper>
+                <SkipButton onClick={handleSkipTutorial}>
+                  Skip Tutorial
+                </SkipButton>
+              </SkipButtonWrapper>
             </div>
           ) : null}
         </TutorialOverlay>
-      )}
-
-      {signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1 && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-            zIndex: 1001,
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "7.4em",
-              right: "0.8em",
-              width: "30%",
-            }}
-          >
-            <CenteredIconContainer>
-              <EnhancedNeonButton
-                onClick={handleTutorialTwoClick}
-                className="skeleton"
-                style={{ pointerEvents: "auto" }}
-              >
-                <ButtonContent>
-                  <IconWrapper>
-                    <FaStore />
-                  </IconWrapper>
-                  <div>Trade</div>
-                  <div>Market</div>
-                </ButtonContent>
-              </EnhancedNeonButton>
-            </CenteredIconContainer>
-          </div>
-        </div>
       )}
     </Wrapper>
   );

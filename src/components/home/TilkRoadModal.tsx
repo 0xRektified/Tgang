@@ -15,6 +15,7 @@ import {
   WebPageTitle,
 } from "./styles/supplier.css";
 import { useTutorial } from "../../hooks/useTutorial";
+import { SkipButton } from "./Home";
 
 interface TilkRoadModalProps {
   remainingCash: number;
@@ -43,22 +44,27 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
   handleUnlockClick,
   tutorial,
 }) => {
+  const handleSkipTutorial = () => {
+    tutorial.setTutorialCompleted(true);
+    tutorial.tutorialCompleted = true;
+  };
   return (
     <div style={{ position: "relative" }}>
-      {tutorial.tutorialStep === 2 && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 10,
-            pointerEvents: "none",
-          }}
-        />
-      )}
+      {tutorial.tutorialCompleted ||
+        (tutorial.tutorialStep === 2 && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          />
+        ))}
       <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
 
       <FlexBoxRow style={{ margin: "10px" }}>
@@ -85,24 +91,26 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         <ShoppingCartTotal>Total: ${totalCost.toFixed(2)}</ShoppingCartTotal>
       </ShoppingCartFooter>
 
-      {tutorial.tutorialStep === 2 && (
-        <div
-          style={{
-            position: "relative",
-            zIndex: 20,
-            backgroundColor: "black",
-            color: "white",
-            padding: "10px",
-            margin: "10px 0",
-            borderRadius: "5px",
-            textAlign: "center",
-            fontWeight: "bold",
-            fontSize: "20px",
-          }}
-        >
-          Click on the Buy button to buy 10 Herb
-        </div>
-      )}
+      {tutorial.tutorialCompleted ||
+        (tutorial.tutorialStep === 2 && (
+          <div
+            style={{
+              position: "relative",
+              zIndex: 20,
+              backgroundColor: "black",
+              color: "white",
+              padding: "10px",
+              margin: "10px 0",
+              borderRadius: "5px",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "1.5em",
+            }}
+          >
+            Click on the Buy button to buy 10 Herb
+            <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
+          </div>
+        ))}
 
       <ScrollableTableContainer className="scrollable-content">
         <Table>
@@ -133,7 +141,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   const priceChangeSign = priceChangePercent > 0 ? "+" : "";
 
                   const isTutorialHerbProduct =
-                    tutorial.tutorialStep === 2 && product.name === "Herb";
+                    tutorial.tutorialCompleted ||
+                    (tutorial.tutorialStep === 2 && product.name === "Herb");
 
                   return (
                     <React.Fragment key={product.name}>
@@ -179,18 +188,6 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                             </span>
                           )}
                         </td>
-                        {isTutorialHerbProduct && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: -5,
-                              left: -5,
-                              right: -5,
-                              bottom: -5,
-                              pointerEvents: "none",
-                            }}
-                          />
-                        )}
                       </tr>
                       {userProduct &&
                         selectedProduct?.name === product.name && (

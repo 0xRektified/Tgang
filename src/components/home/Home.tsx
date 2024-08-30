@@ -37,6 +37,43 @@ const HomeContainer = styled.div`
   touch-action: none;
 `;
 
+export const SkipButton = styled.button`
+  background: linear-gradient(45deg, #2c3e50, #4a69bd);
+  color: white;
+  border: 2px solid #74b9ff;
+  border-radius: 6px;
+  padding: 0.6em 1em;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px #74b9ff;
+  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
+    0 0 10px #eab308;
+  margin: 1rem auto;
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(116, 185, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0);
+    }
+  }
+
+  animation: pulse 2s infinite;
+
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    padding: 0.5em 0.8em;
+  }
+  display: block;
+`;
+
 interface HomeProps {
   userInfo: IUserInfo;
   marketInfo: IMarketInfo | undefined;
@@ -46,6 +83,8 @@ interface HomeProps {
   signup: boolean;
   tutorial: ReturnType<typeof useTutorial>;
   handleTutorialComplete: () => void;
+  isCombinedModalOpen: boolean;
+  closeCombinedModal: () => void;
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -57,6 +96,8 @@ export const Home: React.FC<HomeProps> = ({
   signup,
   tutorial,
   handleTutorialComplete,
+  isCombinedModalOpen,
+  closeCombinedModal,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -69,6 +110,8 @@ export const Home: React.FC<HomeProps> = ({
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const { handleSell } = useCustomerManagement(userInfo, setUserInfo);
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
+    useState<boolean>(false);
+  const [isLocalSupplierModalOpen, setIsLocalSupplierModalOpen] =
     useState<boolean>(false);
 
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(
@@ -86,7 +129,8 @@ export const Home: React.FC<HomeProps> = ({
   }, [userInfo.products]);
 
   const handleCloseSupplierModal = () => {
-    setIsSupplierModalOpen(false);
+    setIsLocalSupplierModalOpen(false);
+    closeCombinedModal();
   };
 
   const handleCloseModal = () => {
@@ -95,8 +139,10 @@ export const Home: React.FC<HomeProps> = ({
   };
 
   const handleOpenSupplierModal = () => {
-    setIsSupplierModalOpen(true);
-    // tutorial.onTutorialProgress()
+    if (tutorial.tutorialStep === 2) {
+      setSelectedProduct(EProduct.HERB);
+    }
+    setIsLocalSupplierModalOpen(true);
   };
 
   const handleSelectProductFromInventory = (product: {
@@ -244,11 +290,11 @@ export const Home: React.FC<HomeProps> = ({
           handleCloseModal={handleCloseModal}
         />
       )}
-      {isSupplierModalOpen && (
+      {(isLocalSupplierModalOpen || isCombinedModalOpen) && (
         <CombinedModal
           userInfo={userInfo}
           marketInfo={marketInfo}
-          isOpen={isSupplierModalOpen}
+          isOpen={isLocalSupplierModalOpen || isCombinedModalOpen}
           onClose={handleCloseSupplierModal}
           onUnlockClick={onUnlockClick}
           setUserInfo={setUserInfo}

@@ -45,11 +45,16 @@ const FooterButton = styled.button<{ active: boolean }>`
 type TViewType = "Base" | "Lab" | "Shop" | "Mission" | "Pvp" | "Airdrop";
 
 interface FooterMenuProps {
-  setCurrentView: (view: TViewType) => void;
+  setCurrentView: (view: string) => void;
   currentView: string;
+
 }
 
-export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
+export const FooterMenu: React.FC<FooterMenuProps> = ({
+  setCurrentView,
+  currentView,
+
+}) => {
   return (
     <FooterContainer>
       <FooterButton
@@ -59,6 +64,15 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
         <GiPlayerBase />
         <span className="btm-nav-label">Base</span>
       </FooterButton>
+      {/* <FooterButton
+        onClick={() => {
+          setIsCombinedModalOpen(true);
+        }}
+        active={isCombinedModalOpen}
+      >
+        <GiPlayerBase />
+        <span className="btm-nav-label">trade</span>
+      </FooterButton> */}
       <FooterButton
         onClick={() => setCurrentView("Lab")}
         active={currentView === "Lab"}
@@ -89,6 +103,6 @@ export function FooterMenu({ setCurrentView, currentView }: FooterMenuProps) {
       </FooterButton>
     </FooterContainer>
   );
-}
+};
 
 export default FooterMenu;

@@ -18,6 +18,7 @@ import { useUpgradeLabCapacity } from "../../hooks/useUpgradeLabCapacity";
 import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
 import { useTutorial } from "../../hooks/useTutorial";
 import { FlexBoxRow } from "../styled/globalStyled";
+import { SkipButton } from "../home/Home";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
@@ -147,15 +148,18 @@ const TutorialOverlay = styled.div`
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 1000;
   display: flex;
+  padding-top: 5em;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
 
 const TutorialText = styled.div`
   color: white;
-  font-size: 1rem;
+  font-size: 1.2rem;
   text-align: center;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+  max-width: 80%;
 `;
 
 const HighlightedPlotItem = styled(PlotItem)`
@@ -251,6 +255,11 @@ export const Lab: React.FC<LabProps> = ({
     setIsPurchasedLabModalOpen(false);
   };
 
+  const handleSkipTutorial = () => {
+    tutorial.setTutorialCompleted(true);
+    tutorial.tutorialCompleted = true;
+  };
+
   const production = {
     [EProduct.HERB]: 0,
     [EProduct.MUSHROOM]: 0,
@@ -301,40 +310,12 @@ export const Lab: React.FC<LabProps> = ({
 
     return production;
   };
-
+  console.log(`LAB  tutorial.tutorialStep`);
+  console.log(tutorial.tutorialStep);
+  console.log(`LAB  tutorial.tutorialCompleted`);
+  console.log(tutorial.tutorialCompleted);
   return (
     <LabContainer>
-      {tutorial.tutorialStep === 4 && (
-        <>
-          <TutorialOverlay>
-            <FlexBoxRow className="w-full justify-center">
-              {userInfo.labPlots.map((labPlot) => {
-                if (!labPlot.lab) {
-                  return (
-                    <HighlightedPlotItem key={labPlot.plotId}>
-                      <div>Build a new lab</div>
-                      <AddLabButton
-                        onClick={() => handleOpenLabModal(labPlot)}
-                        className="build-new-lab-button tutorial-highlight"
-                      >
-                        <MdConstruction />
-                      </AddLabButton>
-                    </HighlightedPlotItem>
-                  );
-                }
-                return null;
-              })}
-            </FlexBoxRow>
-            <FlexBoxRow className="w-full justify-center">
-              <TutorialText>
-                Great job! Now let's build your first lab. Click on the "Build a
-                new lab" button. You will be able to collect resources from it
-                when supply start to accumulate
-              </TutorialText>
-            </FlexBoxRow>
-          </TutorialOverlay>
-        </>
-      )}
       <DescriptionContainer>
         <DescriptionText>
           Expand your empire by producing resources
@@ -346,8 +327,39 @@ export const Lab: React.FC<LabProps> = ({
         productionPerHour={production}
       />
       <Divider />
-      {tutorial.tutorialStep === 4 ? (
-        <></>
+      {!tutorial.tutorialCompleted && tutorial.tutorialStep === 4 ? (
+        <TutorialOverlay>
+          <TutorialText>
+            Great job! Now let's build your first lab.
+          </TutorialText>
+          <FlexBoxRow className="w-full justify-center">
+            {userInfo.labPlots.map((labPlot) => {
+              if (!labPlot.lab) {
+                return (
+                  <HighlightedPlotItem key={labPlot.plotId}>
+                    <div>Build a new lab</div>
+                    <AddLabButton
+                      onClick={() => handleOpenLabModal(labPlot)}
+                      className="build-new-lab-button tutorial-highlight"
+                    >
+                      <MdConstruction />
+                    </AddLabButton>
+                  </HighlightedPlotItem>
+                );
+              }
+              return null;
+            })}
+          </FlexBoxRow>
+          <TutorialText>
+            Click on the "Build a new lab" button above.
+          </TutorialText>
+          <TutorialText>
+            You will be able to collect resources from it when supply starts to
+            accumulate.
+          </TutorialText>
+          <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
+
+        </TutorialOverlay>
       ) : (
         <LabsGrid className="scrollable-content">
           {userInfo.labPlots.map((labPlot) => {

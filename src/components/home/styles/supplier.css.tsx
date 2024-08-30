@@ -15,7 +15,7 @@ export const NeonButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   transition: background-color 0.3s ease, transform 0.1s ease;
-
+  animation: pulse 2s infinite;
   &:hover {
     background-color: rgb(24 24 27);
     animation: glow 1.5s infinite alternate, pulse 2s infinite;

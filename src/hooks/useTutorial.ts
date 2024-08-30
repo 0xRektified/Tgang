@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function useTutorial() {
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -6,10 +6,16 @@ export function useTutorial() {
   const [clickCount, setClickCount] = useState(0);
 
   const onTutorialProgress = () => {
-    setTutorialStep((prevStep) => prevStep + 1);
-    if (tutorialStep >= 3) {
-      setTutorialCompleted(true);
-    }
+    setTutorialStep((prevStep) => {
+      const newStep = prevStep + 1;
+      console.log("Tutorial step:", newStep); // Now it will log the updated step
+
+      if (newStep > 4) {
+        setTutorialCompleted(true);
+      }
+
+      return newStep; // Return the updated state
+    });
   };
 
   const handleTutorialClick = () => {
@@ -30,5 +36,6 @@ export function useTutorial() {
     clickCount,
     onTutorialProgress,
     handleTutorialClick,
+    setTutorialCompleted,
   };
 }

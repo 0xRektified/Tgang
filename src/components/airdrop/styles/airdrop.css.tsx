@@ -1,17 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
 
-// Add global styles to prevent scrolling and bouncing
-export const GlobalStyle = createGlobalStyle`
-  html, body {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    touch-action: none;
-    -webkit-overflow-scrolling: none;
-  }
-`;
-
 export const AirdropContainer = styled.div`
   background-color: #1c1c1e;
   height: calc(100vh - 120px);
@@ -99,7 +87,8 @@ export const Title = styled.div`
 `;
 
 export const TableContainer = styled.div`
-  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
 `;
 
