@@ -169,10 +169,14 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
           let locked = false;
           if (upgradeRequirements) {
             locked = upgradeRequirements.some((req) => {
-              const requiredProduct = userInfo.products.find(
-                (u) => u.name === req.product
-              );
-              return !requiredProduct || requiredProduct.level < req.level;
+              if (req.requirement == 'product') {
+                const requiredProduct = userInfo.products.find(
+                  (u) => u.name === req.product
+                );
+                return !requiredProduct || requiredProduct.level < req.level;
+              } else if (req.requirement == 'referredUsers') {
+                return userInfo.referredUsers.length < req.level;
+              }
             });
           }
 
