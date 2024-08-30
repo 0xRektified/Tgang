@@ -37,7 +37,6 @@ const AirdropContainer = styled.div`
   padding: 0.3rem;
   width: 100%;
   font-family: "Digital", sans-serif;
-  touch-action: none;
 `;
 
 const DigitalFont = styled.span`
@@ -80,7 +79,7 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   };
 
   return (
-    <>
+    <div className="space-y-4 scrollable-content">
       <AirdropContainer>
         <LevelInfoContainer>
           <ReputationLabel>Reputation level {level}</ReputationLabel>
@@ -155,7 +154,7 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
           </Table>
         </ScrollableTableContainer>
       </Card>
-    </>
+    </div>
   );
 };
 

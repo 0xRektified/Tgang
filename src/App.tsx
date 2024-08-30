@@ -60,6 +60,7 @@ function App() {
   const [currentView, setCurrentView] = useState("Base");
   const [activeTab, setActiveTab] = useState<string>("dealer");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isCombinedModalOpen, setIsCombinedModalOpen] = useState(false);
 
   useEffect(() => {
     initializeApp();
@@ -117,6 +118,8 @@ function App() {
             signup={signup}
             tutorial={tutorial}
             handleTutorialComplete={handleTutorialComplete}
+            isCombinedModalOpen={isCombinedModalOpen}
+            closeCombinedModal={() => setIsCombinedModalOpen(false)}
           />
         );
       case "Lab":
@@ -163,6 +166,8 @@ function App() {
             signup={signup}
             tutorial={tutorial}
             handleTutorialComplete={handleTutorialComplete}
+            isCombinedModalOpen={isCombinedModalOpen}
+            closeCombinedModal={() => setIsCombinedModalOpen(false)}
           />
         );
     }
@@ -200,6 +205,7 @@ function App() {
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}
+
         />
       </AppContainer>
     </StyledApp>
