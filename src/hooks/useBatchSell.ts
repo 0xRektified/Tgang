@@ -9,7 +9,7 @@ export const useBatchSell = (
 ) => {
   const [batch, setBatch] = useState<Map<string, number>>(new Map());
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const timerTrigger = 2000;
+  const timerTrigger = 500;
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
