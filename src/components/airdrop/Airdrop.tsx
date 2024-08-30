@@ -37,7 +37,9 @@ const AirdropContainer = styled.div`
   touch-action: none;
 `;
 const AirdropTabContainer = styled.div`
-  height: 100vh;
+  height: calc(100vh - 50px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 const DigitalFont = styled.span`
   font-family: "Digital", sans-serif;
@@ -58,7 +60,6 @@ const Airdrop: React.FC<AirdropProps> = ({
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
 
-
   const { robberyStrike, claimDailyReward, loading, error, successMessage } =
     useDailyRobbery(userInfo, setUserInfo);
 
@@ -71,8 +72,6 @@ const Airdrop: React.FC<AirdropProps> = ({
     <>
       <GlobalStyle />
       <AirdropContainer>
-
-
         <FlexBoxRow>
           <Tabs role="tablist">
             <Tab

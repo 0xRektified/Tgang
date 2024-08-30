@@ -45,6 +45,13 @@ const DigitalFont = styled.span`
   font-size: 0.9rem;
 `;
 
+const ScrollableTableContainer = styled(TableContainer)`
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10rem;
+`;
+
 interface FriendsComponentProps {
   referralToken: string;
   referredUsers: IReferredUsers[];
@@ -119,7 +126,7 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             <p>$2000 & 1000rep</p>
           </div>
         </div>
-        <TableContainer>
+        <ScrollableTableContainer>
           <Table>
             <thead>
               <tr>
@@ -129,20 +136,24 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               </tr>
             </thead>
             <tbody>
-              {[...Array(Math.max(3, referredUsers.length))].map((_, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{referredUsers[index]?.username || "-"}</td>
-                  <td>
-                    {referredUsers[index]?.reward && (
-                      <span style={{ color: "#32cd32" }}>+{referredUsers[index]?.reward}$</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {[...Array(Math.max(10, referredUsers.length))].map(
+                (_, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{referredUsers[index]?.username || "-"}</td>
+                    <td>
+                      {referredUsers[index]?.reward && (
+                        <span style={{ color: "#32cd32" }}>
+                          +{referredUsers[index]?.reward}$
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </Table>
-        </TableContainer>
+        </ScrollableTableContainer>
       </Card>
     </>
   );
