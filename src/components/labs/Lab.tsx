@@ -310,10 +310,7 @@ export const Lab: React.FC<LabProps> = ({
 
     return production;
   };
-  console.log(`LAB  tutorial.tutorialStep`);
-  console.log(tutorial.tutorialStep);
-  console.log(`LAB  tutorial.tutorialCompleted`);
-  console.log(tutorial.tutorialCompleted);
+
   return (
     <LabContainer>
       <DescriptionContainer>

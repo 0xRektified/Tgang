@@ -17,7 +17,7 @@ export function useFetchShippingMethods() {
     } catch (error) {
       console.error("Failed to fetch upgrades data:", error);
       setError("Failed to fetch upgrades data");
-      return { upgrades: [] };
+      return { shippingMethods: undefined };
     } finally {
       setLoading(false);
     }

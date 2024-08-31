@@ -1,5 +1,6 @@
 import { EProduct } from "./product.interface";
 import { EShippingMethod } from "./shipping.interface";
+import { SocialChannel } from "./social.interface";
 import { EDealerUpgrade, IRequirement, IUpgrade } from "./upgrade.interface";
 
 export interface UserLab {
@@ -77,6 +78,11 @@ export interface IReferredUsers {
   reward: number;
 }
 
+export interface IUserSocial {
+  channel: SocialChannel,
+  member: boolean,
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
@@ -99,5 +105,6 @@ export interface IUserInfo {
   nextShipment: Date;
   reputation: number;
   userLevel: IReputationLevel;
+  socials?: IUserSocial[];
   wallet?: string;
 }

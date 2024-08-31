@@ -108,6 +108,27 @@ export const Button = styled.button`
   }
 `;
 
+export const LockedButton = styled.button`
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  width: 8em;
+
+  &:disabled {
+    background-color: grey;
+  }
+`;
+
 export const NeonButton = styled(Button)`
   background-color: rgb(39 39 42) !important;
   color: #e4e4e7;

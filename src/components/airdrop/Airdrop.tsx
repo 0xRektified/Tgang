@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-
 import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import { ApiToast } from "../ApiToast";
 import WalletComponent from "./WalletComponent";
-import RobberyComponent from "./RobberyComponent";
+import RobberyComponent from "./MissionsComponent";
 import FriendsComponent from "./FriendsComponent";
 import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
+import SocialComponent from "./SocialComponent";
+import { SocialChannel, SocialData } from "../interfaces/social.interface";
+import { useVerifySocial } from "../../hooks/useVerifySocial";
+import MissionsComponent from "./MissionsComponent";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -36,6 +39,7 @@ interface AirdropProps {
   referredUsers: IReferredUsers[];
   activeTab: string;
   userInfo: IUserInfo;
+  socials: Record<SocialChannel, SocialData>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
@@ -43,12 +47,10 @@ const Airdrop: React.FC<AirdropProps> = ({
   referralToken,
   referredUsers,
   userInfo,
+  socials,
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
-
-  const { robberyStrike, claimDailyReward, loading, error, successMessage } =
-    useDailyRobbery(userInfo, setUserInfo);
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
@@ -68,10 +70,10 @@ const Airdrop: React.FC<AirdropProps> = ({
           </Tab>
           <Tab
             role="tab"
-            active={currentTab === "Mission"}
-            onClick={() => handleTabClick("Mission")}
+            active={currentTab === "missions"}
+            onClick={() => handleTabClick("missions")}
           >
-            Mission
+            Missions
           </Tab>
           <Tab
             role="tab"
@@ -94,21 +96,14 @@ const Airdrop: React.FC<AirdropProps> = ({
         {currentTab === "wallet" && (
           <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
         )}
-        {currentTab === "Mission" && (
-          <RobberyComponent
-            robberyStrike={robberyStrike}
-            claimDailyReward={claimDailyReward}
+        {currentTab === "missions" && (
+          <MissionsComponent
             userInfo={userInfo}
             setUserInfo={setUserInfo}
-            loading={loading}
+            socials={socials}
           />
         )}
       </AirdropTabContainer>
-      <ApiToast
-        loading={loading}
-        error={error}
-        successMessage={successMessage}
-      />
     </AirdropContainer>
   );
 };

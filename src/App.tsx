@@ -38,6 +38,7 @@ function App() {
     marketInfo,
     labs,
     shippingMethods,
+    socials,
     setUserInfo,
     setUpgrades,
     setMarketInfo,
@@ -150,6 +151,7 @@ function App() {
             referredUsers={userInfo!.referredUsers}
             activeTab={activeTab}
             userInfo={userInfo!}
+            socials={socials!}
             setUserInfo={setUserInfo}
           />
         );

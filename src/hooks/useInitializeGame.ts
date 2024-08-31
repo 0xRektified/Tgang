@@ -5,6 +5,7 @@ import { useMarketData } from "./useMarketData";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { useFetchLabs } from "./useFetchLabs";
 import { useFetchShippingMethods } from "./useFetchShippingMethods";
+import { useFetchSocials } from "./useFetchSocials";
 
 const defaultUserInfo: IUserInfo = {
   id: "",
@@ -76,6 +77,14 @@ export function useInitializeGame() {
     fetchMarketData,
   } = useMarketData();
 
+  const {
+    socials,
+    setSocials,
+    loading: socialsLoading,
+    error: socialsError,
+    fetchSocials,
+  } = useFetchSocials();
+
   const initializeGame = useCallback(async () => {
     try {
       setLoading(true);
@@ -89,12 +98,13 @@ export function useInitializeGame() {
         throw new Error("User info is not available");
       }
 
-      const [upgradesData, marketData, labs, shippingMethods] =
+      const [upgradesData, marketData, labs, shippingMethods, socials] =
         await Promise.all([
           fetchUpgrades(),
           fetchMarketData(),
           fetchLabs(),
           fetchShippingMethods(),
+          fetchSocials(),
         ]);
 
       if (upgradesError || marketError || labsError) {
@@ -105,18 +115,14 @@ export function useInitializeGame() {
       setMarketInfo(marketData?.marketInfo);
       setLabs(labs?.labs);
       setShippingMethods(shippingMethods?.shippingMethods);
-
-      console.log(`upgradesData:`, upgradesData);
-      console.log(`marketData:`, marketData);
-      console.log(`labs:`, labs);
-      console.log(`shippingMethods:`, shippingMethods);
+      setSocials(socials);
     } catch (error) {
       setError(`Failed to initialize game: ${error}`);
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [authError, fetchUpgrades, fetchMarketData, setUpgrades, setMarketInfo]);
+  }, [authError, fetchUpgrades, fetchMarketData, setUpgrades, setMarketInfo, setSocials]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -130,6 +136,7 @@ export function useInitializeGame() {
     marketInfo,
     labs,
     shippingMethods,
+    socials,
     setUserInfo: setUser,
     setUpgrades,
     setMarketInfo,
