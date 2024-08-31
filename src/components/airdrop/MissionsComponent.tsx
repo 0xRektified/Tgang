@@ -35,7 +35,7 @@ interface MissionsComponentProps {
   socials: Record<SocialChannel, SocialData>;
 }
 const RobberyNeonButton = styled(NeonButton)`
-  width: 12em;
+  width: 16em;
 `;
 const calculateCountdown = (time: Date) => {
   const now = new Date().getTime();
