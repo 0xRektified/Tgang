@@ -58,8 +58,6 @@ const Airdrop: React.FC<AirdropProps> = ({
     mixpanel.track("Airdrop Tab Changed", { tab });
   };
 
-  console.log("socials", socials);
-
   return (
     <AirdropContainer className="scrollable-content">
       <FlexBoxRow>
