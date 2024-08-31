@@ -5,16 +5,19 @@ import {
   CardInfoColumn,
   LockedButton,
   NeonButton,
-} from "../styled/cardStyled";
-import {
   CardHeader,
   CardImage,
   CardDetails,
   CardTitle,
 } from "../styled/cardStyled";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
-import { StatDesc } from "./styles/airdrop.css";
+import { Button, StatDesc } from "./styles/airdrop.css";
 import WebApp from "@twa-dev/sdk";
+import styled from "styled-components";
+
+const ResponsiveButton = styled(NeonButton)`
+  width: 6rem;
+`;
 
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
@@ -44,13 +47,22 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   const renderVerifyButton = (channel: SocialChannel, isMember: boolean) => {
     if (isMember) {
-      return <LockedButton disabled>Joined</LockedButton>;
+      return <></>;
     }
     if (loading) {
-      return <LockedButton disabled>Loading...</LockedButton>;
+      return (
+        <ResponsiveButton as={LockedButton} disabled>
+          Loading...
+        </ResponsiveButton>
+      );
     }
     return (
-      <NeonButton onClick={() => handleVerifyClick(channel)}>Verify</NeonButton>
+      <ResponsiveButton
+        as={NeonButton}
+        onClick={() => handleVerifyClick(channel)}
+      >
+        Verify
+      </ResponsiveButton>
     );
   };
 
@@ -73,13 +85,18 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                 />
                 <CardDetails>
                   <CardInfoColumn>
-                    <CardTitle>{social.title}</CardTitle>
+                    <CardTitle>
+                      {social.title} {!!isMember ? `✅` : ``}
+                    </CardTitle>
 
                     <div className="grid grid-cols-2 gap-4 w-full pb-4">
                       <div className="card flex flex-col justify-center items-center text-center">
-                        <NeonButton onClick={() => handleJoinClick(social.url)}>
+                        <ResponsiveButton
+                          as={NeonButton}
+                          onClick={() => handleJoinClick(social.url)}
+                        >
                           Open
-                        </NeonButton>
+                        </ResponsiveButton>
                       </div>
                       <div className="card flex flex-col justify-center items-center text-center">
                         {renderVerifyButton(
