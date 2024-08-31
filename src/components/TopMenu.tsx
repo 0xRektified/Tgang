@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef, useEffect, useState } from "react";
 import { IUserInfo } from "./interfaces/user.interface";
 import rank from "/assets/rank.png";
 import {
@@ -15,13 +15,23 @@ import {
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { calculateProgress, formatPrice } from "./utils/formater";
 
+// Add this function at the top of the file, outside the component
+const calculateFontSize = (username: string): string => {
+  if (username.length <= 10) return "1.2rem";
+  if (username.length <= 15) return "1.1rem";
+  if (username.length <= 20) return "1rem";
+  if (username.length <= 25) return "0.8rem";
+  return "0.7rem";
+};
+
 interface TopMenuProps {
   userInfo: IUserInfo;
 }
 
-
-
 export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
+  const [fontSize, setFontSize] = useState("1rem");
+  const usernameRef = useRef<HTMLSpanElement>(null);
+
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
     if (scrollableEl) {
@@ -30,6 +40,12 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (userInfo && userInfo.username) {
+      setFontSize(calculateFontSize(userInfo.username));
+    }
+  }, [userInfo]);
 
   if (!userInfo) return null;
 
@@ -44,7 +60,9 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
           <FlexBoxCol>
             <div className="flex items-center space-x-2">
               <RankIcon src={rank} alt="Rank" />
-              <DigitalFont as={Username}>{username}</DigitalFont>
+              <DigitalFont as={Username} ref={usernameRef} style={{ fontSize }}>
+                {username}
+              </DigitalFont>
             </div>
           </FlexBoxCol>
           <FlexBoxCol>

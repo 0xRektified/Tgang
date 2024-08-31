@@ -20,8 +20,6 @@ export function useAuthAndFetchUserData(
       try {
         const decodedInput = decodeURIComponent(WebApp.initData);
         const parsedQuery = queryString.parse(decodedInput);
-        console.log(`parsedQuery`);
-        console.log(parsedQuery);
         const sanitizeQuery = (query: Record<string, any>) => {
           const sanitizedQuery: Record<string, any> = {};
           if (query.query_id && typeof query.query_id === "string") {
@@ -57,15 +55,10 @@ export function useAuthAndFetchUserData(
           `${import.meta.env.VITE_BACKEND_URL}/auth/login?${decodedInput}`,
           sanitizedResult,
         );
-        console.log(`response`);
-        console.log(response);
         const { access_token, signup } = response.data;
         setSignup(signup);
         setAuthToken(access_token);
         const userInfoResponse = await axiosInstance.get<IUserInfo>(`/users`);
-        console.log(`userInfoResponse`);
-        console.log(userInfoResponse);
-
         setUser(userInfoResponse.data);
 
         mixpanel.identify(userInfoResponse.data.id.toString());

@@ -8,8 +8,6 @@ export function useTutorial() {
   const onTutorialProgress = () => {
     setTutorialStep((prevStep) => {
       const newStep = prevStep + 1;
-      console.log("Tutorial step:", newStep); // Now it will log the updated step
-
       if (newStep > 4) {
         setTutorialCompleted(true);
       }

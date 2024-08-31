@@ -16,9 +16,6 @@ const WalletComponent: React.FC<WalletProps> = ({ userInfo, setUserInfo }) => {
   const tonWalletAddress = useTonAddress();
   const { setWallet } = useSetUserWallet();
   useEffect(() => {
-    console.log(tonWalletAddress);
-    console.log(`userInfo`);
-    console.log(userInfo);
     if (!userInfo.wallet) {
       setWallet(tonWalletAddress, setUserInfo);
     }

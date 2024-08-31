@@ -44,20 +44,23 @@ export const ApiToast: React.FC<ApiToastProps> = ({
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-[10em] right-0 m-4">
-      <div className="toast toast-top toast-end">
+    <div className="fixed bottom-[10em] left-0 right-0 mx-auto px-4 max-w-sm">
+      <div className="toast toast-top toast-center w-full">
         <div
-          className={`alert p-2 rounded shadow-lg text-white font-bold bg-black bg-opacity-75 flex items-center`}
-          style={{ minHeight: "2.5em" }}
+          className={`alert p-2 rounded shadow-lg text-white font-bold bg-black bg-opacity-75 flex items-start`}
         >
-          {loading ? (
-            <span className="loading loading-dots loading-lg"></span>
-          ) : error ? (
-            <MdError className="text-red-500 mr-2" size={24} />
-          ) : (
-            <MdCheckCircle className="text-green-500 mr-2" size={24} />
-          )}
-          <span>{loading ? "Loading..." : message}</span>
+          <div className="flex-shrink-0 mr-2 mt-1">
+            {loading ? (
+              <span className="loading loading-dots loading-md"></span>
+            ) : error ? (
+              <MdError className="text-red-500" size={20} />
+            ) : (
+              <MdCheckCircle className="text-green-500" size={20} />
+            )}
+          </div>
+          <div className="flex-grow text-sm break-words">
+            {loading ? "Loading..." : message}
+          </div>
         </div>
       </div>
     </div>

@@ -459,10 +459,6 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
     }
   }, [signup, tutorial.tutorialCompleted, tutorial.tutorialStep]);
 
-  useEffect(() => {
-    console.log("Component rendered. Tutorial step:", tutorial.tutorialStep);
-  }, [tutorial.tutorialStep]);
-
   const handleSkipTutorial = () => {
     tutorial.setTutorialCompleted(true);
     tutorial.tutorialCompleted = true;

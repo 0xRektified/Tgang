@@ -7,7 +7,6 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  console.log("mode", mode);
   return {
     plugins: [
       react(),

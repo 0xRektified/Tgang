@@ -13,6 +13,7 @@ import {
   TableContainer,
 } from "./styles/airdrop.css";
 import styled from "styled-components";
+import { NeonButton } from "../styled/cardStyled";
 
 const LevelInfoContainer = styled.div`
   display: flex;
@@ -69,6 +70,26 @@ const AnnouncementLink = styled.a`
   }
 `;
 
+const InlineStatDesc = styled(StatDesc)`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+`;
+
+const FriendNeonButton = styled(NeonButton)`
+  width: 100%;
+  height: 3rem;
+`;
+
+const CopyNeonButton = styled(NeonButton)`
+  height: 3rem;
+  width: 3rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 interface FriendsComponentProps {
   referralToken: string;
   referredUsers: IReferredUsers[];
@@ -118,26 +139,28 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
           🚀
         </AnnouncementContainer>
       </AirdropContainer>
-      <DigitalFont>
+      {/* <DigitalFont>
         Invite users and earn reputation to qualify for the airdrop
-      </DigitalFont>
+      </DigitalFont> */}
       <Card className="scrollable-content">
         <div className="flex flex-row items-center justify-start mb-4">
           <Stats>
-            <StatDesc>Invited users:</StatDesc>
-            <StatValue>{referredUsers.length}</StatValue>
+            <InlineStatDesc>
+              Invited users:
+              <StatValue>{referredUsers.length}</StatValue>
+            </InlineStatDesc>
           </Stats>
         </div>
         <div className="flex w-full mb-4">
           <div className="flex-grow">
-            <Button onClick={handleRefForward} className="w-full h-12">
+            <FriendNeonButton onClick={handleRefForward}>
               Invite Friends
-            </Button>
+            </FriendNeonButton>
           </div>
           <div className="ml-4">
-            <Button onClick={handleRefClick} className="h-12">
+            <CopyNeonButton onClick={handleRefClick}>
               <PiCopySimpleBold className="text-xl font-bold" />
-            </Button>
+            </CopyNeonButton>
           </div>
         </div>
 
@@ -165,21 +188,19 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               </tr>
             </thead>
             <tbody>
-              {[...Array(Math.max(10, referredUsers.length))].map(
-                (_, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{referredUsers[index]?.username || "-"}</td>
-                    <td>
-                      {referredUsers[index]?.reward && (
-                        <span style={{ color: "#32cd32" }}>
-                          +{referredUsers[index]?.reward}$
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ),
-              )}
+              {[...Array(Math.max(3, referredUsers.length))].map((_, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{referredUsers[index]?.username || "-"}</td>
+                  <td>
+                    {referredUsers[index]?.reward && (
+                      <span style={{ color: "#32cd32" }}>
+                        +{referredUsers[index]?.reward}$
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </ScrollableTableContainer>

@@ -19,13 +19,24 @@ import SocialComponent from "./SocialComponent";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { ApiToast } from "../ApiToast";
 import { useVerifySocial } from "../../hooks/useVerifySocial";
+import { NeonButton } from "../styled/cardStyled";
+import styled from "styled-components";
+
+// Add this new styled component
+const InlineStatDesc = styled(StatDesc)`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+`;
 
 interface MissionsComponentProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   socials: Record<SocialChannel, SocialData>;
 }
-
+const RobberyNeonButton = styled(NeonButton)`
+  width: 12em;
+`;
 const calculateCountdown = (time: Date) => {
   const now = new Date().getTime();
   const timeInMillis = new Date(time).getTime();
@@ -52,12 +63,6 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
     successMessage: robberySuccessMessage,
   } = useDailyRobbery(userInfo, setUserInfo);
 
-  const {
-    verifySocial,
-    loading: socialLoading,
-    error: socialError,
-    successMessage: socialSuccessMessage,
-  } = useVerifySocial();
   const [nextRobberyCountdown, setNextRobberyCountdown] = useState({
     hours: 0,
     minutes: 0,
@@ -119,23 +124,13 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
           <p>Loading...</p>
         ) : (
           <>
-            <StatDesc>Robbery Strike</StatDesc>
-            <StatValue>
-              {robberyStrike !== null ? robberyStrike : "0"}
-            </StatValue>
-            <Button onClick={handleDailyReward} disabled={isButtonDisabled}>
-              <FlexBoxRow>
-                {isButtonDisabled ? (
-                  <>
-                    <GiAk47 className="text-2xl" /> Wait for reward
-                  </>
-                ) : (
-                  <>
-                    <GiAk47 className="text-2xl" /> Commit a robbery
-                  </>
-                )}
-              </FlexBoxRow>
-            </Button>
+            <InlineStatDesc>
+              Robbery Strike
+              <StatValue>
+                {robberyStrike !== null ? robberyStrike : "0"}
+              </StatValue>
+            </InlineStatDesc>
+
             {userInfo.lastRobbery && (
               <Countdown>
                 {nextRobberyCountdown.hours > 0 ||
@@ -203,6 +198,22 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
                 )}
               </Countdown>
             )}
+            <RobberyNeonButton
+              onClick={handleDailyReward}
+              disabled={isButtonDisabled}
+            >
+              <FlexBoxRow>
+                {isButtonDisabled ? (
+                  <>
+                    <GiAk47 className="text-4xl" /> Wait for reward
+                  </>
+                ) : (
+                  <>
+                    <GiAk47 className="text-4xl" /> Commit a robbery
+                  </>
+                )}
+              </FlexBoxRow>
+            </RobberyNeonButton>
             <StatDesc>
               Next reward will be{" "}
               <GreenText>${(robberyStrike + 1) * 1000}</GreenText>
@@ -218,14 +229,12 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
           socials={socials}
           userInfo={userInfo}
           setUserInfo={setUserInfo}
-          verifySocial={verifySocial}
-          loading={socialLoading}
         />
       </Card>
       <ApiToast
-        loading={robberyLoading || socialLoading}
-        error={robberyError || socialError}
-        successMessage={robberySuccessMessage || socialSuccessMessage}
+        loading={robberyLoading}
+        error={robberyError}
+        successMessage={robberySuccessMessage}
       />
     </>
   );

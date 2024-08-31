@@ -10,7 +10,7 @@ export const calculateTotalQuantity = (products: Product[]): number => {
 export const updateProducts = (
   products: Product[],
   productName: string,
-  quantity: number
+  quantity: number,
 ): Product[] => {
   return products.map((product) => {
     if (product.name === productName && product.quantity >= quantity) {
@@ -28,7 +28,7 @@ export const getSellQuantity = (user: IUserInfo, product: EProduct) => {
 export const handleTransaction = (
   userInfo: IUserInfo,
   productToSell: Product,
-  marketInfo: IMarketInfo | undefined
+  marketInfo: IMarketInfo | undefined,
 ): {
   updatedProducts: Product[];
   transaction: Transaction;
@@ -46,10 +46,8 @@ export const handleTransaction = (
     const productName = productToSell.name;
 
     const productMarket = marketInfo.products.find(
-      (e) => e.name === productName
+      (e) => e.name === productName,
     );
-    console.log(`marketInfo`);
-    console.log(marketInfo);
     if (productMarket && userInfo) {
       let productPrice = productMarket.price;
       amountEarned = amountToSell * productPrice;
@@ -58,7 +56,7 @@ export const handleTransaction = (
       const updatedProducts = updateProducts(
         userInfo.products,
         productName,
-        amountToSell
+        amountToSell,
       );
       const transaction = {
         type: "success",
@@ -76,7 +74,7 @@ export const handleTransaction = (
       return { updatedProducts: userInfo.products, transaction, cashState };
     } else {
       const inventoryProduct = userInfo.products.find(
-        (product) => product.name === productName
+        (product) => product.name === productName,
       );
       if (inventoryProduct) {
         const transaction = {

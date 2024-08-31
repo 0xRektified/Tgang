@@ -11,18 +11,22 @@ export function useVerifySocial() {
 
   const verifySocial = async (
     chanel: SocialChannel,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
-        `/socials/verify/${chanel}`
+        `/socials/verify/${chanel}`,
       );
-      const newUserInfo = data;
-      setUserInfo(newUserInfo);
-      setSuccessMessage("Thank you for joining!");
+      if (data) {
+        const newUserInfo = data;
+        setUserInfo(newUserInfo);
+        setSuccessMessage("Thank you for joining!");
+      } else {
+        setError("An unexpected error occurred");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message || error.message;

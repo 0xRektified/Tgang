@@ -14,32 +14,35 @@ import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { Button, StatDesc } from "./styles/airdrop.css";
 import WebApp from "@twa-dev/sdk";
 import styled from "styled-components";
+import { useVerifySocial } from "../../hooks/useVerifySocial";
+import { ApiToast } from "../ApiToast";
 
-const ResponsiveButton = styled(NeonButton)`
-  width: 6rem;
-`;
 
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  verifySocial: (
-    chanel: SocialChannel,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
-  ) => Promise<void>;
-  loading: boolean;
 }
+
+const ResponsiveButton = styled(NeonButton)<{ isMember: boolean }>`
+  width: ${props => props.isMember ? '10rem' : '6rem'};
+`;
 
 const SocialComponent: React.FC<SocialComponentProps> = ({
   socials,
   userInfo,
   setUserInfo,
-  verifySocial,
-  loading,
 }) => {
   const handleJoinClick = (url: string) => {
     WebApp.openTelegramLink(url);
   };
+
+  const {
+    verifySocial,
+    loading: socialLoading,
+    error: socialError,
+    successMessage: socialSuccessMessage,
+  } = useVerifySocial();
 
   const handleVerifyClick = (channel: SocialChannel) => {
     verifySocial(channel, setUserInfo);
@@ -47,11 +50,11 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   const renderVerifyButton = (channel: SocialChannel, isMember: boolean) => {
     if (isMember) {
-      return <></>;
+      return <div></div>;
     }
-    if (loading) {
+    if (socialLoading) {
       return (
-        <ResponsiveButton as={LockedButton} disabled>
+        <ResponsiveButton as={LockedButton} disabled isMember={false}>
           Loading...
         </ResponsiveButton>
       );
@@ -60,6 +63,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
       <ResponsiveButton
         as={NeonButton}
         onClick={() => handleVerifyClick(channel)}
+        isMember={false}
       >
         Verify
       </ResponsiveButton>
@@ -90,20 +94,35 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                     </CardTitle>
 
                     <div className="grid grid-cols-2 gap-4 w-full pb-4">
-                      <div className="card flex flex-col justify-center items-center text-center">
-                        <ResponsiveButton
-                          as={NeonButton}
-                          onClick={() => handleJoinClick(social.url)}
-                        >
-                          Open
-                        </ResponsiveButton>
-                      </div>
-                      <div className="card flex flex-col justify-center items-center text-center">
-                        {renderVerifyButton(
-                          channel as SocialChannel,
-                          !!isMember,
-                        )}
-                      </div>
+                      {isMember ? (
+                        <div className="card flex flex-col justify-center items-center text-center col-span-2">
+                          <ResponsiveButton
+                            as={NeonButton}
+                            onClick={() => handleJoinClick(social.url)}
+                            isMember={true}
+                          >
+                            Open
+                          </ResponsiveButton>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="card flex flex-col justify-center items-center text-center">
+                            <ResponsiveButton
+                              as={NeonButton}
+                              onClick={() => handleJoinClick(social.url)}
+                              isMember={false}
+                            >
+                              Open
+                            </ResponsiveButton>
+                          </div>
+                          <div className="card flex flex-col justify-center items-center text-center">
+                            {renderVerifyButton(
+                              channel as SocialChannel,
+                              !!isMember,
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </CardInfoColumn>
                 </CardDetails>
@@ -111,6 +130,11 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
             </CardContainer>
           );
         })}
+        <ApiToast
+          loading={socialLoading}
+          error={socialError}
+          successMessage={socialSuccessMessage}
+        />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { IMarketInfo } from "../components/interfaces/market.interface";
 
 export function useMarketData() {
   const [marketInfo, setMarketInfo] = useState<IMarketInfo | undefined>(
-    undefined
+    undefined,
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +13,7 @@ export function useMarketData() {
     try {
       setLoading(true);
       const marketResponse = await axiosInstance.get<IMarketInfo>(
-        `/markets/NY`
+        `/markets/NY`,
       );
       setMarketInfo(marketResponse.data);
       return { marketInfo: marketResponse.data };
@@ -35,8 +35,6 @@ export function useMarketData() {
     // Calculate time until the next full hour
     const timeUntilNextHour =
       (60 - minutes - 1) * 60 * 1000 + (60 - seconds) * 1000 - milliseconds;
-
-    console.log("Time until next hour:", timeUntilNextHour);
 
     const fetchAtNextFullHour = () => {
       // Fetch data immediately at the next full hour
