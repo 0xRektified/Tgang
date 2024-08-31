@@ -51,6 +51,24 @@ const ScrollableTableContainer = styled(TableContainer)`
   padding-bottom: 10rem;
 `;
 
+const AnnouncementContainer = styled.div`
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+`;
+
+const AnnouncementLink = styled.a`
+  color: #3498db;
+  text-decoration: underline;
+  &:hover {
+    color: #2980b9;
+  }
+`;
+
 interface FriendsComponentProps {
   referralToken: string;
   referredUsers: IReferredUsers[];
@@ -87,14 +105,26 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             {userInfo.reputation} / {userInfo.userLevel.maxReputation}
           </ReputationAmount>
         </LevelInfoContainer>
-        <DigitalFont>
-          Invite users and earn reputation to qualify for the airdrop
-        </DigitalFont>
+
+        <AnnouncementContainer>
+          🎉 Exciting news! We're giving away over $600 USD for beta testers!{" "}
+          <AnnouncementLink
+            href="https://t.me/cartel_game_community"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            More info in our community page
+          </AnnouncementLink>{" "}
+          🚀
+        </AnnouncementContainer>
       </AirdropContainer>
+      <DigitalFont>
+        Invite users and earn reputation to qualify for the airdrop
+      </DigitalFont>
       <Card className="scrollable-content">
-        <div className="w-1/4 flex flex-col items-center justify-center">
+        <div className="flex flex-row items-center justify-start mb-4">
           <Stats>
-            <StatDesc>Invited users</StatDesc>
+            <StatDesc>Invited users:</StatDesc>
             <StatValue>{referredUsers.length}</StatValue>
           </Stats>
         </div>
