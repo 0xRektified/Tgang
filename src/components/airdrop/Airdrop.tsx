@@ -10,6 +10,7 @@ import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
 import SocialComponent from "./SocialComponent";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
+import { useVerifySocial } from "../../hooks/useVerifySocial";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -50,8 +51,21 @@ const Airdrop: React.FC<AirdropProps> = ({
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
 
-  const { robberyStrike, claimDailyReward, loading, error, successMessage } =
+  const {
+    robberyStrike,
+    claimDailyReward,
+    loading: robberyLoading,
+    error: robberyError,
+    successMessage: robberySuccessMessage,
+  } =
     useDailyRobbery(userInfo, setUserInfo);
+
+  const {
+    verifySocial,
+    loading: socialLoading,
+    error: socialError,
+    successMessage: socialSuccessMessage,
+  } = useVerifySocial();
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
@@ -104,14 +118,16 @@ const Airdrop: React.FC<AirdropProps> = ({
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             socials={socials}
-            loading={loading}
+            verifySocial={verifySocial}
+            robberyLoading={robberyLoading}
+            socialLoading={socialLoading}
           />
         )}
       </AirdropTabContainer>
       <ApiToast
-        loading={loading}
-        error={error}
-        successMessage={successMessage}
+        loading={robberyLoading || socialLoading}
+        error={robberyError || socialError}
+        successMessage={robberySuccessMessage || socialSuccessMessage}
       />
     </AirdropContainer>
   );

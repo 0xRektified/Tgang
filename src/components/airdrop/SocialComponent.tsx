@@ -12,6 +12,7 @@ interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  verifySocial: (channel: SocialChannel, setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>) => void;
   loading: boolean;
 }
 
@@ -19,9 +20,9 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
   socials,
   userInfo,
   setUserInfo,
+  verifySocial,
   loading,
 }) => {
-  const {verifySocial} = useVerifySocial();
 
   const handleJoinClick = (url: string) => {
     WebApp.openTelegramLink(url);

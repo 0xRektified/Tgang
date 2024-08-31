@@ -24,7 +24,9 @@ interface RobberyComponentProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   socials: Record<SocialChannel, SocialData>;
-  loading: boolean;
+  verifySocial: (channel: SocialChannel, setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>) => void;
+  robberyLoading: boolean;
+  socialLoading: boolean;
 }
 
 const calculateCountdown = (time: Date) => {
@@ -45,7 +47,9 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
   userInfo,
   setUserInfo,
   socials,
-  loading,
+  verifySocial,
+  robberyLoading,
+  socialLoading,
 }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [nextRobberyCountdown, setNextRobberyCountdown] = useState({
@@ -105,7 +109,7 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
   return (
     <>
     <Card>
-      {loading ? (
+      {robberyLoading ? (
         <p>Loading...</p>
       ) : (
         <>
@@ -206,7 +210,8 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
         socials={socials}
         userInfo={userInfo}
         setUserInfo={setUserInfo}
-        loading={loading}
+        verifySocial={verifySocial}
+        loading={socialLoading}
       />
     </Card>
     </>
