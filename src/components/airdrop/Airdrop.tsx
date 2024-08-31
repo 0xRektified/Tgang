@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-
 import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import { ApiToast } from "../ApiToast";
@@ -9,6 +8,8 @@ import RobberyComponent from "./RobberyComponent";
 import FriendsComponent from "./FriendsComponent";
 import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
+import SocialComponent from "./SocialComponent";
+import { SocialChannel, SocialData } from "../interfaces/social.interface";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -36,6 +37,7 @@ interface AirdropProps {
   referredUsers: IReferredUsers[];
   activeTab: string;
   userInfo: IUserInfo;
+  socials: Record<SocialChannel, SocialData>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
 }
 
@@ -43,6 +45,7 @@ const Airdrop: React.FC<AirdropProps> = ({
   referralToken,
   referredUsers,
   userInfo,
+  socials,
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
@@ -54,6 +57,8 @@ const Airdrop: React.FC<AirdropProps> = ({
     setCurrentTab(tab);
     mixpanel.track("Airdrop Tab Changed", { tab });
   };
+
+  console.log("socials", socials);
 
   return (
     <AirdropContainer className="scrollable-content">
@@ -80,6 +85,13 @@ const Airdrop: React.FC<AirdropProps> = ({
           >
             Wallet
           </Tab>
+          <Tab
+            role="tab"
+            active={currentTab === "social"}
+            onClick={() => handleTabClick("social")}
+          >
+            Social
+          </Tab>
         </Tabs>
       </FlexBoxRow>
 
@@ -98,6 +110,14 @@ const Airdrop: React.FC<AirdropProps> = ({
           <RobberyComponent
             robberyStrike={robberyStrike}
             claimDailyReward={claimDailyReward}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            loading={loading}
+          />
+        )}
+        {currentTab === "social" && (
+          <SocialComponent
+            socials={socials}
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             loading={loading}
