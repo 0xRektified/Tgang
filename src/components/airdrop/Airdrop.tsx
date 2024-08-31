@@ -4,13 +4,14 @@ import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import { ApiToast } from "../ApiToast";
 import WalletComponent from "./WalletComponent";
-import RobberyComponent from "./RobberyComponent";
+import RobberyComponent from "./MissionsComponent";
 import FriendsComponent from "./FriendsComponent";
 import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
 import SocialComponent from "./SocialComponent";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { useVerifySocial } from "../../hooks/useVerifySocial";
+import MissionsComponent from "./MissionsComponent";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -50,22 +51,6 @@ const Airdrop: React.FC<AirdropProps> = ({
   setUserInfo,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
-
-  const {
-    robberyStrike,
-    claimDailyReward,
-    loading: robberyLoading,
-    error: robberyError,
-    successMessage: robberySuccessMessage,
-  } =
-    useDailyRobbery(userInfo, setUserInfo);
-
-  const {
-    verifySocial,
-    loading: socialLoading,
-    error: socialError,
-    successMessage: socialSuccessMessage,
-  } = useVerifySocial();
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
@@ -112,23 +97,13 @@ const Airdrop: React.FC<AirdropProps> = ({
           <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
         )}
         {currentTab === "missions" && (
-          <RobberyComponent
-            robberyStrike={robberyStrike}
-            claimDailyReward={claimDailyReward}
+          <MissionsComponent
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             socials={socials}
-            verifySocial={verifySocial}
-            robberyLoading={robberyLoading}
-            socialLoading={socialLoading}
           />
         )}
       </AirdropTabContainer>
-      <ApiToast
-        loading={robberyLoading || socialLoading}
-        error={robberyError || socialError}
-        successMessage={robberySuccessMessage || socialSuccessMessage}
-      />
     </AirdropContainer>
   );
 };

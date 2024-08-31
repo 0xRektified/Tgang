@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { IUserInfo } from "../interfaces/user.interface";
-import { Button, CardContainer, CardInfoColumn, LockedButton, NeonButton } from "../styled/cardStyled";
-import { CardHeader, CardImage, CardDetails, CardTitle } from "../styled/cardStyled";
+import {
+  Button,
+  CardContainer,
+  CardInfoColumn,
+  LockedButton,
+  NeonButton,
+} from "../styled/cardStyled";
+import {
+  CardHeader,
+  CardImage,
+  CardDetails,
+  CardTitle,
+} from "../styled/cardStyled";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { DigitalFont } from "../styled/topmenu";
 import { AirdropContainer, StatDesc } from "./styles/airdrop.css";
 import WebApp from "@twa-dev/sdk";
 import { useVerifySocial } from "../../hooks/useVerifySocial";
+import { ApiToast } from "../ApiToast";
+import useDailyRobbery from "../../hooks/useDailyRobbery";
 
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  verifySocial: (channel: SocialChannel, setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>) => void;
+  verifySocial: (
+    chanel: SocialChannel,
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
+  ) => Promise<void>;
   loading: boolean;
 }
 
@@ -23,7 +39,6 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
   verifySocial,
   loading,
 }) => {
-
   const handleJoinClick = (url: string) => {
     WebApp.openTelegramLink(url);
   };
@@ -34,14 +49,10 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   const renderVerifyButton = (channel: SocialChannel, isMember: boolean) => {
     if (isMember) {
-      return (
-        <LockedButton disabled>Joined</LockedButton>
-      );
+      return <LockedButton disabled>Joined</LockedButton>;
     }
     if (loading) {
-      return (
-        <LockedButton disabled>Loading...</LockedButton>
-      );
+      return <LockedButton disabled>Loading...</LockedButton>;
     }
     return (
       <NeonButton onClick={() => handleVerifyClick(channel)}>Verify</NeonButton>
@@ -50,7 +61,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   return (
     <div>
-      <StatDesc>
+      <StatDesc className="font-bold mb-4">
         Join our socials to get $1000 and 100 rep each!
       </StatDesc>
       <div className="space-y-2">
@@ -58,9 +69,13 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
           const isMember = userInfo.socials?.find((s) => s.channel === channel);
 
           return (
-            <CardContainer>
+            <CardContainer style={{ padding: "0rem" }}>
               <CardHeader>
-                <CardImage src={social.image} alt={social.title} loading="lazy" />
+                <CardImage
+                  src={social.image}
+                  alt={social.title}
+                  loading="lazy"
+                />
                 <CardDetails>
                   <CardInfoColumn>
                     <CardTitle>{social.title}</CardTitle>
@@ -72,14 +87,17 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                         </NeonButton>
                       </div>
                       <div className="card flex flex-col justify-center items-center text-center">
-                        {renderVerifyButton(channel as SocialChannel, !!isMember)}
+                        {renderVerifyButton(
+                          channel as SocialChannel,
+                          !!isMember,
+                        )}
                       </div>
                     </div>
                   </CardInfoColumn>
                 </CardDetails>
               </CardHeader>
             </CardContainer>
-          )
+          );
         })}
       </div>
     </div>

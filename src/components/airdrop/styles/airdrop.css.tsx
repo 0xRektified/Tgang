@@ -63,7 +63,7 @@ export const StatValue = styled.div`
 
 export const StatDesc = styled.div`
   font-size: 1rem;
-  color: #9ca3af;
+  color: white;
 `;
 
 export const GreenText = styled.span`
