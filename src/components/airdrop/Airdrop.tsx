@@ -85,13 +85,6 @@ const Airdrop: React.FC<AirdropProps> = ({
           >
             Wallet
           </Tab>
-          <Tab
-            role="tab"
-            active={currentTab === "social"}
-            onClick={() => handleTabClick("social")}
-          >
-            Social
-          </Tab>
         </Tabs>
       </FlexBoxRow>
 
@@ -112,14 +105,7 @@ const Airdrop: React.FC<AirdropProps> = ({
             claimDailyReward={claimDailyReward}
             userInfo={userInfo}
             setUserInfo={setUserInfo}
-            loading={loading}
-          />
-        )}
-        {currentTab === "social" && (
-          <SocialComponent
             socials={socials}
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
             loading={loading}
           />
         )}

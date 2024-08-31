@@ -15,12 +15,15 @@ import {
   StatValue,
   Card,
 } from "./styles/airdrop.css";
+import SocialComponent from "./SocialComponent";
+import { SocialChannel, SocialData } from "../interfaces/social.interface";
 
 interface RobberyComponentProps {
   robberyStrike: number;
   claimDailyReward: () => Promise<void>;
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  socials: Record<SocialChannel, SocialData>;
   loading: boolean;
 }
 
@@ -41,6 +44,7 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
   claimDailyReward,
   userInfo,
   setUserInfo,
+  socials,
   loading,
 }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -99,6 +103,7 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
   };
 
   return (
+    <>
     <Card>
       {loading ? (
         <p>Loading...</p>
@@ -196,6 +201,15 @@ const RobberyComponent: React.FC<RobberyComponentProps> = ({
         </>
       )}
     </Card>
+    <Card>
+      <SocialComponent
+        socials={socials}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+        loading={loading}
+      />
+    </Card>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { Button, CardContainer, CardInfoColumn, LockedButton, NeonButton } from 
 import { CardHeader, CardImage, CardDetails, CardTitle } from "../styled/cardStyled";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { DigitalFont } from "../styled/topmenu";
-import { AirdropContainer } from "./styles/airdrop.css";
+import { AirdropContainer, StatDesc } from "./styles/airdrop.css";
 import WebApp from "@twa-dev/sdk";
 import { useVerifySocial } from "../../hooks/useVerifySocial";
 
@@ -49,9 +49,9 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   return (
     <div>
-      <DigitalFont>
+      <StatDesc>
         Join our socials to get $1000 and 100 rep each!
-      </DigitalFont>
+      </StatDesc>
       <div className="space-y-2">
         {Object.entries(socials).map(([channel, social]) => {
           const isMember = userInfo.socials?.find((s) => s.channel === channel);
