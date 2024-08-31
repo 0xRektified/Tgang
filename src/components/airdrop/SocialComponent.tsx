@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { IUserInfo } from "../interfaces/user.interface";
 import {
-  Button,
   CardContainer,
   CardInfoColumn,
   LockedButton,
@@ -14,12 +13,8 @@ import {
   CardTitle,
 } from "../styled/cardStyled";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
-import { DigitalFont } from "../styled/topmenu";
-import { AirdropContainer, StatDesc } from "./styles/airdrop.css";
+import { StatDesc } from "./styles/airdrop.css";
 import WebApp from "@twa-dev/sdk";
-import { useVerifySocial } from "../../hooks/useVerifySocial";
-import { ApiToast } from "../ApiToast";
-import useDailyRobbery from "../../hooks/useDailyRobbery";
 
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
