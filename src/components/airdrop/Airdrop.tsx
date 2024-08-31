@@ -73,10 +73,10 @@ const Airdrop: React.FC<AirdropProps> = ({
           </Tab>
           <Tab
             role="tab"
-            active={currentTab === "Mission"}
-            onClick={() => handleTabClick("Mission")}
+            active={currentTab === "missions"}
+            onClick={() => handleTabClick("missions")}
           >
-            Mission
+            Missions
           </Tab>
           <Tab
             role="tab"
@@ -99,7 +99,7 @@ const Airdrop: React.FC<AirdropProps> = ({
         {currentTab === "wallet" && (
           <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
         )}
-        {currentTab === "Mission" && (
+        {currentTab === "missions" && (
           <RobberyComponent
             robberyStrike={robberyStrike}
             claimDailyReward={claimDailyReward}
