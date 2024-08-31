@@ -51,14 +51,15 @@ export const Divider = styled.div`
 
 export const Stats = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 `;
 
 export const StatValue = styled.div`
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: white;
+  margin-left: 0.5rem;
 `;
 
 export const StatDesc = styled.div`
