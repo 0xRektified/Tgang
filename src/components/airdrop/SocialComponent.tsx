@@ -46,6 +46,9 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
   };
 
   const renderVerifyButton = (channel: SocialChannel, isMember: boolean) => {
+    if (isMember) {
+      return <></>;
+    }
     if (loading) {
       return (
         <ResponsiveButton as={LockedButton} disabled>
