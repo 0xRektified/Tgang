@@ -126,15 +126,16 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             {userInfo.reputation} / {userInfo.userLevel.maxReputation}
           </ReputationAmount>
         </LevelInfoContainer>
-
         <AnnouncementContainer>
-          🎉 Exciting news! We're giving away over $600 USD for beta testers!{" "}
+          <p>
+            🎉 Exciting news! Beta testers can win real-world prizes totaling over $600 USD!
+          </p>
           <AnnouncementLink
             href="https://t.me/cartel_game_community"
             target="_blank"
             rel="noopener noreferrer"
           >
-            More info in our community page
+            Details in our community page
           </AnnouncementLink>{" "}
           🚀
         </AnnouncementContainer>
