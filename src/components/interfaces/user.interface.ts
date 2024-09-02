@@ -81,6 +81,7 @@ export interface IReferredUsers {
 export interface IUserSocial {
   channel: SocialChannel,
   member: boolean,
+  joined?: Date,
 }
 
 export interface IUserInfo {

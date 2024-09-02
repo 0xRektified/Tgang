@@ -5,7 +5,6 @@ import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IUserInfo } from "../interfaces/user.interface";
 import WebApp from "@twa-dev/sdk";
 import {
-  Button,
   Countdown,
   RedDot,
   GreenDot,
@@ -15,10 +14,7 @@ import {
   StatValue,
   Card,
 } from "./styles/airdrop.css";
-import SocialComponent from "./SocialComponent";
-import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { ApiToast } from "../ApiToast";
-import { useVerifySocial } from "../../hooks/useVerifySocial";
 import { NeonButton } from "../styled/cardStyled";
 import styled from "styled-components";
 
@@ -32,7 +28,6 @@ const InlineStatDesc = styled(StatDesc)`
 interface MissionsComponentProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
-  socials: Record<SocialChannel, SocialData>;
 }
 const RobberyNeonButton = styled(NeonButton)`
   width: 16em;
@@ -52,7 +47,6 @@ const calculateCountdown = (time: Date) => {
 const MissionsComponent: React.FC<MissionsComponentProps> = ({
   userInfo,
   setUserInfo,
-  socials,
 }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const {
@@ -223,13 +217,6 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
             </ItalicText>
           </>
         )}
-      </Card>
-      <Card>
-        <SocialComponent
-          socials={socials}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-        />
       </Card>
       <ApiToast
         loading={robberyLoading}
