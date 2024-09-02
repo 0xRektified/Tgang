@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
+import { useTutorial } from "../../hooks/useTutorial";
 
 import { PiCopySimpleBold } from "react-icons/pi";
 import {
@@ -14,6 +15,7 @@ import {
 } from "./styles/airdrop.css";
 import styled from "styled-components";
 import { NeonButton } from "../styled/cardStyled";
+import { SkipButton } from "../home/Home";
 
 const LevelInfoContainer = styled.div`
   display: flex;
@@ -90,16 +92,41 @@ const CopyNeonButton = styled(NeonButton)`
   align-items: center;
 `;
 
+const TutorialOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  padding-top: 5em;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TutorialText = styled.div`
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 1rem 0;
+  max-width: 80%;
+`;
+
 interface FriendsComponentProps {
   referralToken: string;
   referredUsers: IReferredUsers[];
   userInfo: IUserInfo;
+  tutorial: ReturnType<typeof useTutorial>;
 }
 
 const FriendsComponent: React.FC<FriendsComponentProps> = ({
   referralToken,
   referredUsers,
   userInfo,
+  tutorial,
 }) => {
   const { userLevel } = userInfo;
   const { level } = userLevel;
@@ -109,12 +136,33 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
         import.meta.env.VITE_WEB_APP_URL
       }?startapp=${referralToken}`,
     );
+    if (tutorial.tutorialStep === 5) {
+      tutorial.setTutorialCompleted(true);
+      tutorial.tutorialCompleted = true;
+    }
   };
 
   const handleRefClick = () => {
     navigator.clipboard.writeText(
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
     );
+  };
+
+  useEffect(() => {
+    if (tutorial.tutorialStep === 5) {
+      const inviteFriendsButton = document.querySelector(
+        ".invite-friends-button",
+      );
+      if (inviteFriendsButton) {
+        inviteFriendsButton.classList.add("tutorial-highlight");
+        tutorial.onTutorialProgress();
+      }
+    }
+  }, [tutorial.tutorialStep]);
+
+  const handleSkipTutorial = () => {
+    tutorial.setTutorialCompleted(true);
+    tutorial.tutorialCompleted = true;
   };
 
   return (
@@ -126,23 +174,51 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             {userInfo.reputation} / {userInfo.userLevel.maxReputation}
           </ReputationAmount>
         </LevelInfoContainer>
-        <AnnouncementContainer>
-          <p>
-            🎉 Exciting news! Beta testers can win real-world prizes totaling over $600 USD!
-          </p>
-          <AnnouncementLink
-            href="https://t.me/cartel_game_community"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Details in our community page
-          </AnnouncementLink>{" "}
-          🚀
-        </AnnouncementContainer>
+        {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? (
+          <TutorialOverlay>
+            <TutorialText>
+              "Invite Friends"
+              below to win real-world money
+            </TutorialText>
+            <FriendNeonButton onClick={handleRefForward}>
+              Invite Friends
+            </FriendNeonButton>
+            <AnnouncementContainer>
+              <p>
+                🎉 Exciting news! Beta testers can win real-world prizes totaling
+                over $600 USD!
+              </p>
+              <AnnouncementLink
+                href="https://t.me/cartel_game_community"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Details in our community page
+              </AnnouncementLink>{" "}
+              🚀
+            </AnnouncementContainer>
+
+            <SkipButton onClick={handleSkipTutorial}>End of the Tutorial</SkipButton>
+          </TutorialOverlay>
+        ) : (
+          <>
+            <AnnouncementContainer>
+              <p>
+                🎉 Exciting news! Beta testers can win real-world prizes totaling
+                over $600 USD!
+              </p>
+              <AnnouncementLink
+                href="https://t.me/cartel_game_community"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Details in our community page
+              </AnnouncementLink>{" "}
+              🚀
+            </AnnouncementContainer>
+          </>
+        )}
       </AirdropContainer>
-      {/* <DigitalFont>
-        Invite users and earn reputation to qualify for the airdrop
-      </DigitalFont> */}
       <Card className="scrollable-content">
         <div className="flex flex-row items-center justify-start mb-4">
           <Stats>
@@ -154,9 +230,11 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
         </div>
         <div className="flex w-full mb-4">
           <div className="flex-grow">
-            <FriendNeonButton onClick={handleRefForward}>
-              Invite Friends
-            </FriendNeonButton>
+            {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? null : (
+              <FriendNeonButton onClick={handleRefForward}>
+                Invite Friends
+              </FriendNeonButton>
+            )}
           </div>
           <div className="ml-4">
             <CopyNeonButton onClick={handleRefClick}>

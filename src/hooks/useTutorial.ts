@@ -8,11 +8,10 @@ export function useTutorial() {
   const onTutorialProgress = () => {
     setTutorialStep((prevStep) => {
       const newStep = prevStep + 1;
-      if (newStep > 4) {
+      if (newStep > 5) { // Updated to 5 steps
         setTutorialCompleted(true);
       }
-
-      return newStep; // Return the updated state
+      return newStep;
     });
   };
 
@@ -21,7 +20,7 @@ export function useTutorial() {
       const newClickCount = clickCount + 1;
       setClickCount(newClickCount);
 
-      if (newClickCount >= 10) {
+      if (newClickCount >= 5) {
         onTutorialProgress();
         setClickCount(0);
       }

@@ -38,21 +38,18 @@ const HomeContainer = styled.div`
 `;
 
 export const SkipButton = styled.button`
-  background: linear-gradient(45deg, #2c3e50, #4a69bd);
-  color: white;
-  border: 2px solid #74b9ff;
+  background: grey;
+  color: black;
   border-radius: 6px;
   padding: 0.6em 1em;
-  font-size: 0.9em;
+  font-size: 0.7em !important;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-shadow: 0 0 5px #74b9ff;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  margin: 1rem auto;
+  margin: 0.8rem auto;
+  width: 10em;
   @keyframes pulse {
     0% {
       box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.7);
@@ -64,9 +61,6 @@ export const SkipButton = styled.button`
       box-shadow: 0 0 0 0 rgba(116, 185, 255, 0);
     }
   }
-
-  animation: pulse 2s infinite;
-
   @media (max-width: 768px) {
     font-size: 0.8em;
     padding: 0.5em 0.8em;

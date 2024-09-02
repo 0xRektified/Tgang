@@ -12,8 +12,8 @@ const Loading: React.FC = () => {
         <span className="loading loading-spinner loading-md"></span>
         <p
           style={{
-            color: "#1e90ff",
-            textShadow: "0 0 8px #1e90ff",
+            color: "white",
+            textShadow: "0 0 8px red",
             fontSize: "3rem",
             fontWeight: "bold",
             marginTop: "10px",

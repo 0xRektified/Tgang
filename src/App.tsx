@@ -101,9 +101,14 @@ function App() {
     [userInfo, tutorial],
   );
 
-  const handleTutorialComplete = useCallback(() => {
-    tutorial.onTutorialProgress();
+  const handleHomeTutorialComplete = useCallback(() => {
     setCurrentView("Lab");
+  }, [tutorial]);
+
+  const handleLabTutorialComplete = useCallback(() => {
+    tutorial.onTutorialProgress();
+    tutorial.tutorialStep = 5;
+    setCurrentView("Airdrop");
   }, [tutorial]);
 
   const renderCurrentView = useCallback(() => {
@@ -118,7 +123,7 @@ function App() {
             shippingMethods={shippingMethods}
             signup={signup}
             tutorial={tutorial}
-            handleTutorialComplete={handleTutorialComplete}
+            handleTutorialComplete={handleHomeTutorialComplete}
             isCombinedModalOpen={isCombinedModalOpen}
             closeCombinedModal={() => setIsCombinedModalOpen(false)}
           />
@@ -130,6 +135,7 @@ function App() {
             labs={labs!}
             setUserInfo={setUserInfo}
             tutorial={tutorial}
+            handleLabTutorialComplete={handleLabTutorialComplete}
           />
         );
       case "Shop":
@@ -153,6 +159,7 @@ function App() {
             userInfo={userInfo!}
             socials={socials!}
             setUserInfo={setUserInfo}
+            tutorial={tutorial}
           />
         );
       case "Pvp":
@@ -167,7 +174,7 @@ function App() {
             shippingMethods={shippingMethods}
             signup={signup}
             tutorial={tutorial}
-            handleTutorialComplete={handleTutorialComplete}
+            handleTutorialComplete={handleHomeTutorialComplete}
             isCombinedModalOpen={isCombinedModalOpen}
             closeCombinedModal={() => setIsCombinedModalOpen(false)}
           />
@@ -198,7 +205,6 @@ function App() {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
   return (
     <StyledApp data-theme="dark" id="buffer">
       <AppContainer>
@@ -207,7 +213,6 @@ function App() {
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}
-
         />
       </AppContainer>
     </StyledApp>
