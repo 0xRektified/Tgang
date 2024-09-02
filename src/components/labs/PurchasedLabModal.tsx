@@ -50,7 +50,7 @@ const PurchasedLabModal: React.FC<PurchasedLabModalProps> = ({
     },
     {
       label: "Production +",
-      valueDiff: upgradeProductionDiff.toString(),
+      valueDiff: `${upgradeProductionDiff}/h`,
       price: plot.lab?.upgradeProductionPrice || 0,
       icon: <MdConveyorBelt />,
       onClick: upgradeProduction,
