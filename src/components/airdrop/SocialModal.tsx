@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo } from "../interfaces/user.interface";
-import { CardTitle, NeonButton, Button } from "../styled/cardStyled";
+import { CardTitle, NeonButton, Button, CardContent } from "../styled/cardStyled";
 import { formatPrice } from "../utils/formater";
 
 const ModalBackground = styled.div`
@@ -36,24 +36,16 @@ const ModalHeader = styled(CardTitle)`
   margin-bottom: 1rem;
 `;
 
+const ModalDescription = styled(CardContent)`
+  text-align: center;
+  color: white;
+  margin-bottom: 1rem;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 1rem;
-`;
-
-const StyledNeonButton = styled(NeonButton)`
-  padding: 0.75rem 1.5rem;
-`;
-
-const StyledCloseButton = styled(Button)`
-  padding: 0.75rem 1.5rem;
-  background-color: #ef4444;
-  border-color: #ef4444;
-
-  &:hover {
-    background-color: #dc2626;
-  }
 `;
 
 interface SocialModalProps {
@@ -67,11 +59,13 @@ const SocialModal: React.FC<SocialModalProps> = ({
     <ModalBackground onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <p>Thank you for joining!</p>
-          Please wait so we can verify your membership, it can take up to an hour.
+          Thank you for joining!
         </ModalHeader>
+        <ModalDescription>
+          Please wait so we can verify your membership, it can take up to an hour.
+        </ModalDescription>
         <ButtonContainer>
-          <StyledCloseButton onClick={onClose}>Close</StyledCloseButton>
+          <NeonButton onClick={onClose}>Close</NeonButton>
         </ButtonContainer>
       </ModalContent>
     </ModalBackground>
