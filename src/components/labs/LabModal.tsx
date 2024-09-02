@@ -14,6 +14,7 @@ import {
 import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
 import { RequirementType } from "../interfaces/upgrade.interface";
+import { useTutorial } from "../../hooks/useTutorial";
 
 interface LabModalProps {
   labs: Record<EProduct, ILab>;
@@ -26,8 +27,11 @@ interface LabModalProps {
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
   buyLab: (
     lab: IBuyLab,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => Promise<void>;
+  tutorial: ReturnType<typeof useTutorial>;
+
+  handleLabTutorialComplete: () => void;
 }
 
 const LabModal: React.FC<LabModalProps> = ({
@@ -40,12 +44,14 @@ const LabModal: React.FC<LabModalProps> = ({
   setTouchPoints,
   setShowBalanceErrorToast,
   buyLab,
+  tutorial,
+  handleLabTutorialComplete,
 }) => {
   const handleBuyClick = async (
     labProduct: EProduct,
     plotId: number,
     price: number,
-    touch: React.Touch
+    touch: React.Touch,
   ) => {
     if (userInfo.cashAmount >= price) {
       await buyLab(
@@ -53,7 +59,7 @@ const LabModal: React.FC<LabModalProps> = ({
           labProduct,
           plotId,
         },
-        setUserInfo
+        setUserInfo,
       );
 
       const newTouchPoint: TouchPoint = {
@@ -66,10 +72,13 @@ const LabModal: React.FC<LabModalProps> = ({
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setTimeout(() => {
         setTouchPoints((prevTouchPoints) =>
-          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id),
         );
       }, 3000);
       onClose();
+      if (tutorial.tutorialStep === 4) {
+        handleLabTutorialComplete();
+      }
     } else {
       setShowBalanceErrorToast(true);
     }
@@ -104,7 +113,7 @@ const LabModal: React.FC<LabModalProps> = ({
                   requirements: {
                     name: labKey,
                     level: levelRequirement,
-                    requirement: 'product',
+                    requirement: "product",
                   },
                 }}
                 locked={locked}

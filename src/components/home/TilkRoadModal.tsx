@@ -67,6 +67,24 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
         ))}
       <WebPageTitle>https://3g2upl4pq6kufc4m.onion</WebPageTitle>
 
+      {tutorial.tutorialCompleted ||
+        (tutorial.tutorialStep === 2 && (
+          <SkipButton
+            onClick={handleSkipTutorial}
+            style={{
+              position: "absolute",
+              bottom: "7em",
+              right: "15em",
+              zIndex: 20,
+              backgroundColor: "grey",
+              color: "black",
+              padding: "5px 10px",
+              borderRadius: "5px",
+            }}
+          >
+            Skip Tutorial
+          </SkipButton>
+        ))}
       <FlexBoxRow style={{ margin: "10px" }}>
         <FlexBoxCol>
           <img
@@ -93,23 +111,36 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
 
       {tutorial.tutorialCompleted ||
         (tutorial.tutorialStep === 2 && (
-          <div
-            style={{
-              position: "relative",
-              zIndex: 20,
-              backgroundColor: "black",
-              color: "white",
-              padding: "10px",
-              margin: "10px 0",
-              borderRadius: "5px",
-              textAlign: "center",
-              fontWeight: "bold",
-              fontSize: "1.5em",
-            }}
-          >
-            Click on the Buy button to buy 10 Herb
-            <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
-          </div>
+          <>
+            <div
+              style={{
+                position: "relative",
+                zIndex: 20,
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "5px",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "1.2em",
+              }}
+            >
+              CLICK THE "BUY" ICON
+            </div>
+            <div
+              style={{
+                position: "relative",
+                zIndex: 20,
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "5px",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "1.2em",
+              }}
+            >
+              TO PURCHASE 🌱 👇
+            </div>
+          </>
         ))}
 
       <ScrollableTableContainer className="scrollable-content">
@@ -215,9 +246,32 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                                   onChange={(e) => {
                                     setQuantity(Number(e.target.value));
                                   }}
-                                  disabled={tutorial.tutorialStep === 2}
                                 />
                               </div>
+                              {tutorial.tutorialStep === 2 ? (
+                                <>
+                                                                <div
+                                  style={{
+                                    textAlign: "center",
+                                    fontSize: "1em",
+                                    color: "white",
+                                  }}
+                                >
+                                  DRAG TO SELECT QUANTITY 👆
+                                </div>
+                                <div
+                                  style={{
+                                    textAlign: "center",
+                                    fontSize: "1em",
+                                    color: "white",
+                                  }}
+                                >
+                                  AND PRESS BUY AGAIN
+                                </div>
+                                </>
+                              ) : (
+                                ""
+                              )}
                             </td>
                           </tr>
                         )}

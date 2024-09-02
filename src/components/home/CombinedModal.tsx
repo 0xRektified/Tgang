@@ -87,11 +87,10 @@ export const CombinedModal: React.FC<ModalProps> = ({
 
       if (
         tutorial.tutorialStep === 2 &&
-        selectedProduct.name === EProduct.HERB &&
-        quantity === 10
+        selectedProduct.name === EProduct.HERB
       ) {
         tutorial.onTutorialProgress();
-        handleTutorialComplete()
+        handleTutorialComplete();
       }
     }
     setSelectedProduct(null);
@@ -105,9 +104,9 @@ export const CombinedModal: React.FC<ModalProps> = ({
       return;
     }
     setSelectedProduct((prevSelectedProduct) =>
-      prevSelectedProduct?.name === product.name ? null : product
+      prevSelectedProduct?.name === product.name ? null : product,
     );
-    setQuantity(tutorial.tutorialStep === 2 ? 10 : 1);
+    setQuantity(tutorial.tutorialStep === 2 ? 5 : 1);
   };
 
   const handleUnlockClick = (product: MarketProduct | undefined) => {

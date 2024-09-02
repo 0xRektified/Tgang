@@ -166,6 +166,16 @@ const HighlightedPlotItem = styled(PlotItem)`
   position: relative;
   z-index: 1001;
   pointer-events: auto;
+  animation: bounce 2s infinite;
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-7px);
+    }
+  }
 `;
 
 interface LabProps {
@@ -173,6 +183,7 @@ interface LabProps {
   labs: Record<string, ILab>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   tutorial: ReturnType<typeof useTutorial>;
+  handleLabTutorialComplete: () => void;
 }
 
 export const Lab: React.FC<LabProps> = ({
@@ -180,6 +191,7 @@ export const Lab: React.FC<LabProps> = ({
   labs,
   setUserInfo,
   tutorial,
+  handleLabTutorialComplete,
 }) => {
   const [isLabPlotModalOpen, setIsLabPlotModalOpen] = useState<boolean>(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState<boolean>(false);
@@ -216,21 +228,15 @@ export const Lab: React.FC<LabProps> = ({
     successMessage: labProductionSuccessMessage,
   } = useUpgradeLabProduction();
 
-  useEffect(() => {
-    if (tutorial.tutorialStep === 4) {
-      const newLabButton = document.querySelector(".build-new-lab-button");
-      if (newLabButton) {
-        newLabButton.classList.add("tutorial-highlight");
-      }
-    }
-  }, [tutorial.tutorialStep]);
-
   const handleOpenLabModal = (plot: LabPlot) => {
     setSelectedPlot(plot);
     setIsLabModalOpen(true);
+    console.log(`In handleOpenLabModal tutorial.tutorialStep`);
+    console.log(tutorial.tutorialStep);
 
-    if (tutorial.tutorialStep === 4) {
+    if (tutorial.tutorialStep === 3) {
       tutorial.onTutorialProgress();
+      tutorial.tutorialStep = 4;
     }
   };
 
@@ -310,7 +316,8 @@ export const Lab: React.FC<LabProps> = ({
 
     return production;
   };
-
+  console.log(`tutorial.tutorialStep`);
+  console.log(tutorial.tutorialStep);
   return (
     <LabContainer>
       <DescriptionContainer>
@@ -324,17 +331,14 @@ export const Lab: React.FC<LabProps> = ({
         productionPerHour={production}
       />
       <Divider />
-      {!tutorial.tutorialCompleted && tutorial.tutorialStep === 4 ? (
+      {!tutorial.tutorialCompleted && tutorial.tutorialStep === 3 ? (
         <TutorialOverlay>
-          <TutorialText>
-            Great job! Now let's build your first lab.
-          </TutorialText>
+          <TutorialText>CLICK ON THE "BUILD LAB" ICON 👇</TutorialText>
           <FlexBoxRow className="w-full justify-center">
             {userInfo.labPlots.map((labPlot) => {
               if (!labPlot.lab) {
                 return (
                   <HighlightedPlotItem key={labPlot.plotId}>
-                    <div>Build a new lab</div>
                     <AddLabButton
                       onClick={() => handleOpenLabModal(labPlot)}
                       className="build-new-lab-button tutorial-highlight"
@@ -347,15 +351,8 @@ export const Lab: React.FC<LabProps> = ({
               return null;
             })}
           </FlexBoxRow>
-          <TutorialText>
-            Click on the "Build a new lab" button above.
-          </TutorialText>
-          <TutorialText>
-            You will be able to collect resources from it when supply starts to
-            accumulate.
-          </TutorialText>
+          <TutorialText>Collect resources as 🌱 supply grows.</TutorialText>
           <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
-
         </TutorialOverlay>
       ) : (
         <LabsGrid className="scrollable-content">
@@ -407,6 +404,8 @@ export const Lab: React.FC<LabProps> = ({
           setTouchPoints={setTouchPoints}
           setShowBalanceErrorToast={setShowBalanceErrorToast}
           buyLab={buyLab}
+          tutorial={tutorial}
+          handleLabTutorialComplete={handleLabTutorialComplete}
         />
       )}
       {isLabPlotModalOpen && (

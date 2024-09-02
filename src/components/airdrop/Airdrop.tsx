@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
-import { ApiToast } from "../ApiToast";
 import WalletComponent from "./WalletComponent";
-import RobberyComponent from "./MissionsComponent";
 import FriendsComponent from "./FriendsComponent";
 import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
-import SocialComponent from "./SocialComponent";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
-import { useVerifySocial } from "../../hooks/useVerifySocial";
 import MissionsComponent from "./MissionsComponent";
+import { useTutorial } from "../../hooks/useTutorial";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -29,10 +25,7 @@ const AirdropTabContainer = styled.div`
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `;
-const DigitalFont = styled.span`
-  font-family: "Digital", sans-serif;
-  font-size: 0.9rem;
-`;
+
 
 interface AirdropProps {
   referralToken: string;
@@ -41,6 +34,7 @@ interface AirdropProps {
   userInfo: IUserInfo;
   socials: Record<SocialChannel, SocialData>;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
+  tutorial: ReturnType<typeof useTutorial>;
 }
 
 const Airdrop: React.FC<AirdropProps> = ({
@@ -49,8 +43,10 @@ const Airdrop: React.FC<AirdropProps> = ({
   userInfo,
   socials,
   setUserInfo,
+  tutorial,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
+
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
@@ -84,13 +80,13 @@ const Airdrop: React.FC<AirdropProps> = ({
           </Tab>
         </Tabs>
       </FlexBoxRow>
-
       <AirdropTabContainer className="scrollable-content">
         {currentTab === "friends" && (
           <FriendsComponent
             referralToken={referralToken}
             referredUsers={referredUsers}
             userInfo={userInfo}
+            tutorial={tutorial}
           />
         )}
         {currentTab === "wallet" && (
