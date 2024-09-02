@@ -53,7 +53,7 @@ const CombinedProduction: React.FC<CombinedProductionProps> = ({
             {currentAmount[product as keyof typeof currentAmount]}
           </Amount>
           <ProductionPerHour>
-            +{productionPerHour[product as keyof typeof productionPerHour]}
+            +{productionPerHour[product as keyof typeof productionPerHour]}/h
           </ProductionPerHour>
         </CombinedProductionItem>
       ))}
