@@ -1,35 +1,49 @@
-import { useEffect, Dispatch, SetStateAction } from "react";
+import { useEffect, Dispatch, SetStateAction, useCallback } from "react";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import axiosInstance from "../api/axiosConfig";
 import { getUnixTime } from "date-fns";
+import mixpanel from "mixpanel-browser";
 
 const useCustomerManagement = (
-  userInfo: IUserInfo,
   setUserInfo: Dispatch<SetStateAction<IUserInfo>>
 ) => {
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = new Date();
-      const diff = getUnixTime(now) - getUnixTime(new Date(userInfo.lastSell));
+      setUserInfo((prevUserInfo) => {
+        const now = new Date();
+        const diff = getUnixTime(now) - getUnixTime(new Date(prevUserInfo.lastSell));
+  
+        const newCustomers = Math.floor(
+          (diff / 3600) * prevUserInfo.customerAmountMax
+        );
+        let customerAmount = Math.min(
+          prevUserInfo.customerAmountRemaining + newCustomers,
+          prevUserInfo.customerAmountMax
+        );
+  
+        if (customerAmount < 0) {
+          customerAmount = 0;
+        }
 
-      const newCustomers = Math.floor(
-        (diff / 3600) * userInfo.customerAmountMax
-      );
-      let customerAmount = Math.min(
-        userInfo.customerAmountRemaining + newCustomers,
-        userInfo.customerAmountMax
-      );
-      if (customerAmount < 0) {
-        customerAmount = 0;
-      }
-      // @note If max value is reach do not sync, it put less update on the state
-      // and avoid bug where total customer is flipping to max during a sell
-      if (customerAmount < userInfo.customerAmountMax) {
-        setUserInfo({ ...userInfo, customerAmount });
-      }
+        if (customerAmount < prevUserInfo.customerAmountMax) {
+          return { ...prevUserInfo, customerAmount };
+        }
+        
+        return prevUserInfo;
+      });
     }, 1000);
+  
     return () => clearInterval(interval);
-  }, [userInfo]);
+  }, []);
+
+  const fetchuser = useCallback(async () => {
+    try {
+      const { data } = await axiosInstance.get<IUserInfo>(`/users`);;
+      setUserInfo(data);
+    } catch (error: any) {
+      console.error("Failed to fetch user");
+    }
+  }, []);
 
   const handleSell = async (
     marketId: string,
@@ -41,8 +55,12 @@ const useCustomerManagement = (
       });
       // @note There is still a small diff between server and client causing a +/- 1 customer
       setUserInfo(response.data);
-    } catch (error) {
-      console.error("Failed to sell products", error);
+    } catch (error: any) {
+      console.error("Failed to sell products", error?.response?.data?.message);
+      mixpanel.track("Failed to sell products", {
+        error: error?.response?.data?.message,
+      });
+      fetchuser();
     }
   };
 
