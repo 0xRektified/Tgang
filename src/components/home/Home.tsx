@@ -102,7 +102,7 @@ export const Home: React.FC<HomeProps> = ({
     { emoji: string; id: number; offset: string }[]
   >([]);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const { handleSell } = useCustomerManagement(userInfo, setUserInfo);
+  const { handleSell } = useCustomerManagement(setUserInfo);
   const [isSupplierModalOpen, setIsSupplierModalOpen] =
     useState<boolean>(false);
   const [isLocalSupplierModalOpen, setIsLocalSupplierModalOpen] =
