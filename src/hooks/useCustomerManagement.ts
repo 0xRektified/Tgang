@@ -3,6 +3,7 @@ import { IUserInfo } from "../components/interfaces/user.interface";
 import axiosInstance from "../api/axiosConfig";
 import { getUnixTime } from "date-fns";
 import mixpanel from "mixpanel-browser";
+import { AxiosError } from "axios";
 
 const useCustomerManagement = (
   setUserInfo: Dispatch<SetStateAction<IUserInfo>>
@@ -58,7 +59,8 @@ const useCustomerManagement = (
     } catch (error: any) {
       console.error("Failed to sell products", error?.response?.data?.message);
       mixpanel.track("Failed to sell products", {
-        error: error?.response?.data?.message,
+        error: error?.response?.data?.message || error.message,
+        code: error.status,
       });
       fetchuser();
     }
