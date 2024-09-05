@@ -8,6 +8,8 @@ import mixpanel from "mixpanel-browser";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import MissionsComponent from "./MissionsComponent";
 import { useTutorial } from "../../hooks/useTutorial";
+import SocialComponent from "./SocialComponent";
+import SocialModal from "./SocialModal";
 
 const AirdropContainer = styled.div`
   background: #171c24;
@@ -46,7 +48,12 @@ const Airdrop: React.FC<AirdropProps> = ({
   tutorial,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
+  const [isSocialModalOpen, setIsSocialModalOpen] =
+    useState<boolean>(false);
 
+  const handleCloseSocialModal = () => {
+    setIsSocialModalOpen(false);
+  };
 
   const handleTabClick = (tab: string) => {
     setCurrentTab(tab);
@@ -93,13 +100,25 @@ const Airdrop: React.FC<AirdropProps> = ({
           <WalletComponent userInfo={userInfo} setUserInfo={setUserInfo} />
         )}
         {currentTab === "missions" && (
-          <MissionsComponent
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            socials={socials}
-          />
+          <>
+            <MissionsComponent
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+            />
+            <SocialComponent
+              socials={socials}
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+              setIsSocialModalOpen={setIsSocialModalOpen}
+            />
+          </>
         )}
       </AirdropTabContainer>
+      {isSocialModalOpen && (
+        <SocialModal
+          onClose={handleCloseSocialModal}
+        />
+      )}
     </AirdropContainer>
   );
 };
