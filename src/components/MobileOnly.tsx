@@ -21,7 +21,7 @@ const MobileOnly: React.FC = () => {
           Scan the QR code to open on your mobile device
         </p>
         <img
-          src="/assets/mobile_qr.svg"
+          src="/assets/mobile_qr.png"
           alt="QR Code"
           className="mx-auto w-64 h-64"
         />
