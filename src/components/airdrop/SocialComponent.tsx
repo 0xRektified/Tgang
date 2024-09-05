@@ -3,7 +3,6 @@ import { IUserInfo } from "../interfaces/user.interface";
 import {
   CardContainer,
   CardInfoColumn,
-  LockedButton,
   NeonButton,
   CardHeader,
   CardImage,
@@ -18,7 +17,11 @@ import { useVerifySocial } from "../../hooks/useVerifySocial";
 import { ApiToast } from "../ApiToast";
 import { useJoinSocial } from "../../hooks/useJoinSocial";
 
-
+export const CardImageSocial = styled(CardImage)`
+  width: 50px;
+  height: 50px;
+  border-radius: 0.5rem;
+`;
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
   userInfo: IUserInfo;
@@ -27,7 +30,7 @@ interface SocialComponentProps {
 }
 
 const ResponsiveButton = styled(NeonButton)<{ isMember: boolean }>`
-  width: ${props => props.isMember ? '10rem' : '6rem'};
+  width: ${(props) => (props.isMember ? "10rem" : "6rem")};
 `;
 
 const SocialComponent: React.FC<SocialComponentProps> = ({
@@ -36,7 +39,6 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
   setUserInfo,
   setIsSocialModalOpen,
 }) => {
-
   const {
     verifySocial,
     loading: socialLoading,
@@ -44,9 +46,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
     successMessage: socialSuccessMessage,
   } = useVerifySocial();
 
-  const {
-    joinSocial,
-  } = useJoinSocial();
+  const { joinSocial } = useJoinSocial();
 
   const handleJoinClick = (url: string, channel: SocialChannel) => {
     joinSocial(channel, setIsSocialModalOpen);
@@ -94,13 +94,15 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
       </StatDesc>
       <div className="space-y-2">
         {Object.entries(socials).map(([channel, social]) => {
-          const userSocial = userInfo.socials?.find((s) => s.channel === channel);
+          const userSocial = userInfo.socials?.find(
+            (s) => s.channel === channel,
+          );
           const isMember = userSocial?.member || false;
 
           return (
             <CardContainer style={{ padding: "0rem" }}>
               <CardHeader>
-                <CardImage
+                <CardImageSocial
                   src={social.image}
                   alt={social.title}
                   loading="lazy"
@@ -116,7 +118,12 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                         <div className="card flex flex-col justify-center items-center text-center col-span-2">
                           <ResponsiveButton
                             as={NeonButton}
-                            onClick={() => handleJoinClick(social.url, channel as SocialChannel)}
+                            onClick={() =>
+                              handleJoinClick(
+                                social.url,
+                                channel as SocialChannel,
+                              )
+                            }
                             isMember={true}
                           >
                             Open
@@ -127,7 +134,12 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                           <div className="card flex flex-col justify-center items-center text-center">
                             <ResponsiveButton
                               as={NeonButton}
-                              onClick={() => handleJoinClick(social.url, channel as SocialChannel)}
+                              onClick={() =>
+                                handleJoinClick(
+                                  social.url,
+                                  channel as SocialChannel,
+                                )
+                              }
                               isMember={false}
                             >
                               Open
