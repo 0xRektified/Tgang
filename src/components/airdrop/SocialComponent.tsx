@@ -16,19 +16,11 @@ import styled from "styled-components";
 import { useVerifySocial } from "../../hooks/useVerifySocial";
 import { ApiToast } from "../ApiToast";
 import { useJoinSocial } from "../../hooks/useJoinSocial";
+import { FaCoins } from "react-icons/fa";
+import { GiRank3 } from "react-icons/gi";
 
-const ColoredText = styled.span`
-  font-size: 1rem;
-  font-weight: bold;
-  text-shadow: 0 0 2px currentColor;
-  transition: text-shadow 0.3s ease;
-
-  &.cash {
-    color: #2e9dff;
-  }
-  &.rep {
-    color: #2e9dff;
-  }
+const CardHeaderSocial = styled(CardHeader)`
+  padding-bottom: 0rem !important;
 `;
 
 const CardImageContainer = styled.div`
@@ -37,14 +29,31 @@ const CardImageContainer = styled.div`
   align-items: center;
 `;
 
-const RewardText = styled.div`
-  margin-top: 0.25rem;
-  text-align: center;
+const RewardInfo = styled.div`
+  background-color: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
 `;
 
-export const CardImageSocial = styled(CardImage)<{ $title: string }>`
+const RewardItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0rem;
+`;
+
+const RewardAmount = styled.span`
+  font-size: 1rem;
+  font-weight: bold;
+  color: #16a34a;
+`;
+
+const CardImageSocial = styled(CardImage)<{ $title: string }>`
   width: ${({ $title }) =>
     $title === "Cartel X"
       ? "40px"
@@ -69,6 +78,7 @@ interface SocialComponentProps {
 
 const ResponsiveButton = styled(NeonButton)<{ isMember: boolean }>`
   width: ${(props) => (props.isMember ? "10rem" : "6rem")};
+  margin-bottom: 0rem;
 `;
 
 const SocialComponent: React.FC<SocialComponentProps> = ({
@@ -139,7 +149,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
           return (
             <CardContainer style={{ padding: "0rem", marginBottom: "1rem" }}>
-              <CardHeader>
+              <CardHeaderSocial>
                 <CardImageContainer>
                   <CardImageSocial
                     src={social.image}
@@ -147,11 +157,6 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                     loading="lazy"
                     $title={social.title}
                   />
-
-                  <RewardText>
-                    <ColoredText className="cash">+1000$</ColoredText>
-                    <ColoredText className="rep">+100rp</ColoredText>
-                  </RewardText>
                 </CardImageContainer>
                 <CardDetails>
                   <CardInfoColumn>
@@ -201,7 +206,19 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                     </div>
                   </CardInfoColumn>
                 </CardDetails>
-              </CardHeader>
+              </CardHeaderSocial>
+              <RewardInfo>
+                <RewardItem>
+                  <FaCoins />
+                  <StatDesc>Reward:</StatDesc>
+                  <RewardAmount>1000$</RewardAmount>
+                </RewardItem>
+                <RewardItem>
+                  <GiRank3 />
+                  <StatDesc>Rep:</StatDesc>
+                  <RewardAmount>+100</RewardAmount>
+                </RewardItem>
+              </RewardInfo>
             </CardContainer>
           );
         })}
