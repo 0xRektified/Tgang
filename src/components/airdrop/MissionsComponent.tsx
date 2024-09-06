@@ -112,8 +112,7 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
   };
 
   const robberyStrikeReward =
-    (robberyStrike + 1) * 1000 > 10000 ?
-    (robberyStrike + 1) * 1000 : 10000;
+    (robberyStrike + 1) * 1000 > 10000 ? 10000 : (robberyStrike + 1) * 1000;
 
   return (
     <>
@@ -213,8 +212,7 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
               </FlexBoxRow>
             </RobberyNeonButton>
             <StatDesc>
-              Next reward will be{" "}
-              <GreenText>${robberyStrikeReward}</GreenText>
+              Next reward will be <GreenText>${robberyStrikeReward}</GreenText>
             </StatDesc>
             <ItalicText>
               **Missing a daily robbery resets your reward to 0
