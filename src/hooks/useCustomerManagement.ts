@@ -1,33 +1,32 @@
-import { useEffect, Dispatch, SetStateAction, useCallback } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import axiosInstance from "../api/axiosConfig";
 import { getUnixTime } from "date-fns";
 import mixpanel from "mixpanel-browser";
-import { AxiosError } from "axios";
 
-const useCustomerManagement = (
-  setUserInfo: Dispatch<SetStateAction<IUserInfo>>
-) => {
+const useCustomerManagement = (initialUserInfo: IUserInfo) => {
+  const [userInfo, setUserInfo] = useState<IUserInfo>(initialUserInfo);
+  const lastUpdateTimeRef = useRef(getUnixTime(new Date()));
   useEffect(() => {
     const interval = setInterval(() => {
+      const now = getUnixTime(new Date());
+      const diff = now - lastUpdateTimeRef.current;
+      
       setUserInfo((prevUserInfo) => {
-        const now = new Date();
-        const diff = getUnixTime(now) - getUnixTime(new Date(prevUserInfo.lastSell));
-  
-        const newCustomers = Math.floor(
-          (diff / 3600) * prevUserInfo.customerAmountMax
-        );
-        let customerAmount = Math.min(
-          prevUserInfo.customerAmountRemaining + newCustomers,
-          prevUserInfo.customerAmountMax
-        );
-  
-        if (customerAmount < 0) {
-          customerAmount = 0;
-        }
-
-        if (customerAmount < prevUserInfo.customerAmountMax) {
-          return { ...prevUserInfo, customerAmount };
+        const newCustomersFloat = (diff / 3600) * prevUserInfo.customerAmountMax;
+        const newCustomers = Math.floor(newCustomersFloat);
+        if (newCustomers > 0) {
+          lastUpdateTimeRef.current = now - ((newCustomersFloat - newCustomers) * 3600 / prevUserInfo.customerAmountMax);
+          
+          const customerAmount = Math.min(
+            prevUserInfo.customerAmount + newCustomers,
+            prevUserInfo.customerAmountMax
+          );
+          return {
+            ...prevUserInfo,
+            customerAmount,
+            customerAmountRemaining: customerAmount,
+          };
         }
         
         return prevUserInfo;
@@ -37,9 +36,25 @@ const useCustomerManagement = (
     return () => clearInterval(interval);
   }, []);
 
+  const decreaseCustomer = useCallback(() => {
+    setUserInfo((prevUser) => {
+      const customerAmount =
+        prevUser.customerAmount - 1 < 0 ? 0 : prevUser.customerAmount - 1;
+      const customerAmountRemaining =
+        prevUser.customerAmountRemaining - 1 < 0
+          ? 0
+          : prevUser.customerAmountRemaining - 1;
+      return {
+        ...prevUser,
+        customerAmount,
+        customerAmountRemaining,
+      };
+    });
+  }, []);
+
   const fetchuser = useCallback(async () => {
     try {
-      const { data } = await axiosInstance.get<IUserInfo>(`/users`);;
+      const { data } = await axiosInstance.get<IUserInfo>(`/users`);
       setUserInfo(data);
     } catch (error: any) {
       console.error("Failed to fetch user");
@@ -48,7 +63,7 @@ const useCustomerManagement = (
 
   const handleSell = async (
     marketId: string,
-    batch: { product: string; customers: number }[]
+    batch: { product: string; customers: number }[],
   ) => {
     try {
       const response = await axiosInstance.post(`/markets/${marketId}/sell`, {
@@ -66,7 +81,7 @@ const useCustomerManagement = (
     }
   };
 
-  return { handleSell };
+  return { userInfo, setUserInfo, decreaseCustomer, handleSell };
 };
 
 export default useCustomerManagement;

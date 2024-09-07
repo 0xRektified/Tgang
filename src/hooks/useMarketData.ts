@@ -18,7 +18,6 @@ export function useMarketData() {
       setMarketInfo(marketResponse.data);
       return { marketInfo: marketResponse.data };
     } catch (error) {
-      console.error("Failed to fetch market data:", error);
       setError("Failed to fetch market data");
       return { marketInfo: undefined };
     } finally {
