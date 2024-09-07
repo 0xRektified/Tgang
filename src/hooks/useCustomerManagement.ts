@@ -7,7 +7,6 @@ import mixpanel from "mixpanel-browser";
 const useCustomerManagement = (initialUserInfo: IUserInfo) => {
   const [userInfo, setUserInfo] = useState<IUserInfo>(initialUserInfo);
   const lastUpdateTimeRef = useRef(getUnixTime(new Date()));
-  console.log("userInfo in useCustomerManagement", userInfo);
   useEffect(() => {
     const interval = setInterval(() => {
       const now = getUnixTime(new Date());
@@ -15,18 +14,14 @@ const useCustomerManagement = (initialUserInfo: IUserInfo) => {
       
       setUserInfo((prevUserInfo) => {
         const newCustomersFloat = (diff / 3600) * prevUserInfo.customerAmountMax;
-        console.log("newCustomersFloat", newCustomersFloat);  
         const newCustomers = Math.floor(newCustomersFloat);
-        console.log("newCustomers", newCustomers);
-        
         if (newCustomers > 0) {
           lastUpdateTimeRef.current = now - ((newCustomersFloat - newCustomers) * 3600 / prevUserInfo.customerAmountMax);
           
           const customerAmount = Math.min(
-            prevUserInfo.customerAmountRemaining + newCustomers,
+            prevUserInfo.customerAmount + newCustomers,
             prevUserInfo.customerAmountMax
           );
-          console.log("customerAmount", customerAmount);
           return {
             ...prevUserInfo,
             customerAmount,
