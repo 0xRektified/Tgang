@@ -397,7 +397,7 @@ interface ClickableAreaWithSmokeProps {
   tutorial: ReturnType<typeof useTutorial>;
 }
 
-export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
+export const ClickableAreaWithSmoke = React.memo(({
   products,
   handleTouchStart,
   selectedProduct,
@@ -410,13 +410,13 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
   marketInfo,
   signup,
   tutorial,
-}) => {
+}: ClickableAreaWithSmokeProps) => {
   const [smokes, setSmokes] = useState<JSX.Element[]>([]);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [pressed, setPressed] = useState(false);
 
   const animationTargetRef = useRef<HTMLDivElement>(null);
-  const handleAnimation = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleAnimation = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const result = handleTouchStart(e);
 
     if (result) {
@@ -437,7 +437,7 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
         });
       }
     }
-  };
+  }, [handleTouchStart, pressed]);
 
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);
@@ -660,4 +660,4 @@ export const ClickableAreaWithSmoke: React.FC<ClickableAreaWithSmokeProps> = ({
       )}
     </Wrapper>
   );
-};
+});

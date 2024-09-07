@@ -82,9 +82,9 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({
-  userInfo,
+  userInfo: initialUserInfo,
   marketInfo,
-  setUserInfo,
+  setUserInfo: setGlobalUserInfo,
   onUnlockClick,
   shippingMethods,
   signup,
@@ -93,6 +93,9 @@ export const Home: React.FC<HomeProps> = ({
   isCombinedModalOpen,
   closeCombinedModal,
 }) => {
+  const { userInfo, setUserInfo, decreaseCustomer, handleSell } =
+    useCustomerManagement(initialUserInfo);
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
@@ -102,9 +105,6 @@ export const Home: React.FC<HomeProps> = ({
     { emoji: string; id: number; offset: string }[]
   >([]);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const { handleSell } = useCustomerManagement(setUserInfo);
-  const [isSupplierModalOpen, setIsSupplierModalOpen] =
-    useState<boolean>(false);
   const [isLocalSupplierModalOpen, setIsLocalSupplierModalOpen] =
     useState<boolean>(false);
 
@@ -121,6 +121,10 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
+
+  useEffect(() => {
+    setGlobalUserInfo(userInfo);
+  }, [userInfo, setGlobalUserInfo]);
 
   const handleCloseSupplierModal = () => {
     setIsLocalSupplierModalOpen(false);
@@ -215,6 +219,13 @@ export const Home: React.FC<HomeProps> = ({
       };
 
       addToBatch(selectedProduct);
+      decreaseCustomer();
+
+      setUserInfo((prevUser) => ({
+        ...prevUser,
+        cashAmount: Number(formatNumber(cashState)),
+        products: updatedProducts,
+      }));
 
       // Move the customer emoji to the animating array
       setNextCustomer(getRandomEmoji());
@@ -231,21 +242,6 @@ export const Home: React.FC<HomeProps> = ({
         );
       }, 1000);
 
-      setUserInfo((prevUser) => {
-        const customerAmount =
-          prevUser.customerAmount - 1 < 0 ? 0 : prevUser.customerAmount - 1;
-        const customerAmountRemaining =
-          prevUser.customerAmountRemaining - 1 < 0
-            ? 0
-            : prevUser.customerAmountRemaining - 1;
-        return {
-          ...prevUser,
-          customerAmount,
-          customerAmountRemaining,
-          cashAmount: Number(formatNumber(cashState)),
-          products: updatedProducts,
-        };
-      });
       result = true;
     }
     setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
