@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo } from "../interfaces/user.interface";
-import { CardTitle, NeonButton, Button } from "../styled/cardStyled";
+import { CardTitle, NeonButton, NeonRedButton } from "../styled/cardStyled";
 import { formatPrice } from "../utils/formater";
 
 const ModalBackground = styled.div`
@@ -46,14 +46,8 @@ const StyledNeonButton = styled(NeonButton)`
   padding: 0.75rem 1.5rem;
 `;
 
-const StyledCloseButton = styled(Button)`
+const StyledCloseButton = styled(NeonRedButton)`
   padding: 0.75rem 1.5rem;
-  background-color: #ef4444;
-  border-color: #ef4444;
-
-  &:hover {
-    background-color: #dc2626;
-  }
 `;
 
 interface LabModalProps {

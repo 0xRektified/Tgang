@@ -188,6 +188,33 @@ export const NeonButton = styled(Button)`
   }
 `;
 
+export const NeonRedButton = styled(NeonButton)`
+  background-color: rgb(39 39 42) !important;
+  color: #white;
+  border: 2px solid #ff1e1e;
+  box-shadow: 0 0 2px #ff1e1e, 0 0 6px #ff1e1e;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+    animation: redGlow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  &:active {
+    animation: redGlow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  @keyframes redGlow {
+    0% {
+      box-shadow: 0 0 2px #ff1e1e, 0 0 4px #ff1e1e, 0 0 6px #ff1e1e,
+        0 0 8px #ff1e1e;
+    }
+    100% {
+      box-shadow: 0 0 8px #ff1e1e, 0 0 12px #ff1e1e, 0 0 16px #ff1e1e,
+        0 0 20px #ff1e1e;
+    }
+  }
+`;
+
 export const CardCost = styled.span`
   font-size: 0.8rem;
   color: #32cd32;
