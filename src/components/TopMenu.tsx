@@ -14,6 +14,7 @@ import {
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { calculateProgress, formatPrice } from "./utils/formater";
+import { MdOutlineLeaderboard } from "react-icons/md";
 
 // Add this function at the top of the file, outside the component
 const calculateFontSize = (username: string): string => {
@@ -26,9 +27,10 @@ const calculateFontSize = (username: string): string => {
 
 interface TopMenuProps {
   userInfo: IUserInfo;
+  setIsLeaderboardModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
+export const TopMenu: React.FC<TopMenuProps> = ({ userInfo, setIsLeaderboardModalOpen }) => {
   const [fontSize, setFontSize] = useState("1rem");
   const usernameRef = useRef<HTMLSpanElement>(null);
 
@@ -46,6 +48,10 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
       setFontSize(calculateFontSize(userInfo.username));
     }
   }, [userInfo]);
+
+  const handleLeaderboardClick = () => {
+    setIsLeaderboardModalOpen(true);
+  };
 
   if (!userInfo) return null;
 
@@ -74,18 +80,23 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
             </div>
           </FlexBoxCol>
         </FlexBoxRow>
-        <FlexBoxCol className="w-full">
-          <LevelInfo>
-            <span>
-              Lvl {level} {title}
-            </span>
-            <ProgressBar
-              className=" progress progress-warning w-40"
-              value={progress}
-              max="100"
-            ></ProgressBar>
-          </LevelInfo>
-        </FlexBoxCol>
+        <FlexBoxRow>
+          <FlexBoxCol className="w-full">
+            <LevelInfo>
+              <span>
+                Lvl {level} {title}
+              </span>
+              <ProgressBar
+                className=" progress progress-warning w-40"
+                value={progress}
+                max="100"
+              ></ProgressBar>
+            </LevelInfo>
+          </FlexBoxCol>
+          <FlexBoxCol className="flex justify-end ">
+            <MdOutlineLeaderboard onClick={handleLeaderboardClick} />
+          </FlexBoxCol>
+        </FlexBoxRow>
       </Container>
     </TopMenuContainer>
   );
