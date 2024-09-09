@@ -17,7 +17,7 @@ import MobileOnly from "./components/MobileOnly";
 import { initializeApp, cleanupApp } from "./appScreenHelper";
 import mixpanel from "mixpanel-browser";
 import { useTutorial } from "./hooks/useTutorial";
-import LeaderboardModal from "./components/home/LeaderboardModal";
+import Leaderboard from "./components/Leaderboard";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -63,7 +63,6 @@ function App() {
   const [activeTab, setActiveTab] = useState<string>("dealer");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isCombinedModalOpen, setIsCombinedModalOpen] = useState(false);
-  const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     initializeApp();
@@ -166,6 +165,8 @@ function App() {
         );
       case "Pvp":
         return <Pvp userInfo={userInfo} />;
+      case "Leaderboard":
+        return <Leaderboard username={userInfo.username} />;
       default:
         return (
           <Home
@@ -210,23 +211,15 @@ function App() {
   return (
     <StyledApp data-theme="dark" id="buffer">
       <AppContainer>
-        <TopMenu
-          userInfo={userInfo}
-          setIsLeaderboardModalOpen={setIsLeaderboardModalOpen}
-        />
+        <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
         <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}
         />
       </AppContainer>
-      {isLeaderboardModalOpen && (
-        <LeaderboardModal
-          username={userInfo.username}
-          setIsLeaderboardModalOpen={setIsLeaderboardModalOpen}
-        />
-      )}
     </StyledApp>
   );
 }
+
 export default App;

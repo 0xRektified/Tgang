@@ -27,10 +27,13 @@ const calculateFontSize = (username: string): string => {
 
 interface TopMenuProps {
   userInfo: IUserInfo;
-  setIsLeaderboardModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentView: (tab: string) => void;
 }
 
-export const TopMenu: React.FC<TopMenuProps> = ({ userInfo, setIsLeaderboardModalOpen }) => {
+export const TopMenu: React.FC<TopMenuProps> = ({
+  userInfo,
+  setCurrentView,
+}) => {
   const [fontSize, setFontSize] = useState("1rem");
   const usernameRef = useRef<HTMLSpanElement>(null);
 
@@ -48,10 +51,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo, setIsLeaderboardModa
       setFontSize(calculateFontSize(userInfo.username));
     }
   }, [userInfo]);
-
-  const handleLeaderboardClick = () => {
-    setIsLeaderboardModalOpen(true);
-  };
 
   if (!userInfo) return null;
 
@@ -94,7 +93,9 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo, setIsLeaderboardModa
             </LevelInfo>
           </FlexBoxCol>
           <FlexBoxCol className="flex justify-end ">
-            <MdOutlineLeaderboard onClick={handleLeaderboardClick} />
+            <MdOutlineLeaderboard
+              onClick={() => setCurrentView("Leaderboard")}
+            />
           </FlexBoxCol>
         </FlexBoxRow>
       </Container>
