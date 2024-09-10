@@ -166,7 +166,7 @@ function App() {
       case "Pvp":
         return <Pvp userInfo={userInfo} />;
       case "Leaderboard":
-        return <Leaderboard username={userInfo.username} />;
+        return <Leaderboard userInfo={userInfo} />;
       default:
         return (
           <Home
