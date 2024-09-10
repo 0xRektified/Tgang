@@ -26,7 +26,7 @@ interface ProductSelectionModalProps {
     product: EProduct,
     amount: number,
   ) => void;
-  onRedirectToTilkRoad: () => void; // Add this prop for redirection
+  onRedirectToTilkRoad: () => void;
 }
 
 const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
@@ -35,7 +35,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
   shippingMethod,
   amount,
   handleShip,
-  onRedirectToTilkRoad, // Destructure the new prop
+  onRedirectToTilkRoad,
 }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 

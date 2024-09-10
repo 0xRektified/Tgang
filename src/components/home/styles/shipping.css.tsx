@@ -191,7 +191,7 @@ export const ScrollableTableContainer = styled.div`
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
   width: 100%;
-  max-height: 60vh; /* Adjust this value as needed */
+  max-height: 60vh;
 
   &::-webkit-scrollbar {
     width: 8px;

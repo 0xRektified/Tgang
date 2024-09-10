@@ -12,8 +12,8 @@ export const SocialCard = styled.div`
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
-  width: 100%; // Ensure it takes full width
-  box-sizing: border-box; // Include padding and border in the element's total width and height
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const SocialCardContent = styled.div`
@@ -60,19 +60,19 @@ export const SocialCardTitle = styled.h3`
 
 export const SocialButtonContainer = styled.div`
   display: flex;
-  gap: 0.5rem; // Reduce gap between buttons
-  justify-content: space-between; // Spread buttons evenly
+  gap: 0.5rem;
+  justify-content: space-between;
 `;
 
 export const SocialButton = styled.button<{ isMember: boolean }>`
   background-color: rgb(39 39 42);
   color: #e4e4e7;
   border-radius: 8px;
-  padding: 0.4rem 0.8rem; // Slightly reduce padding
+  padding: 0.4rem 0.8rem;
   border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.75em; // Reduce font size
+  font-size: 0.75em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
@@ -82,8 +82,8 @@ export const SocialButton = styled.button<{ isMember: boolean }>`
   gap: 0.5rem;
   transition: background-color 0.3s ease, transform 0.1s ease;
   box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
-  min-width: 70px; // Set a minimum width
-  flex: 1; // Allow buttons to grow and shrink
+  min-width: 70px;
+  flex: 1;
 
   ${({ isMember }) =>
     isMember &&
