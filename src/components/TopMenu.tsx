@@ -14,6 +14,7 @@ import {
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { calculateProgress, formatPrice } from "./utils/formater";
+import { MdOutlineLeaderboard } from "react-icons/md";
 
 // Add this function at the top of the file, outside the component
 const calculateFontSize = (username: string): string => {
@@ -26,9 +27,13 @@ const calculateFontSize = (username: string): string => {
 
 interface TopMenuProps {
   userInfo: IUserInfo;
+  setCurrentView: (tab: string) => void;
 }
 
-export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
+export const TopMenu: React.FC<TopMenuProps> = ({
+  userInfo,
+  setCurrentView,
+}) => {
   const [fontSize, setFontSize] = useState("1rem");
   const usernameRef = useRef<HTMLSpanElement>(null);
 
@@ -74,18 +79,25 @@ export const TopMenu: React.FC<TopMenuProps> = ({ userInfo }) => {
             </div>
           </FlexBoxCol>
         </FlexBoxRow>
-        <FlexBoxCol className="w-full">
-          <LevelInfo>
-            <span>
-              Lvl {level} {title}
-            </span>
-            <ProgressBar
-              className=" progress progress-warning w-40"
-              value={progress}
-              max="100"
-            ></ProgressBar>
-          </LevelInfo>
-        </FlexBoxCol>
+        <FlexBoxRow>
+          <FlexBoxCol className="w-full">
+            <LevelInfo>
+              <span>
+                Lvl {level} {title}
+              </span>
+              <ProgressBar
+                className=" progress progress-warning w-40"
+                value={progress}
+                max="100"
+              ></ProgressBar>
+            </LevelInfo>
+          </FlexBoxCol>
+          <FlexBoxCol className="flex justify-end ">
+            <MdOutlineLeaderboard
+              onClick={() => setCurrentView("Leaderboard")}
+            />
+          </FlexBoxCol>
+        </FlexBoxRow>
       </Container>
     </TopMenuContainer>
   );

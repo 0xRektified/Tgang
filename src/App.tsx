@@ -17,6 +17,7 @@ import MobileOnly from "./components/MobileOnly";
 import { initializeApp, cleanupApp } from "./appScreenHelper";
 import mixpanel from "mixpanel-browser";
 import { useTutorial } from "./hooks/useTutorial";
+import Leaderboard from "./components/Leaderboard";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
@@ -164,6 +165,8 @@ function App() {
         );
       case "Pvp":
         return <Pvp userInfo={userInfo} />;
+      case "Leaderboard":
+        return <Leaderboard userInfo={userInfo} />;
       default:
         return (
           <Home
@@ -208,7 +211,7 @@ function App() {
   return (
     <StyledApp data-theme="dark" id="buffer">
       <AppContainer>
-        <TopMenu userInfo={userInfo} />
+        <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
         <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
@@ -218,4 +221,5 @@ function App() {
     </StyledApp>
   );
 }
+
 export default App;

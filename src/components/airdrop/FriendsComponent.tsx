@@ -17,23 +17,6 @@ import styled from "styled-components";
 import { NeonButton } from "../styled/cardStyled";
 import { SkipButton } from "../home/Home";
 
-const LevelInfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const ReputationLabel = styled.span`
-  font-size: 1.2rem;
-`;
-
-const ReputationAmount = styled.span`
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #32cd32;
-  margin-left: 2em;
-`;
-
 const AirdropContainer = styled.div`
   background: #171c24;
   color: white;
@@ -128,8 +111,6 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   userInfo,
   tutorial,
 }) => {
-  const { userLevel } = userInfo;
-  const { level } = userLevel;
   const handleRefForward = () => {
     WebApp.openTelegramLink(
       `https://t.me/share/url?url=${
@@ -168,25 +149,18 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   return (
     <div className="space-y-4 scrollable-content">
       <AirdropContainer>
-        <LevelInfoContainer>
-          <ReputationLabel>Reputation level {level}</ReputationLabel>
-          <ReputationAmount>
-            {userInfo.reputation} / {userInfo.userLevel.maxReputation}
-          </ReputationAmount>
-        </LevelInfoContainer>
         {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? (
           <TutorialOverlay>
             <TutorialText>
-              "Invite Friends"
-              below to win real-world money
+              "Invite Friends" below to win real-world money
             </TutorialText>
             <FriendNeonButton onClick={handleRefForward}>
               Invite Friends
             </FriendNeonButton>
             <AnnouncementContainer>
               <p>
-                🎉 Exciting news! Beta testers can win real-world prizes totaling
-                over $600 USD!
+                🎉 Exciting news! Beta testers can win real-world prizes
+                totaling over $600 USD!
               </p>
               <AnnouncementLink
                 href="https://t.me/cartel_game_community"
@@ -198,14 +172,16 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
               🚀
             </AnnouncementContainer>
 
-            <SkipButton onClick={handleSkipTutorial}>End of the Tutorial</SkipButton>
+            <SkipButton onClick={handleSkipTutorial}>
+              End of the Tutorial
+            </SkipButton>
           </TutorialOverlay>
         ) : (
           <>
             <AnnouncementContainer>
               <p>
-                🎉 Exciting news! Beta testers can win real-world prizes totaling
-                over $600 USD!
+                🎉 Exciting news! Beta testers can win real-world prizes
+                totaling over $600 USD!
               </p>
               <AnnouncementLink
                 href="https://t.me/cartel_game_community"
@@ -230,7 +206,8 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
         </div>
         <div className="flex w-full mb-4">
           <div className="flex-grow">
-            {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? null : (
+            {!tutorial.tutorialCompleted &&
+            tutorial.tutorialStep === 5 ? null : (
               <FriendNeonButton onClick={handleRefForward}>
                 Invite Friends
               </FriendNeonButton>
