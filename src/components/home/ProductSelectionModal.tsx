@@ -24,7 +24,7 @@ interface ProductSelectionModalProps {
   handleShip: (
     shippingMethod: EShippingMethod,
     product: EProduct,
-    amount: number
+    amount: number,
   ) => void;
   onRedirectToTilkRoad: () => void; // Add this prop for redirection
 }
@@ -44,23 +44,23 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
   };
 
   const userHasProducts = userInfo.products.some(
-    (product) => product.quantity > 0
+    (product) => product.quantity > 0,
   );
 
   const calculateAmountToShip = async (
     shippingMethod: EShippingMethod,
-    selectedProduct: Product
+    selectedProduct: Product,
   ) => {
     await handleShip(
       shippingMethod,
       selectedProduct.name,
-      Math.min(selectedProduct.quantity, amount)
+      Math.min(selectedProduct.quantity, amount),
     );
     onClose();
   };
 
   return (
-    <ModalContainer>
+    <ModalContainer className="scrollable-content">
       <CloseButton onClick={onClose}>×</CloseButton>
       <h3>Select a Product to Ship</h3>
       {userHasProducts ? (
@@ -77,12 +77,13 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 }}
               >
                 <CardHeader>
-                  <CardImage src={ProductImage[product.name]} alt={product.name} />
+                  <CardImage
+                    src={ProductImage[product.name]}
+                    alt={product.name}
+                  />
                   <CardDetails>
-                    <CardInfoColumn>
-                      <CardTitle>{product.name}</CardTitle>
-                      <p>Quantity: {product.quantity}</p>
-                    </CardInfoColumn>
+                    <CardTitle>{product.name}</CardTitle>
+                    <p>Quantity: {product.quantity}</p>
                   </CardDetails>
                 </CardHeader>
               </CardContainer>
