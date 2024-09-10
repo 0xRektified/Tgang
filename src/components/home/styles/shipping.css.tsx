@@ -5,7 +5,7 @@ export const CardContainer = styled.div<{ locked?: boolean }>`
   flex-direction: column;
   background-color: rgba(128, 128, 128, 0.15);
   border-radius: 0.8rem;
-  padding: 1rem;
+  padding: 0.75rem;
   box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
   color: #e4e4e7;
   margin-bottom: 1rem;
@@ -15,7 +15,7 @@ export const CardContainer = styled.div<{ locked?: boolean }>`
 export const CardHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
 `;
 
 export const CardContent = styled.div`
@@ -25,6 +25,7 @@ export const CardContent = styled.div`
 export const CardTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: bold;
+  margin: 0;
 `;
 
 export const CardDescription = styled.p`
@@ -33,14 +34,20 @@ export const CardDescription = styled.p`
 `;
 
 export const CardImage = styled.img`
-  width: 5rem;
-  height: 5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 0.8rem;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 export const CardDetails = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   flex: 1;
 `;
 
@@ -183,9 +190,8 @@ export const ScrollableTableContainer = styled.div`
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
-  background-color: #1a202c;
   width: 100%;
-  max-height: 60vh; /* Adjust this value as needed */
+  max-height: 60vh;
 
   &::-webkit-scrollbar {
     width: 8px;

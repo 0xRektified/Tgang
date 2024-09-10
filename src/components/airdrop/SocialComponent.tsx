@@ -22,6 +22,8 @@ import {
   RewardAmount,
   StatDesc,
   GlobalContainer, // Add this import
+  RewardIcon,
+  RewardText,
 } from "./styles/socialStyled.css";
 
 interface SocialComponentProps {
@@ -116,13 +118,17 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
               </SocialCardContent>
               <RewardInfo>
                 <RewardItem>
-                  <FaCoins />
-                  <StatDesc>Reward:</StatDesc>
+                  <RewardIcon>
+                    <FaCoins />
+                  </RewardIcon>
+                  <RewardText>Reward:</RewardText>
                   <RewardAmount>1000$</RewardAmount>
                 </RewardItem>
                 <RewardItem>
-                  <GiRank3 />
-                  <StatDesc>Rep:</StatDesc>
+                  <RewardIcon>
+                    <GiRank3 />
+                  </RewardIcon>
+                  <RewardText>Rep:</RewardText>
                   <RewardAmount>+100</RewardAmount>
                 </RewardItem>
               </RewardInfo>
