@@ -53,6 +53,14 @@ export default {
           "0%, 100%": { opacity: 1 },
           "50%": { opacity: 0.5 },
         },
+        subtleBounce: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+        glowingBorder: {
+          "0%, 100%": { boxShadow: "0 0 5px rgba(255, 255, 255, 0.5)" },
+          "50%": { boxShadow: "0 0 20px rgba(255, 255, 255, 0.8)" },
+        },
       },
       animation: {
         "fade-in": "fadeIn 1s forwards",
@@ -66,6 +74,8 @@ export default {
         "move-up-random-x": "moveUpRandomX 1s forwards",
         "scale-up-down": "scaleUpDown 0.1s ease-in-out",
         "pulse-smooth": "pulseSmooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "subtle-bounce": "subtleBounce 2s ease-in-out infinite",
+        "glowing-border": "glowingBorder 2s ease-in-out infinite",
       },
     },
   },

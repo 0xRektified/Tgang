@@ -1,12 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BsFillArrowUpSquareFill } from "react-icons/bs";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import "tailwindcss/tailwind.css";
 import { IUserInfo, LabPlot } from "../interfaces/user.interface";
 import { getUnixTime } from "date-fns";
 import { useCollectLabProduct } from "../../hooks/useCollectLabProduct";
 import WebApp from "@twa-dev/sdk";
 import { EProductIcon } from "../interfaces/product.interface";
+import { BsFillArrowUpSquareFill } from "react-icons/bs";
+
+const glowingBorder = keyframes`
+  0%, 100% { box-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+`;
+
+const subtleBounce = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+`;
 
 const PurchasedLabContainer = styled.div`
   display: flex;
@@ -19,13 +29,13 @@ const PurchasedLabContainer = styled.div`
 `;
 
 const LabInfo = styled.div`
+  font-size: 0.9em;
   text-align: center;
   color: white;
 `;
 
 const ProgressContainer = styled.div`
   width: 100%;
-  margin-top: 0.5rem;
 `;
 
 const UpdateButton = styled.button`
@@ -43,10 +53,21 @@ const UpdateButton = styled.button`
   }
 `;
 
-const VideoWrapper = styled.div`
+const VideoWrapper = styled.div<{ isProduced: boolean }>`
   position: relative;
-  width: 5rem;
-  height: 5rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 0.5rem;
+  ${({ isProduced }) =>
+    isProduced &&
+    css`
+      animation: ${glowingBorder} 3s ease-in-out infinite,
+        ${subtleBounce} 2s ease-in-out infinite;
+      cursor: pointer;
+    `}
+  border: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 const StyledVideo = styled.video.attrs<{ isVideoLoaded: boolean }>({})<{
@@ -118,7 +139,7 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
       for (let i = 0; i < hapticCount; i++) {
         setTimeout(
           () => WebApp.HapticFeedback.impactOccurred("heavy"),
-          i * interval
+          i * interval,
         );
       }
       setTimeout(() => {
@@ -151,8 +172,12 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
   return (
     <PurchasedLabContainer>
       <VideoWrapper
+        isProduced={produced > 0}
         onClick={collectProduct}
-        className={noProductAnimation ? "animate-resize" : ""}
+        className={`
+          ${noProductAnimation ? "animate-resize" : ""}
+          ${produced > 0 ? "animate-subtle-bounce cursor-pointer" : ""}
+        `}
       >
         <PlaceholderImage poster={lab.image} isVideoLoaded={isVideoLoaded} />
         <StyledVideo
@@ -166,7 +191,6 @@ const PurchasedLab: React.FC<PurchasedLabProps> = ({
           isVideoLoaded={isVideoLoaded}
         />
       </VideoWrapper>
-      <LabInfo>{lab.product}</LabInfo>
       <LabInfo>
         {produced}/{lab.capacity}
       </LabInfo>

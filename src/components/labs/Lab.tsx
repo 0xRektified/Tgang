@@ -22,11 +22,11 @@ import { SkipButton } from "../home/Home";
 
 const LabContainer = styled.div`
   background-color: rgb(17 17 23);
-  height: calc(100vh - 120px); // Adjust this value based on your layout
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 1em;
+  padding: 1em 1em 2em;
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -45,8 +45,8 @@ const LabsGrid = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   max-height: calc(80vh - 150px);
-
-  @media (min-width: 768px) {
+  padding-bottom: 2rem;
+  grid @media (min-width: 768px) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 `;
@@ -129,13 +129,12 @@ const AddPlotButton = styled.button`
 const DescriptionContainer = styled.div`
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  padding: 0.5rem;
 `;
 
 const DescriptionText = styled.p`
   color: #e2e8f0;
-  font-size: 1rem;
+  font-size: 0.8rem;
   text-align: center;
 `;
 
@@ -316,21 +315,19 @@ export const Lab: React.FC<LabProps> = ({
 
     return production;
   };
-  console.log(`tutorial.tutorialStep`);
-  console.log(tutorial.tutorialStep);
   return (
     <LabContainer>
+      <CombinedProduction
+        currentAmount={mapProductsToProduction(userInfo.products)}
+        productionPerHour={production}
+      />
+
+      <Divider />
       <DescriptionContainer>
         <DescriptionText>
           Expand your empire by producing resources
         </DescriptionText>
       </DescriptionContainer>
-      <h2 className="text-lg font-bold p-2">Current Production per hour</h2>
-      <CombinedProduction
-        currentAmount={mapProductsToProduction(userInfo.products)}
-        productionPerHour={production}
-      />
-      <Divider />
       {!tutorial.tutorialCompleted && tutorial.tutorialStep === 3 ? (
         <TutorialOverlay>
           <TutorialText>CLICK ON THE "BUILD LAB" ICON 👇</TutorialText>
