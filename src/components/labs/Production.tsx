@@ -26,7 +26,7 @@ const CombinedProductionItem = styled.div`
 `;
 
 const Amount = styled.div`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
 `;
 
