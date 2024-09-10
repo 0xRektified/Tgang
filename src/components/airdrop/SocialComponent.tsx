@@ -103,7 +103,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                   <SocialCardTitle>{social.title}</SocialCardTitle>
                   <SocialButtonContainer>
                     <SocialButton
-                      isMember={isMember}
+                      isMember={false}
                       onClick={() =>
                         handleJoinClick(social.url, channel as SocialChannel)
                       }
