@@ -82,6 +82,21 @@ export const SocialButton = styled.button<{ isMember: boolean }>`
   transition: background-color 0.3s ease, transform 0.1s ease;
   box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
 
+  ${({ isMember }) =>
+    isMember &&
+    `
+    background-color: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+    border: 2px solid #16a34a;
+    cursor: default;
+    box-shadow: none;
+    
+    &:hover {
+      background-color: rgba(22, 163, 74, 0.1);
+      animation: none;
+    }
+  `}
+
   &:hover {
     background-color: rgb(24 24 27);
     animation: glow 1.5s infinite alternate, pulse 2s infinite;

@@ -7,6 +7,7 @@ import { ApiToast } from "../ApiToast";
 import { useJoinSocial } from "../../hooks/useJoinSocial";
 import { FaCoins } from "react-icons/fa";
 import { GiRank3 } from "react-icons/gi";
+import { FaCheck } from "react-icons/fa"; // Add this import
 import {
   SocialCard,
   SocialCardContent,
@@ -64,7 +65,11 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
 
   const renderVerifyButton = (channel: SocialChannel, isMember: boolean) => {
     if (isMember) {
-      return null;
+      return (
+        <SocialButton isMember={true} disabled>
+          <FaCheck /> Verified
+        </SocialButton>
+      );
     }
     return (
       <SocialButton isMember={false} onClick={() => handleVerifyClick(channel)}>
@@ -95,9 +100,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                   />
                 </SocialCardImageContainer>
                 <SocialCardDetails>
-                  <SocialCardTitle>
-                    {social.title} {!!isMember ? `✅` : ``}
-                  </SocialCardTitle>
+                  <SocialCardTitle>{social.title}</SocialCardTitle>
                   <SocialButtonContainer>
                     <SocialButton
                       isMember={isMember}
