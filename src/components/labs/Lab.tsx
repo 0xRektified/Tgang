@@ -26,7 +26,7 @@ const LabContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 1em 1em 2em; // Increase bottom padding
+  padding: 1em 1em 2em;
   width: 100%;
   border-radius: 0.375rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -45,8 +45,8 @@ const LabsGrid = styled.div`
   gap: 0.5rem;
   overflow-y: auto;
   max-height: calc(80vh - 150px);
-  padding-bottom: 2rem; // Add padding to the bottom of the grid
-  @media (min-width: 768px) {
+  padding-bottom: 2rem;
+  grid @media (min-width: 768px) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 `;
@@ -315,8 +315,6 @@ export const Lab: React.FC<LabProps> = ({
 
     return production;
   };
-  console.log(`tutorial.tutorialStep`);
-  console.log(tutorial.tutorialStep);
   return (
     <LabContainer>
       <CombinedProduction
