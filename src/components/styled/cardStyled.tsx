@@ -8,47 +8,106 @@ export const CardContainer = styled.div`
   position: relative;
   padding: 0.5rem;
   border: 2px solid #285d90;
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const CardLeftColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+`;
+
+export const CardImageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+export const CardImage = styled.img`
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+`;
+
+export const CardButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.25rem;
+`;
+
+export const CardRightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+`;
+
+export const CardFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.2rem;
+  margin-top: auto;
+`;
+
+export const CardCost = styled.div`
+  font-size: 0.9rem;
+  color: #32cd32;
+  text-align: center;
+  width: 100%;
+  padding-right: 1px;
 `;
 
 export const CardHeader = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 0.5rem;
   padding-bottom: 0.2rem;
 `;
 
-export const CardImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 0.5rem;
-`;
-
 export const CardDetails = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 1rem;
 `;
 
 export const CardInfoColumn = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 `;
 
-export const CardInfoColumnText = styled.p`
-  font-size: 0.8rem;
+export const CardInfoGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const InfoItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+`;
+
+export const InfoLabel = styled.span`
+  font-weight: bold;
   color: #d1d5db;
+  margin-right: 0.5rem;
 `;
 
-export const CardInfoColumnUpgradeValue = styled.p`
-  font-size: 0.8rem;
-  color: white;
+export const InfoValue = styled.span<{ isCost?: boolean }>`
+  color: ${(props) => (props.isCost ? "#32cd32" : "white")};
 `;
 
 export const CardTitle = styled.h3`
   font-size: 1.2rem;
   font-weight: bold;
   color: white;
+  margin-bottom: 0.5rem;
 `;
 
 export const CardContent = styled.div`
@@ -57,12 +116,14 @@ export const CardContent = styled.div`
 `;
 
 export const CardDescription = styled.p`
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   color: #d1d5db;
 `;
 
 export const CardRequirement = styled.div`
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   color: #1e90ff;
   text-shadow: 0 0 2px #1e90ff, 0 0 8px #1e90ff;
 
@@ -92,6 +153,14 @@ export const CardRequirement = styled.div`
       transform: scale(1);
     }
   }
+`;
+
+export const RequirementText = styled.p`
+  color: white;
+  text-shadow: 0 0 2px red;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: 5px;
 `;
 
 export const Button = styled.button`
@@ -214,8 +283,14 @@ export const NeonRedButton = styled(NeonButton)`
     }
   }
 `;
-
-export const CardCost = styled.span`
+export const SmallButton = styled(Button)`
   font-size: 0.8rem;
-  color: #32cd32;
+  padding: 0.3rem 0.6rem;
+  width: 100%;
+`;
+
+export const SmallNeonButton = styled(NeonButton)`
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  width: 100%;
 `;

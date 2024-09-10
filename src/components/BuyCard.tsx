@@ -2,18 +2,23 @@ import React, { useState } from "react";
 import {
   CardContainer,
   CardHeader,
+  CardImageContainer,
   CardImage,
   CardDetails,
-  CardInfoColumn,
+  CardInfoGrid,
+  InfoItemContainer,
+  InfoLabel,
+  InfoValue,
+  SmallButton,
+  SmallNeonButton,
   CardTitle,
-  CardContent,
   CardDescription,
-  Button,
-  NeonButton,
-  CardInfoColumnText,
+  RequirementText,
+  CardFooter,
   CardCost,
-  CardInfoColumnUpgradeValue,
-  CardRequirement,
+  CardButtonContainer,
+  CardRightColumn,
+  CardLeftColumn,
 } from "./styled/cardStyled";
 import BuyConfirmationModal from "./BuyConfirmationModal";
 import { IUserInfo } from "./interfaces/user.interface";
@@ -21,6 +26,7 @@ import { UpgradeConfirmationModal } from "./UpgradeConfirmationModal";
 import { TouchPoint } from "./utils/types";
 import { formatPrice } from "./utils/formater";
 import { RequirementType } from "./interfaces/upgrade.interface";
+import styled from "styled-components";
 
 interface BuyCardProps {
   item: {
@@ -35,12 +41,16 @@ interface BuyCardProps {
     labCapacity?: number | undefined;
     labProduction?: number | undefined;
     description: string;
-    requirements?: { name?: string; level: number, requirement: RequirementType } | null;
+    requirements?: {
+      name?: string;
+      level: number;
+      requirement: RequirementType;
+    } | null;
   };
   locked: boolean;
   onBuyClick: (
     params: any,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => Promise<void>;
   upgradeOption: boolean;
   userInfo: IUserInfo;
@@ -57,6 +67,10 @@ interface BuyCardProps {
     onClick: () => void;
   }[];
 }
+
+const DummyRequirement = styled.div`
+  height: 24px; // Adjust this value to match the height of the RequirementText
+`;
 
 const BuyCard: React.FC<BuyCardProps> = ({
   item,
@@ -94,31 +108,29 @@ const BuyCard: React.FC<BuyCardProps> = ({
     : null;
 
   const renderRequirements = (
-    requirements?: { name?: string; level: number, requirement: RequirementType } | null
+    requirements?: {
+      name?: string;
+      level: number;
+      requirement: RequirementType;
+    } | null,
   ) => {
-    if (!requirements) return <></>;
-  
-    if (requirements?.requirement == 'referredUsers') {
-      return (
-        <CardRequirement>
-          Requires {requirements?.level || 0} Referred Users
-        </CardRequirement>
-      );
-    } else {
-      return (
-        <CardRequirement>
-          Requires {requirements?.name || "Unknown"} Level{" "}
-          {requirements?.level || 0}
-        </CardRequirement>
-      );
-    }
+    if (!requirements) return null;
+
+    const requirementText =
+      requirements.requirement === "referredUsers"
+        ? `Requires ${requirements.level || 0} Referred Users`
+        : `Requires ${requirements.name || "Unknown"} Level ${
+            requirements.level || 0
+          }`;
+
+    return <RequirementText>{requirementText}</RequirementText>;
   };
 
   const handleCardClick = async (price: number) => {
     if (userInfo.cashAmount >= price) {
       await onBuyClick(
         { category, upgrade: upgradeKey, upgradePrice: price },
-        setUserInfo
+        setUserInfo,
       );
 
       const newTouchPoint: TouchPoint = {
@@ -131,7 +143,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
       setTouchPoints((prevTouchPoints) => [...prevTouchPoints, newTouchPoint]);
       setTimeout(() => {
         setTouchPoints((prevTouchPoints) =>
-          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id)
+          prevTouchPoints.filter((point) => point.id !== newTouchPoint.id),
         );
       }, 3000);
     } else {
@@ -155,77 +167,63 @@ const BuyCard: React.FC<BuyCardProps> = ({
   return (
     <>
       <CardContainer>
-        <CardHeader>
-          <CardImage src={image} alt={title} loading="lazy" />
-          <CardDetails>
-            <CardInfoColumn>
-              <CardTitle>{title}</CardTitle>
+        <CardLeftColumn>
+          <CardImageContainer>
+            <CardImage src={image} alt={title} loading="lazy" />
+          </CardImageContainer>
+          <CardButtonContainer>
+            {locked ? (
+              <SmallButton disabled>Locked</SmallButton>
+            ) : (
               <>
-                {level ? (
-                  <CardInfoColumnText>Level: {level}</CardInfoColumnText>
+                {upgradeOption ? (
+                  <SmallNeonButton onClick={handleUpgradeClick}>
+                    Upgrade
+                  </SmallNeonButton>
                 ) : (
-                  ""
-                )}
-                {upgradeValue && (
-                  <CardInfoColumnUpgradeValue>
-                    {upgradeValue}
-                  </CardInfoColumnUpgradeValue>
-                )}
-                {shippingTimeLevel && (
-                  <CardInfoColumnText>
-                    Shipping Time: {shippingTimeLevel}
-                  </CardInfoColumnText>
-                )}
-                {capacityLevel && (
-                  <CardInfoColumnText>
-                    Capacity: {capacityLevel}
-                  </CardInfoColumnText>
-                )}
-                {labCapacity && (
-                  <CardInfoColumnText>
-                    Capacity: {labCapacity}
-                  </CardInfoColumnText>
-                )}
-                {productionLevel && (
-                  <CardInfoColumnText>
-                    Production level: {productionLevel}
-                  </CardInfoColumnText>
-                )}
-                {labProduction && (
-                  <CardInfoColumnText>
-                    Production: {labProduction}
-                  </CardInfoColumnText>
-                )}
-                {!upgradeOption ? (
-                  <CardInfoColumnText>
-                    Cost: <CardCost>{formatPrice(cost, false)}</CardCost>
-                  </CardInfoColumnText>
-                ) : (
-                  <></>
+                  <SmallNeonButton onClick={handleBuyClick}>
+                    Buy
+                  </SmallNeonButton>
                 )}
               </>
-            </CardInfoColumn>
-            <CardInfoColumn>
-              {locked ? (
-                <Button disabled>Locked</Button>
-              ) : (
-                <>
-                  {upgradeOption ? (
-                    <NeonButton onClick={handleUpgradeClick}>
-                      Upgrade
-                    </NeonButton>
-                  ) : (
-                    <NeonButton onClick={handleBuyClick}>Buy</NeonButton>
-                  )}
-                </>
+            )}
+          </CardButtonContainer>
+        </CardLeftColumn>
+        <CardRightColumn>
+          <CardDetails>
+            <CardTitle>{title}</CardTitle>
+            <CardInfoGrid>
+              {level ? <InfoItem label="Level" value={level} /> : null}
+              {upgradeValue && (
+                <InfoItem label="Upgrade" value={upgradeValue} />
               )}
-            </CardInfoColumn>
+              {shippingTimeLevel && (
+                <InfoItem label="Shipping Time" value={shippingTimeLevel} />
+              )}
+              {capacityLevel && (
+                <InfoItem label="Capacity" value={capacityLevel} />
+              )}
+              {labCapacity && <InfoItem label="Capacity" value={labCapacity} />}
+              {productionLevel && (
+                <InfoItem label="Production Level" value={productionLevel} />
+              )}
+              {labProduction && (
+                <InfoItem label="Production" value={labProduction} />
+              )}
+            </CardInfoGrid>
+            <CardDescription>{description}</CardDescription>
           </CardDetails>
-        </CardHeader>
-        <CardContent>
-          <CardDescription>{description}</CardDescription>
-          {locked && renderRequirements(safeRequirements)}
-        </CardContent>
+          <CardFooter>
+            <CardCost>
+              <InfoItem label="Cost" value={formatPrice(cost, false)} isCost />
+            </CardCost>
+          </CardFooter>
+          {locked ? (
+            renderRequirements(safeRequirements)
+          ) : (
+            <DummyRequirement />
+          )}
+        </CardRightColumn>
       </CardContainer>
       {showBuyConfirmation && (
         <BuyConfirmationModal
@@ -245,5 +243,16 @@ const BuyCard: React.FC<BuyCardProps> = ({
     </>
   );
 };
+
+const InfoItem: React.FC<{
+  label: string;
+  value: string | number;
+  isCost?: boolean;
+}> = ({ label, value, isCost }) => (
+  <InfoItemContainer>
+    {label && label != "Upgrade" ? <InfoLabel>{label}:</InfoLabel> : null}
+    <InfoValue isCost={isCost}>{value}</InfoValue>
+  </InfoItemContainer>
+);
 
 export default BuyCard;

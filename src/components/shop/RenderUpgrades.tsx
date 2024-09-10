@@ -182,10 +182,10 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             });
           }
           const upgradeEffect = userUpgrade?.upgradeMarketDiscount
-            ? `Discount from ${userUpgrade?.marketDiscount.toFixed(
+            ? `From -${userUpgrade?.marketDiscount.toFixed(
                 2,
-              )}% to ${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
-            : `Unlock a ${productUpgrade.baseDiscount}% discount`;
+              )}% to -${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
+            : `Unlock a -${productUpgrade.baseDiscount}% discount`;
           return render(
             productUpgrade,
             key as EProduct | EDealerUpgrade,
