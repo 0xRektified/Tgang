@@ -13,28 +13,13 @@ import {
 import { GiDodging } from "react-icons/gi";
 import { useState } from "react";
 import InfoModal from "./InfoModal";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   gap: 0.5rem;
 `;
-
-// const StatItem = styled.div`
-//   background-color: #3a3a3c;
-//   border-radius: 0.5rem;
-//   padding: 0.5rem;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
-// const StatIcon = styled.div`
-//   font-size: 1.2rem;
-//   color: #a0aec0;
-//   margin-bottom: 0.2rem;
-// `;
 
 const StatValue = styled.p`
   font-size: 0.9rem;
@@ -133,37 +118,23 @@ const WhiteIcon = styled(StatIcon)`
   color: white;
 `;
 
-const ProductsList = styled.div`
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
   margin-top: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
 `;
 
 const ProductItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  background-color: #3a3a3c;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
+  text-align: center;
 `;
 
-const ProductImage = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 0.25rem;
-`;
-
-const ProductDetails = styled.div`
-  flex-grow: 1;
-`;
-
-const ProductName = styled.p`
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 0;
+const ProductIcon = styled.div`
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 const ProductQuantity = styled.p`
@@ -293,7 +264,7 @@ export function PlayerCard({
             <UserDetails>
               <Username>{player.username}</Username>
               <UserLevel>
-                {player.userLevel.title} (Level {player.userLevel.level})
+                (Level {player.userLevel.level}) {player.userLevel.title}
               </UserLevel>
               <StatRow>
                 <StatItem>
@@ -351,17 +322,19 @@ export function PlayerCard({
           </StatsGrid>
           <div>
             <h4 className="text-white text-sm font-bold mb-1">Products</h4>
-            <ProductsList>
-              {player.products.map((product: any, index: number) => (
-                <ProductItem key={index}>
-                  <ProductImage src={product.image} alt={product.name} />
-                  <ProductDetails>
-                    <ProductName>{product.name}</ProductName>
-                    <ProductQuantity>Qty: {product.quantity}</ProductQuantity>
-                  </ProductDetails>
-                </ProductItem>
-              ))}
-            </ProductsList>
+            <ProductsGrid>
+              {Object.values(EProduct).map((productName: string) => {
+                const product = player.products.find((p: { name: string; }) => p.name === productName);
+                const quantity = product ? product.quantity : 0;
+                const emoji = EProductIcon[productName as keyof typeof EProductIcon];
+                return (
+                  <ProductItem key={productName}>
+                    <ProductIcon>{emoji}</ProductIcon>
+                    <ProductQuantity>{quantity}</ProductQuantity>
+                  </ProductItem>
+                );
+              })}
+            </ProductsGrid>
           </div>
         </CardContent>
       </StyledCard>
