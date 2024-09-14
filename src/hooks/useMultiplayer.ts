@@ -1,55 +1,84 @@
-import { useState } from "react"; // Import useState
-import axios from "axios";
+import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
+import { IUserInfo, IUserPvp } from "../components/interfaces/user.interface";
 
-export function useMultiplayer() {
-  const [loading, setLoading] = useState<boolean>(false); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
+export function useMultiplayer(
+  userInfo: IUserInfo,
+  setUserInfo: (value: React.SetStateAction<IUserInfo>) => void,
+) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [combatResult, setCombatResult] = useState<any>(null);
 
   const searchPlayer = async () => {
-    setLoading(true); // Set loading to true
-    setError(null); // Reset error state
+    setLoading(true);
+    setError(null);
     try {
       const response = await axiosInstance.get(`/multiplayer/search`);
       return response.data;
     } catch (err) {
-      setError("Failed to search player"); // Set error message
-      return null; // Return null on error
+      setError("Failed to search player");
+      return null;
     } finally {
-      setLoading(false); // Set loading to false
+      setLoading(false);
     }
   };
 
-  const startFight = async (userId: string, opponentId: string) => {
-    setLoading(true); // Set loading to true
-    setError(null); // Reset error state
-    try {
-      const response = await axiosInstance.post("/multiplayer/fight", {
-        userId,
-        opponentId,
-      });
-      return response.data;
-    } catch (err) {
-      setError("Failed to start fight"); // Set error message
-      return null; // Return null on error
-    } finally {
-      setLoading(false); // Set loading to false
-    }
-  };
+  const startFight = useCallback(
+    async (playerId: string, opponentId: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axiosInstance.post("/multiplayer/fight", {
+          playerId,
+          opponentId,
+        });
+        setLoading(false);
+        const result = response.data;
+        setCombatResult(result);
+
+        setUserInfo((prevUserInfo: IUserInfo) => {
+          const isWinner = result.winner === prevUserInfo.username;
+          const updatedPvp = prevUserInfo.pvp as IUserPvp;
+
+          if (isWinner) {
+            updatedPvp.victory += 1;
+          } else {
+            updatedPvp.defeat = (updatedPvp.defeat ?? 0) + 1;
+          }
+
+          return {
+            ...prevUserInfo,
+            pvp: updatedPvp,
+            cashAmount: isWinner
+              ? prevUserInfo.cashAmount + result.loot
+              : prevUserInfo.cashAmount - result.loot,
+          };
+        });
+
+        return result;
+      } catch (err) {
+        setLoading(false);
+        setError("Failed to start fight");
+        console.error(err);
+      }
+    },
+    [setUserInfo],
+  );
 
   const enablePvp = async () => {
-    setLoading(true); // Set loading to true
-    setError(null); // Reset error state
+    setLoading(true);
+    setError(null);
     try {
       const response = await axiosInstance.post("/multiplayer/enable-pvp");
       return response.data;
     } catch (err) {
-      setError("Failed to enable PvP"); // Set error message
-      return null; // Return null on error
+      setError("Failed to enable PvP");
+      return null;
     } finally {
-      setLoading(false); // Set loading to false
+      setLoading(false);
     }
   };
 
-  return { searchPlayer, startFight, enablePvp, loading, error }; // Return loading and error states
+  return { searchPlayer, startFight, enablePvp, loading, error, combatResult };
 }

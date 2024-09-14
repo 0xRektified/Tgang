@@ -86,27 +86,20 @@ const AttackButton = styled.button`
 
 interface PvpProps {
   userInfo: IUserInfo;
+  setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
 }
 
-export default function Pvp({ userInfo }: PvpProps) {
-  console.log(userInfo);
-  const { searchPlayer, startFight, enablePvp, loading, error } =
-    useMultiplayer();
+export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
+  const { searchPlayer, startFight, enablePvp, loading, error, combatResult } =
+    useMultiplayer(userInfo, setUserInfo);
   const [showEnableModal, setShowEnableModal] = useState(false);
   const [opponent, setOpponent] = useState<any>(null);
-  const [combatResult, setCombatResult] = useState<any>(null);
   const [isAttacking, setIsAttacking] = useState(false);
   const [attackAnimation, setAttackAnimation] = useState({
     attacker: "",
     defender: "",
   });
   const [isSearching, setIsSearching] = useState(false);
-  const [player, setPlayer] = useState({
-    ...userInfo,
-    health: userInfo.pvp?.baseHp || 1000,
-    maxHealth: userInfo.pvp?.baseHp || 1000,
-    image: "/assets/pvp/userImage.png",
-  });
   const [showExplosion, setShowExplosion] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
@@ -176,8 +169,6 @@ export default function Pvp({ userInfo }: PvpProps) {
         maxHealth: opponentData.maxHealth || 1000,
         image: opponentData.image || "/assets/pvp/userImage.png",
       });
-      setPlayer((prev) => ({ ...prev, health: prev.maxHealth }));
-      setCombatResult(null);
       setIsAttacking(false);
     }
     setIsSearching(false);
@@ -187,11 +178,10 @@ export default function Pvp({ userInfo }: PvpProps) {
     if (!opponent) return;
     setIsAttacking(true);
     setAttackAnimation({
-      attacker: player.username,
+      attacker: userInfo.username,
       defender: opponent.username,
     });
-    const result = await startFight(userInfo.id, opponent.id);
-    setCombatResult(result);
+    await startFight(userInfo.id, opponent.id);
     setShowExplosion(true);
     setTimeout(() => {
       setIsAttacking(false);
@@ -199,7 +189,7 @@ export default function Pvp({ userInfo }: PvpProps) {
       setOpponent(null); // Remove the opponent after the fight
     }, 2000);
     setAttackAnimation({ attacker: "", defender: "" });
-  }, [opponent, startFight, userInfo.id, player.username]);
+  }, [opponent, startFight, userInfo.id, userInfo.username]);
 
   const handleButtonClick = async () => {
     if (opponent) {
@@ -235,9 +225,10 @@ export default function Pvp({ userInfo }: PvpProps) {
                 </h2>
                 <p>
                   {combatResult.winner === userInfo.username
-                    ? `You stole $${combatResult.amountStolen} from ${combatResult.loser}!`
-                    : `${combatResult.winner} stole $${combatResult.amountStolen} from you!`}
+                    ? `You stole $${combatResult.loot} from ${combatResult.loser}!`
+                    : `${combatResult.winner} stole $${combatResult.loot} from you!`}
                 </p>
+                <p>The battle lasted {combatResult.rounds} rounds.</p>
               </ResultContainer>
             )}
           </AnimatePresence>
@@ -312,11 +303,11 @@ export default function Pvp({ userInfo }: PvpProps) {
             transition={{ duration: 0.5 }}
           >
             <PlayerCard
-              player={player}
+              player={userInfo}
               title="You"
-              isAttacking={attackAnimation.attacker === player.username}
-              isDefending={attackAnimation.defender === player.username}
-              onInfoClick={() => handleInfoClick(player)}
+              isAttacking={attackAnimation.attacker === userInfo.username}
+              isDefending={attackAnimation.defender === userInfo.username}
+              onInfoClick={() => handleInfoClick(userInfo)}
             />
           </motion.div>
         </div>

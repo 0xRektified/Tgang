@@ -359,7 +359,6 @@ export function PlayerCard({
             ))} */}
           </StatsGrid>
           <div>
-            <h4 className="text-white text-sm font-bold mb-1">Products</h4>
             <ProductsGrid>
               {Object.values(EProduct).map((productName: string) => {
                 const product = player.products.find(
