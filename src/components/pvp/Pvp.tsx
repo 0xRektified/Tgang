@@ -140,6 +140,8 @@ interface PvpProps {
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
 }
 
+type CombatState = 'idle' | 'searching' | 'ready' | 'fighting' | 'result';
+
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const {
     searchPlayer,
@@ -152,13 +154,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   } = useMultiplayer(userInfo, setUserInfo);
   const [showEnableModal, setShowEnableModal] = useState(false);
   const [opponent, setOpponent] = useState<any>(null);
-  const [isAttacking, setIsAttacking] = useState(false);
-  const [attackAnimation, setAttackAnimation] = useState({
-    attacker: "",
-    defender: "",
-  });
-  const [isSearching, setIsSearching] = useState(false);
-  const [showExplosion, setShowExplosion] = useState(false);
+  const [combatState, setCombatState] = useState<CombatState>('idle');
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
 
@@ -216,9 +212,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     setShowEnableModal(false);
   };
 
-  const handleSearch = async () => {
-    setIsSearching(true);
+  const handleSearch = useCallback(async () => {
+    setCombatState('searching');
     setCombatResult(null);
+    setOpponent(null);
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
@@ -228,40 +225,37 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         maxHealth: opponentData.maxHealth || 1000,
         image: opponentData.image || "/assets/pvp/userImage.png",
       });
-      setIsAttacking(false);
+      setCombatState('ready');
+    } else {
+      setCombatState('idle');
     }
-    setIsSearching(false);
-  };
+  }, [searchPlayer, setCombatResult]);
 
   const handleAttack = useCallback(async () => {
     if (!opponent) return;
-    setIsAttacking(true);
-    setAttackAnimation({
-      attacker: userInfo.username,
-      defender: opponent.username,
-    });
+    setCombatState('fighting');
     await startFight(userInfo.id, opponent.id);
-    setShowExplosion(true);
     setTimeout(() => {
-      setIsAttacking(false);
-      setShowExplosion(false);
-      setOpponent(null); // Remove the opponent after the fight
-    }, 2000);
-    setAttackAnimation({ attacker: "", defender: "" });
-  }, [opponent, startFight, userInfo.id, userInfo.username]);
+      setCombatState('result');
+    }, 2000); // Adjust this timing as needed
+  }, [opponent, startFight, userInfo.id]);
 
-  const handleButtonClick = async () => {
-    if (opponent) {
-      await handleAttack();
-    } else {
-      await handleSearch();
+  const handleButtonClick = useCallback(() => {
+    switch (combatState) {
+      case 'idle':
+      case 'result':
+        handleSearch();
+        break;
+      case 'ready':
+        handleAttack();
+        break;
     }
-  };
+  }, [combatState, handleSearch, handleAttack]);
 
-  const handleInfoClick = (player: any) => {
+  const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
     setIsInfoModalOpen(true);
-  };
+  }, []);
 
   return (
     <PvpContainer className="scrollable-content">
@@ -269,86 +263,72 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         <h1 className="text-3xl font-bold mb-1 text-center text-white">
           Cartel War
         </h1>
-        <div className="mt-6 flex flex-col items-center">
-          <AnimatePresence>
-            {combatResult && (
-              <ResultContainer
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <ResultHeader>
-                  <ResultTitle>
-                    {combatResult.winner === userInfo.username
-                      ? "Victory!"
-                      : "Defeat!"}
-                  </ResultTitle>
-                  <ResultIcon
-                    color={
-                      combatResult.winner === userInfo.username
-                        ? "#48bb78"
-                        : "#e53e3e"
-                    }
-                  >
-                    {combatResult.winner === userInfo.username ? (
-                      <FaTrophy />
-                    ) : (
-                      <FaSkull />
-                    )}
-                  </ResultIcon>
-                </ResultHeader>
-                <ResultContent>
-                  <ResultItem>
-                    <ResultItemIcon>
-                      <FaDollarSign />
-                    </ResultItemIcon>
-                    Loot:{" "}
-                    <ResultItemValue>${combatResult.loot}</ResultItemValue>
-                  </ResultItem>
-                  <ResultItem>
-                    <ResultItemIcon>
-                      <FaClock />
-                    </ResultItemIcon>
-                    Rounds:{" "}
-                    <ResultItemValue>{combatResult.rounds}</ResultItemValue>
-                  </ResultItem>
-                  <ResultItem>
-                    <ResultItemIcon>
-                      <FaSkull />
-                    </ResultItemIcon>
-                    <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
-                  </ResultItem>
-                </ResultContent>
-              </ResultContainer>
-            )}
-          </AnimatePresence>
-        </div>
-        <AnimatePresence>
-          {showExplosion && (
-            <ExplosionAnimation
-              initial={{ scale: 0, rotate: 0 }}
-              animate={{ scale: [0, 1.5, 1], rotate: [0, 180, 0] }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.5 }}
+        <AnimatePresence mode="wait">
+          {combatState === 'result' && combatResult && (
+            <ResultContainer
+              key="result"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
             >
-              💥
-            </ExplosionAnimation>
+              <ResultHeader>
+                <ResultTitle>
+                  {combatResult.winner === userInfo.username
+                    ? "Victory!"
+                    : "Defeat!"}
+                </ResultTitle>
+                <ResultIcon
+                  color={
+                    combatResult.winner === userInfo.username
+                      ? "#48bb78"
+                      : "#e53e3e"
+                  }
+                >
+                  {combatResult.winner === userInfo.username ? (
+                    <FaTrophy />
+                  ) : (
+                    <FaSkull />
+                  )}
+                </ResultIcon>
+              </ResultHeader>
+              <ResultContent>
+                <ResultItem>
+                  <ResultItemIcon>
+                    <FaDollarSign />
+                  </ResultItemIcon>
+                  Loot:{" "}
+                  <ResultItemValue>${combatResult.loot}</ResultItemValue>
+                </ResultItem>
+                <ResultItem>
+                  <ResultItemIcon>
+                    <FaClock />
+                  </ResultItemIcon>
+                  Rounds:{" "}
+                  <ResultItemValue>{combatResult.rounds}</ResultItemValue>
+                </ResultItem>
+                <ResultItem>
+                  <ResultItemIcon>
+                    <FaSkull />
+                  </ResultItemIcon>
+                  <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
+                </ResultItem>
+              </ResultContent>
+            </ResultContainer>
           )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {opponent && !combatResult && (
+          {(combatState === 'ready' || combatState === 'fighting') && opponent && (
             <motion.div
               key="opponent"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
               <PlayerCard
                 player={opponent}
                 title="Opponent"
-                isAttacking={attackAnimation.attacker === opponent.username}
-                isDefending={attackAnimation.defender === opponent.username}
+                isAttacking={combatState === 'fighting'}
+                isDefending={combatState === 'fighting'}
                 onInfoClick={() => handleInfoClick(opponent)}
               />
             </motion.div>
@@ -356,8 +336,9 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {(isSearching || loading) && (
+          {combatState === 'searching' && (
             <SpinnerContainer
+              key="spinner"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -371,44 +352,36 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         <div className="my-6 flex justify-center">
           <button
             onClick={handleButtonClick}
-            disabled={isAttacking || isSearching || loading}
+            disabled={combatState === 'fighting' || combatState === 'searching'}
             className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
-              opponent
+              combatState === 'ready'
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-blue-500 hover:bg-blue-600"
             }`}
           >
-            {isSearching || loading
+            {combatState === 'searching'
               ? "Searching..."
-              : isAttacking
+              : combatState === 'fighting'
               ? "Attacking..."
-              : opponent
+              : combatState === 'ready'
               ? "Attack Opponent"
               : "Search for Opponent"}
           </button>
         </div>
 
-        {error && (
-          <div className="text-center p-4 bg-red-100 rounded-lg mb-8">
-            <p className="text-red-800 font-semibold">{error}</p>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <PlayerCard
-              player={userInfo}
-              title="You"
-              isAttacking={attackAnimation.attacker === userInfo.username}
-              isDefending={attackAnimation.defender === userInfo.username}
-              onInfoClick={() => handleInfoClick(userInfo)}
-            />
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <PlayerCard
+            player={userInfo}
+            title="You"
+            isAttacking={combatState === 'fighting'}
+            isDefending={combatState === 'fighting'}
+            onInfoClick={() => handleInfoClick(userInfo)}
+          />
+        </motion.div>
 
         {showEnableModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
