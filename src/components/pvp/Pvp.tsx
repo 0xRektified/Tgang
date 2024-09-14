@@ -1,293 +1,103 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { GiCrossedSwords } from "react-icons/gi";
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { IUserInfo } from "../interfaces/user.interface";
-import { EProductIcon } from "../interfaces/product.interface";
 import { useMultiplayer } from "../../hooks/useMultiplayer";
+import PlayerCard from "./PlayerCard";
+import styled from "styled-components";
 
 const PvpContainer = styled.div`
+  background-color: #000000;
+  height: 100em;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  height: calc(100vh - 120px); // Adjust this value based on your layout
-  background-size: cover;
-  background-position: center;
-  color: white;
   padding: 1rem;
+  width: 100%;
+
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   -webkit-overflow-scrolling: touch;
-  touch-action: none;
+  max-height: calc(100vh - 120px);
 `;
 
-const Title = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #ffffff;
+const PvpContent = styled.div`
+  background-color: #1c1c1e;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const ResultContainer = styled(motion.div)`
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 1rem;
+  padding: 1rem;
   margin-bottom: 1rem;
   text-align: center;
+  color: #ffffff;
 `;
 
-const FightContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #2a2a2e;
-  border-radius: 0.375rem;
-  padding: 1rem;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+const ExplosionAnimation = styled(motion.div)`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: #ff9900;
+  text-shadow: 0 0 10px #ff9900;
 `;
 
-const FightScene = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 1rem;
-`;
-
-const Fighter = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const FighterName = styled.div`
-  font-size: 1rem;
-  font-weight: bold;
-  color: #9ca3af;
-  margin-top: 0.5rem;
-`;
-
-const Versus = styled.div`
-  font-size: 2rem;
-  font-weight: bold;
-  color: #dc2626;
-  margin: 0 1rem;
-`;
-
-const PlayerListContainer = styled.div`
-  width: 100%;
-  max-width: 600px;
-  overflow-x: auto;
-  background-color: #2a2a2e;
-  border-radius: 0.375rem;
-  padding: 1rem;
-`;
-
-const PlayerList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-`;
-
-const PlayerListItem = styled.li`
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #4a4a4a;
+const AttackButton = styled.button`
+  background-color: #ff4136;
   color: white;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.75rem;
-`;
-
-const PlayerHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const PlayerName = styled.div`
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  font-weight: bold;
-`;
-
-const CashAmount = styled.div`
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
-  font-weight: bold;
-  color: #16a34a;
-`;
-
-const PlayerStats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  color: #9ca3af;
-`;
-
-const StatItem = styled.div`
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-
-  & > span {
-    margin-left: 0.25rem;
-  }
-`;
-
-const ProductIcons = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
-`;
-
-const ProductIcon = styled.span`
-  font-size: clamp(1rem, 2vw, 1.2rem);
-`;
-
-const SearchButton = styled.button`
-  background-color: #4a5568;
-  color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
+  border-radius: 0.25rem;
   font-size: 1rem;
-  font-weight: bold;
-  margin-top: 1rem;
+  cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #2d3748;
+    background-color: #ff1a1a;
+  }
+
+  &:disabled {
+    background-color: #999;
+    cursor: not-allowed;
   }
 `;
-
-const OpponentCard = styled.div`
-  background-color: #2a2a2e;
-  border-radius: 0.375rem;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-`;
-
-const OpponentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const OpponentName = styled.h3`
-  font-size: 1.25rem;
-  color: #ffffff;
-`;
-
-const OpponentStats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const Stat = styled.div`
-  text-align: center;
-`;
-
-const StatLabel = styled.div`
-  font-size: 0.875rem;
-  color: #9ca3af;
-`;
-
-const StatValue = styled.div`
-  font-size: 1.125rem;
-  font-weight: bold;
-  color: #ffffff;
-`;
-
-const FightButton = styled(SearchButton)`
-  background-color: #dc2626;
-  width: 100%;
-
-  &:hover {
-    background-color: #b91c1c;
-  }
-`;
-
-// Modal components
-const ModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background-color: #1a1a1d;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  max-width: 90%;
-  width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-`;
-
-const ModalTitle = styled.h2`
-  color: #ffffff;
-  margin-bottom: 1rem;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #ffffff;
-  cursor: pointer;
-`;
-
-// Modal component
-const Modal: React.FC<{
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}> = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <ModalBackground onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
-        {children}
-      </ModalContent>
-    </ModalBackground>
-  );
-};
 
 interface PvpProps {
   userInfo: IUserInfo;
 }
 
-interface Player {
-  id: string;
-  username: string;
-  cashAmount: number;
-  reputation: number;
-  pvp: {
-    victory: number;
-    defeat: number;
-  };
-}
-
-const Pvp: React.FC<PvpProps> = ({ userInfo }) => {
-  const { searchPlayer, startFight, enablePvp } = useMultiplayer();
+export default function Pvp({ userInfo }: PvpProps) {
+  console.log(userInfo);
+  const { searchPlayer, startFight, enablePvp, loading, error } =
+    useMultiplayer();
   const [showEnableModal, setShowEnableModal] = useState(false);
-  const [opponent, setOpponent] = useState<Player | null>(null);
-  const [fightResult, setFightResult] = useState<any>(null);
+  const [opponent, setOpponent] = useState<any>(null);
+  const [combatResult, setCombatResult] = useState<any>(null);
+  const [isAttacking, setIsAttacking] = useState(false);
+  const [attackAnimation, setAttackAnimation] = useState({
+    attacker: "",
+    defender: "",
+  });
   const [isSearching, setIsSearching] = useState(false);
+  const [player, setPlayer] = useState({
+    ...userInfo,
+    health: userInfo.pvp?.baseHp || 1000,
+    maxHealth: userInfo.pvp?.baseHp || 1000,
+    image: "/assets/pvp/userImage.png",
+  });
+  const [showExplosion, setShowExplosion] = useState(false);
 
   useEffect(() => {
     if (!userInfo.pvp || !userInfo.pvp.pvpEnabled) {
@@ -300,86 +110,202 @@ const Pvp: React.FC<PvpProps> = ({ userInfo }) => {
     setShowEnableModal(false);
   };
 
-  const handleSearchPlayers = async () => {
+  const handleSearch = async () => {
     setIsSearching(true);
     const players = await searchPlayer();
-    if (players.length > 0) {
-      setOpponent(players[0]);
+    if (players && players.length > 0) {
+      const opponentData = players[0];
+      setOpponent({
+        ...opponentData,
+        health: opponentData.maxHealth || 1000,
+        maxHealth: opponentData.maxHealth || 1000,
+        image: opponentData.image || "/assets/pvp/userImage.png",
+      });
+      setPlayer((prev) => ({ ...prev, health: prev.maxHealth }));
+      setCombatResult(null);
+      setIsAttacking(false);
     }
     setIsSearching(false);
   };
 
-  const handleStartFight = async () => {
+  const handleAttack = useCallback(async () => {
+    if (!opponent) return;
+    setIsAttacking(true);
+    setAttackAnimation({
+      attacker: player.username,
+      defender: opponent.username,
+    });
+    const result = await startFight(userInfo.id, opponent.id);
+    setCombatResult(result);
+    setShowExplosion(true);
+    setTimeout(() => {
+      setIsAttacking(false);
+      setShowExplosion(false);
+    }, 2000);
+    setAttackAnimation({ attacker: "", defender: "" });
+  }, [opponent, startFight, userInfo.id, player.username]);
+
+  const handleButtonClick = async () => {
     if (opponent) {
-      const result = await startFight(userInfo.id, opponent.id);
-      setFightResult(result);
+      // If there's an opponent, attack
+      await handleAttack();
+    } else {
+      // If there's no opponent, search for one
+      await handleSearch();
     }
   };
 
   return (
-    <PvpContainer>
-      <Title>PvP Battle Arena</Title>
-      <FightContainer>
-        <FightScene>
-          <Fighter>
-            <GiCrossedSwords size={50} />
-            <FighterName>{userInfo.username}</FighterName>
-          </Fighter>
-          <Versus>VS</Versus>
-          <Fighter>
-            <GiCrossedSwords size={50} />
-            <FighterName>{opponent ? opponent.username : "?"}</FighterName>
-          </Fighter>
-        </FightScene>
-        <p>Fight against other players to steal their resources!</p>
-        {!opponent && (
-          <SearchButton onClick={handleSearchPlayers} disabled={isSearching}>
-            {isSearching ? "Searching..." : "Search for Opponent"}
-          </SearchButton>
+    <PvpContainer className="scrollable-content">
+      <PvpContent>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">
+          Cartel War
+        </h1>
+        <div className="mt-6 flex flex-col items-center">
+          <AnimatePresence>
+            {combatResult && (
+              <ResultContainer
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <h2 className="text-xl font-bold mb-2">
+                  {combatResult.winner === userInfo.username
+                    ? "Victory!"
+                    : "Defeat!"}
+                </h2>
+                <p>
+                  {combatResult.winner === userInfo.username
+                    ? `You stole $${combatResult.amountStolen} from ${opponent.username}!`
+                    : `${opponent.username} stole $${combatResult.amountStolen} from you!`}
+                </p>
+              </ResultContainer>
+            )}
+          </AnimatePresence>
+        </div>
+        <AnimatePresence>
+          {showExplosion && (
+            <ExplosionAnimation
+              initial={{ scale: 0, rotate: 0 }}
+              animate={{ scale: [0, 1.5, 1], rotate: [0, 180, 0] }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              💥
+            </ExplosionAnimation>
+          )}
+        </AnimatePresence>
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={handleButtonClick}
+            disabled={isAttacking || isSearching}
+            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
+              opponent
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {isSearching
+              ? "Searching..."
+              : isAttacking
+              ? "Attacking..."
+              : opponent
+              ? "Attack Opponent"
+              : "Search for Opponent"}
+          </button>
+        </div>
+
+        {loading && (
+          <div className="text-center p-4 bg-blue-100 rounded-lg mb-8">
+            <p className="text-blue-800 font-semibold">Loading...</p>
+          </div>
         )}
-      </FightContainer>
+        {error && (
+          <div className="text-center p-4 bg-red-100 rounded-lg mb-8">
+            <p className="text-red-800 font-semibold">{error}</p>
+          </div>
+        )}
 
-      {opponent && (
-        <OpponentCard>
-          <OpponentHeader>
-            <OpponentName>{opponent.username}</OpponentName>
-            <CashAmount>${opponent.cashAmount.toLocaleString()}</CashAmount>
-          </OpponentHeader>
-          <OpponentStats>
-            <Stat>
-              <StatLabel>Reputation</StatLabel>
-              <StatValue>{opponent.reputation}</StatValue>
-            </Stat>
-            <Stat>
-              <StatLabel>Victories</StatLabel>
-              <StatValue>{opponent.pvp.victory}</StatValue>
-            </Stat>
-            <Stat>
-              <StatLabel>Defeats</StatLabel>
-              <StatValue>{opponent.pvp.defeat}</StatValue>
-            </Stat>
-          </OpponentStats>
-          <FightButton onClick={handleStartFight}>Fight!</FightButton>
-        </OpponentCard>
-      )}
+        <div className="flex flex-col gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <PlayerCard
+              player={player}
+              title="You"
+              isAttacking={attackAnimation.attacker === player.username}
+              isDefending={attackAnimation.defender === player.username}
+            />
+          </motion.div>
+          <AnimatePresence>
+            {opponent ? (
+              <motion.div
+                key="opponent"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ duration: 0.5 }}
+              >
+                <PlayerCard
+                  player={opponent}
+                  title="Opponent"
+                  isAttacking={attackAnimation.attacker === opponent.username}
+                  isDefending={attackAnimation.defender === opponent.username}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-opponent"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center justify-center"
+              >
+                <div className="text-center p-4 bg-gray-100 rounded-lg">
+                  <div className="text-4xl mb-2">🎭</div>
+                  <p className="text-lg font-semibold">No opponent</p>
+                  <p className="text-sm text-gray-600">
+                    Search to start battle!
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-      {fightResult && (
-        <OpponentCard>
-          <Title>Fight Result</Title>
-          <p>Winner: {fightResult.winner}</p>
-          <p>Loser: {fightResult.loser}</p>
-          <p>Rounds: {fightResult.rounds}</p>
-          <p>Loot: ${fightResult.loot.toLocaleString()}</p>
-        </OpponentCard>
-      )}
-
-      <Modal isOpen={showEnableModal} onClose={() => setShowEnableModal(false)}>
-        <ModalTitle>Enable PvP</ModalTitle>
-        <p>Do you want to enable PvP mode?</p>
-        <SearchButton onClick={handleEnablePvp}>Enable PvP</SearchButton>
-      </Modal>
+        {showEnableModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="bg-white rounded-lg p-8 max-w-md w-full"
+            >
+              <h3 className="font-bold text-2xl mb-4">Enable PvP</h3>
+              <p className="text-gray-600 mb-6">
+                Do you want to enable PvP mode and enter the arena?
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setShowEnableModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEnablePvp}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
+                  Enable PvP
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </PvpContent>
     </PvpContainer>
   );
-};
-
-export default Pvp;
+}
