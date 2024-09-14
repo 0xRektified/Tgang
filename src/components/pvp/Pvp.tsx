@@ -32,7 +32,6 @@ const PvpContent = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
 `;
 
 const ResultContainer = styled(motion.div)`
@@ -147,10 +146,8 @@ export default function Pvp({ userInfo }: PvpProps) {
 
   const handleButtonClick = async () => {
     if (opponent) {
-      // If there's an opponent, attack
       await handleAttack();
     } else {
-      // If there's no opponent, search for one
       await handleSearch();
     }
   };
@@ -158,7 +155,7 @@ export default function Pvp({ userInfo }: PvpProps) {
   return (
     <PvpContainer className="scrollable-content">
       <PvpContent>
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">
+        <h1 className="text-3xl font-bold mb-1 text-center text-white">
           Cartel War
         </h1>
         <div className="mt-6 flex flex-col items-center">
@@ -195,6 +192,40 @@ export default function Pvp({ userInfo }: PvpProps) {
             </ExplosionAnimation>
           )}
         </AnimatePresence>
+        <AnimatePresence>
+          {opponent ? (
+            <motion.div
+              key="opponent"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <PlayerCard
+                player={opponent}
+                title="Opponent"
+                isAttacking={attackAnimation.attacker === opponent.username}
+                isDefending={attackAnimation.defender === opponent.username}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-opponent"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center justify-center"
+            >
+              <div className="text-center p-4 bg-gray-100 rounded-lg">
+                <div className="text-4xl mb-2">🎭</div>
+                <p className="text-lg font-semibold">No opponent</p>
+                <p className="text-sm text-gray-600">Search to start battle!</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="mb-6 flex justify-center">
           <button
             onClick={handleButtonClick}
@@ -239,41 +270,6 @@ export default function Pvp({ userInfo }: PvpProps) {
               isDefending={attackAnimation.defender === player.username}
             />
           </motion.div>
-          <AnimatePresence>
-            {opponent ? (
-              <motion.div
-                key="opponent"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ duration: 0.5 }}
-              >
-                <PlayerCard
-                  player={opponent}
-                  title="Opponent"
-                  isAttacking={attackAnimation.attacker === opponent.username}
-                  isDefending={attackAnimation.defender === opponent.username}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="no-opponent"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}
-                className="flex items-center justify-center"
-              >
-                <div className="text-center p-4 bg-gray-100 rounded-lg">
-                  <div className="text-4xl mb-2">🎭</div>
-                  <p className="text-lg font-semibold">No opponent</p>
-                  <p className="text-sm text-gray-600">
-                    Search to start battle!
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {showEnableModal && (
