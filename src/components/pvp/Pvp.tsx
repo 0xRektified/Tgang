@@ -13,8 +13,10 @@ import {
   FaHeart,
   FaBomb,
   FaShieldAlt,
+  FaDollarSign,
+  FaClock,
 } from "react-icons/fa";
-import { GiDodging } from "react-icons/gi";
+import { GiDodging, GiPunchBlast } from "react-icons/gi";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -35,7 +37,6 @@ const PvpContainer = styled.div`
 `;
 
 const PvpContent = styled.div`
-  background-color: #1c1c1e;
   width: 100%;
   max-width: 1200px;
   padding: 2rem;
@@ -46,12 +47,55 @@ const PvpContent = styled.div`
 `;
 
 const ResultContainer = styled(motion.div)`
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #2c2c2e;
   border-radius: 1rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   color: #ffffff;
+  width: 100%;
+  max-width: 600px;
+`;
+
+const ResultHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #4a4a4e;
+`;
+
+const ResultTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+`;
+
+const ResultIcon = styled.div`
+  font-size: 2rem;
+  color: ${(props) => props.color};
+`;
+
+const ResultContent = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+`;
+
+const ResultItem = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+`;
+
+const ResultItemIcon = styled.div`
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  color: #a0aec0;
+`;
+
+const ResultItemValue = styled.span`
+  font-weight: bold;
 `;
 
 const ExplosionAnimation = styled(motion.div)`
@@ -84,14 +128,28 @@ const AttackButton = styled.button`
   }
 `;
 
+const SpinnerContainer = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
 }
 
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
-  const { searchPlayer, startFight, enablePvp, loading, error, combatResult } =
-    useMultiplayer(userInfo, setUserInfo);
+  const {
+    searchPlayer,
+    startFight,
+    enablePvp,
+    loading,
+    error,
+    combatResult,
+    setCombatResult,
+  } = useMultiplayer(userInfo, setUserInfo);
   const [showEnableModal, setShowEnableModal] = useState(false);
   const [opponent, setOpponent] = useState<any>(null);
   const [isAttacking, setIsAttacking] = useState(false);
@@ -160,6 +218,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
 
   const handleSearch = async () => {
     setIsSearching(true);
+    setCombatResult(null);
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
@@ -218,17 +277,48 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
-                <h2 className="text-xl font-bold mb-2">
-                  {combatResult.winner === userInfo.username
-                    ? "Victory!"
-                    : "Defeat!"}
-                </h2>
-                <p>
-                  {combatResult.winner === userInfo.username
-                    ? `You stole $${combatResult.loot} from ${combatResult.loser}!`
-                    : `${combatResult.winner} stole $${combatResult.loot} from you!`}
-                </p>
-                <p>The battle lasted {combatResult.rounds} rounds.</p>
+                <ResultHeader>
+                  <ResultTitle>
+                    {combatResult.winner === userInfo.username
+                      ? "Victory!"
+                      : "Defeat!"}
+                  </ResultTitle>
+                  <ResultIcon
+                    color={
+                      combatResult.winner === userInfo.username
+                        ? "#48bb78"
+                        : "#e53e3e"
+                    }
+                  >
+                    {combatResult.winner === userInfo.username ? (
+                      <FaTrophy />
+                    ) : (
+                      <FaSkull />
+                    )}
+                  </ResultIcon>
+                </ResultHeader>
+                <ResultContent>
+                  <ResultItem>
+                    <ResultItemIcon>
+                      <FaDollarSign />
+                    </ResultItemIcon>
+                    Loot:{" "}
+                    <ResultItemValue>${combatResult.loot}</ResultItemValue>
+                  </ResultItem>
+                  <ResultItem>
+                    <ResultItemIcon>
+                      <FaClock />
+                    </ResultItemIcon>
+                    Rounds:{" "}
+                    <ResultItemValue>{combatResult.rounds}</ResultItemValue>
+                  </ResultItem>
+                  <ResultItem>
+                    <ResultItemIcon>
+                      <FaSkull />
+                    </ResultItemIcon>
+                    <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
+                  </ResultItem>
+                </ResultContent>
               </ResultContainer>
             )}
           </AnimatePresence>
@@ -265,17 +355,30 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {(isSearching || loading) && (
+            <SpinnerContainer
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="loading loading-spinner loading-lg text-primary"></div>
+            </SpinnerContainer>
+          )}
+        </AnimatePresence>
+
         <div className="my-6 flex justify-center">
           <button
             onClick={handleButtonClick}
-            disabled={isAttacking || isSearching}
+            disabled={isAttacking || isSearching || loading}
             className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
               opponent
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-blue-500 hover:bg-blue-600"
             }`}
           >
-            {isSearching
+            {isSearching || loading
               ? "Searching..."
               : isAttacking
               ? "Attacking..."
@@ -285,11 +388,6 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           </button>
         </div>
 
-        {loading && (
-          <div className="text-center p-4 bg-blue-100 rounded-lg mb-8">
-            <p className="text-blue-800 font-semibold">Loading...</p>
-          </div>
-        )}
         {error && (
           <div className="text-center p-4 bg-red-100 rounded-lg mb-8">
             <p className="text-red-800 font-semibold">{error}</p>

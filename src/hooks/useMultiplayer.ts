@@ -80,5 +80,13 @@ export function useMultiplayer(
     }
   };
 
-  return { searchPlayer, startFight, enablePvp, loading, error, combatResult };
+  return {
+    searchPlayer,
+    startFight,
+    enablePvp,
+    loading,
+    error,
+    combatResult,
+    setCombatResult,
+  };
 }
