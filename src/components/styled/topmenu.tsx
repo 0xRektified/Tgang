@@ -8,6 +8,7 @@ export const TopMenuContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   font-family: "Digital", sans-serif;
   border: 1px solid #333;
+  border-radius: 12px; /* Adding slight rounding to match the cards */
   touch-action: none;
 `;
 
@@ -32,7 +33,7 @@ export const BalanceLabel = styled.span`
 `;
 
 export const BalanceAmount = styled.span`
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #32cd32;
 `;
@@ -63,16 +64,20 @@ export const ProgressBar = styled.progress`
   }
 `;
 
-export const pulse = `
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-    100% {
-      transform: scale(1);
-    }
+// Added for item cards
+export const ItemCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #222;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 0.5rem;
+  width: 60px;
+  color: white;
+  font-size: 1rem;
+  span:first-child {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
   }
 `;

@@ -143,33 +143,6 @@ export const Home: React.FC<HomeProps> = ({
     setIsLocalSupplierModalOpen(true);
   };
 
-  const handleSelectProductFromInventory = (product: {
-    id: number;
-    name: string;
-    quantity: number;
-  }) => {
-    if (selectedSlot === null) return;
-
-    setUserInfo((prevUser) => {
-      if (!prevUser) return prevUser;
-
-      const updatedProducts = prevUser.products.map((p) =>
-        p.name === product.name
-          ? { ...p, slot: selectedSlot }
-          : p.slot === selectedSlot
-          ? { ...p, slot: null }
-          : p,
-      );
-
-      return {
-        ...prevUser,
-        products: updatedProducts,
-      };
-    });
-
-    setIsModalOpen(false);
-  };
-
   const getRandomOffset = () => {
     return `${Math.floor(Math.random() * 41) - 20}px`;
   };
@@ -272,14 +245,6 @@ export const Home: React.FC<HomeProps> = ({
       />
 
       <TouchPoints touchPoints={touchPoints} />
-      {isModalOpen && (
-        <InventoryModal
-          selectedSlot={selectedSlot}
-          productsData={userInfo.products}
-          handleSelectProductFromInventory={handleSelectProductFromInventory}
-          handleCloseModal={handleCloseModal}
-        />
-      )}
       {(isLocalSupplierModalOpen || isCombinedModalOpen) && (
         <CombinedModal
           userInfo={userInfo}

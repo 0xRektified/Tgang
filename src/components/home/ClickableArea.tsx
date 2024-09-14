@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
@@ -29,18 +29,35 @@ const slideDown = keyframes`
   }
 `;
 
+// Bounce animation for the selected product
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+`;
+
+// Glow animation for the selected product
+const glow = keyframes`
+  0% {
+    box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  }
+  100% {
+    box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff, 0 0 20px #1e90ff;
+  }
+`;
+
 // Metal-style panel for products
 const ProductPanel = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  padding: 10px;
-  background: linear-gradient(to bottom, #4a4a4a, #3a3a3a);
-  border: 2px solid #5a5a5a;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  padding: 5px;
   animation: ${slideDown} 0.5s ease-out;
+  border-radius: 0 0 12px 12px;
 `;
 
 // Individual product column
@@ -48,27 +65,33 @@ const ProductColumn = styled.div<{ isSelected: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 5px;
+  border-radius: 12px;
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
-
-  ${({ isSelected }) =>
-    isSelected &&
-    `
-    background: linear-gradient(to bottom, #5a5a5a, #4a4a4a);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-  `}
+  background-color: ${({ isSelected }) => (isSelected ? "#374151" : "#202937")};
+  color: white;
+  border: 2px solid ${({ isSelected }) => (isSelected ? "#1e90ff" : "#374151")};
+  box-shadow: ${({ isSelected }) =>
+    isSelected
+      ? "0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff"
+      : "none"};
 
   &:hover {
     transform: translateY(-2px);
   }
+
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      animation: ${bounce} 1s infinite, ${glow} 1.5s infinite alternate;
+    `}
 `;
 
 // Product icon styling
 const ProductIcon = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #ffd700;
   margin-bottom: 5px;
 `;
@@ -76,17 +99,18 @@ const ProductIcon = styled.div`
 // Product price styling
 const ProductPrice = styled.div`
   font-size: 0.8rem;
-  color: #ffffff;
+  color: white;
 `;
 
 // Down arrow indicator for selected product
 const SelectedIndicator = styled(MdArrowDropDown)`
   position: absolute;
-  bottom: -15px;
+  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.5rem;
-  color: #ffd700;
+  font-size: 2rem;
+  color: #1e90ff;
+  filter: drop-shadow(0 0 5px rgba(30, 144, 255, 0.7));
 `;
 
 const NeonText = styled.div`
@@ -364,8 +388,8 @@ const SkipButtonWrapper = styled.div`
 `;
 
 const GlowingImage = styled.img`
-  max-width: 15rem;
-  padding-top: 5rem;
+  max-width: 12em;
+  padding-top: 7rem;
   filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.7));
   transition: all 0.3s ease;
   &:hover {
@@ -533,6 +557,7 @@ export const ClickableAreaWithSmoke = React.memo(
                 isSelected={isSelected}
                 onClick={() => setSelectedProduct(productName)}
               >
+                <ProductPrice>{product?.quantity || 100000}</ProductPrice>
                 <ProductIcon>
                   {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductIcon>
@@ -548,7 +573,7 @@ export const ClickableAreaWithSmoke = React.memo(
             tutorial.tutorialCompleted ||
             tutorial.tutorialStep !== 0) && (
             <FlexBoxRow className="w-full justify-center">
-              <NeonText>TAP TO SELL</NeonText>
+              {/* <NeonText>TAP TO SELL</NeonText> */}
 
               <div
                 ref={animationTargetRef}
@@ -563,7 +588,7 @@ export const ClickableAreaWithSmoke = React.memo(
                   {...({
                     fetchpriority: "high",
                   } as React.ImgHTMLAttributes<HTMLImageElement>)}
-                  className={` pt-24 `}
+                  className={` pt-22 `}
                   onLoad={handleCombinedOnLoad}
                 />
               </div>
