@@ -11,6 +11,7 @@ import {
   BalanceAmount,
   LevelInfo,
   ProgressBar,
+  ItemCard, // Added for the cards in the screenshot
 } from "./styled/topmenu";
 import { FlexBoxCol, FlexBoxRow } from "./styled/globalStyled";
 import { calculateProgress, formatPrice } from "./utils/formater";
@@ -98,6 +99,34 @@ export const TopMenu: React.FC<TopMenuProps> = ({
             />
           </FlexBoxCol>
         </FlexBoxRow>
+
+        {/* Mockup for items/cards */}
+        {/* <FlexBoxRow className="item-cards">
+          <ItemCard>
+            <span>🌱</span>
+            <span>$19.20</span>
+          </ItemCard>
+          <ItemCard>
+            <span>🍄</span>
+            <span>$26.75</span>
+          </ItemCard>
+          <ItemCard>
+            <span>💉</span>
+            <span>$31.50</span>
+          </ItemCard>
+          <ItemCard>
+            <span>💊</span>
+            <span>$39.60</span>
+          </ItemCard>
+          <ItemCard>
+            <span>💎</span>
+            <span>$48.00</span>
+          </ItemCard>
+          <ItemCard>
+            <span>💵</span>
+            <span>$85.00</span>
+          </ItemCard>
+        </FlexBoxRow> */}
       </Container>
     </TopMenuContainer>
   );
