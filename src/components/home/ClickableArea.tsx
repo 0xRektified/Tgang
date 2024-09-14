@@ -638,7 +638,7 @@ export const ClickableAreaWithSmoke = React.memo(
                 isSelected={isSelected}
                 onClick={() => setSelectedProduct(productName)}
               >
-                <ProductPrice>{product?.quantity || 20}</ProductPrice>
+                <ProductPrice>{product?.quantity || 0}</ProductPrice>
                 <ProductIcon>
                   {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductIcon>
