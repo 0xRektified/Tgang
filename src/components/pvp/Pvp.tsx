@@ -39,7 +39,8 @@ const PvpContainer = styled.div`
 const PvpContent = styled.div`
   width: 100%;
   max-width: 1200px;
-  padding: 2rem;
+  padding: 1rem;
+  margin-bottom: 4rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -140,7 +141,7 @@ interface PvpProps {
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
 }
 
-type CombatState = 'idle' | 'searching' | 'ready' | 'fighting' | 'result';
+type CombatState = "idle" | "searching" | "ready" | "fighting" | "result";
 
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const {
@@ -154,7 +155,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   } = useMultiplayer(userInfo, setUserInfo);
   const [showEnableModal, setShowEnableModal] = useState(false);
   const [opponent, setOpponent] = useState<any>(null);
-  const [combatState, setCombatState] = useState<CombatState>('idle');
+  const [combatState, setCombatState] = useState<CombatState>("idle");
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
 
@@ -213,7 +214,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   };
 
   const handleSearch = useCallback(async () => {
-    setCombatState('searching');
+    setCombatState("searching");
     setCombatResult(null);
     setOpponent(null);
     const players = await searchPlayer();
@@ -225,28 +226,28 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         maxHealth: opponentData.maxHealth || 1000,
         image: opponentData.image || "/assets/pvp/userImage.png",
       });
-      setCombatState('ready');
+      setCombatState("ready");
     } else {
-      setCombatState('idle');
+      setCombatState("idle");
     }
   }, [searchPlayer, setCombatResult]);
 
   const handleAttack = useCallback(async () => {
     if (!opponent) return;
-    setCombatState('fighting');
+    setCombatState("fighting");
     await startFight(userInfo.id, opponent.id);
     setTimeout(() => {
-      setCombatState('result');
+      setCombatState("result");
     }, 2000); // Adjust this timing as needed
   }, [opponent, startFight, userInfo.id]);
 
   const handleButtonClick = useCallback(() => {
     switch (combatState) {
-      case 'idle':
-      case 'result':
+      case "idle":
+      case "result":
         handleSearch();
         break;
-      case 'ready':
+      case "ready":
         handleAttack();
         break;
     }
@@ -264,7 +265,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           Cartel War
         </h1>
         <AnimatePresence mode="wait">
-          {combatState === 'result' && combatResult && (
+          {combatState === "result" && combatResult && (
             <ResultContainer
               key="result"
               initial={{ opacity: 0, y: -20 }}
@@ -297,8 +298,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
                   <ResultItemIcon>
                     <FaDollarSign />
                   </ResultItemIcon>
-                  Loot:{" "}
-                  <ResultItemValue>${combatResult.loot}</ResultItemValue>
+                  Loot: <ResultItemValue>${combatResult.loot}</ResultItemValue>
                 </ResultItem>
                 <ResultItem>
                   <ResultItemIcon>
@@ -316,27 +316,28 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
               </ResultContent>
             </ResultContainer>
           )}
-          {(combatState === 'ready' || combatState === 'fighting') && opponent && (
-            <motion.div
-              key="opponent"
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <PlayerCard
-                player={opponent}
-                title="Opponent"
-                isAttacking={combatState === 'fighting'}
-                isDefending={combatState === 'fighting'}
-                onInfoClick={() => handleInfoClick(opponent)}
-              />
-            </motion.div>
-          )}
+          {(combatState === "ready" || combatState === "fighting") &&
+            opponent && (
+              <motion.div
+                key="opponent"
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PlayerCard
+                  player={opponent}
+                  title="Opponent"
+                  isAttacking={combatState === "fighting"}
+                  isDefending={combatState === "fighting"}
+                  onInfoClick={() => handleInfoClick(opponent)}
+                />
+              </motion.div>
+            )}
         </AnimatePresence>
 
         <AnimatePresence>
-          {combatState === 'searching' && (
+          {combatState === "searching" && (
             <SpinnerContainer
               key="spinner"
               initial={{ opacity: 0 }}
@@ -352,18 +353,18 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         <div className="my-6 flex justify-center">
           <button
             onClick={handleButtonClick}
-            disabled={combatState === 'fighting' || combatState === 'searching'}
+            disabled={combatState === "fighting" || combatState === "searching"}
             className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
-              combatState === 'ready'
+              combatState === "ready"
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-blue-500 hover:bg-blue-600"
             }`}
           >
-            {combatState === 'searching'
+            {combatState === "searching"
               ? "Searching..."
-              : combatState === 'fighting'
+              : combatState === "fighting"
               ? "Attacking..."
-              : combatState === 'ready'
+              : combatState === "ready"
               ? "Attack Opponent"
               : "Search for Opponent"}
           </button>
@@ -377,8 +378,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           <PlayerCard
             player={userInfo}
             title="You"
-            isAttacking={combatState === 'fighting'}
-            isDefending={combatState === 'fighting'}
+            isAttacking={combatState === "fighting"}
+            isDefending={combatState === "fighting"}
             onInfoClick={() => handleInfoClick(userInfo)}
           />
         </motion.div>

@@ -15,6 +15,12 @@ import { GiDodging } from "react-icons/gi";
 import { useState } from "react";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
+// Add this helper function at the top of the file
+const truncateUsername = (username: string, maxLength: number = 19) => {
+  if (username.length <= maxLength) return username;
+  return `${username.slice(0, maxLength - 3)}...`;
+};
+
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
@@ -59,7 +65,6 @@ const CardContent = styled.div`
   padding: 1rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
 `;
 
 const UserInfo = styled.div`
@@ -85,6 +90,9 @@ const Username = styled.h3`
   font-weight: bold;
   color: #ffffff;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const UserLevel = styled.p`
@@ -145,7 +153,7 @@ const ProductItem = styled.div`
 `;
 
 const ProductIcon = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 0.25rem;
 `;
 
@@ -216,8 +224,6 @@ export function PlayerCard({
   isDefending: boolean;
   onInfoClick: () => void;
 }) {
-  // Remove the isModalOpen state
-
   if (!player) return null;
 
   const attackVariants = {
@@ -292,7 +298,9 @@ export function PlayerCard({
               alt={player.username}
             />
             <UserDetails>
-              <Username>{player.username}</Username>
+              <Username title={player.username}>
+                {truncateUsername(player.username)}
+              </Username>
               <UserLevel>
                 (Level {player.userLevel.level}) {player.userLevel.title}
               </UserLevel>
