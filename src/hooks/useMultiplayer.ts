@@ -29,10 +29,7 @@ export function useMultiplayer(
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.post("/multiplayer/fight", {
-          playerId,
-          opponentId,
-        });
+        const response = await axiosInstance.post(`/multiplayer/fight/${opponentId}`);
         setLoading(false);
         const result = response.data;
         setCombatResult(result);
