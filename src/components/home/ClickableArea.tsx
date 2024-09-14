@@ -15,7 +15,8 @@ import { MdArrowDropDown } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
-import { FaStore } from "react-icons/fa";
+import marketIcon from "/assets/market.png";
+import shipping from "/assets/shipping.png";
 import { useTutorial } from "../../hooks/useTutorial";
 import { SkipButton } from "./Home";
 
@@ -35,7 +36,7 @@ const bounce = keyframes`
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-1px);
   }
 `;
 
@@ -81,7 +82,7 @@ const ProductColumn = styled.div<{ isSelected: boolean }>`
   &:hover {
     transform: translateY(-2px);
   }
-
+  min-width: 3em;
   ${({ isSelected }) =>
     isSelected &&
     css`
@@ -143,12 +144,20 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+  position: relative;
+`;
+
+const ProgressBarContainer = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
 `;
 
 const ClickableArea = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
   padding-top: 20px;
   padding-left: 20px;
@@ -389,7 +398,7 @@ const SkipButtonWrapper = styled.div`
 
 const GlowingImage = styled.img`
   max-width: 12em;
-  padding-top: 7rem;
+  padding-top: 7em;
   filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.7));
   transition: all 0.3s ease;
   &:hover {
@@ -412,15 +421,82 @@ const BouncingGlowingImage = styled(GlowingImage)`
   }
 `;
 
+const IconContainer = styled.div`
+  position: absolute;
+  top: -18em;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 3em;
+  pointer-events: none;
+  z-index: 10;
+`;
+
+const IconButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 11;
+  pointer-events: auto;
+
+  img {
+    width: 4.5rem;
+    transition: all 0.3s ease;
+  }
+`;
+
+const bounceShop = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+`;
+
+const HighlightedShopContainer = styled.div`
+  position: relative;
+  z-index: 1001;
+  pointer-events: auto;
+  animation: ${bounceShop} 2s infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const IconText = styled.span`
+  font-family: "Orbitron", sans-serif;
+  color: #d4eaff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #1e90ff;
+  box-shadow: 0 0 10px #a7d4ff, 0 0 20px #1e90ff;
+  text-shadow: 0 0 5px #a7d4ff, 0 0 10px #1e90ff;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+  white-space: nowrap;
+`;
+
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => boolean;
   selectedProduct: string;
   setSelectedProduct: Dispatch<SetStateAction<string>>;
-  handleOpenSupplierModal: () => void;
+  handleOpenTilkRoadModal: () => void;
+  handleOpenTedexModal: () => void;
   customer: string;
   customerAmount: number;
-  transaction: Transaction | null;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
   marketInfo: IMarketInfo | undefined;
   signup: boolean;
@@ -433,10 +509,10 @@ export const ClickableAreaWithSmoke = React.memo(
     handleTouchStart,
     selectedProduct,
     setSelectedProduct,
-    handleOpenSupplierModal,
+    handleOpenTilkRoadModal,
+    handleOpenTedexModal,
     customer,
     customerAmount,
-    transaction,
     animatingEmojis,
     marketInfo,
     signup,
@@ -520,8 +596,8 @@ export const ClickableAreaWithSmoke = React.memo(
       ) {
         tutorial.onTutorialProgress();
       }
-      handleOpenSupplierModal();
-    }, [signup, tutorial, handleOpenSupplierModal]);
+      handleOpenTilkRoadModal();
+    }, [signup, tutorial, handleOpenTilkRoadModal]);
 
     useEffect(() => {
       if (
@@ -557,7 +633,7 @@ export const ClickableAreaWithSmoke = React.memo(
                 isSelected={isSelected}
                 onClick={() => setSelectedProduct(productName)}
               >
-                <ProductPrice>{product?.quantity || 100000}</ProductPrice>
+                <ProductPrice>{product?.quantity || 20}</ProductPrice>
                 <ProductIcon>
                   {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductIcon>
@@ -567,14 +643,11 @@ export const ClickableAreaWithSmoke = React.memo(
             );
           })}
         </ProductPanel>
-
         <ClickableArea onTouchStart={handleCombinedClick}>
           {(!signup ||
             tutorial.tutorialCompleted ||
             tutorial.tutorialStep !== 0) && (
             <FlexBoxRow className="w-full justify-center">
-              {/* <NeonText>TAP TO SELL</NeonText> */}
-
               <div
                 ref={animationTargetRef}
                 className={`flex flex-col items-center justify-left w-full ${
@@ -595,14 +668,29 @@ export const ClickableAreaWithSmoke = React.memo(
             </FlexBoxRow>
           )}
         </ClickableArea>
-        <Container>
+        <IconContainer>
+          <HighlightedShopContainer>
+            <IconButton onClick={handleOpenTilkRoadModal}>
+              <img src={marketIcon} alt="Tilk Road Market" />
+            </IconButton>
+            <IconText>SHOP</IconText>
+          </HighlightedShopContainer>
+          <HighlightedShopContainer>
+            <IconButton onClick={handleOpenTedexModal}>
+              <img src={shipping} alt="Tedex Market" />
+            </IconButton>
+            <IconText>SHIPPING</IconText>
+          </HighlightedShopContainer>
+        </IconContainer>
+
+        <ProgressBarContainer>
           <HomeBoard
             customer={customer}
             customerAmount={customerAmount}
-            transaction={transaction}
             animatingEmojis={animatingEmojis}
           />
-        </Container>
+        </ProgressBarContainer>
+
         {signup && !tutorial.tutorialCompleted && (
           <TutorialOverlay>
             {tutorial.tutorialStep === 0 ? (
@@ -656,7 +744,7 @@ export const ClickableAreaWithSmoke = React.memo(
                     >
                       <ButtonContent>
                         <IconWrapper>
-                          <FaStore />
+                          <img src={marketIcon} alt="Tilk Road Market" />
                         </IconWrapper>
                         <div>Trade</div>
                         <div>Market</div>
