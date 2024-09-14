@@ -22,6 +22,7 @@ import {
 import { CombinedModal } from "./CombinedModal";
 import { getRandomEmoji } from "./HomeBoard";
 import { useTutorial } from "../../hooks/useTutorial";
+import { FaStore, FaTruck } from "react-icons/fa";
 
 const formatNumber = (num: number) => num.toFixed(2);
 
@@ -227,6 +228,13 @@ export const Home: React.FC<HomeProps> = ({
     return result;
   };
 
+  const [activeTab, setActiveTab] = useState<"TilkRoad" | "Tedex">("TilkRoad");
+
+  const handleOpenModal = (tab: "TilkRoad" | "Tedex") => {
+    setActiveTab(tab);
+    setIsLocalSupplierModalOpen(true);
+  };
+
   return (
     <HomeContainer>
       <ClickableAreaWithSmoke
@@ -234,17 +242,17 @@ export const Home: React.FC<HomeProps> = ({
         handleTouchStart={handleTouchStart}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
-        handleOpenSupplierModal={handleOpenSupplierModal}
         customer={nextCustomer}
         customerAmount={userInfo.customerAmount}
-        transaction={lastTransaction}
         animatingEmojis={animatingEmojis}
         marketInfo={marketInfo}
         signup={signup}
         tutorial={tutorial}
+        handleOpenTilkRoadModal={() => handleOpenModal("TilkRoad")}
+        handleOpenTedexModal={() => handleOpenModal("Tedex")}
       />
 
-      <TouchPoints touchPoints={touchPoints} />
+      <TouchPoints touchPoints={touchPoints} lastTransaction={lastTransaction} />
       {(isLocalSupplierModalOpen || isCombinedModalOpen) && (
         <CombinedModal
           userInfo={userInfo}
@@ -256,6 +264,7 @@ export const Home: React.FC<HomeProps> = ({
           shippingMethods={shippingMethods}
           tutorial={tutorial}
           handleTutorialComplete={handleTutorialComplete}
+          initialTab={activeTab}
         />
       )}
     </HomeContainer>

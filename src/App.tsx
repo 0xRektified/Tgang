@@ -39,7 +39,6 @@ const TopMenuWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  z-index: 10;
 `;
 
 function App() {
