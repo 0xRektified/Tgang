@@ -21,24 +21,28 @@ import Leaderboard from "./components/Leaderboard";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const AppContainer = styled.div`
   max-width: 750px;
+  width: 100%;
   margin: 0 auto;
-  padding-bottom: 60px;
-`;
-
-const TopMenuWrapper = styled.div`
-  position: relative;
-  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 
 const ContentWrapper = styled.div`
-  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 function App() {
@@ -218,13 +222,11 @@ function App() {
     return <div>Error: {error}</div>;
   }
   return (
-    <StyledApp data-theme="dark" id="buffer">
+    <StyledApp data-theme="dark">
       <AppContainer>
-        <TopMenuWrapper>
-          <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
-        </TopMenuWrapper>
+        <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
         <ContentWrapper>
-          <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
+          {renderCurrentView()}
         </ContentWrapper>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
