@@ -9,10 +9,10 @@ import {
   FaBomb,
   FaShieldAlt,
   FaQuestionCircle,
+  FaDollarSign,
 } from "react-icons/fa";
 import { GiDodging } from "react-icons/gi";
 import { useState } from "react";
-import InfoModal from "./InfoModal";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
 const StatsGrid = styled.div`
@@ -110,12 +110,24 @@ const StatIcon = styled.div`
   margin-right: 0.2rem;
 `;
 
-const GoldIcon = styled(StatIcon)`
-  color: gold;
+const RedIcon = styled(StatIcon)`
+  color: #e53e3e; // Red color for heart (baseHP)
+`;
+
+const BlackIcon = styled(StatIcon)`
+  color: #000000; // Black color for bomb (attack)
 `;
 
 const WhiteIcon = styled(StatIcon)`
-  color: white;
+  color: #ffffff; // White color for evasion
+`;
+
+const BlueIcon = styled(StatIcon)`
+  color: #3182ce; // Blue color for protection
+`;
+
+const GoldIcon = styled(StatIcon)`
+  color: gold;
 `;
 
 const ProductsGrid = styled.div`
@@ -175,18 +187,36 @@ const ModalDescription = styled.p`
   color: #a0aec0;
 `;
 
+const StatsRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+`;
+
+const StatGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const GreenIcon = styled(StatIcon)`
+  color: #48bb78;
+`;
+
 export function PlayerCard({
   player,
   title,
   isAttacking,
   isDefending,
+  onInfoClick,
 }: {
   player: any;
   title: string;
   isAttacking: boolean;
   isDefending: boolean;
+  onInfoClick: () => void;
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Remove the isModalOpen state
 
   if (!player) return null;
 
@@ -252,7 +282,7 @@ export function PlayerCard({
       variants={attackVariants}
     >
       <StyledCard>
-        <QuestionButton onClick={() => setIsModalOpen(true)}>
+        <QuestionButton onClick={onInfoClick}>
           <FaQuestionCircle />
         </QuestionButton>
         <CardHeader>
@@ -266,20 +296,28 @@ export function PlayerCard({
               <UserLevel>
                 (Level {player.userLevel.level}) {player.userLevel.title}
               </UserLevel>
-              <StatRow>
+              <StatsRow>
+                <StatGroup>
+                  <StatItem>
+                    <GoldIcon>
+                      <FaTrophy />
+                    </GoldIcon>
+                    {player.pvp.victory}
+                  </StatItem>
+                  <StatItem>
+                    <WhiteIcon>
+                      <FaSkull />
+                    </WhiteIcon>
+                    {player.pvp.defeat}
+                  </StatItem>
+                </StatGroup>
                 <StatItem>
-                  <GoldIcon>
-                    <FaTrophy />
-                  </GoldIcon>
-                  {player.pvp.victory}
+                  <GreenIcon>
+                    <FaDollarSign />
+                  </GreenIcon>
+                  {player.cashAmount}
                 </StatItem>
-                <StatItem>
-                  <WhiteIcon>
-                    <FaSkull />
-                  </WhiteIcon>
-                  {player.pvp.defeat}
-                </StatItem>
-              </StatRow>
+              </StatsRow>
             </UserDetails>
           </UserInfo>
         </CardHeader>
@@ -287,28 +325,28 @@ export function PlayerCard({
           <StatsGrid>
             <StatRow>
               <StatItem>
-                <StatIcon>
+                <RedIcon>
                   <FaHeart />
-                </StatIcon>
+                </RedIcon>
                 {player.pvp.baseHp}
               </StatItem>
               <StatItem>
-                <StatIcon>
+                <WhiteIcon>
+                  <FaShieldAlt />
+                </WhiteIcon>
+                {player.pvp.protection}%
+              </StatItem>
+              <StatItem>
+                <WhiteIcon>
                   <FaBomb />
-                </StatIcon>
+                </WhiteIcon>
                 {player.pvp.damage}
               </StatItem>
               <StatItem>
-                <StatIcon>
+                <WhiteIcon>
                   <GiDodging />
-                </StatIcon>
+                </WhiteIcon>
                 {player.pvp.evasion}%
-              </StatItem>
-              <StatItem>
-                <StatIcon>
-                  <FaShieldAlt />
-                </StatIcon>
-                {player.pvp.protection}%
               </StatItem>
             </StatRow>
             {/* {statIcons.slice(2).map((stat, index) => (
@@ -324,9 +362,12 @@ export function PlayerCard({
             <h4 className="text-white text-sm font-bold mb-1">Products</h4>
             <ProductsGrid>
               {Object.values(EProduct).map((productName: string) => {
-                const product = player.products.find((p: { name: string; }) => p.name === productName);
+                const product = player.products.find(
+                  (p: { name: string }) => p.name === productName,
+                );
                 const quantity = product ? product.quantity : 0;
-                const emoji = EProductIcon[productName as keyof typeof EProductIcon];
+                const emoji =
+                  EProductIcon[productName as keyof typeof EProductIcon];
                 return (
                   <ProductItem key={productName}>
                     <ProductIcon>{emoji}</ProductIcon>
@@ -338,24 +379,6 @@ export function PlayerCard({
           </div>
         </CardContent>
       </StyledCard>
-      <InfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2>Stat Explanations</h2>
-        <ModalList>
-          {statIcons.map((stat, index) => (
-            <ModalListItem key={index}>
-              <ModalIcon>
-                <stat.icon />
-              </ModalIcon>
-              <ModalContent>
-                <ModalLabel>
-                  {stat.label}: {stat.value}
-                </ModalLabel>
-                <ModalDescription>{stat.description}</ModalDescription>
-              </ModalContent>
-            </ModalListItem>
-          ))}
-        </ModalList>
-      </InfoModal>
     </motion.div>
   );
 }

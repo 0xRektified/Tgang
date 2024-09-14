@@ -3,7 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IUserInfo } from "../interfaces/user.interface";
 import { useMultiplayer } from "../../hooks/useMultiplayer";
 import PlayerCard from "./PlayerCard";
+import InfoModal from "./InfoModal";
 import styled from "styled-components";
+import {
+  FaTrophy,
+  FaSkull,
+  FaBullseye,
+  FaFistRaised,
+  FaHeart,
+  FaBomb,
+  FaShieldAlt,
+} from "react-icons/fa";
+import { GiDodging } from "react-icons/gi";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -97,6 +108,51 @@ export default function Pvp({ userInfo }: PvpProps) {
     image: "/assets/pvp/userImage.png",
   });
   const [showExplosion, setShowExplosion] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+
+  const statIcons = [
+    {
+      icon: FaTrophy,
+      label: "Victories",
+      description: "Total number of PvP battles won",
+    },
+    {
+      icon: FaSkull,
+      label: "Defeats",
+      description: "Total number of PvP battles lost",
+    },
+    {
+      icon: FaBullseye,
+      label: "Accuracy",
+      description: "Chance to hit the opponent in battle",
+    },
+    {
+      icon: FaFistRaised,
+      label: "Attacks Today",
+      description: "Number of attacks performed today",
+    },
+    {
+      icon: FaHeart,
+      label: "Base HP",
+      description: "Base health points of the character",
+    },
+    {
+      icon: FaBomb,
+      label: "Damage",
+      description: "Amount of damage dealt in battles",
+    },
+    {
+      icon: GiDodging,
+      label: "Evasion",
+      description: "Chance to dodge enemy attacks",
+    },
+    {
+      icon: FaShieldAlt,
+      label: "Protection",
+      description: "Percentage of damage reduction",
+    },
+  ];
 
   useEffect(() => {
     if (!userInfo.pvp || !userInfo.pvp.pvpEnabled) {
@@ -140,6 +196,7 @@ export default function Pvp({ userInfo }: PvpProps) {
     setTimeout(() => {
       setIsAttacking(false);
       setShowExplosion(false);
+      setOpponent(null); // Remove the opponent after the fight
     }, 2000);
     setAttackAnimation({ attacker: "", defender: "" });
   }, [opponent, startFight, userInfo.id, player.username]);
@@ -150,6 +207,11 @@ export default function Pvp({ userInfo }: PvpProps) {
     } else {
       await handleSearch();
     }
+  };
+
+  const handleInfoClick = (player: any) => {
+    setSelectedPlayer(player);
+    setIsInfoModalOpen(true);
   };
 
   return (
@@ -173,8 +235,8 @@ export default function Pvp({ userInfo }: PvpProps) {
                 </h2>
                 <p>
                   {combatResult.winner === userInfo.username
-                    ? `You stole $${combatResult.amountStolen} from ${opponent.username}!`
-                    : `${opponent.username} stole $${combatResult.amountStolen} from you!`}
+                    ? `You stole $${combatResult.amountStolen} from ${combatResult.loser}!`
+                    : `${combatResult.winner} stole $${combatResult.amountStolen} from you!`}
                 </p>
               </ResultContainer>
             )}
@@ -193,7 +255,7 @@ export default function Pvp({ userInfo }: PvpProps) {
           )}
         </AnimatePresence>
         <AnimatePresence>
-          {opponent ? (
+          {opponent && !combatResult && (
             <motion.div
               key="opponent"
               initial={{ opacity: 0, y: 50 }}
@@ -206,27 +268,13 @@ export default function Pvp({ userInfo }: PvpProps) {
                 title="Opponent"
                 isAttacking={attackAnimation.attacker === opponent.username}
                 isDefending={attackAnimation.defender === opponent.username}
+                onInfoClick={() => handleInfoClick(opponent)}
               />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="no-opponent"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center justify-center"
-            >
-              <div className="text-center p-4 bg-gray-100 rounded-lg">
-                <div className="text-4xl mb-2">🎭</div>
-                <p className="text-lg font-semibold">No opponent</p>
-                <p className="text-sm text-gray-600">Search to start battle!</p>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="mb-6 flex justify-center">
+        <div className="my-6 flex justify-center">
           <button
             onClick={handleButtonClick}
             disabled={isAttacking || isSearching}
@@ -268,6 +316,7 @@ export default function Pvp({ userInfo }: PvpProps) {
               title="You"
               isAttacking={attackAnimation.attacker === player.username}
               isDefending={attackAnimation.defender === player.username}
+              onInfoClick={() => handleInfoClick(player)}
             />
           </motion.div>
         </div>
@@ -301,6 +350,34 @@ export default function Pvp({ userInfo }: PvpProps) {
             </motion.div>
           </div>
         )}
+
+        <InfoModal
+          isOpen={isInfoModalOpen}
+          onClose={() => setIsInfoModalOpen(false)}
+        >
+          {selectedPlayer && (
+            <>
+              <h2 className="text-xl font-bold mb-4">
+                Player Stats: {selectedPlayer.username}
+              </h2>
+              <ul className="space-y-4">
+                {statIcons.map((stat, index) => (
+                  <li key={index} className="flex items-center">
+                    <span className="text-2xl mr-4">
+                      <stat.icon />
+                    </span>
+                    <div>
+                      <strong className="block">{stat.label}</strong>
+                      <span className="text-sm text-gray-600">
+                        {stat.description}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </InfoModal>
       </PvpContent>
     </PvpContainer>
   );
