@@ -145,6 +145,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
 `;
 
 const ProgressBarContainer = styled.div`
@@ -157,13 +158,13 @@ const ProgressBarContainer = styled.div`
 const ClickableArea = styled.div`
   position: relative;
   display: flex;
-  flex-direction: row;
-  height: 100%;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
   cursor: pointer;
   overflow: hidden;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const ClickableAreaTutorial = styled.div`
@@ -398,9 +399,11 @@ const SkipButtonWrapper = styled.div`
 
 const GlowingImage = styled.img`
   max-width: 12em;
-  padding-top: 7em;
+  max-height: 50vh;
+  object-fit: contain;
   filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.7));
   transition: all 0.3s ease;
+  margin-bottom: 0;
   &:hover {
     filter: drop-shadow(0 0 20px rgba(0, 123, 255, 0.9));
     transform: scale(1.05);
@@ -423,16 +426,16 @@ const BouncingGlowingImage = styled(GlowingImage)`
 
 const IconContainer = styled.div`
   position: absolute;
-  top: -18em;
+  top: 30%;
   left: 0;
   right: 0;
-  bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 3em;
   pointer-events: none;
   z-index: 10;
+  transform: translateY(-50%);
 `;
 
 const IconButton = styled.button`
@@ -501,6 +504,7 @@ interface ClickableAreaWithSmokeProps {
   marketInfo: IMarketInfo | undefined;
   signup: boolean;
   tutorial: ReturnType<typeof useTutorial>;
+  style?: React.CSSProperties;
 }
 
 export const ClickableAreaWithSmoke = React.memo(
@@ -517,6 +521,7 @@ export const ClickableAreaWithSmoke = React.memo(
     marketInfo,
     signup,
     tutorial,
+    style,
   }: ClickableAreaWithSmokeProps) => {
     const [smokes, setSmokes] = useState<JSX.Element[]>([]);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -614,7 +619,7 @@ export const ClickableAreaWithSmoke = React.memo(
     };
 
     return (
-      <Wrapper>
+      <Wrapper style={style}>
         <ProductPanel>
           {Object.values(EProduct).map((productName) => {
             const product = products.find((p) => p.name === productName);
@@ -643,31 +648,6 @@ export const ClickableAreaWithSmoke = React.memo(
             );
           })}
         </ProductPanel>
-        <ClickableArea onTouchStart={handleCombinedClick}>
-          {(!signup ||
-            tutorial.tutorialCompleted ||
-            tutorial.tutorialStep !== 0) && (
-            <FlexBoxRow className="w-full justify-center">
-              <div
-                ref={animationTargetRef}
-                className={`flex flex-col items-center justify-left w-full ${
-                  pressed ? "animate-scale-up-down" : ""
-                }`}
-                style={{ height: "100%" }}
-              >
-                <GlowingImage
-                  src={userCharacter}
-                  alt="Logo"
-                  {...({
-                    fetchpriority: "high",
-                  } as React.ImgHTMLAttributes<HTMLImageElement>)}
-                  className={` pt-22 `}
-                  onLoad={handleCombinedOnLoad}
-                />
-              </div>
-            </FlexBoxRow>
-          )}
-        </ClickableArea>
         <IconContainer>
           <HighlightedShopContainer>
             <IconButton onClick={handleOpenTilkRoadModal}>
@@ -682,14 +662,36 @@ export const ClickableAreaWithSmoke = React.memo(
             <IconText>SHIPPING</IconText>
           </HighlightedShopContainer>
         </IconContainer>
-
-        <ProgressBarContainer>
-          <HomeBoard
-            customer={customer}
-            customerAmount={customerAmount}
-            animatingEmojis={animatingEmojis}
-          />
-        </ProgressBarContainer>
+        <ClickableArea onTouchStart={handleCombinedClick}>
+          {(!signup ||
+            tutorial.tutorialCompleted ||
+            tutorial.tutorialStep !== 0) && (
+            <FlexBoxRow className="w-full justify-center">
+              <div
+                ref={animationTargetRef}
+                className={`flex flex-col items-center justify-end w-full h-full ${
+                  pressed ? "animate-scale-up-down" : ""
+                }`}
+              >
+                <GlowingImage
+                  src={userCharacter}
+                  alt="Logo"
+                  {...({
+                    fetchpriority: "high",
+                  } as React.ImgHTMLAttributes<HTMLImageElement>)}
+                  onLoad={handleCombinedOnLoad}
+                />
+              </div>
+            </FlexBoxRow>
+          )}
+          <ProgressBarContainer>
+            <HomeBoard
+              customer={customer}
+              customerAmount={customerAmount}
+              animatingEmojis={animatingEmojis}
+            />
+          </ProgressBarContainer>
+        </ClickableArea>
 
         {signup && !tutorial.tutorialCompleted && (
           <TutorialOverlay>

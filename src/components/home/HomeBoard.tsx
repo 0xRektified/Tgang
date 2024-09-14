@@ -45,7 +45,9 @@ const electricEffect = keyframes`
 
 const VerticalProgressBarContainer = styled.div`
   width: 10px;
-  height: 100px;
+  height: 20vh;
+  min-height: 100px;
+  max-height: 200px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   overflow: hidden;

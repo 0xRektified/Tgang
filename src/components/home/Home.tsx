@@ -22,20 +22,17 @@ import {
 import { CombinedModal } from "./CombinedModal";
 import { getRandomEmoji } from "./HomeBoard";
 import { useTutorial } from "../../hooks/useTutorial";
-import { FaStore, FaTruck } from "react-icons/fa";
 
 const formatNumber = (num: number) => num.toFixed(2);
 
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  min-height: 80vh;
-  height: auto;
+  height: 80vh;
   touch-action: none;
+  position: relative;
+  overflow: hidden;
 `;
 
 export const SkipButton = styled.button`
@@ -201,7 +198,6 @@ export const Home: React.FC<HomeProps> = ({
         products: updatedProducts,
       }));
 
-      // Move the customer emoji to the animating array
       setNextCustomer(getRandomEmoji());
       const newAnimatingEmoji = {
         emoji: nextCustomer,
@@ -250,9 +246,13 @@ export const Home: React.FC<HomeProps> = ({
         tutorial={tutorial}
         handleOpenTilkRoadModal={() => handleOpenModal("TilkRoad")}
         handleOpenTedexModal={() => handleOpenModal("Tedex")}
+        style={{ flex: 1, display: "flex", flexDirection: "column" }}
       />
 
-      <TouchPoints touchPoints={touchPoints} lastTransaction={lastTransaction} />
+      <TouchPoints
+        touchPoints={touchPoints}
+        lastTransaction={lastTransaction}
+      />
       {(isLocalSupplierModalOpen || isCombinedModalOpen) && (
         <CombinedModal
           userInfo={userInfo}

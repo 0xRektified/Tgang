@@ -30,6 +30,8 @@ export const FlexBoxCol = styled.div`
 export const FlexBoxColNoGap = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100vh;
+
   gap: 0;
 `;
 
