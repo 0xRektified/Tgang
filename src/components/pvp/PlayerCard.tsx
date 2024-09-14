@@ -225,62 +225,12 @@ export function PlayerCard({
   onInfoClick: () => void;
 }) {
   if (!player) return null;
+  if (!player.pvp) return null;
 
   const attackVariants = {
     attacking: { y: [0, -10, 0], transition: { duration: 0.3 } },
     defending: { y: [0, 10, 0], transition: { duration: 0.3 } },
   };
-
-  const statIcons = [
-    {
-      icon: FaTrophy,
-      value: player.pvp.victory,
-      label: "Victories",
-      description: "Total number of PvP battles won",
-    },
-    {
-      icon: FaSkull,
-      value: player.pvp.defeat,
-      label: "Defeats",
-      description: "Total number of PvP battles lost",
-    },
-    {
-      icon: FaBullseye,
-      value: `${player.pvp.accuracy}%`,
-      label: "Accuracy",
-      description: "Chance to hit the opponent in battle",
-    },
-    {
-      icon: FaFistRaised,
-      value: player.pvp.attacksToday,
-      label: "Attacks Today",
-      description: "Number of attacks performed today",
-    },
-    {
-      icon: FaHeart,
-      value: player.pvp.baseHp,
-      label: "Base HP",
-      description: "Base health points of the character",
-    },
-    {
-      icon: FaBomb,
-      value: player.pvp.damage,
-      label: "Damage",
-      description: "Amount of damage dealt in battles",
-    },
-    {
-      icon: GiDodging,
-      value: `${player.pvp.evasion}%`,
-      label: "Evasion",
-      description: "Chance to dodge enemy attacks",
-    },
-    {
-      icon: FaShieldAlt,
-      value: `${player.pvp.protection}%`,
-      label: "Protection",
-      description: "Percentage of damage reduction",
-    },
-  ];
 
   return (
     <motion.div

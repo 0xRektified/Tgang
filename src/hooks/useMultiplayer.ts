@@ -67,8 +67,9 @@ export function useMultiplayer(
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.post("/multiplayer/enable-pvp");
-      return response.data;
+      const { data } = await axiosInstance.post<IUserInfo>("/multiplayer/enable-pvp");
+      setUserInfo(data);
+      return data;
     } catch (err) {
       setError("Failed to enable PvP");
       return null;
