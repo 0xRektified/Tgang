@@ -29,7 +29,17 @@ const StyledApp = styled.div`
 const AppContainer = styled.div`
   max-width: 750px;
   margin: 0 auto;
-  padding-bottom: 60px; /* Add padding to account for the footer */
+  padding-bottom: 60px;
+`;
+
+const TopMenuWrapper = styled.div`
+  position: relative;
+  z-index: 20;
+`;
+
+const ContentWrapper = styled.div`
+  position: relative;
+  z-index: 10;
 `;
 
 function App() {
@@ -211,8 +221,12 @@ function App() {
   return (
     <StyledApp data-theme="dark" id="buffer">
       <AppContainer>
-        <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
-        <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
+        <TopMenuWrapper>
+          <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
+        </TopMenuWrapper>
+        <ContentWrapper>
+          <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
+        </ContentWrapper>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}

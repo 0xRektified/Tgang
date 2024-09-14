@@ -7,11 +7,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
-import { MdArrowCircleRight } from "react-icons/md";
+import { MdArrowDropDown } from "react-icons/md";
 import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
@@ -19,48 +19,74 @@ import { FaStore } from "react-icons/fa";
 import { useTutorial } from "../../hooks/useTutorial";
 import { SkipButton } from "./Home";
 
-const Arrow = styled(({ isSelected, ...rest }) => (
-  <MdArrowCircleRight {...rest} />
-))<{ isSelected: boolean }>`
-  position: absolute;
-  left: -1.5rem;
-  font-size: 1.5rem;
-  color: ${(props) => (props.isSelected ? "#ffd700" : "transparent")};
-  transition: color 0.2s;
+// Slide-down animation for the product panel
+const slideDown = keyframes`
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 `;
 
-const ProductRow = styled(FlexBoxRow)<{ isSelected: boolean }>`
-  position: relative;
+// Metal-style panel for products
+const ProductPanel = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 0.3rem;
-  margin-bottom: 0.3rem;
-  transition: transform 0.2s;
-  border: ${(props) =>
-    props.isSelected ? "2px solid #ffd70012" : "2px solid #595757"};
-  border-radius: 5px;
-  background-color: ${(props) =>
-    props.isSelected ? "#ffd7001a" : "#59575742"};
   width: 100%;
+  padding: 10px;
+  background: linear-gradient(to bottom, #4a4a4a, #3a3a3a);
+  border: 2px solid #5a5a5a;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  animation: ${slideDown} 0.5s ease-out;
+`;
+
+// Individual product column
+const ProductColumn = styled.div<{ isSelected: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+
+  ${({ isSelected }) =>
+    isSelected &&
+    `
+    background: linear-gradient(to bottom, #5a5a5a, #4a4a4a);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  `}
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
   }
+`;
 
-  &.disabled {
-    background-color: #1a202c;
-    cursor: not-allowed;
+// Product icon styling
+const ProductIcon = styled.div`
+  font-size: 1.5rem;
+  color: #ffd700;
+  margin-bottom: 5px;
+`;
 
-    &:hover {
-      transform: none;
-    }
+// Product price styling
+const ProductPrice = styled.div`
+  font-size: 0.8rem;
+  color: #ffffff;
+`;
 
-    div {
-      color: #718096;
-    }
-  }
+// Down arrow indicator for selected product
+const SelectedIndicator = styled(MdArrowDropDown)`
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: #ffd700;
 `;
 
 const NeonText = styled.div`
@@ -90,6 +116,7 @@ const NeonText = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 `;
@@ -98,7 +125,6 @@ const ClickableArea = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 70%;
   height: 100%;
   padding-top: 20px;
   padding-left: 20px;
@@ -127,26 +153,6 @@ const Container = styled.div`
   width: 30%;
   height: 80%;
   position: relative;
-`;
-
-const ProductsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.8);
-  width: 100%;
-  flex-grow: 0;
-  flex-shrink: 0;
-  z-index: 1;
-  margin-top: 1em;
-`;
-
-const ProductNameD = styled.div`
-  font-size: 0.8rem;
-  font-weight: 600;
-  flex-grow: 1;
 `;
 
 const Smoke = styled.div`
@@ -359,7 +365,7 @@ const SkipButtonWrapper = styled.div`
 
 const GlowingImage = styled.img`
   max-width: 15rem;
-  padding-top: 7rem;
+  padding-top: 5rem;
   filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.7));
   transition: all 0.3s ease;
   &:hover {
@@ -397,267 +403,253 @@ interface ClickableAreaWithSmokeProps {
   tutorial: ReturnType<typeof useTutorial>;
 }
 
-export const ClickableAreaWithSmoke = React.memo(({
-  products,
-  handleTouchStart,
-  selectedProduct,
-  setSelectedProduct,
-  handleOpenSupplierModal,
-  customer,
-  customerAmount,
-  transaction,
-  animatingEmojis,
-  marketInfo,
-  signup,
-  tutorial,
-}: ClickableAreaWithSmokeProps) => {
-  const [smokes, setSmokes] = useState<JSX.Element[]>([]);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [pressed, setPressed] = useState(false);
+export const ClickableAreaWithSmoke = React.memo(
+  ({
+    products,
+    handleTouchStart,
+    selectedProduct,
+    setSelectedProduct,
+    handleOpenSupplierModal,
+    customer,
+    customerAmount,
+    transaction,
+    animatingEmojis,
+    marketInfo,
+    signup,
+    tutorial,
+  }: ClickableAreaWithSmokeProps) => {
+    const [smokes, setSmokes] = useState<JSX.Element[]>([]);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [pressed, setPressed] = useState(false);
 
-  const animationTargetRef = useRef<HTMLDivElement>(null);
-  const handleAnimation = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    const result = handleTouchStart(e);
+    const animationTargetRef = useRef<HTMLDivElement>(null);
+    const handleAnimation = useCallback(
+      (e: React.TouchEvent<HTMLDivElement>) => {
+        const result = handleTouchStart(e);
 
-    if (result) {
-      if (!pressed) {
-        setPressed(true);
+        if (result) {
+          if (!pressed) {
+            setPressed(true);
 
-        const element = animationTargetRef.current;
-        if (element) {
-          element.style.animation = "none";
-          void element.offsetWidth;
-          element.style.animation = `scaleUpDown 0.1s ease-in-out`;
+            const element = animationTargetRef.current;
+            if (element) {
+              element.style.animation = "none";
+              void element.offsetWidth;
+              element.style.animation = `scaleUpDown 0.1s ease-in-out`;
+            }
+
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                setPressed(false);
+              }, 100);
+            });
+          }
         }
+      },
+      [handleTouchStart, pressed],
+    );
 
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            setPressed(false);
-          }, 10);
-        });
-      }
-    }
-  }, [handleTouchStart, pressed]);
+    const handleImageLoad = useCallback(() => {
+      setImageLoaded(true);
+    }, []);
 
-  const handleImageLoad = useCallback(() => {
-    setImageLoaded(true);
-  }, []);
+    const handleCombinedOnLoad = useCallback(() => {
+      handleImageLoad();
+    }, [handleImageLoad]);
 
-  const handleCombinedOnLoad = useCallback(() => {
-    handleImageLoad();
-  }, [handleImageLoad]);
-
-  const preloadImage = (src: string) => {
-    const img = new Image();
-    img.src = src;
-  };
-
-  useEffect(() => {
-    preloadImage(userCharacter);
-    const createSmoke = () => {
-      const newSmokes: JSX.Element[] = [];
-      for (let i = 0; i < 12; i++) {
-        newSmokes.push(
-          <Smoke
-            key={i}
-            style={{
-              left: Math.random() * -500,
-              animationDuration: `${Math.random() * 5 + 5}s`,
-            }}
-          />,
-        );
-      }
-      return newSmokes;
+    const preloadImage = (src: string) => {
+      const img = new Image();
+      img.src = src;
     };
 
-    setSmokes(createSmoke());
-  }, []);
+    useEffect(() => {
+      preloadImage(userCharacter);
+      const createSmoke = () => {
+        const newSmokes: JSX.Element[] = [];
+        for (let i = 0; i < 12; i++) {
+          newSmokes.push(
+            <Smoke
+              key={i}
+              style={{
+                left: Math.random() * -500,
+                animationDuration: `${Math.random() * 5 + 5}s`,
+              }}
+            />,
+          );
+        }
+        return newSmokes;
+      };
 
-  const handleCombinedClick = (e: React.TouchEvent<HTMLDivElement>) => {
-    tutorial.handleTutorialClick();
-    handleAnimation(e);
-  };
+      setSmokes(createSmoke());
+    }, []);
 
-  const handleTutorialTwoClick = useCallback(() => {
-    if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
-      tutorial.onTutorialProgress();
-    }
-    handleOpenSupplierModal();
-  }, [signup, tutorial, handleOpenSupplierModal]);
+    const handleCombinedClick = (e: React.TouchEvent<HTMLDivElement>) => {
+      tutorial.handleTutorialClick();
+      handleAnimation(e);
+    };
 
-  useEffect(() => {
-    if (signup && !tutorial.tutorialCompleted && tutorial.tutorialStep === 1) {
-    }
-  }, [signup, tutorial.tutorialCompleted, tutorial.tutorialStep]);
+    const handleTutorialTwoClick = useCallback(() => {
+      if (
+        signup &&
+        !tutorial.tutorialCompleted &&
+        tutorial.tutorialStep === 1
+      ) {
+        tutorial.onTutorialProgress();
+      }
+      handleOpenSupplierModal();
+    }, [signup, tutorial, handleOpenSupplierModal]);
 
-  const handleSkipTutorial = () => {
-    tutorial.setTutorialCompleted(true);
-    tutorial.tutorialCompleted = true;
-  };
+    useEffect(() => {
+      if (
+        signup &&
+        !tutorial.tutorialCompleted &&
+        tutorial.tutorialStep === 1
+      ) {
+      }
+    }, [signup, tutorial.tutorialCompleted, tutorial.tutorialStep]);
 
-  return (
-    <Wrapper>
-      <ClickableArea onTouchStart={handleCombinedClick}>
-        {(!signup ||
-          tutorial.tutorialCompleted ||
-          tutorial.tutorialStep !== 0) && (
-          <FlexBoxRow className="w-full justify-center">
-            <NeonText>TAP TO SELL</NeonText>
+    const handleSkipTutorial = () => {
+      tutorial.setTutorialCompleted(true);
+      tutorial.tutorialCompleted = true;
+    };
 
-            <div
-              ref={animationTargetRef}
-              className={`flex flex-col items-center justify-left w-full ${
-                pressed ? "animate-scale-up-down" : ""
-              }`}
-              style={{ height: "100%" }}
-            >
-              <GlowingImage
-                src={userCharacter}
-                alt="Logo"
-                {...({
-                  fetchpriority: "high",
-                } as React.ImgHTMLAttributes<HTMLImageElement>)}
-                className={`max-w-[15rem] pt-28 `}
-                onLoad={handleCombinedOnLoad}
-              />
-            </div>
-          </FlexBoxRow>
-        )}
-      </ClickableArea>
-
-      <Container>
-        <ProductsList>
-          <CenteredIconContainer>
-            <EnhancedNeonButton
-              onClick={handleOpenSupplierModal}
-              className="skeleton"
-            >
-              <ButtonContent>
-                <IconWrapper>
-                  <FaStore />
-                </IconWrapper>
-                <div>Trade</div>
-                <div>Market</div>
-              </ButtonContent>
-            </EnhancedNeonButton>
-          </CenteredIconContainer>
-          {Object.values(EProduct).map((productName, index) => {
+    return (
+      <Wrapper>
+        <ProductPanel>
+          {Object.values(EProduct).map((productName) => {
             const product = products.find((p) => p.name === productName);
-            let productMarketprice = 0;
-            let productMarketDiscountedPrice = 0;
+            let productMarketPrice = 0;
             if (marketInfo && marketInfo.products.length > 0) {
               const productMarket = marketInfo.products.find(
                 (m) => m.name === productName,
               );
-              productMarketprice = productMarket?.price || 0;
-              productMarketDiscountedPrice = productMarket?.discountPrice || 0;
+              productMarketPrice = productMarket?.price || 0;
             }
-            const quantity = product ? product.quantity : 0;
+            const isSelected = selectedProduct === productName;
+
             return (
-              <FlexBoxRow key={productName} style={{ alignItems: "center" }}>
-                <ProductRow
-                  isSelected={selectedProduct === productName}
-                  onClick={() => setSelectedProduct(productName)}
-                >
-                  <Arrow isSelected={selectedProduct === productName} />
-                  <ProductNameD>
-                    <FlexBoxRowPriceNeon className="w-full justify-center gap-1px">
-                      <NeonGoldText>
-                        ${productMarketDiscountedPrice.toFixed(2)}
-                      </NeonGoldText>
-                      <NeonGreenText>
-                        /${productMarketprice.toFixed(2)}
-                      </NeonGreenText>
-                    </FlexBoxRowPriceNeon>
-                    <FlexBoxRow className="w-full justify-center">
-                      {EProductIcon[productName as keyof typeof EProductIcon]}
-                      {quantity}
-                    </FlexBoxRow>
-                  </ProductNameD>
-                </ProductRow>
-              </FlexBoxRow>
+              <ProductColumn
+                key={productName}
+                isSelected={isSelected}
+                onClick={() => setSelectedProduct(productName)}
+              >
+                <ProductIcon>
+                  {EProductIcon[productName as keyof typeof EProductIcon]}
+                </ProductIcon>
+                <ProductPrice>${productMarketPrice.toFixed(2)}</ProductPrice>
+                {isSelected && <SelectedIndicator />}
+              </ProductColumn>
             );
           })}
-        </ProductsList>
-        <HomeBoard
-          customer={customer}
-          customerAmount={customerAmount}
-          transaction={transaction}
-          animatingEmojis={animatingEmojis}
-        />
-      </Container>
+        </ProductPanel>
 
-      {signup && !tutorial.tutorialCompleted && (
-        <TutorialOverlay>
-          {tutorial.tutorialStep === 0 ? (
-            <div>
-              <TutorialText>Tap on the Player 5 times</TutorialText>
-              <TutorialText2>
-                To sell your product! ({tutorial.clickCount}/5)
-              </TutorialText2>
-              <SkipButton onClick={handleSkipTutorial}>
-                Skip Tutorial
-              </SkipButton>
-              <ClickableAreaTutorial onTouchStart={handleCombinedClick}>
-                <FlexBoxRow className="w-full justify-center">
-                  <div
-                    ref={animationTargetRef}
-                    className={`flex flex-col items-center justify-left w-full ${
-                      pressed ? "animate-scale-up-down" : ""
-                    }`}
-                    style={{ height: "100%" }}
-                  >
-                    <BouncingGlowingImage
-                      src={userCharacter}
-                      alt="Logo"
-                      className="max-w-[15rem] pt-28"
-                    />
-                  </div>
-                </FlexBoxRow>
-              </ClickableAreaTutorial>
-            </div>
-          ) : tutorial.tutorialStep === 1 ? (
-            <div
-              style={{ position: "relative", width: "100%", height: "100%" }}
-            >
-              <TutorialTextContainer>
-                <TutorialTextTwo>CLICK THE BLUE ICON</TutorialTextTwo>
-                <TutorialTextTwo>TO START TRADING 👉</TutorialTextTwo>
-              </TutorialTextContainer>
+        <ClickableArea onTouchStart={handleCombinedClick}>
+          {(!signup ||
+            tutorial.tutorialCompleted ||
+            tutorial.tutorialStep !== 0) && (
+            <FlexBoxRow className="w-full justify-center">
+              <NeonText>TAP TO SELL</NeonText>
+
               <div
-                style={{
-                  position: "absolute",
-                  top: "7.4em",
-                  right: "0.8em",
-                  width: "25%",
-                }}
+                ref={animationTargetRef}
+                className={`flex flex-col items-center justify-left w-full ${
+                  pressed ? "animate-scale-up-down" : ""
+                }`}
+                style={{ height: "100%" }}
               >
-                <CenteredIconContainer>
-                  <EnhancedNeonButton
-                    onClick={handleTutorialTwoClick}
-                    className="skeleton"
-                    style={{ pointerEvents: "auto" }}
-                  >
-                    <ButtonContent>
-                      <IconWrapper>
-                        <FaStore />
-                      </IconWrapper>
-                      <div>Trade</div>
-                      <div>Market</div>
-                    </ButtonContent>
-                  </EnhancedNeonButton>
-                </CenteredIconContainer>
+                <GlowingImage
+                  src={userCharacter}
+                  alt="Logo"
+                  {...({
+                    fetchpriority: "high",
+                  } as React.ImgHTMLAttributes<HTMLImageElement>)}
+                  className={` pt-24 `}
+                  onLoad={handleCombinedOnLoad}
+                />
               </div>
-
-              <SkipButtonWrapper>
+            </FlexBoxRow>
+          )}
+        </ClickableArea>
+        <Container>
+          <HomeBoard
+            customer={customer}
+            customerAmount={customerAmount}
+            transaction={transaction}
+            animatingEmojis={animatingEmojis}
+          />
+        </Container>
+        {signup && !tutorial.tutorialCompleted && (
+          <TutorialOverlay>
+            {tutorial.tutorialStep === 0 ? (
+              <div>
+                <TutorialText>Tap on the Player 5 times</TutorialText>
+                <TutorialText2>
+                  To sell your product! ({tutorial.clickCount}/5)
+                </TutorialText2>
                 <SkipButton onClick={handleSkipTutorial}>
                   Skip Tutorial
                 </SkipButton>
-              </SkipButtonWrapper>
-            </div>
-          ) : null}
-        </TutorialOverlay>
-      )}
-    </Wrapper>
-  );
-});
+                <ClickableAreaTutorial onTouchStart={handleCombinedClick}>
+                  <FlexBoxRow className="w-full justify-center">
+                    <div
+                      ref={animationTargetRef}
+                      className={`flex flex-col items-center justify-left w-full ${
+                        pressed ? "animate-scale-up-down" : ""
+                      }`}
+                      style={{ height: "100%" }}
+                    >
+                      <BouncingGlowingImage
+                        src={userCharacter}
+                        alt="Logo"
+                        className="max-w-[15rem] pt-28"
+                      />
+                    </div>
+                  </FlexBoxRow>
+                </ClickableAreaTutorial>
+              </div>
+            ) : tutorial.tutorialStep === 1 ? (
+              <div
+                style={{ position: "relative", width: "100%", height: "100%" }}
+              >
+                <TutorialTextContainer>
+                  <TutorialTextTwo>CLICK THE BLUE ICON</TutorialTextTwo>
+                  <TutorialTextTwo>TO START TRADING 👉</TutorialTextTwo>
+                </TutorialTextContainer>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "7.4em",
+                    right: "0.8em",
+                    width: "25%",
+                  }}
+                >
+                  <CenteredIconContainer>
+                    <EnhancedNeonButton
+                      onClick={handleTutorialTwoClick}
+                      className="skeleton"
+                      style={{ pointerEvents: "auto" }}
+                    >
+                      <ButtonContent>
+                        <IconWrapper>
+                          <FaStore />
+                        </IconWrapper>
+                        <div>Trade</div>
+                        <div>Market</div>
+                      </ButtonContent>
+                    </EnhancedNeonButton>
+                  </CenteredIconContainer>
+                </div>
+
+                <SkipButtonWrapper>
+                  <SkipButton onClick={handleSkipTutorial}>
+                    Skip Tutorial
+                  </SkipButton>
+                </SkipButtonWrapper>
+              </div>
+            ) : null}
+          </TutorialOverlay>
+        )}
+      </Wrapper>
+    );
+  },
+);
