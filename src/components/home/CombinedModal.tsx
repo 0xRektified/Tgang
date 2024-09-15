@@ -150,6 +150,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
             setQuantity={setQuantity}
             handleProductSelect={handleProductSelect}
             handleUnlockClick={handleUnlockClick}
+            setSelectedProduct={setSelectedProduct}
             tutorial={tutorial}
           ></TilkRoadModal>
         )}

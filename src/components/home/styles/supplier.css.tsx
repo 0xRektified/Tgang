@@ -335,3 +335,62 @@ export const PriceVariation = styled.span`
   font-size: 0.7em;
   margin-left: 5px;
 `;
+
+export const PriceChangeIcon = styled.div<{ increase: boolean }>`
+  background-color: ${props => props.increase ? "#48bb78" : "#f56565"};
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const CardContainer = styled.div<{ locked: boolean }>`
+  background-color: #282b2c;
+  border-radius: 0.8rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  opacity: ${props => props.locked ? 0.5 : 1};
+  pointer-events: ${props => props.locked ? "none" : "auto"};
+`;
+
+export const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+export const CardTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e4e4e7;
+  margin: 0;
+`;
+
+export const CardDescription = styled.p`
+  font-size: 0.9rem;
+  color: #a0aec0;
+  margin: 0;
+`;
+
+export const CardImage = styled.img`
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.4rem;
+`;
+
+export const CardDetails = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const CardInfoColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
