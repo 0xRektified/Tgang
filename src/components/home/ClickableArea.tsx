@@ -641,11 +641,10 @@ export const ClickableAreaWithSmoke = React.memo(
                 isSelected={isSelected}
                 onClick={() => setSelectedProduct(productName)}
               >
-                <ProductPrice>{product?.quantity || 0}</ProductPrice>
+                <ProductQuantity>{product?.quantity || 0}</ProductQuantity>
                 <ProductIcon>
                   {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductIcon>
-                <ProductQuantity>{product?.quantity || 20}</ProductQuantity>
                 <ProductPrice>${productMarketPrice.toFixed(2)}</ProductPrice>
                 {isSelected && <SelectedIndicator />}
               </ProductColumn>
