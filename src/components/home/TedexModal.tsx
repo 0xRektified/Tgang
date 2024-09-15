@@ -59,9 +59,7 @@ export const TedexModal: React.FC<TedexProps> = ({
   return (
     <>
       <WebPageTitle>https://mv09mn0u123m.onion</WebPageTitle>
-      <FlexBoxRow>
-        <SiteTitle></SiteTitle>
-      </FlexBoxRow>
+
 
       <FlexBoxRow style={{ margin: "10px" }}>
         <FlexBoxCol style={{ gap: "0px" }}>
