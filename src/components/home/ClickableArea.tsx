@@ -71,9 +71,9 @@ const ProductColumn = styled.div<{ isSelected: boolean }>`
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
-  background-color: ${({ isSelected }) => (isSelected ? "#374151" : "#202937")};
+  background-color: ${({ isSelected }) => (isSelected ? "#242627" : "#242627")};
   color: white;
-  border: 2px solid ${({ isSelected }) => (isSelected ? "#1e90ff" : "#374151")};
+  border: 2px solid ${({ isSelected }) => (isSelected ? "white" : "#374151")};
   box-shadow: ${({ isSelected }) =>
     isSelected
       ? "0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff"
@@ -90,15 +90,18 @@ const ProductColumn = styled.div<{ isSelected: boolean }>`
     `}
 `;
 
-// Product icon styling
 const ProductIcon = styled.div`
   font-size: 1.2rem;
   color: #ffd700;
   margin-bottom: 5px;
 `;
 
-// Product price styling
 const ProductPrice = styled.div`
+  font-size: 0.8rem;
+  color: #51ce25;
+`;
+
+const ProductQuantity = styled.div`
   font-size: 0.8rem;
   color: white;
 `;
@@ -151,7 +154,7 @@ const Wrapper = styled.div`
 const ProgressBarContainer = styled.div`
   position: absolute;
   bottom: 10px;
-  left: 10px;
+  right: 10px;
   z-index: 2;
 `;
 
@@ -642,6 +645,7 @@ export const ClickableAreaWithSmoke = React.memo(
                 <ProductIcon>
                   {EProductIcon[productName as keyof typeof EProductIcon]}
                 </ProductIcon>
+                <ProductQuantity>{product?.quantity || 20}</ProductQuantity>
                 <ProductPrice>${productMarketPrice.toFixed(2)}</ProductPrice>
                 {isSelected && <SelectedIndicator />}
               </ProductColumn>
