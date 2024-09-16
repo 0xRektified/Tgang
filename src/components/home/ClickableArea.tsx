@@ -503,7 +503,6 @@ const IconText = styled.span`
   margin-top: 0.5em;
 `;
 
-// Add this new styled component for the tutorial icon
 const TutorialShopIcon = styled.div`
   position: absolute;
   top: 14em;
@@ -769,7 +768,7 @@ export const ClickableAreaWithSmoke = React.memo(
                   <TutorialTextTwo> 👈 CLICK THE SHOP ICON</TutorialTextTwo>
                   <TutorialTextTwo>TO BUY RESOURCES</TutorialTextTwo>
                 </TutorialTextContainer>
-                
+
                 {/* Add the new tutorial-specific icon here */}
                 <TutorialShopIcon>
                   <TutorialIconButton onClick={handleTutorialTwoClick}>

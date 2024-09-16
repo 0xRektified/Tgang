@@ -12,7 +12,7 @@ import SocialComponent from "./SocialComponent";
 import SocialModal from "./SocialModal";
 
 const AirdropContainer = styled.div`
-  background: #171c24;
+  background: #1c1c1e;
   color: white;
   padding: 0.3rem;
   width: 100%;
@@ -27,7 +27,6 @@ const AirdropTabContainer = styled.div`
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `;
-
 
 interface AirdropProps {
   referralToken: string;
@@ -48,8 +47,7 @@ const Airdrop: React.FC<AirdropProps> = ({
   tutorial,
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
-  const [isSocialModalOpen, setIsSocialModalOpen] =
-    useState<boolean>(false);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
 
   const handleCloseSocialModal = () => {
     setIsSocialModalOpen(false);
@@ -101,10 +99,7 @@ const Airdrop: React.FC<AirdropProps> = ({
         )}
         {currentTab === "missions" && (
           <>
-            <MissionsComponent
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-            />
+            <MissionsComponent userInfo={userInfo} setUserInfo={setUserInfo} />
             <SocialComponent
               socials={socials}
               userInfo={userInfo}
@@ -114,11 +109,7 @@ const Airdrop: React.FC<AirdropProps> = ({
           </>
         )}
       </AirdropTabContainer>
-      {isSocialModalOpen && (
-        <SocialModal
-          onClose={handleCloseSocialModal}
-        />
-      )}
+      {isSocialModalOpen && <SocialModal onClose={handleCloseSocialModal} />}
     </AirdropContainer>
   );
 };
