@@ -503,6 +503,30 @@ const IconText = styled.span`
   margin-top: 0.5em;
 `;
 
+// Add this new styled component for the tutorial icon
+const TutorialShopIcon = styled.div`
+  position: absolute;
+  top: 14em;
+  left: 2em;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const TutorialIconButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1003;
+  pointer-events: auto;
+
+  img {
+    width: 6rem; // Larger than the original
+    transition: all 0.3s ease;
+  }
+`;
+
 interface ClickableAreaWithSmokeProps {
   products: Product[];
   handleTouchStart: (e: React.TouchEvent<HTMLDivElement>) => boolean;
@@ -745,26 +769,14 @@ export const ClickableAreaWithSmoke = React.memo(
                   <TutorialTextTwo> 👈 CLICK THE SHOP ICON</TutorialTextTwo>
                   <TutorialTextTwo>TO BUY RESOURCES</TutorialTextTwo>
                 </TutorialTextContainer>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "17em",
-                    left: "2em",
-                    width: "25%",
-                  }}
-                >
-                  <CenteredIconContainer>
-                    <HighlightedShopContainer>
-                      <IconButtonShop
-                        onClick={handleTutorialTwoClick}
-                        className="skeleton"
-                      >
-                        <img src={marketIcon} alt="Tilk Road Market" />
-                      </IconButtonShop>
-                      <IconText>SHOP</IconText>
-                    </HighlightedShopContainer>
-                  </CenteredIconContainer>
-                </div>
+                
+                {/* Add the new tutorial-specific icon here */}
+                <TutorialShopIcon>
+                  <TutorialIconButton onClick={handleTutorialTwoClick}>
+                    <img src={marketIcon} alt="Tilk Road Market" />
+                  </TutorialIconButton>
+                  <IconText>SHOP</IconText>
+                </TutorialShopIcon>
 
                 <SkipButtonWrapper>
                   <SkipButton onClick={handleSkipTutorial}>
