@@ -78,7 +78,8 @@ export const LevelLabels = styled.div`
   justify-content: space-between;
   font-size: 0.8rem;
   color: #888;
-  margin-top: 0.1rem;
+  margin-top: 0.25rem;
+  padding: 0 2px;
 `;
 
 // Added for item cards
