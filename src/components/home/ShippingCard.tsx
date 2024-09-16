@@ -4,11 +4,12 @@ import { CardContainer } from "./styles/shipping.css";
 import { IShippingMethod } from "../interfaces/shipping.interface";
 import { IUserShipping } from "../interfaces/user.interface";
 import { Duration } from "date-fns";
+import { convertSecondsToReadableTime } from "../utils/formater";
 
 const ShippingCardMiddle = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
   justify-content: center;
   flex: 1;
   margin: 0 1rem;
@@ -220,7 +221,9 @@ export const ShippingCard: React.FC<{
           Price: <PriceText>${method.basePrice}</PriceText>
         </InfoText>
         <InfoText>Capacity:{method.baseCapacity}</InfoText>
-        <InfoText>Shipping Time: {method.baseShippingTime}</InfoText>
+        <InfoText>
+          Shipping Time: {convertSecondsToReadableTime(method.baseShippingTime)}
+        </InfoText>
       </ShippingCardMiddle>
     </ShippingCardMiddle>
   );

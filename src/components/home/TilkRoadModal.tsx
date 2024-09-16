@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { IMarketInfo, MarketProduct } from "../interfaces/market.interface";
 import { EProductIcon } from "../interfaces/product.interface";
 import { IUserInfo, Product } from "../interfaces/user.interface";
@@ -63,8 +63,38 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
   setSelectedProduct,
   tutorial,
 }) => {
-  const handleBuyClick = () => {
-    handleBuy();
+  const [productQuantities, setProductQuantities] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // Initialize quantities for all products
+    if (marketInfo?.products) {
+      const initialQuantities = marketInfo.products.reduce((acc, product) => {
+        acc[product.name] = 0;
+        return acc;
+      }, {} as Record<string, number>);
+      setProductQuantities(initialQuantities);
+    }
+  }, [marketInfo]);
+
+  const handleQuantityChange = (product: MarketProduct, newQuantity: number) => {
+    setProductQuantities(prev => {
+      const updatedQuantities = { ...prev };
+      // Set all products to 0
+      Object.keys(updatedQuantities).forEach(key => {
+        updatedQuantities[key] = 0;
+      });
+      // Set the selected product to the new quantity
+      updatedQuantities[product.name] = newQuantity;
+      return updatedQuantities;
+    });
+
+    if (newQuantity > 0) {
+      setSelectedProduct(product);
+      setQuantity(newQuantity);
+    } else {
+      setSelectedProduct(null);
+      setQuantity(0);
+    }
   };
 
   const isInTutorialMode =
@@ -109,8 +139,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                   ((product.price - product.previousPrice) /
                     product.previousPrice) *
                   100;
-                const isSelected = selectedProduct?.name === product.name;
-                const currentQuantity = isSelected ? quantity : 0;
+                const currentQuantity = quantity;
 
                 return (
                   <ProductCard key={product.name} locked={!userProduct}>
@@ -132,11 +161,10 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                       <ProductControls>
                         <BuyControlsRow>
                           <BuyButton
-                            onClick={handleBuyClick}
-                            disabled={!isSelected}
-                            style={{
-                              pointerEvents: isInTutorialMode ? "auto" : "none",
+                            onClick={() => {
+                              handleBuy();
                             }}
+                            disabled={productQuantities[product.name] === 0}
                           >
                             Buy
                           </BuyButton>
@@ -150,13 +178,10 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                                     remainingCash / product.discountPrice,
                                   )
                             }
-                            value={currentQuantity}
+                            value={productQuantities[product.name]}
                             onChange={(e) => {
                               const newQuantity = Number(e.target.value);
-                              setQuantity(newQuantity);
-                              setSelectedProduct(
-                                newQuantity > 0 ? product : null,
-                              );
+                              handleQuantityChange(product, newQuantity);
                             }}
                           />
                         </BuyControlsRow>
@@ -170,13 +195,10 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                                   remainingCash / product.discountPrice,
                                 )
                           }
-                          value={currentQuantity}
+                          value={productQuantities[product.name]}
                           onChange={(e) => {
                             const newQuantity = Number(e.target.value);
-                            setQuantity(newQuantity);
-                            setSelectedProduct(
-                              newQuantity > 0 ? product : null,
-                            );
+                            handleQuantityChange(product, newQuantity);
                           }}
                         />
                       </ProductControls>

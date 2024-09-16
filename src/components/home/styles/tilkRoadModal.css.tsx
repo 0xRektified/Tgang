@@ -7,7 +7,7 @@ export const TilkRoadContainer = styled.div`
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  height: 70vh;
 `;
 
 export const TilkRoadHeader = styled.div`
@@ -155,12 +155,14 @@ export const BuyButton = styled.button`
       transform: scale(1);
     }
   }
+
   &:disabled {
     background-color: rgb(99 99 99);
+    color: rgb(150 150 150);
     box-shadow: none;
     border: none;
-    transition: none;
     cursor: not-allowed;
+    animation: none;
   }
 `;
 
