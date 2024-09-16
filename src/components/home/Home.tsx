@@ -199,6 +199,7 @@ export const Home: React.FC<HomeProps> = ({
       setUserInfo((prevUser) => ({
         ...prevUser,
         cashAmount: Number(formatNumber(cashState)),
+        reputation: prevUser.reputation + sellQuantity,
         products: updatedProducts,
       }));
 

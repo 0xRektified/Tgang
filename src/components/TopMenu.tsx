@@ -34,6 +34,35 @@ const glowAnimation = keyframes`
   100% { box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff; }
 `;
 
+const electricEffect = keyframes`
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+`;
+
+const ElectricEffect = styled.div<{ start: number; end: number }>`
+  position: absolute;
+  top: 0;
+  left: ${(props) => props.start}%;
+  width: ${(props) => props.end - props.start}%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #00ffff,
+    #1e90ff,
+    #00ffff,
+    transparent
+  );
+  opacity: 0;
+  animation: ${electricEffect} 0.5s ease-out;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+  z-index: 1;
+`;
+
 const ProgressFill = styled.div<{ width: number; isDecreasing: boolean }>`
   height: 100%;
   width: ${(props) => props.width}%;
@@ -78,6 +107,8 @@ export const TopMenu: React.FC<TopMenuProps> = ({
 }) => {
   const [fontSize, setFontSize] = useState("1rem");
   const usernameRef = useRef<HTMLSpanElement>(null);
+  const [prevProgress, setPrevProgress] = useState(0);
+  const [showElectricEffect, setShowElectricEffect] = useState(false);
 
   useLayoutEffect(() => {
     const scrollableEl = document.getElementById("mainView");
@@ -94,11 +125,20 @@ export const TopMenu: React.FC<TopMenuProps> = ({
     }
   }, [userInfo]);
 
-  if (!userInfo) return null;
-
   const { reputation, userLevel, username, cashAmount } = userInfo;
   const { level, title, minReputation, maxReputation } = userLevel;
   const progress = calculateProgress(reputation, minReputation, maxReputation);
+
+  useEffect(() => {
+    if (progress > prevProgress) {
+      setShowElectricEffect(true);
+      const timer = setTimeout(() => setShowElectricEffect(false), 500);
+      return () => clearTimeout(timer);
+    }
+    setPrevProgress(progress);
+  }, [progress, prevProgress]);
+
+  if (!userInfo) return null;
 
   return (
     <TopMenuContainer id="mainView">
@@ -133,8 +173,11 @@ export const TopMenu: React.FC<TopMenuProps> = ({
           <FlexBoxCol className="flex-grow gap-0">
             <HorizontalProgressBarContainer>
               <ProgressFill width={progress} isDecreasing={false} />
+              {showElectricEffect && (
+                <ElectricEffect start={prevProgress} end={progress} />
+              )}
             </HorizontalProgressBarContainer>
-            <LevelLabels style={{ gap: 0 }}>
+            <LevelLabels style={{ gap: "5px" }}>
               <span>Level {level}</span>
               <span>Level {level + 1}</span>
             </LevelLabels>
