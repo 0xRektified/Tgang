@@ -127,6 +127,10 @@ export const Home: React.FC<HomeProps> = ({
   const handleCloseSupplierModal = () => {
     setIsLocalSupplierModalOpen(false);
     closeCombinedModal();
+    if (!tutorial.tutorialCompleted) {
+      tutorial.setTutorialCompleted(true);
+      tutorial.tutorialCompleted = true;
+    }
   };
 
   const handleCloseModal = () => {
@@ -240,6 +244,7 @@ export const Home: React.FC<HomeProps> = ({
         setSelectedProduct={setSelectedProduct}
         customer={nextCustomer}
         customerAmount={userInfo.customerAmount}
+        customerAmountMax={userInfo.customerAmountMax}
         animatingEmojis={animatingEmojis}
         marketInfo={marketInfo}
         signup={signup}

@@ -7,13 +7,13 @@ export const TilkRoadContainer = styled.div`
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  height: 80vh; // Adjust this value as needed
+  height: 80vh;
 `;
 
 export const TilkRoadHeader = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 `;
 
 export const TilkRoadLogo = styled.img`
@@ -22,33 +22,35 @@ export const TilkRoadLogo = styled.img`
 `;
 
 export const TilkRoadTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
 `;
 
 export const TilkRoadDescription = styled.p`
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   margin: 0;
 `;
 
 export const ShoppingCartInfo = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
 `;
 
 export const Balance = styled.span`
+  font-size: 1rem;
   font-weight: bold;
 `;
 
 export const Total = styled.span`
+  font-size: 1rem;
   font-weight: bold;
 `;
 
 export const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  margin-bottom: 10rem;
   gap: 1rem;
 `;
 
@@ -58,8 +60,6 @@ export const ProductCard = styled.div<{ locked: boolean }>`
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  opacity: ${(props) => (props.locked ? 0.5 : 1)};
-  pointer-events: ${(props) => (props.locked ? "none" : "auto")};
   border: 2px solid #285d90;
 `;
 
@@ -70,56 +70,109 @@ export const ProductTopRow = styled.div`
   margin-bottom: 0.5rem;
 `;
 
+export const ProductIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 export const ProductIcon = styled.div`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
 `;
 
 export const Price = styled.span`
   font-size: 1rem;
   font-weight: bold;
+  color: white;
 `;
 
 export const PriceChange = styled.span<{ increase: boolean }>`
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: ${(props) => (props.increase ? "#48bb78" : "#f56565")};
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  svg {
+    font-size: 0.8rem;
+  }
 `;
 
-export const ProductMiddleRow = styled.div`
+export const ProductControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const BuyControlsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  width: 100%;
 `;
 
 export const BuyButton = styled.button`
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-  font-weight: bold;
+  width: 50%;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: rgb(39 39 42);
+  color: #e4e4e7;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 2px solid #1e90ff;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  animation: glow 1.5s infinite alternate;
 
-  &:hover {
-    background-color: #2563eb;
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff,
+        0 0 8px #1e90ff;
+    }
+    100% {
+      box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff,
+        0 0 20px #1e90ff;
+    }
   }
 
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
   &:disabled {
-    background-color: #4b5563;
+    background-color: rgb(99 99 99);
+    box-shadow: none;
+    border: none;
+    transition: none;
     cursor: not-allowed;
   }
 `;
 
 export const QuantityInput = styled.input`
-  width: 50px;
-  padding: 0.25rem;
+  width: 5em;
+  text-align: right;
+  padding: 0.5rem;
   border-radius: 0.25rem;
   border: 1px solid #4a5568;
   background-color: #2d3748;
   color: #e4e4e7;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
 `;
 
 export const QuantitySlider = styled.input`
@@ -127,16 +180,11 @@ export const QuantitySlider = styled.input`
   margin-top: 0.5rem;
 `;
 
-export const UnlockButton = styled.button`
+export const UnlockButton = styled(BuyButton)`
   background-color: transparent;
+  border: 2px solid #3b82f6;
   color: #3b82f6;
-  border: 1px solid #3b82f6;
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  width: 100%;
 
   &:hover {
     background-color: #3b82f6;

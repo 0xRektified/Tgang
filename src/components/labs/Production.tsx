@@ -1,7 +1,26 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import "tailwindcss/tailwind.css";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
+
+// Add these new animations
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+`;
+
+const glow = keyframes`
+  0% {
+    box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  }
+  100% {
+    box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff, 0 0 20px #1e90ff;
+  }
+`;
 
 const CombinedProductionGrid = styled.div`
   display: grid;
@@ -16,13 +35,22 @@ const CombinedProductionGrid = styled.div`
   }
 `;
 
+// Update CombinedProductionItem
 const CombinedProductionItem = styled.div`
-  padding: 0.2rem;
+  padding: 5px;
   text-align: center;
   color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 `;
 
 const Amount = styled.div`
@@ -48,10 +76,11 @@ const CombinedProduction: React.FC<CombinedProductionProps> = ({
     <CombinedProductionGrid>
       {Object.values(EProduct).map((product) => (
         <CombinedProductionItem key={product}>
-          {EProductIcon[product as keyof typeof EProductIcon]}
           <Amount>
             {currentAmount[product as keyof typeof currentAmount]}
           </Amount>
+          {EProductIcon[product as keyof typeof EProductIcon]}
+
           <ProductionPerHour>
             +{productionPerHour[product as keyof typeof productionPerHour]}/h
           </ProductionPerHour>
