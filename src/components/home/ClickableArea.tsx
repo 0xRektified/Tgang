@@ -98,7 +98,7 @@ const ProductIcon = styled.div`
 
 const ProductPrice = styled.div`
   font-size: 0.8rem;
-  color: #51ce25;
+  color: #4adf81;
 `;
 
 const ProductQuantity = styled.div`
@@ -748,7 +748,7 @@ export const ClickableAreaWithSmoke = React.memo(
                 <div
                   style={{
                     position: "absolute",
-                    top: "15.4em",
+                    top: "17em",
                     left: "2em",
                     width: "25%",
                   }}

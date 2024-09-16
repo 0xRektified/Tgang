@@ -5,7 +5,7 @@ import "@twa-dev/sdk";
 import { useEffect, useState, useCallback } from "react";
 import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
-import { Shop } from "./components/shop/Shop";
+import { Upgrade } from "./components/upgrade/Upgrade";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
@@ -101,7 +101,7 @@ function App() {
     if (tab) {
       setActiveTab(tab);
     }
-    setCurrentView("Shop");
+    setCurrentView("Upgrade");
   }, []);
 
   const handleSetCurrentView = useCallback(
@@ -152,9 +152,9 @@ function App() {
             handleLabTutorialComplete={handleLabTutorialComplete}
           />
         );
-      case "Shop":
+      case "Upgrade":
         return (
-          <Shop
+          <Upgrade
             userInfo={userInfo}
             activeTab={activeTab}
             upgradesData={upgrades}
@@ -225,9 +225,7 @@ function App() {
     <StyledApp data-theme="dark">
       <AppContainer>
         <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
-        <ContentWrapper>
-          {renderCurrentView()}
-        </ContentWrapper>
+        <ContentWrapper>{renderCurrentView()}</ContentWrapper>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}
