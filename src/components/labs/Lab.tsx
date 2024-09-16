@@ -21,7 +21,7 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { SkipButton } from "../home/Home";
 
 const LabContainer = styled.div`
-  background-color: rgb(17 17 23);
+  background-color: #1c1c1e;
   height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;

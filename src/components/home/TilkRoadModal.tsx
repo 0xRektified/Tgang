@@ -68,13 +68,21 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
   useEffect(() => {
     // Initialize quantities for all products
     if (marketInfo?.products) {
-      const initialQuantities = marketInfo.products.reduce((acc, product) => {
-        acc[product.name] = 0;
+      const initialQuantities = marketInfo.products.reduce((acc, product, index) => {
+        // Set the first product's quantity to 1, others to 0
+        acc[product.name] = index === 0 ? 1 : 0;
         return acc;
       }, {} as Record<string, number>);
       setProductQuantities(initialQuantities);
+
+      // Set the first product as selected and its quantity to 1
+      if (marketInfo.products.length > 0) {
+        const firstProduct = marketInfo.products[0];
+        setSelectedProduct(firstProduct);
+        setQuantity(1);
+      }
     }
-  }, [marketInfo]);
+  }, [marketInfo, setSelectedProduct, setQuantity]);
 
   const handleQuantityChange = (product: MarketProduct, newQuantity: number) => {
     setProductQuantities(prev => {

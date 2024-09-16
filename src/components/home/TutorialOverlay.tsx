@@ -75,7 +75,7 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
   return (
     <div style={{ position: "relative" }}>
       <TutorialMessage>
-        CLICK THE "BUY" BUTTON TO BUY YOUR FIRST PRODUCT
+        CLICK THE "BUY" BUTTON TO BUY YOUR FIRST PRODUCT 👇
       </TutorialMessage>
       <StyledSkipButton onClick={handleSkipTutorial}>
         Skip Tutorial
