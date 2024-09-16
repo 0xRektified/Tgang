@@ -3,56 +3,6 @@ import styled, { keyframes, css } from "styled-components";
 import "tailwindcss/tailwind.css";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
-// Add these new animations
-const bounce = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-1px);
-  }
-`;
-
-const glow = keyframes`
-  0% {
-    box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
-  }
-  100% {
-    box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff, 0 0 20px #1e90ff;
-  }
-`;
-
-const CombinedProductionGrid = styled.div`
-  display: grid;
-  background-color: #10346e3d;
-  border-radius: 0.375rem;
-
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-`;
-
-// Update CombinedProductionItem
-const CombinedProductionItem = styled.div`
-  padding: 5px;
-  text-align: center;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
 const Amount = styled.div`
   font-size: 0.9rem;
   font-weight: bold;
@@ -61,6 +11,36 @@ const Amount = styled.div`
 const ProductionPerHour = styled.div`
   font-size: 0.9rem;
   color: #4caf50;
+`;
+
+const ProductionPanel = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  border-radius: 12px;
+  background-color: #242627;
+  border: 2px solid #1e90ff;
+  box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+`;
+
+const ProductionColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: #242627;
+  color: white;
+  border: 2px solid "#374151";
+  &:hover {
+    transform: translateY(-2px);
+  }
+  min-width: 3em;
 `;
 
 interface CombinedProductionProps {
@@ -73,20 +53,19 @@ const CombinedProduction: React.FC<CombinedProductionProps> = ({
   productionPerHour,
 }) => {
   return (
-    <CombinedProductionGrid>
+    <ProductionPanel>
       {Object.values(EProduct).map((product) => (
-        <CombinedProductionItem key={product}>
+        <ProductionColumn>
           <Amount>
             {currentAmount[product as keyof typeof currentAmount]}
           </Amount>
           {EProductIcon[product as keyof typeof EProductIcon]}
-
           <ProductionPerHour>
             +{productionPerHour[product as keyof typeof productionPerHour]}/h
           </ProductionPerHour>
-        </CombinedProductionItem>
+        </ProductionColumn>
       ))}
-    </CombinedProductionGrid>
+    </ProductionPanel>
   );
 };
 
