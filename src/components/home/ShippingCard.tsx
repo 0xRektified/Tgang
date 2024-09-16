@@ -25,20 +25,24 @@ const NeonButton = styled.button`
   background-color: rgb(39 39 42) !important;
   color: #e4e4e7;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.6rem;
   border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: 0.8em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   transition: background-color 0.3s ease, transform 0.1s ease;
   box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background-color: rgb(24 24 27);
@@ -123,7 +127,7 @@ const ShippingCardImage = styled.img`
 `;
 
 const ShippingCardTitle = styled.h4`
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   font-size: 1rem;
   margin-bottom: 0.5rem;
@@ -167,8 +171,12 @@ const LoadingSpinner = styled.div`
   animation: spin 1s linear infinite;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -233,11 +241,11 @@ export const ShippingCard: React.FC<{
     <ShippingCardMiddle>
       <ShippingCardMiddle>
         <InfoText>
-          Price: <PriceText>${method.basePrice}</PriceText>
+          Price <PriceText>${method.basePrice}</PriceText>
         </InfoText>
-        <InfoText>Capacity:{method.baseCapacity}</InfoText>
+        <InfoText>Capacity {method.baseCapacity}</InfoText>
         <InfoText>
-          Shipping Time: {convertSecondsToReadableTime(method.baseShippingTime)}
+          Shipping {convertSecondsToReadableTime(method.baseShippingTime)}
         </InfoText>
       </ShippingCardMiddle>
     </ShippingCardMiddle>
@@ -275,11 +283,11 @@ export const ShippingCard: React.FC<{
       userShipping &&
       shipmentInProgress(new Date(userShipping.nextShipment))
     ) {
-      return <NeonButton disabled>In progress</NeonButton>;
+      return <NeonButton disabled>In Progress</NeonButton>;
     } else if (userShipping) {
       return (
         <NeonButton onClick={() => handleOpenModal(userShipping)}>
-          Ship up to {userShipping.capacity}
+          Ship {userShipping.capacity}
         </NeonButton>
       );
     }
