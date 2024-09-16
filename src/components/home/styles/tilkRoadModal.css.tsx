@@ -57,7 +57,7 @@ export const ProductGrid = styled.div`
 export const ProductCard = styled.div<{ locked: boolean }>`
   background: linear-gradient(135deg, #282c34, #3c3f45);
   border-radius: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   border: 2px solid #285d90;
@@ -67,7 +67,7 @@ export const ProductTopRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 export const ProductIconWrapper = styled.div`
@@ -77,24 +77,24 @@ export const ProductIconWrapper = styled.div`
 `;
 
 export const ProductIcon = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 `;
 
 export const Price = styled.span`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
   color: white;
 `;
 
 export const PriceChange = styled.span<{ increase: boolean }>`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: ${(props) => (props.increase ? "#48bb78" : "#f56565")};
   display: flex;
   align-items: center;
   gap: 0.25rem;
 
   svg {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 `;
 
@@ -118,11 +118,11 @@ export const BuyButton = styled.button`
   background-color: rgb(39 39 42);
   color: #e4e4e7;
   border-radius: 8px;
-  padding: 0.5rem;
+  padding: 0.3rem;
   border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
@@ -169,12 +169,12 @@ export const BuyButton = styled.button`
 export const QuantityInput = styled.input`
   width: 5em;
   text-align: right;
-  padding: 0.5rem;
+  padding: 0.3rem;
   border-radius: 0.25rem;
   border: 1px solid #4a5568;
   background-color: #2d3748;
   color: #e4e4e7;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 `;
 
 export const QuantitySlider = styled.input`
