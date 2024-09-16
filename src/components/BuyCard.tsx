@@ -213,16 +213,20 @@ const BuyCard: React.FC<BuyCardProps> = ({
             </CardInfoGrid>
             <CardDescription>{description}</CardDescription>
           </CardDetails>
-          <CardFooter>
-            <CardCost>
-              <InfoItem label="Cost" value={formatPrice(cost, false)} isCost />
-            </CardCost>
-          </CardFooter>
-          {locked ? (
-            renderRequirements(safeRequirements)
+          {upgradeOption ? (
+            <></>
           ) : (
-            <DummyRequirement />
+            <CardFooter>
+              <CardCost>
+                <InfoItem
+                  label="Cost"
+                  value={formatPrice(cost, false)}
+                  isCost
+                />
+              </CardCost>
+            </CardFooter>
           )}
+          {renderRequirements(safeRequirements)}
         </CardRightColumn>
       </CardContainer>
       {showBuyConfirmation && (

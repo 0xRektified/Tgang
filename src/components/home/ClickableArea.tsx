@@ -153,7 +153,7 @@ const Wrapper = styled.div`
 
 const ProgressBarContainer = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: 2em;
   right: 10px;
   z-index: 2;
 `;
@@ -174,13 +174,12 @@ const ClickableAreaTutorial = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  flex: 1;
   width: 100%;
-  height: 100%;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
   cursor: pointer;
   overflow: hidden;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const Container = styled.div`
@@ -376,8 +375,8 @@ const TutorialText2 = styled.div`
 
 const TutorialTextContainer = styled.div`
   position: absolute;
-  top: 7.8em;
-  right: 33%;
+  top: 16em;
+  left: 8em;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -415,7 +414,7 @@ const GlowingImage = styled.img`
 
 const BouncingGlowingImage = styled(GlowingImage)`
   animation: bounce 2s infinite;
-
+  margin-top: 15em;
   @keyframes bounce {
     0%,
     100% {
@@ -429,7 +428,7 @@ const BouncingGlowingImage = styled(GlowingImage)`
 
 const IconContainer = styled.div`
   position: absolute;
-  top: 30%;
+  top: 35%;
   left: 0;
   right: 0;
   display: flex;
@@ -441,7 +440,7 @@ const IconContainer = styled.div`
   transform: translateY(-50%);
 `;
 
-const IconButton = styled.button`
+const IconButtonShop = styled.button`
   background: none;
   border: none;
   cursor: pointer;
@@ -450,7 +449,20 @@ const IconButton = styled.button`
   pointer-events: auto;
 
   img {
-    width: 4.5rem;
+    width: 4rem;
+    transition: all 0.3s ease;
+  }
+`;
+
+const IconButtonShipping = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 11;
+  pointer-events: auto;
+  img {
+    width: 4rem;
     transition: all 0.3s ease;
   }
 `;
@@ -487,11 +499,8 @@ const IconText = styled.span`
   border: 1px solid #1e90ff;
   box-shadow: 0 0 10px #a7d4ff, 0 0 20px #1e90ff;
   text-shadow: 0 0 5px #a7d4ff, 0 0 10px #1e90ff;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(50%);
   white-space: nowrap;
+  margin-top: 0.5em;
 `;
 
 interface ClickableAreaWithSmokeProps {
@@ -503,6 +512,7 @@ interface ClickableAreaWithSmokeProps {
   handleOpenTedexModal: () => void;
   customer: string;
   customerAmount: number;
+  customerAmountMax: number;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
   marketInfo: IMarketInfo | undefined;
   signup: boolean;
@@ -520,6 +530,7 @@ export const ClickableAreaWithSmoke = React.memo(
     handleOpenTedexModal,
     customer,
     customerAmount,
+    customerAmountMax,
     animatingEmojis,
     marketInfo,
     signup,
@@ -602,6 +613,7 @@ export const ClickableAreaWithSmoke = React.memo(
         !tutorial.tutorialCompleted &&
         tutorial.tutorialStep === 1
       ) {
+        tutorial.tutorialStep = 2;
         tutorial.onTutorialProgress();
       }
       handleOpenTilkRoadModal();
@@ -653,15 +665,15 @@ export const ClickableAreaWithSmoke = React.memo(
         </ProductPanel>
         <IconContainer>
           <HighlightedShopContainer>
-            <IconButton onClick={handleOpenTilkRoadModal}>
+            <IconButtonShop onClick={handleOpenTilkRoadModal}>
               <img src={marketIcon} alt="Tilk Road Market" />
-            </IconButton>
+            </IconButtonShop>
             <IconText>SHOP</IconText>
           </HighlightedShopContainer>
           <HighlightedShopContainer>
-            <IconButton onClick={handleOpenTedexModal}>
+            <IconButtonShipping onClick={handleOpenTedexModal}>
               <img src={shipping} alt="Tedex Market" />
-            </IconButton>
+            </IconButtonShipping>
             <IconText>SHIPPING</IconText>
           </HighlightedShopContainer>
         </IconContainer>
@@ -691,6 +703,7 @@ export const ClickableAreaWithSmoke = React.memo(
             <HomeBoard
               customer={customer}
               customerAmount={customerAmount}
+              customerAmountMax={customerAmountMax}
               animatingEmojis={animatingEmojis}
             />
           </ProgressBarContainer>
@@ -699,7 +712,7 @@ export const ClickableAreaWithSmoke = React.memo(
         {signup && !tutorial.tutorialCompleted && (
           <TutorialOverlay>
             {tutorial.tutorialStep === 0 ? (
-              <div>
+              <div style={{ width: "100%" }}>
                 <TutorialText>Tap on the Player 5 times</TutorialText>
                 <TutorialText2>
                   To sell your product! ({tutorial.clickCount}/5)
@@ -714,12 +727,11 @@ export const ClickableAreaWithSmoke = React.memo(
                       className={`flex flex-col items-center justify-left w-full ${
                         pressed ? "animate-scale-up-down" : ""
                       }`}
-                      style={{ height: "100%" }}
                     >
                       <BouncingGlowingImage
                         src={userCharacter}
                         alt="Logo"
-                        className="max-w-[15rem] pt-28"
+                        className="max-w-[15rem]pt-24"
                       />
                     </div>
                   </FlexBoxRow>
@@ -730,31 +742,27 @@ export const ClickableAreaWithSmoke = React.memo(
                 style={{ position: "relative", width: "100%", height: "100%" }}
               >
                 <TutorialTextContainer>
-                  <TutorialTextTwo>CLICK THE BLUE ICON</TutorialTextTwo>
-                  <TutorialTextTwo>TO START TRADING 👉</TutorialTextTwo>
+                  <TutorialTextTwo> 👈 CLICK THE SHOP ICON</TutorialTextTwo>
+                  <TutorialTextTwo>TO BUY RESOURCES</TutorialTextTwo>
                 </TutorialTextContainer>
                 <div
                   style={{
                     position: "absolute",
-                    top: "7.4em",
-                    right: "0.8em",
+                    top: "15.4em",
+                    left: "2em",
                     width: "25%",
                   }}
                 >
                   <CenteredIconContainer>
-                    <EnhancedNeonButton
-                      onClick={handleTutorialTwoClick}
-                      className="skeleton"
-                      style={{ pointerEvents: "auto" }}
-                    >
-                      <ButtonContent>
-                        <IconWrapper>
-                          <img src={marketIcon} alt="Tilk Road Market" />
-                        </IconWrapper>
-                        <div>Trade</div>
-                        <div>Market</div>
-                      </ButtonContent>
-                    </EnhancedNeonButton>
+                    <HighlightedShopContainer>
+                      <IconButtonShop
+                        onClick={handleTutorialTwoClick}
+                        className="skeleton"
+                      >
+                        <img src={marketIcon} alt="Tilk Road Market" />
+                      </IconButtonShop>
+                      <IconText>SHOP</IconText>
+                    </HighlightedShopContainer>
                   </CenteredIconContainer>
                 </div>
 

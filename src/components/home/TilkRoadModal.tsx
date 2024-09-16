@@ -4,6 +4,7 @@ import { EProductIcon } from "../interfaces/product.interface";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { TutorialOverlay } from "./TutorialOverlay";
 import { useTutorial } from "../../hooks/useTutorial";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import {
   TilkRoadContainer,
   TilkRoadHeader,
@@ -16,19 +17,20 @@ import {
   ProductGrid,
   ProductCard,
   ProductTopRow,
-  ProductMiddleRow,
   ProductIcon,
-  // ProductPrice,
   Price,
   PriceChange,
-  // QuantityControl,
+  ProductControls,
+  BuyButton,
   QuantityInput,
   QuantitySlider,
-  BuyButton,
   UnlockButton,
   ScrollableTableContainer,
   WebPageTitle,
+  BuyControlsRow,
+  ProductIconWrapper,
 } from "./styles/tilkRoadModal.css";
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 interface TilkRoadModalProps {
   remainingCash: number;
@@ -61,32 +63,43 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
   setSelectedProduct,
   tutorial,
 }) => {
+  const handleBuyClick = () => {
+    handleBuy();
+  };
+
+  const isInTutorialMode =
+    tutorial.tutorialStep === 2 && !tutorial.tutorialCompleted;
+
+  const productsToDisplay =
+    isInTutorialMode && marketInfo?.products
+      ? [marketInfo.products[0]]
+      : marketInfo?.products || [];
+
   return (
     <>
       <WebPageTitle>https://mv09mn0u123m.onion</WebPageTitle>
-      <TutorialOverlay step={2} tutorial={tutorial}>
-        <TilkRoadContainer>
-          <TilkRoadHeader>
-            <TilkRoadLogo
-              src="/assets/home/market_logo.webp"
-              alt="Tilk Road Logo"
-            />
-            <div>
-              <TilkRoadTitle>Welcome to Tilk Road</TilkRoadTitle>
-              <TilkRoadDescription>
-                Buy more resources to sell to your customers.
-              </TilkRoadDescription>
-            </div>
-          </TilkRoadHeader>
+      <TilkRoadContainer>
+        <TilkRoadHeader>
+          <TilkRoadLogo
+            src="/assets/home/market_logo.webp"
+            alt="Tilk Road Logo"
+          />
+          <div>
+            <TilkRoadTitle>Welcome to Tilk Road</TilkRoadTitle>
+            <TilkRoadDescription>
+              Buy more resources to sell to your customers.
+            </TilkRoadDescription>
+          </div>
+        </TilkRoadHeader>
 
-          <ShoppingCartInfo>
-            <Balance>Balance: ${remainingCash.toFixed(2)}</Balance>
-            <Total>Total: ${totalCost.toFixed(2)}</Total>
-          </ShoppingCartInfo>
-
+        <ShoppingCartInfo>
+          <Balance>Balance: ${remainingCash.toFixed(2)}</Balance>
+          <Total>Total: ${totalCost.toFixed(2)}</Total>
+        </ShoppingCartInfo>
+        <TutorialOverlay step={2} tutorial={tutorial}>
           <ScrollableTableContainer className="scrollable-content">
             <ProductGrid>
-              {marketInfo?.products.map((product) => {
+              {productsToDisplay.map((product) => {
                 const userProduct = userInfo?.products.find(
                   (p) => p.name === product.name,
                 );
@@ -102,24 +115,36 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                 return (
                   <ProductCard key={product.name} locked={!userProduct}>
                     <ProductTopRow>
-                      <ProductIcon>{productIcon}</ProductIcon>
-                      <Price>${product.discountPrice.toFixed(2)}</Price>
+                      <ProductIconWrapper>
+                        <ProductIcon>{productIcon}</ProductIcon>
+                        <Price>${product.discountPrice.toFixed(2)}</Price>
+                      </ProductIconWrapper>
                       <PriceChange increase={priceChangePercent > 0}>
-                        {priceChangePercent > 0 ? "+" : ""}
-                        {priceChangePercent.toFixed(2)}%
+                        {priceChangePercent > 0 ? (
+                          <FaArrowUp />
+                        ) : (
+                          <FaArrowDown />
+                        )}
+                        {Math.abs(priceChangePercent).toFixed(2)}%
                       </PriceChange>
                     </ProductTopRow>
-                    {userProduct && (
-                      <>
-                        <ProductMiddleRow>
-                          <BuyButton onClick={handleBuy} disabled={!isSelected}>
+                    {userProduct ? (
+                      <ProductControls>
+                        <BuyControlsRow>
+                          <BuyButton
+                            onClick={handleBuyClick}
+                            disabled={!isSelected}
+                            style={{
+                              pointerEvents: isInTutorialMode ? "auto" : "none",
+                            }}
+                          >
                             Buy
                           </BuyButton>
                           <QuantityInput
                             type="number"
                             min={0}
                             max={
-                              tutorial.tutorialStep === 2
+                              isInTutorialMode
                                 ? 10
                                 : Math.floor(
                                     remainingCash / product.discountPrice,
@@ -134,12 +159,12 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                               );
                             }}
                           />
-                        </ProductMiddleRow>
+                        </BuyControlsRow>
                         <QuantitySlider
                           type="range"
                           min={0}
                           max={
-                            tutorial.tutorialStep === 2
+                            isInTutorialMode
                               ? 10
                               : Math.floor(
                                   remainingCash / product.discountPrice,
@@ -154,9 +179,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                             );
                           }}
                         />
-                      </>
-                    )}
-                    {!userProduct && (
+                      </ProductControls>
+                    ) : (
                       <UnlockButton onClick={() => handleUnlockClick(product)}>
                         Unlock
                       </UnlockButton>
@@ -166,8 +190,8 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
               })}
             </ProductGrid>
           </ScrollableTableContainer>
-        </TilkRoadContainer>
-      </TutorialOverlay>
+        </TutorialOverlay>
+      </TilkRoadContainer>
     </>
   );
 };

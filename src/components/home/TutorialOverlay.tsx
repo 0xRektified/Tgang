@@ -1,6 +1,56 @@
 import React from "react";
-import { SkipButton } from "./Home";
 import { useTutorial } from "../../hooks/useTutorial";
+import styled from "styled-components";
+
+const TutorialMessage = styled.div`
+  transform: translateY(-50%);
+  color: white;
+  font-size: 1.2rem;
+  z-index: 20;
+  pointer-events: none;
+  background-color: #1a1a1a;
+`;
+
+const SkipButton = styled.button`
+  background: grey;
+  color: black;
+  border-radius: 6px;
+  padding: 0.6em 1em;
+  font-size: 0.7em !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.8rem auto;
+  width: 10em;
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(116, 185, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0);
+    }
+  }
+  @media (max-width: 768px) {
+    font-size: 0.8em;
+    padding: 0.5em 0.8em;
+  }
+  display: block;
+`;
+
+const StyledSkipButton = styled(SkipButton)`
+  position: absolute;
+  top: 25em;
+  right: 20px;
+  background-color: grey;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 5px;
+`;
 
 interface TutorialOverlayProps {
   children: React.ReactNode;
@@ -24,33 +74,12 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
   return (
     <div style={{ position: "relative" }}>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 10,
-          pointerEvents: "none",
-        }}
-      />
-      <SkipButton
-        onClick={handleSkipTutorial}
-        style={{
-          position: "absolute",
-          bottom: "7em",
-          right: "15em",
-          zIndex: 20,
-          backgroundColor: "grey",
-          color: "black",
-          padding: "5px 10px",
-          borderRadius: "5px",
-        }}
-      >
+      <TutorialMessage>
+        CLICK THE "BUY" BUTTON TO BUY YOUR FIRST PRODUCT
+      </TutorialMessage>
+      <StyledSkipButton onClick={handleSkipTutorial}>
         Skip Tutorial
-      </SkipButton>
+      </StyledSkipButton>
       {children}
     </div>
   );

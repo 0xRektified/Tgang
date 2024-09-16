@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaQuestion } from "react-icons/fa";
+import { CloseButton } from "./styles/supplier.css";
 // import { LastTransaction } from "./LastTransaction";
 // import { Transaction } from "./utils/types";
 
@@ -100,7 +101,8 @@ const HomeBoardContainer = styled.div<{ shake: boolean }>`
   background-color: #242627;
   border: 2px solid white;
   box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
-  animation: ${props => props.shake ? shakeAnimation : 'none'} 0.3s ease-in-out;
+  animation: ${(props) => (props.shake ? shakeAnimation : "none")} 0.3s
+    ease-in-out;
 `;
 
 const CustomerInfo = styled.div`
@@ -140,6 +142,7 @@ const Modal = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+  margin-top: 2em;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -149,7 +152,6 @@ const Modal = styled.div`
 
 const ModalContent = styled.div`
   background-color: #242627;
-  margin-top: 10em;
   padding: 1em;
   border-radius: 0.5rem;
   max-width: 80%;
@@ -158,6 +160,7 @@ const ModalContent = styled.div`
   flex-direction: column;
   align-items: center;
   color: white;
+  position: relative;
 `;
 
 const RedQuestionIcon = styled(FaQuestion)`
@@ -169,6 +172,7 @@ const RedQuestionIcon = styled(FaQuestion)`
 interface HomeBoardProps {
   customer: string;
   customerAmount: number;
+  customerAmountMax: number;
   animatingEmojis: { emoji: string; id: number; offset: string }[];
 }
 
@@ -221,61 +225,66 @@ export const getRandomEmoji = () => {
 export const HomeBoard: React.FC<HomeBoardProps> = ({
   customer,
   customerAmount,
+  customerAmountMax,
   animatingEmojis,
 }) => {
-  const maxCustomers = 500;
   const [showModal, setShowModal] = useState(false);
   const [shake, setShake] = useState(false);
 
   useEffect(() => {
-    setShake(true);
-    const timer = setTimeout(() => setShake(false), 300);
-    return () => clearTimeout(timer);
+    if (customerAmount > 0) {
+      setShake(true);
+      const timer = setTimeout(() => setShake(false), 300);
+      return () => clearTimeout(timer);
+    }
   }, [customerAmount]);
 
-  return (
-    <HomeBoardContainer shake={shake}>
-      <CustomerInfo>
-        <CustomerEmoji>{customerAmount > 0 ? customer : "💀"}</CustomerEmoji>
-        {/* Commented out gauge
-        <HorizontalProgressBarContainer>
-          <ProgressFill width={fillPercentage} isDecreasing={isDecreasing} />
-        </HorizontalProgressBarContainer>
-        */}
-        <QuestionMark onClick={() => setShowModal(true)}>?</QuestionMark>
-      </CustomerInfo>
-      <CustomerCount>
-        {customerAmount} / {maxCustomers}
-      </CustomerCount>
+  const handleCloseModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowModal(false);
+  };
 
-      <AnimatingEmojiContainer>
-        {animatingEmojis.map(({ emoji, id, offset }) => (
-          <div
-            key={`${id}${offset}`}
-            className="absolute text-2xl text-white animate-move-up-random-x"
-            style={
-              {
-                "--random-offset": offset,
-                transform: `translateX(${offset})`,
-              } as React.CSSProperties
-            }
-          >
-            {emoji}
-          </div>
-        ))}
-      </AnimatingEmojiContainer>
+  return (
+    <>
+      <HomeBoardContainer shake={shake}>
+        <CustomerInfo>
+          <CustomerEmoji>{customerAmount > 0 ? customer : "💀"}</CustomerEmoji>
+          <QuestionMark onClick={() => setShowModal(true)}>?</QuestionMark>
+        </CustomerInfo>
+        <CustomerCount>
+          {customerAmount} / {customerAmountMax}
+        </CustomerCount>
+
+        <AnimatingEmojiContainer>
+          {animatingEmojis.map(({ emoji, id, offset }) => (
+            <div
+              key={`${id}${offset}`}
+              className="absolute text-2xl text-white animate-move-up-random-x"
+              style={
+                {
+                  "--random-offset": offset,
+                  transform: `translateX(${offset})`,
+                } as React.CSSProperties
+              }
+            >
+              {emoji}
+            </div>
+          ))}
+        </AnimatingEmojiContainer>
+      </HomeBoardContainer>
 
       {showModal && (
-        <Modal onClick={() => setShowModal(false)}>
+        <Modal onClick={handleCloseModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
             <RedQuestionIcon />
             <p>
-              You currently have {maxCustomers} new customers per hour who may
-              buy your resources.
+              You currently have {customerAmountMax} new customers per hour who
+              may buy your resources.
             </p>
           </ModalContent>
         </Modal>
       )}
-    </HomeBoardContainer>
+    </>
   );
 };
