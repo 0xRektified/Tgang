@@ -158,6 +158,20 @@ const WhiteText = styled.span`
   color: white;
 `;
 
+const LoadingSpinner = styled.div`
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #ffffff;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 export const ShippingCard: React.FC<{
   method: IShippingMethod;
   userShipping: IUserShipping | undefined;
@@ -170,6 +184,7 @@ export const ShippingCard: React.FC<{
     minutes: 0,
     seconds: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   const shipmentInProgress = (nextShipment: Date) => {
     return nextShipment.getTime() > new Date().getTime();
@@ -229,7 +244,16 @@ export const ShippingCard: React.FC<{
   );
 
   useEffect(() => {
-    if (userShipping) {
+    if (userShipping && !locked) {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+        const newCountdown = calculateCountdown(
+          new Date(userShipping.nextShipment),
+        );
+        setCountdown(newCountdown);
+      }, 1000);
+
       const interval = setInterval(() => {
         const newCountdown = calculateCountdown(
           new Date(userShipping.nextShipment),
@@ -237,9 +261,12 @@ export const ShippingCard: React.FC<{
         setCountdown(newCountdown);
       }, 1000);
 
-      return () => clearInterval(interval);
+      return () => {
+        clearTimeout(timer);
+        clearInterval(interval);
+      };
     }
-  }, [userShipping]);
+  }, [userShipping, locked]);
 
   const renderShippingButton = () => {
     if (locked) {
@@ -272,7 +299,9 @@ export const ShippingCard: React.FC<{
           <ShippingCardMiddle>
             {userShipping && (
               <div>
-                {formatCountdown(countdown) === "Ship now" ? (
+                {loading ? (
+                  <LoadingSpinner />
+                ) : formatCountdown(countdown) === "Ship now" ? (
                   <ShipNowText>Next shipment Ready</ShipNowText>
                 ) : (
                   <div>
