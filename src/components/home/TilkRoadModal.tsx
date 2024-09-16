@@ -113,6 +113,12 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
       ? [marketInfo.products[0]]
       : marketInfo?.products || [];
 
+  const handleInputBlur = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   return (
     <>
       <WebPageTitle>https://mv09mn0u123m.onion</WebPageTitle>
@@ -191,6 +197,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                               const newQuantity = Number(e.target.value);
                               handleQuantityChange(product, newQuantity);
                             }}
+                            onBlur={handleInputBlur}
                           />
                         </BuyControlsRow>
                         <QuantitySlider
@@ -207,6 +214,7 @@ export const TilkRoadModal: React.FC<TilkRoadModalProps> = ({
                           onChange={(e) => {
                             const newQuantity = Number(e.target.value);
                             handleQuantityChange(product, newQuantity);
+                            handleInputBlur();
                           }}
                         />
                       </ProductControls>

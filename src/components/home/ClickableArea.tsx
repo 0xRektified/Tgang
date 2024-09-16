@@ -428,7 +428,7 @@ const BouncingGlowingImage = styled(GlowingImage)`
 
 const IconContainer = styled.div`
   position: absolute;
-  top: 35%;
+  top: 30%;
   left: 0;
   right: 0;
   display: flex;
