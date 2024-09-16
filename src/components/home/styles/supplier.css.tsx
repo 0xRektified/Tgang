@@ -112,7 +112,7 @@ export const ModalContainer = styled.div`
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   width: 95%;
   max-width: 400px;
-  height: 83%;
+  height: 80%;
   position: relative;
   z-index: 1001;
   display: flex;
@@ -337,7 +337,7 @@ export const PriceVariation = styled.span`
 `;
 
 export const PriceChangeIcon = styled.div<{ increase: boolean }>`
-  background-color: ${props => props.increase ? "#48bb78" : "#f56565"};
+  background-color: ${(props) => (props.increase ? "#48bb78" : "#f56565")};
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
@@ -353,8 +353,8 @@ export const CardContainer = styled.div<{ locked: boolean }>`
   border-radius: 0.8rem;
   padding: 1rem;
   margin-bottom: 1rem;
-  opacity: ${props => props.locked ? 0.5 : 1};
-  pointer-events: ${props => props.locked ? "none" : "auto"};
+  opacity: ${(props) => (props.locked ? 0.5 : 1)};
+  pointer-events: ${(props) => (props.locked ? "none" : "auto")};
 `;
 
 export const CardHeader = styled.div`
