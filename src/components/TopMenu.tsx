@@ -87,7 +87,6 @@ const ProgressFill = styled.div<{ width: number; isDecreasing: boolean }>`
   }
 `;
 
-// Add this function at the top of the file, outside the component
 const calculateFontSize = (username: string): string => {
   if (username.length <= 10) return "1.2rem";
   if (username.length <= 15) return "1.1rem";
@@ -177,7 +176,7 @@ export const TopMenu: React.FC<TopMenuProps> = ({
                 <ElectricEffect start={prevProgress} end={progress} />
               )}
             </HorizontalProgressBarContainer>
-            <LevelLabels style={{ gap: "5px" }}>
+            <LevelLabels style={{ gap: 0, margin: 0 }}>
               <span>Level {level}</span>
               <span>Level {level + 1}</span>
             </LevelLabels>
