@@ -12,7 +12,6 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { Product } from "../interfaces/user.interface";
 import { MdArrowDropDown } from "react-icons/md";
-import { Transaction } from "./utils/types";
 import { HomeBoard } from "./HomeBoard";
 import { IMarketInfo } from "../interfaces/market.interface";
 import marketIcon from "/assets/market.png";
@@ -20,7 +19,6 @@ import shipping from "/assets/shipping.png";
 import { useTutorial } from "../../hooks/useTutorial";
 import { SkipButton } from "./Home";
 
-// Slide-down animation for the product panel
 const slideDown = keyframes`
   from {
     transform: translateY(-100%);
@@ -30,7 +28,6 @@ const slideDown = keyframes`
   }
 `;
 
-// Bounce animation for the selected product
 const bounce = keyframes`
   0%, 100% {
     transform: translateY(0);
@@ -40,7 +37,6 @@ const bounce = keyframes`
   }
 `;
 
-// Glow animation for the selected product
 const glow = keyframes`
   0% {
     box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
@@ -50,7 +46,6 @@ const glow = keyframes`
   }
 `;
 
-// Metal-style panel for products
 const ProductPanel = styled.div`
   display: flex;
   justify-content: space-around;
@@ -213,127 +208,11 @@ const Smoke = styled.div`
   }
 `;
 
-const CenteredIconContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 1em;
-`;
-
-const EnhancedNeonButton = styled.button`
-  background: linear-gradient(45deg, #2c3e50, #4a69bd);
-  color: white;
-  border: 2px solid #74b9ff;
-  padding: 0.6em 1em;
-  font-size: 0.9em;
-  text-shadow: 0 0 5px #74b9ff;
-  transition: all 0.3s ease;
-  max-width: 90%;
-  margin: 0 auto;
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.7);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(116, 185, 255, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(116, 185, 255, 0);
-    }
-  }
-
-  animation: pulse 2s infinite;
-
-  &:hover {
-    background: linear-gradient(45deg, #4a69bd, #2c3e50);
-    box-shadow: 0 0 10px #74b9ff, 0 0 20px #74b9ff;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 0.8em;
-    padding: 0.5em 0.8em;
-  }
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  @media (max-width: 768px) {
-    font-size: 0.7em;
-    padding: 0.5em 0.8em;
-    max-width: 100%;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.6em;
-  }
-  border-radius: 6px;
-  box-shadow: 0 0 1px #eab308, 0 0 5px #eab308, 0 0 8px #eab308,
-    0 0 10px #eab308;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.8em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  margin: 0.5em;
-  padding: 0.9em;
-  flex: 1;
-`;
-
-const ButtonContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 1.2;
-`;
-
-const IconWrapper = styled.div`
-  font-size: 1.5em;
-  margin-bottom: 0.3em;
-`;
-
-const ButtonText = styled.span`
-  margin-left: 0.5em;
-  @media (max-width: 360px) {
-    display: none;
-  }
-`;
-
 export const FlexBoxRowPriceNeon = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.3em;
   align-items: center;
-`;
-const NeonGoldText = styled.span`
-  color: #ffd700;
-  text-shadow: 0 0 2px #ffd700,  0 0 6px #ffd700,
-    0 0 8px #ffd700, 
-  font-weight: bold;
-  font-size: 0.6rem;
-`;
-
-const NeonGreenText = styled.span`
-  color: #32cd32;
-  text-shadow: 0 0 2px #32cd32,  0 0 6px #32cd32,
-    0 0 8px #32cd32, 
-  font-weight: bold;
-  font-size: 0.6rem;
-
 `;
 
 const TutorialOverlay = styled.div`
