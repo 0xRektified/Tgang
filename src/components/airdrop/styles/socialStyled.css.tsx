@@ -12,8 +12,8 @@ export const SocialCard = styled.div`
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
-  width: 100%; // Ensure it takes full width
-  box-sizing: border-box; // Include padding and border in the element's total width and height
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const SocialCardContent = styled.div`
@@ -60,18 +60,19 @@ export const SocialCardTitle = styled.h3`
 
 export const SocialButtonContainer = styled.div`
   display: flex;
-  gap: 2rem;
+  gap: 0.5rem;
+  justify-content: space-between;
 `;
 
 export const SocialButton = styled.button<{ isMember: boolean }>`
   background-color: rgb(39 39 42);
   color: #e4e4e7;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   border: 2px solid #1e90ff;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: 0.75em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
@@ -81,6 +82,8 @@ export const SocialButton = styled.button<{ isMember: boolean }>`
   gap: 0.5rem;
   transition: background-color 0.3s ease, transform 0.1s ease;
   box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  min-width: 70px;
+  flex: 1;
 
   ${({ isMember }) =>
     isMember &&
@@ -142,8 +145,20 @@ export const RewardItem = styled.div`
   gap: 0.5rem;
 `;
 
-export const RewardAmount = styled.span`
+export const RewardIcon = styled.span`
+  display: flex;
+  align-items: center;
   font-size: 1rem;
+  color: white;
+`;
+
+export const RewardText = styled.span`
+  font-size: 0.8rem;
+  color: #e4e4e7;
+`;
+
+export const RewardAmount = styled.span`
+  font-size: 0.9rem;
   font-weight: bold;
   color: #16a34a;
 `;

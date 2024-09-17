@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import styled from "styled-components";
 
-import { FlexBoxRow } from "./styles/supplier.css";
 import {
   ModalContainer,
   CloseButton,
   CardContainer,
-  CardHeader,
   CardTitle,
   CardDetails,
   CardInfoColumn,
@@ -17,7 +15,6 @@ import {
 import { EShippingMethod } from "../interfaces/shipping.interface";
 import { EProduct, ProductImage } from "../interfaces/product.interface";
 
-// New styled components
 const ProductCard = styled(CardContainer)`
   margin-bottom: 15px;
   cursor: pointer;
@@ -72,17 +69,25 @@ const NeonButton = styled.button`
 
   @keyframes glow {
     0% {
-      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff,
+        0 0 8px #1e90ff;
     }
     100% {
-      box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff, 0 0 20px #1e90ff;
+      box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff,
+        0 0 20px #1e90ff;
     }
   }
 
   @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 `;
 
@@ -153,7 +158,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
   };
 
   return (
-    <ModalContainer>
+    <ModalContainer className="scrollable-content">
       <CloseButton onClick={onClose}>×</CloseButton>
       <ModalTitle>Select a Product to Ship</ModalTitle>
       {userHasProducts ? (

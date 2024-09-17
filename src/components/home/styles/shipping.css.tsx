@@ -3,6 +3,10 @@ export const CardContainer = styled.div<{ locked?: boolean }>`
   display: flex;
   background-color: #282b2c;
   border-radius: 0.8rem;
+<<<<<<< HEAD
+=======
+  padding: 0.75rem;
+>>>>>>> main
   box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
   color: #e4e4e7;
   width: 100%;
@@ -11,12 +15,13 @@ export const CardContainer = styled.div<{ locked?: boolean }>`
 export const CardHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
 `;
 
 export const CardTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: bold;
+  margin: 0;
 `;
 
 export const CardDescription = styled.div`
@@ -25,14 +30,20 @@ export const CardDescription = styled.div`
 `;
 
 export const CardImage = styled.img`
-  width: 5rem;
-  height: 5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 0.8rem;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 export const CardDetails = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   flex: 1;
 `;
 
@@ -176,7 +187,20 @@ export const ScrollableTableContainer = styled.div`
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
   width: 100%;
-  max-height: 60vh; /* Adjust this value as needed */
+  max-height: 60vh;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #2d3748;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #4a5568;
+    border-radius: 4px;
+  }
 `;
 
 export const ClickableText = styled.div`
