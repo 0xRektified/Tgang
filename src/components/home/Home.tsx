@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { InventoryModal } from "./modals/InventoryModal";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import {

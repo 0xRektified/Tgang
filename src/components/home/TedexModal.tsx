@@ -5,7 +5,6 @@ import { IUserInfo, IUserShipping } from "../interfaces/user.interface";
 import {
   ScrollableTableContainer,
   WebPageTitle,
-  SiteTitle,
   FlexBoxRow,
 } from "./styles/supplier.css";
 
@@ -59,7 +58,6 @@ export const TedexModal: React.FC<TedexProps> = ({
   return (
     <>
       <WebPageTitle>https://mv09mn0u123m.onion</WebPageTitle>
-
 
       <FlexBoxRow style={{ margin: "10px" }}>
         <FlexBoxCol style={{ gap: "0px" }}>
