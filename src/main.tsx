@@ -12,11 +12,11 @@ initializeApp();
 
 
 
-// const manifestUrl =
-//   "https://app.cartel-game.com/manifest.json";
-
 const manifestUrl =
-  "https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json";
+  "https://app.cartel-game.com/manifest.json";
+
+// const manifestUrl =
+//   "https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
