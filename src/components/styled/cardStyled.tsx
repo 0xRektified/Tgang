@@ -37,7 +37,6 @@ export const CardButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 0.25rem;
 `;
 
 export const CardRightColumn = styled.div`

@@ -6,8 +6,6 @@ import {
   ModalContainer,
   Notch,
   RoundButton,
-  TabContainer,
-  Tab,
 } from "./styles/supplier.css";
 import { tabMapping } from "../interfaces/general.interface";
 import useBuyProduct from "../../hooks/useBuyProduct";
@@ -33,6 +31,7 @@ interface ModalProps {
   shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   tutorial: ReturnType<typeof useTutorial>;
   handleTutorialComplete: () => void;
+  initialTab: "TilkRoad" | "Tedex";
 }
 
 export const CombinedModal: React.FC<ModalProps> = ({
@@ -45,8 +44,9 @@ export const CombinedModal: React.FC<ModalProps> = ({
   shippingMethods,
   tutorial,
   handleTutorialComplete,
+  initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState("Tilk Road");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const { buyProduct, loading, error } = useBuyProduct();
   const { shipProduct } = useShipProduct();
   const [selectedProduct, setSelectedProduct] = useState<
@@ -69,12 +69,6 @@ export const CombinedModal: React.FC<ModalProps> = ({
     }
     setRemainingCash(userInfo.cashAmount);
   }, [selectedProduct, quantity, userInfo.cashAmount]);
-
-  useEffect(() => {
-    if (isOpen && tutorial.tutorialStep === 2) {
-      setActiveTab("Tilk Road");
-    }
-  }, [isOpen, tutorial.tutorialStep]);
 
   const handleBuy = async () => {
     if (totalCost > userInfo.cashAmount) {
@@ -119,7 +113,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
   };
 
   const handleRedirectToTilkRoad = () => {
-    setActiveTab("Tilk Road");
+    setActiveTab("TilkRoad");
   };
 
   const handleShip = (
@@ -143,22 +137,8 @@ export const CombinedModal: React.FC<ModalProps> = ({
     <FixedOverlay onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <Notch />
-        <TabContainer>
-          <Tab
-            active={activeTab === "Tilk Road"}
-            onClick={() => setActiveTab("Tilk Road")}
-          >
-            Tilk Road
-          </Tab>
-          <Tab
-            active={activeTab === "Tedex"}
-            onClick={() => setActiveTab("Tedex")}
-          >
-            Tedex
-          </Tab>
-        </TabContainer>
 
-        {activeTab === "Tilk Road" && (
+        {activeTab === "TilkRoad" && (
           <TilkRoadModal
             remainingCash={remainingCash}
             totalCost={totalCost}
@@ -170,6 +150,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
             setQuantity={setQuantity}
             handleProductSelect={handleProductSelect}
             handleUnlockClick={handleUnlockClick}
+            setSelectedProduct={setSelectedProduct}
             tutorial={tutorial}
           ></TilkRoadModal>
         )}

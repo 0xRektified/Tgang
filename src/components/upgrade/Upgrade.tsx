@@ -24,7 +24,7 @@ import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTi
 import { IMarketInfo } from "../interfaces/market.interface";
 import mixpanel from "mixpanel-browser";
 
-interface ShopProps {
+interface UpgradeProps {
   userInfo: IUserInfo;
   activeTab: string;
   upgradesData: IUpgrade | undefined;
@@ -34,7 +34,7 @@ interface ShopProps {
   setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>;
 }
 
-export const Shop: React.FC<ShopProps> = ({
+export const Upgrade: React.FC<UpgradeProps> = ({
   userInfo,
   activeTab,
   upgradesData,
@@ -173,4 +173,4 @@ export const Shop: React.FC<ShopProps> = ({
   );
 };
 
-export default Shop;
+export default Upgrade;

@@ -1,15 +1,15 @@
 import styled from "styled-components";
-
 export const CardContainer = styled.div<{ locked?: boolean }>`
   display: flex;
-  flex-direction: column;
-  background-color: rgba(128, 128, 128, 0.15);
+  background-color: #282b2c;
   border-radius: 0.8rem;
+<<<<<<< HEAD
+=======
   padding: 0.75rem;
+>>>>>>> main
   box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
   color: #e4e4e7;
-  margin-bottom: 1rem;
-  align-items: center;
+  width: 100%;
 `;
 
 export const CardHeader = styled.div`
@@ -18,17 +18,13 @@ export const CardHeader = styled.div`
   gap: 1rem;
 `;
 
-export const CardContent = styled.div`
-  margin-top: 1rem;
-`;
-
 export const CardTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
 `;
 
-export const CardDescription = styled.p`
+export const CardDescription = styled.div`
   font-size: 0.9rem;
   margin: 0.5rem 0;
 `;
@@ -56,7 +52,7 @@ export const CardInfoColumn = styled.div`
   flex-direction: column;
 `;
 
-export const CardRequirement = styled.p`
+export const CardRequirement = styled.div`
   font-size: 0.8rem;
   color: #ff6b6b;
 `;
@@ -148,9 +144,9 @@ export const Button = styled.button`
 `;
 
 export const ShippingCardsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 export const ModalContainer = styled.div`
@@ -239,11 +235,12 @@ export const SiteTitleTedex = styled.h1`
 `;
 export const SiteDescription = styled.p`
   font-size: 0.8rem;
+  font-weight: 600;
   line-height: 1.5;
-  color: #cbd5e0;
+  color: white;
 `;
 
-export const StyledLink = styled.p`
+export const StyledLink = styled.div`
   margin-top: 0.5em;
   font-size: 0.8rem;
   color: #1e90ff;

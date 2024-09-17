@@ -64,7 +64,7 @@ export default {
       },
       animation: {
         "fade-in": "fadeIn 1s forwards",
-        "fade-out": "fadeOut 1s forwards",
+        "fade-out": "fadeOut 3s forwards",
         "fade-out-toast": "fadeOutToast 3s forwards",
         "slide-in-from-left": "slideInFromLeft 1s forwards",
         "slide-out-to-right": "slideOutToRight 1s forwards 3s",

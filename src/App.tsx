@@ -5,7 +5,7 @@ import "@twa-dev/sdk";
 import { useEffect, useState, useCallback } from "react";
 import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
-import { Shop } from "./components/shop/Shop";
+import { Upgrade } from "./components/upgrade/Upgrade";
 import { TopMenu } from "./components/TopMenu";
 import Loading from "./components/Loading";
 import { useInitializeGame } from "./hooks/useInitializeGame";
@@ -21,15 +21,28 @@ import Leaderboard from "./components/Leaderboard";
 
 const StyledApp = styled.div`
   background-image: url("/assets/home/street.webp");
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const AppContainer = styled.div`
   max-width: 750px;
+  width: 100%;
   margin: 0 auto;
-  padding-bottom: 60px; /* Add padding to account for the footer */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 function App() {
@@ -88,7 +101,7 @@ function App() {
     if (tab) {
       setActiveTab(tab);
     }
-    setCurrentView("Shop");
+    setCurrentView("Upgrade");
   }, []);
 
   const handleSetCurrentView = useCallback(
@@ -139,9 +152,9 @@ function App() {
             handleLabTutorialComplete={handleLabTutorialComplete}
           />
         );
-      case "Shop":
+      case "Upgrade":
         return (
-          <Shop
+          <Upgrade
             userInfo={userInfo}
             activeTab={activeTab}
             upgradesData={upgrades}
@@ -209,10 +222,10 @@ function App() {
     return <div>Error: {error}</div>;
   }
   return (
-    <StyledApp data-theme="dark" id="buffer">
+    <StyledApp data-theme="dark">
       <AppContainer>
         <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
-        <FlexBoxColNoGap id="mainView">{renderCurrentView()}</FlexBoxColNoGap>
+        <ContentWrapper>{renderCurrentView()}</ContentWrapper>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
           currentView={currentView}

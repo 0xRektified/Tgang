@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { InventoryModal } from "./modals/InventoryModal";
 import WebApp from "@twa-dev/sdk";
 import { TouchPoint, Transaction } from "./utils/types";
 import {
@@ -28,13 +27,11 @@ const formatNumber = (num: number) => num.toFixed(2);
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  min-height: 80vh;
-  height: auto;
+  height: 80vh;
   touch-action: none;
+  position: relative;
+  overflow: hidden;
 `;
 
 export const SkipButton = styled.button`
@@ -129,6 +126,10 @@ export const Home: React.FC<HomeProps> = ({
   const handleCloseSupplierModal = () => {
     setIsLocalSupplierModalOpen(false);
     closeCombinedModal();
+    if (!tutorial.tutorialCompleted) {
+      tutorial.setTutorialCompleted(true);
+      tutorial.tutorialCompleted = true;
+    }
   };
 
   const handleCloseModal = () => {
@@ -141,33 +142,6 @@ export const Home: React.FC<HomeProps> = ({
       setSelectedProduct(EProduct.HERB);
     }
     setIsLocalSupplierModalOpen(true);
-  };
-
-  const handleSelectProductFromInventory = (product: {
-    id: number;
-    name: string;
-    quantity: number;
-  }) => {
-    if (selectedSlot === null) return;
-
-    setUserInfo((prevUser) => {
-      if (!prevUser) return prevUser;
-
-      const updatedProducts = prevUser.products.map((p) =>
-        p.name === product.name
-          ? { ...p, slot: selectedSlot }
-          : p.slot === selectedSlot
-          ? { ...p, slot: null }
-          : p,
-      );
-
-      return {
-        ...prevUser,
-        products: updatedProducts,
-      };
-    });
-
-    setIsModalOpen(false);
   };
 
   const getRandomOffset = () => {
@@ -224,10 +198,10 @@ export const Home: React.FC<HomeProps> = ({
       setUserInfo((prevUser) => ({
         ...prevUser,
         cashAmount: Number(formatNumber(cashState)),
+        reputation: prevUser.reputation + sellQuantity,
         products: updatedProducts,
       }));
 
-      // Move the customer emoji to the animating array
       setNextCustomer(getRandomEmoji());
       const newAnimatingEmoji = {
         emoji: nextCustomer,
@@ -254,6 +228,13 @@ export const Home: React.FC<HomeProps> = ({
     return result;
   };
 
+  const [activeTab, setActiveTab] = useState<"TilkRoad" | "Tedex">("TilkRoad");
+
+  const handleOpenModal = (tab: "TilkRoad" | "Tedex") => {
+    setActiveTab(tab);
+    setIsLocalSupplierModalOpen(true);
+  };
+
   return (
     <HomeContainer>
       <ClickableAreaWithSmoke
@@ -261,25 +242,22 @@ export const Home: React.FC<HomeProps> = ({
         handleTouchStart={handleTouchStart}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
-        handleOpenSupplierModal={handleOpenSupplierModal}
         customer={nextCustomer}
         customerAmount={userInfo.customerAmount}
-        transaction={lastTransaction}
+        customerAmountMax={userInfo.customerAmountMax}
         animatingEmojis={animatingEmojis}
         marketInfo={marketInfo}
         signup={signup}
         tutorial={tutorial}
+        handleOpenTilkRoadModal={() => handleOpenModal("TilkRoad")}
+        handleOpenTedexModal={() => handleOpenModal("Tedex")}
+        style={{ flex: 1, display: "flex", flexDirection: "column" }}
       />
 
-      <TouchPoints touchPoints={touchPoints} />
-      {isModalOpen && (
-        <InventoryModal
-          selectedSlot={selectedSlot}
-          productsData={userInfo.products}
-          handleSelectProductFromInventory={handleSelectProductFromInventory}
-          handleCloseModal={handleCloseModal}
-        />
-      )}
+      <TouchPoints
+        touchPoints={touchPoints}
+        lastTransaction={lastTransaction}
+      />
       {(isLocalSupplierModalOpen || isCombinedModalOpen) && (
         <CombinedModal
           userInfo={userInfo}
@@ -291,6 +269,7 @@ export const Home: React.FC<HomeProps> = ({
           shippingMethods={shippingMethods}
           tutorial={tutorial}
           handleTutorialComplete={handleTutorialComplete}
+          initialTab={activeTab}
         />
       )}
     </HomeContainer>
