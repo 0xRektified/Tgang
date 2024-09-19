@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
-import { SocialChannel, SocialData } from "../components/interfaces/social.interface";
+import {
+  SocialChannel,
+  SocialData,
+} from "../components/interfaces/social.interface";
 
 export function useFetchSocials() {
   const [socials, setSocials] = useState<Record<SocialChannel, SocialData>>();
@@ -10,10 +13,10 @@ export function useFetchSocials() {
   const fetchSocials = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.get<Record<SocialChannel, SocialData>>(
-        `/socials`
-      );
-
+      const { data } = await axiosInstance.get<
+        Record<SocialChannel, SocialData>
+      >(`/socials`);
+      setError(null);
       setSocials(data);
       return data;
     } catch (error) {

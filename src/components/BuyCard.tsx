@@ -212,11 +212,9 @@ const BuyCard: React.FC<BuyCardProps> = ({
               )}
             </CardInfoGrid>
             <CardDescription>{description}</CardDescription>
-          </CardDetails>
-          {upgradeOption ? (
-            <></>
-          ) : (
-            <CardFooter>
+            {upgradeOption ? (
+              <></>
+            ) : (
               <CardCost>
                 <InfoItem
                   label="Cost"
@@ -224,9 +222,9 @@ const BuyCard: React.FC<BuyCardProps> = ({
                   isCost
                 />
               </CardCost>
-            </CardFooter>
-          )}
-          {renderRequirements(safeRequirements)}
+            )}
+            {locked ? renderRequirements(safeRequirements) : <></>}
+          </CardDetails>
         </CardRightColumn>
       </CardContainer>
       {showBuyConfirmation && (

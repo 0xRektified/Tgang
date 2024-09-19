@@ -10,16 +10,18 @@ export function useUpgradeLabCapacity() {
 
   const upgradeLabCapacity = async (
     plotId: number,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
-        `/labs/${plotId}/capacity`
+        `/labs/${plotId}/capacity`,
       );
       const newUserInfo = data;
+      setError(null);
+
       setUserInfo(newUserInfo);
       setSuccessMessage("Lab capacity upgraded successfully!");
     } catch (error) {
