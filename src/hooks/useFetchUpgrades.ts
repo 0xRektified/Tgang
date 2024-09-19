@@ -14,7 +14,7 @@ export function useFetchUpgrades(userInfo: IUserInfo | null) {
       const upgradesResponse = await axiosInstance.get<IUpgrade>(`/upgrades`);
 
       let updatedUpgrades = upgradesResponse.data;
-
+      setError(null);
       setUpgrades(updatedUpgrades);
       return { upgrades: updatedUpgrades };
     } catch (error) {

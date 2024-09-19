@@ -187,7 +187,7 @@ export const UnlockButton = styled(BuyButton)`
   border: 2px solid #3b82f6;
   color: #3b82f6;
   width: 100%;
-
+  margin-top: 1.5em;
   &:hover {
     background-color: #3b82f6;
     color: white;

@@ -11,10 +11,9 @@ export function useFetchLabs() {
   const fetchLabs = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.get<Record<EProduct, ILab>>(
-        `/labs`
-      );
+      const { data } = await axiosInstance.get<Record<EProduct, ILab>>(`/labs`);
 
+      setError(null);
       setLabs(data);
       return { labs: data };
     } catch (error) {
