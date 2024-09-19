@@ -21,15 +21,15 @@ interface RenderShippingProps {
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
   buyShippingMethod: (
     method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => Promise<void>;
   upgradeShippingCapacity: (
     method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => Promise<void>;
   upgradeShippingShippingTime: (
     method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => Promise<void>;
 }
 
@@ -52,7 +52,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
     shippingTimeLevel: string,
     price?: number,
     locked?: boolean,
-    requirement?: IRequirement | null
+    requirement?: IRequirement | null,
   ) => {
     let bought = false;
     if (shipping) {
@@ -75,7 +75,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           {
             label: "Shipping Time -",
             valueDiff: convertSecondsToReadableTime(
-              Math.abs(shipping.upgradeShippingTime! - shipping.shippingTime!)
+              Math.abs(shipping.upgradeShippingTime! - shipping.shippingTime!),
             ).toString(),
             price: shipping.upgradeShippingTimePrice || 0,
             icon: <FaShippingFast />,
@@ -97,7 +97,11 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           shippingTimeLevel: shippingTimeLevel,
           description: upgrade.description,
           requirements: requirement
-            ? { name: key.toString(), level: requirement.level, requirement: requirement.requirement }
+            ? {
+                name: key.toString(),
+                level: requirement.level,
+                requirement: requirement.requirement,
+              }
             : null,
         }}
         locked={locked || false}
@@ -119,14 +123,14 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
   const renderUpgradeCategory = (
     categoryTitle: string,
     shippingMethods: Record<EShippingMethod, IShippingMethod>,
-    userShipping: IUserShipping[]
+    userShipping: IUserShipping[],
   ) => (
     <div key={categoryTitle}>
       <h3 className="text-2xl font-semibold capitalize p-4">{categoryTitle}</h3>
       <div className="space-y-2">
         {Object.entries(shippingMethods ?? {}).map(([key, method]) => {
           const userUpgrade: IUserShipping | undefined = userShipping.find(
-            (u) => u.method === key
+            (u) => u.method === key,
           );
           let price = method.basePrice;
           let capacityLevel: string;
@@ -141,7 +145,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
           } else {
             capacityLevel = `${method.baseCapacity}`;
             shippingTimeLevel = `${convertSecondsToReadableTime(
-              method.baseShippingTime
+              method.baseShippingTime,
             )}`;
           }
 
@@ -165,7 +169,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             shippingTimeLevel,
             price,
             locked,
-            requirement
+            requirement,
           );
         })}
       </div>
@@ -180,7 +184,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
         renderUpgradeCategory(
           "Shipping Methods",
           shippingMethods,
-          userInfo.shipping
+          userInfo.shipping,
         )}
     </div>
   );

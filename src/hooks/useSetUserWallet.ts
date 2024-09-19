@@ -10,7 +10,7 @@ export function useSetUserWallet() {
 
   const setWallet = async (
     tonWalletAddress: string,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => {
     setLoading(true);
     setError(null);
@@ -19,6 +19,7 @@ export function useSetUserWallet() {
       const { data } = await axiosInstance.post<IUserInfo>(`/users/wallet`, {
         tonWalletAddress,
       });
+      setError(null);
       const newUserInfo = data;
       setUserInfo(newUserInfo);
       setSuccessMessage("wallet connected successfully!");

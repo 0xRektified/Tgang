@@ -15,6 +15,7 @@ export function useMarketData() {
       const marketResponse = await axiosInstance.get<IMarketInfo>(
         `/markets/NY`,
       );
+      setError(null);
       setMarketInfo(marketResponse.data);
       return { marketInfo: marketResponse.data };
     } catch (error) {

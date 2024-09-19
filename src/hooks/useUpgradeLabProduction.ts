@@ -10,16 +10,18 @@ export function useUpgradeLabProduction() {
 
   const upgradeLabProduction = async (
     plotId: number,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
-        `/labs/${plotId}/production`
+        `/labs/${plotId}/production`,
       );
       const newUserInfo = data;
+      setError(null);
+
       setUserInfo(newUserInfo);
       setSuccessMessage("Lab production upgraded successfully!");
     } catch (error) {

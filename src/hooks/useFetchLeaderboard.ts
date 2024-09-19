@@ -11,9 +11,9 @@ export function useFetchLeaderboard() {
     try {
       setLoading(true);
       const { data } = await axiosInstance.get<Leaderboard[]>(
-        `/users/leaderboard`
+        `/users/leaderboard`,
       );
-
+      setError(null);
       setLeaderboard(data);
       return data;
     } catch (error) {

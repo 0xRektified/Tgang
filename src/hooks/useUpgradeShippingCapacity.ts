@@ -11,15 +11,16 @@ export function useUpgradeShippingCapacity() {
 
   const upgradeShippingCapacity = async (
     method: EShippingMethod,
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
   ) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
       const { data } = await axiosInstance.put<IUserInfo>(
-        `/shipping/${method}/capacity`
+        `/shipping/${method}/capacity`,
       );
+      setError(null);
       const newUserInfo = data;
       setUserInfo(newUserInfo);
       setSuccessMessage("Shipping capacity upgraded successfully!");
