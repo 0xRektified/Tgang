@@ -36,7 +36,18 @@ export function useMultiplayer(
 
         setUserInfo((prevUserInfo: IUserInfo) => {
           const isWinner = result.winner === prevUserInfo.username;
-          const updatedPvp = prevUserInfo.pvp as IUserPvp;
+          const updatedPvp: IUserPvp = prevUserInfo.pvp || {
+            victory: 0,
+            defeat: 0,
+            lastAttackDate: new Date(),
+            attacksToday: 0,
+            lastDefendDate: new Date(),
+            baseHp: 100, // default value
+            protection: 0, // default value
+            damage: 10, // default value
+            accuracy: 50, // default value
+            evasion: 5, // default value
+          };
 
           if (isWinner) {
             updatedPvp.victory += 1;
@@ -63,25 +74,9 @@ export function useMultiplayer(
     [setUserInfo],
   );
 
-  const enablePvp = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await axiosInstance.post<IUserInfo>("/multiplayer/enable-pvp");
-      setUserInfo(data);
-      return data;
-    } catch (err) {
-      setError("Failed to enable PvP");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return {
     searchPlayer,
     startFight,
-    enablePvp,
     loading,
     error,
     combatResult,

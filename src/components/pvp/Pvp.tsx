@@ -17,6 +17,7 @@ import {
   FaClock,
 } from "react-icons/fa";
 import { GiDodging, GiPunchBlast } from "react-icons/gi";
+import { SocialChannel } from "../interfaces/social.interface";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -147,7 +148,6 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const {
     searchPlayer,
     startFight,
-    enablePvp,
     loading,
     error,
     combatResult,
@@ -203,13 +203,14 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   ];
 
   useEffect(() => {
-    if (!userInfo.pvp || !userInfo.pvp.pvpEnabled) {
+    const social = userInfo.socials?.find((s) => s.channel === SocialChannel.TELEGRAM_CHANNEL);
+    if (!social?.member) {
       setShowEnableModal(true);
     }
   }, [userInfo]);
 
   const handleEnablePvp = async () => {
-    await enablePvp();
+    // await enablePvp();
     setShowEnableModal(false);
   };
 

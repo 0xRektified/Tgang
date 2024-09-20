@@ -225,7 +225,6 @@ export function PlayerCard({
   onInfoClick: () => void;
 }) {
   if (!player) return null;
-  if (!player.pvp) return null;
 
   const attackVariants = {
     attacking: { y: [0, -10, 0], transition: { duration: 0.3 } },
@@ -260,13 +259,13 @@ export function PlayerCard({
                     <GoldIcon>
                       <FaTrophy />
                     </GoldIcon>
-                    {player.pvp.victory}
+                    {player.pvp?.victory || 0}
                   </StatItem>
                   <StatItem>
                     <WhiteIcon>
                       <FaSkull />
                     </WhiteIcon>
-                    {player.pvp.defeat}
+                    {player.pvp?.defeat || 0}
                   </StatItem>
                 </StatGroup>
                 <StatItem>
@@ -286,25 +285,25 @@ export function PlayerCard({
                 <RedIcon>
                   <FaHeart />
                 </RedIcon>
-                {player.pvp.baseHp}
+                {player.pvp?.baseHp || 100}
               </StatItem>
               <StatItem>
                 <WhiteIcon>
                   <FaShieldAlt />
                 </WhiteIcon>
-                {player.pvp.protection}%
+                {player.pvp?.protection || 0}%
               </StatItem>
               <StatItem>
                 <WhiteIcon>
                   <FaBomb />
                 </WhiteIcon>
-                {player.pvp.damage}
+                {player.pvp?.damage || 10}
               </StatItem>
               <StatItem>
                 <WhiteIcon>
                   <GiDodging />
                 </WhiteIcon>
-                {player.pvp.evasion}%
+                {player.pvp?.evasion || 5}%
               </StatItem>
             </StatRow>
             {/* {statIcons.slice(2).map((stat, index) => (

@@ -112,7 +112,6 @@ export interface IUserInfo {
 }
 
 export interface IUserPvp {
-  pvpEnabled: boolean;
   victory: number;
   defeat: number;
   lastAttackDate: Date;
