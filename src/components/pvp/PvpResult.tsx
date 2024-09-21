@@ -1,8 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { FaTrophy, FaSkull, FaDollarSign, FaClock } from 'react-icons/fa';
-import { ICombatResult } from '../../hooks/useMultiplayer';
+import React from "react";
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
+import { ICombatResult } from "../../hooks/useMultiplayer";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
 const ResultContainer = styled(motion.div)`
   background-color: #2c2c2e;
@@ -36,7 +37,7 @@ const ResultIcon = styled.div`
 
 const ResultContent = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
 `;
 
@@ -47,7 +48,7 @@ const ResultItem = styled.div`
 `;
 
 const ResultItemIcon = styled.div`
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin-right: 0.5rem;
   color: #a0aec0;
 `;
@@ -56,12 +57,40 @@ const ResultItemValue = styled.span`
   font-weight: bold;
 `;
 
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+`;
+
+const ProductItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const ProductIcon = styled.div`
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+`;
+
+const ProductQuantity = styled.p`
+  font-size: 0.7rem;
+  color: #a0aec0;
+  margin: 0;
+`;
+
 interface PvpResultProps {
   combatResult: ICombatResult;
   username: string;
 }
 
-export const PvpResult: React.FC<PvpResultProps> = ({ combatResult, username }) => {
+export const PvpResult: React.FC<PvpResultProps> = ({
+  combatResult,
+  username,
+}) => {
   const isWinner = combatResult.winner === username;
 
   return (
@@ -70,26 +99,43 @@ export const PvpResult: React.FC<PvpResultProps> = ({ combatResult, username }) 
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      className="pvp-result"
     >
       <ResultHeader>
         <ResultTitle>{isWinner ? "Victory!" : "Defeat!"}</ResultTitle>
-        <ResultIcon color={isWinner ? "#48bb78" : "#e53e3e"}>
+        <ResultIcon color={isWinner ? "gold" : "white"}>
           {isWinner ? <FaTrophy /> : <FaSkull />}
         </ResultIcon>
       </ResultHeader>
       <ResultContent>
         <ResultItem>
-          <ResultItemIcon><FaDollarSign /></ResultItemIcon>
-          Loot: <ResultItemValue>${combatResult.loot}</ResultItemValue>
-        </ResultItem>
-        <ResultItem>
-          <ResultItemIcon><FaClock /></ResultItemIcon>
-          Rounds: <ResultItemValue>{combatResult.rounds}</ResultItemValue>
-        </ResultItem>
-        <ResultItem>
-          <ResultItemIcon><FaSkull /></ResultItemIcon>
+          <ResultItemIcon>
+            <FaSkull />
+          </ResultItemIcon>
           <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
         </ResultItem>
+        <ResultItem>
+          <ResultItemIcon>
+            <FaDollarSign />
+          </ResultItemIcon>
+          You Stole <ResultItemValue> ${combatResult.loot}</ResultItemValue>
+        </ResultItem>
+        <ProductsGrid>
+          {Object.values(EProduct).map((productName: string) => {
+            const lootedProduct = combatResult.productLoot.find(
+              (p) => p.name === productName,
+            );
+            const quantity = lootedProduct ? lootedProduct.quantity : 0;
+            const emoji =
+              EProductIcon[productName as keyof typeof EProductIcon];
+            return (
+              <ProductItem key={productName}>
+                <ProductIcon>{emoji}</ProductIcon>
+                <ProductQuantity>{quantity}</ProductQuantity>
+              </ProductItem>
+            );
+          })}
+        </ProductsGrid>
       </ResultContent>
     </ResultContainer>
   );

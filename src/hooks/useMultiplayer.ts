@@ -1,6 +1,12 @@
 import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { IUserInfo, IUserPvp } from "../components/interfaces/user.interface";
+import { EProduct } from "../components/interfaces/product.interface";
+
+export interface Loot {
+  name: EProduct;
+  quantity: number;
+}
 
 // Add this new interface
 export interface ICombatResult {
@@ -14,6 +20,7 @@ export interface ICombatResult {
     defenderDamage: number;
   }[];
   loot: number;
+  productLoot: Loot[];
 }
 
 export function useMultiplayer(

@@ -57,12 +57,12 @@ const StyledCard = styled(motion.div)`
 
 const CardHeader = styled.div`
   background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
-  padding: 1rem;
+  padding: 0.5rem;
   border-bottom: 2px solid #4a4a4e;
 `;
 
 const CardContent = styled.div`
-  padding: 1rem;
+  padding: 0.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 `;
@@ -85,6 +85,12 @@ const UserDetails = styled.div`
   flex-grow: 1;
 `;
 
+const UsernameLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Username = styled.h3`
   font-size: 1rem;
   font-weight: bold;
@@ -93,12 +99,25 @@ const Username = styled.h3`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; // Add small gap between username and stats
 `;
 
 const UserLevel = styled.p`
   font-size: 0.8rem;
   color: #48bb78;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const CashAmount = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #ffffff;
 `;
 
 const StatRow = styled.div`
@@ -111,27 +130,21 @@ const StatItem = styled.div`
   display: flex;
   align-items: center;
   font-size: 0.8rem;
+  padding: 0.5em;
 `;
 
 const StatIcon = styled.div`
   font-size: 1rem;
   margin-right: 0.2rem;
+  gap: 0.5em;
 `;
 
 const RedIcon = styled(StatIcon)`
   color: #e53e3e; // Red color for heart (baseHP)
 `;
 
-const BlackIcon = styled(StatIcon)`
-  color: #000000; // Black color for bomb (attack)
-`;
-
 const WhiteIcon = styled(StatIcon)`
   color: #ffffff; // White color for evasion
-`;
-
-const BlueIcon = styled(StatIcon)`
-  color: #3182ce; // Blue color for protection
 `;
 
 const GoldIcon = styled(StatIcon)`
@@ -141,8 +154,8 @@ const GoldIcon = styled(StatIcon)`
 const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 0.2rem;
+  margin-top: 0.5rem;
 `;
 
 const ProductItem = styled.div`
@@ -163,38 +176,6 @@ const ProductQuantity = styled.p`
   margin: 0;
 `;
 
-const ModalList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const ModalListItem = styled.li`
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const ModalIcon = styled.span`
-  font-size: 1.2rem;
-  margin-right: 1rem;
-  color: #a0aec0;
-`;
-
-const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ModalLabel = styled.strong`
-  margin-bottom: 0.25rem;
-`;
-
-const ModalDescription = styled.p`
-  margin: 0;
-  font-size: 0.9rem;
-  color: #a0aec0;
-`;
-
 const StatsRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -204,7 +185,7 @@ const StatsRow = styled.div`
 
 const StatGroup = styled.div`
   display: flex;
-  gap: 1rem;
+  font-size: 0.8rem; // Reduce font size to match username
 `;
 
 const GreenIcon = styled(StatIcon)`
@@ -304,7 +285,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           </DamagePastil>
         )}
       </AnimatePresence>
-      
+
       <AnimatePresence>
         {damageReceived !== undefined && (
           <Overlay
@@ -327,33 +308,55 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             alt={player.username}
           />
           <UserDetails>
-            <Username title={player.username}>
-              {truncateUsername(player.username)}
-            </Username>
+            <UsernameLine>
+              <Username title={player.username}>
+                {truncateUsername(player.username)}
+                <StatGroup>
+                  <StatItem>
+                    <GoldIcon>
+                      <FaTrophy />
+                    </GoldIcon>
+                    {player.pvp.victory}
+                  </StatItem>
+                  <StatItem>
+                    <WhiteIcon>
+                      <FaSkull />
+                    </WhiteIcon>
+                    {player.pvp.defeat}
+                  </StatItem>
+                </StatGroup>
+              </Username>
+            </UsernameLine>
             <UserLevel>
               (Level {player.userLevel.level}) {player.userLevel.title}
-            </UserLevel>
-            <StatsRow>
-              <StatGroup>
-                <StatItem>
-                  <GoldIcon>
-                    <FaTrophy />
-                  </GoldIcon>
-                  {player.pvp.victory}
-                </StatItem>
-                <StatItem>
-                  <WhiteIcon>
-                    <FaSkull />
-                  </WhiteIcon>
-                  {player.pvp.defeat}
-                </StatItem>
-              </StatGroup>
-              <StatItem>
+              <CashAmount>
                 <GreenIcon>
                   <FaDollarSign />
                 </GreenIcon>
                 {player.cashAmount}
-              </StatItem>
+              </CashAmount>
+            </UserLevel>
+            <StatsRow>
+              <StatGroup>
+                <StatItem>
+                  <WhiteIcon>
+                    <FaShieldAlt />
+                  </WhiteIcon>
+                  {player.pvp.protection}%
+                </StatItem>
+                <StatItem>
+                  <WhiteIcon>
+                    <FaBomb />
+                  </WhiteIcon>
+                  {player.pvp.damage}
+                </StatItem>
+                <StatItem>
+                  <WhiteIcon>
+                    <GiDodging />
+                  </WhiteIcon>
+                  {player.pvp.evasion}%
+                </StatItem>
+              </StatGroup>
             </StatsRow>
           </UserDetails>
         </UserInfo>
@@ -369,35 +372,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         </HealthBarContainer>
       </CardHeader>
       <CardContent>
-        <StatsGrid>
-          <StatRow>
-            <StatItem>
-              <RedIcon>
-                <FaHeart />
-              </RedIcon>
-              {player.pvp.baseHp}
-            </StatItem>
-            <StatItem>
-              <WhiteIcon>
-                <FaShieldAlt />
-              </WhiteIcon>
-              {player.pvp.protection}%
-            </StatItem>
-            <StatItem>
-              <WhiteIcon>
-                <FaBomb />
-              </WhiteIcon>
-              {player.pvp.damage}
-            </StatItem>
-            <StatItem>
-              <WhiteIcon>
-                <GiDodging />
-              </WhiteIcon>
-              {player.pvp.evasion}%
-            </StatItem>
-          </StatRow>
-        </StatsGrid>
-
         <div>
           <ProductsGrid>
             {Object.values(EProduct).map((productName: string) => {

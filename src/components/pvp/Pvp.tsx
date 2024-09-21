@@ -8,17 +8,18 @@ import styled from "styled-components";
 import { PvpHeader } from "./PvpHeader";
 import { PvpControls } from "./PvpControls";
 import { PvpResult } from "./PvpResult";
-import { PvpDoors } from "./PvpDoors";
 import {
   FaBomb,
   FaBullseye,
-  FaFistRaised,
   FaHeart,
   FaShieldAlt,
   FaSkull,
   FaTrophy,
+  FaSpinner,
 } from "react-icons/fa";
 import { GiDodging } from "react-icons/gi";
+import { EProductIcon } from "../interfaces/product.interface";
+import { BsCash } from "react-icons/bs";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -54,7 +55,12 @@ interface PvpProps {
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
 }
 
-type CombatState = "idle" | "searching" | "ready" | "fighting" | "result";
+export type CombatState =
+  | "idle"
+  | "searching"
+  | "ready"
+  | "fighting"
+  | "result";
 
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const { searchPlayer, startFight, loading, error } = useMultiplayer(
@@ -77,21 +83,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const [attacksLeft, setAttacksLeft] = useState(
     userInfo.pvp?.attacksToday || 0,
   );
-  const [showDoors, setShowDoors] = useState(false);
-
-  const [doorImages, setDoorImages] = useState<{
-    top: string | null;
-    bottom: string | null;
-  }>({ top: null, bottom: null });
-
-  useEffect(() => {
-    const loadImages = async () => {
-      const topImage = await import("/assets/multi-door-top.png");
-      const bottomImage = await import("/assets/multi-door-bottom.png");
-      setDoorImages({ top: topImage.default, bottom: bottomImage.default });
-    };
-    loadImages();
-  }, []);
+  const [collectingRewards, setCollectingRewards] = useState(false);
+  const [rewardPositions, setRewardPositions] = useState<{
+    [key: string]: { x: number; y: number };
+  }>({});
 
   const userControls = useAnimation();
   const opponentControls = useAnimation();
@@ -111,11 +106,6 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
       icon: FaBullseye,
       label: "Accuracy",
       description: "Chance to hit the opponent in battle",
-    },
-    {
-      icon: FaFistRaised,
-      label: "Attacks Today",
-      description: "Number of attacks performed today",
     },
     {
       icon: FaHeart,
@@ -209,13 +199,9 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   );
 
   const handleSearch = useCallback(async () => {
-    setShowDoors(true);
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
-
-    // Animate doors closing
-    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const players = await searchPlayer();
     if (players && players.length > 0) {
@@ -229,10 +215,6 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     } else {
       setCombatState("idle");
     }
-
-    // Animate doors opening
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setShowDoors(false);
   }, [searchPlayer, resetCombatState]);
 
   const handleAttack = useCallback(async () => {
@@ -280,15 +262,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         handleAttack();
         break;
       case "result":
-        setShowDoors(true);
-        setTimeout(() => {
-          setCombatState("idle");
-          setOpponent(null);
-          resetCombatState();
-          setTimeout(() => {
-            setShowDoors(false);
-          }, 500);
-        }, 500);
+        setCombatState("idle");
+        setOpponent(null);
+        setCombatResult(null);
+        resetCombatState();
         break;
     }
   }, [combatState, handleSearch, handleAttack, resetCombatState]);
@@ -306,59 +283,129 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     console.log("Navigating to Armory");
   };
 
-  // Add a new state for total attacks
   const [totalAttacks, setTotalAttacks] = useState(
     userInfo.pvp?.attacksAvailable || 10,
-  ); // Set an initial value, adjust as needed
+  );
+
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call once to set initial size
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleCollectAndReturn = useCallback(async () => {
+    if (!combatResult) return;
+
+    setCollectingRewards(true);
+
+    const resultElement = document.querySelector('.pvp-result');
+    if (resultElement) {
+      const rect = resultElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const newRewardPositions: { [key: string]: { x: number; y: number } } = {};
+
+      combatResult.productLoot.forEach((product, index) => {
+        const angle = (index / combatResult.productLoot.length) * Math.PI * 2;
+        const radius = 100; // Adjust this value to change the spread of the starting positions
+        newRewardPositions[product.name] = { 
+          x: centerX + Math.cos(angle) * radius, 
+          y: centerY + Math.sin(angle) * radius 
+        };
+      });
+
+      // Position cash slightly below the center
+      newRewardPositions.cash = { x: centerX, y: centerY + 50 };
+
+      setRewardPositions(newRewardPositions);
+    }
+
+    // Simulate collecting rewards
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setCollectingRewards(false);
+
+    // Update user info with collected rewards
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      cashAmount: prevUserInfo.cashAmount + combatResult.loot,
+      products: prevUserInfo.products.map(product => {
+        const lootedProduct = combatResult.productLoot.find(p => p.name === product.name);
+        return lootedProduct
+          ? { ...product, quantity: product.quantity + lootedProduct.quantity }
+          : product;
+      }),
+    }));
+
+    // Return to the main menu
+    setCombatState("idle");
+    setOpponent(null);
+    setCombatResult(null);
+  }, [combatResult, setUserInfo]);
 
   return (
     <PvpContainer className="scrollable-content">
       <PvpContent>
         <AnimatePresence mode="wait">
-          {combatState === "idle" && (
-            <PvpHeader
-              attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
-              totalAttacks={totalAttacks}
-              onGetMoreAttacks={handleGetMoreAttacks}
-              onArmoryClick={handleArmoryClick}
-            />
-          )}
+          <motion.div
+            key={combatState === "fighting" ? "fighting" : combatState}
+            className={combatState !== "fighting" ? "w-full animate-slide-in-from-right-bounce" : "w-full"}
+          >
+            {combatState === "idle" && (
+              <>
+                <PvpHeader
+                  attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
+                  totalAttacks={totalAttacks}
+                  onGetMoreAttacks={handleGetMoreAttacks}
+                  onArmoryClick={handleArmoryClick}
+                />
+              </>
+            )}
 
-          {(combatState === "ready" || combatState === "fighting") &&
-            opponent && (
-              <motion.div
-                key="opponent-card"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.div animate={opponentControls}>
-                  <PlayerCard
-                    player={opponent}
-                    title="Opponent"
-                    isAttacking={combatState === "fighting"}
-                    isDefending={combatState === "fighting"}
-                    onInfoClick={() => handleInfoClick(opponent)}
-                    health={opponentHealth}
-                    maxHealth={opponent.pvp?.baseHp || 100}
-                    damageReceived={opponentDamageReceived}
-                  />
-                </motion.div>
+            {combatState === "searching" && (
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <FaSpinner className="animate-spin text-4xl text-white" />
+                <p className="text-white text-lg">Looking for Opponent...</p>
+              </div>
+            )}
+
+            {(combatState === "ready" || combatState === "fighting") && opponent && (
+              <motion.div animate={opponentControls}>
+                <PlayerCard
+                  player={opponent}
+                  title="Opponent"
+                  isAttacking={combatState === "fighting"}
+                  isDefending={combatState === "fighting"}
+                  onInfoClick={() => handleInfoClick(opponent)}
+                  health={opponentHealth}
+                  maxHealth={opponent.pvp?.baseHp || 100}
+                  damageReceived={opponentDamageReceived}
+                />
               </motion.div>
             )}
 
-          {combatState === "result" && combatResult && (
-            <PvpResult
-              combatResult={combatResult}
-              username={userInfo.username}
-            />
-          )}
+            {combatState === "result" && combatResult && (
+              <PvpResult
+                combatResult={combatResult}
+                username={userInfo.username}
+              />
+            )}
+          </motion.div>
         </AnimatePresence>
 
         <PvpControls
           combatState={combatState}
           onButtonClick={handleButtonClick}
+          onCollect={handleCollectAndReturn}
+          isWinner={combatResult?.winner === userInfo.username}
         />
 
         <motion.div animate={userControls}>
@@ -402,7 +449,86 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           )}
         </InfoModal>
 
-        <PvpDoors showDoors={showDoors} doorImages={doorImages} />
+        <AnimatePresence>
+          {collectingRewards && (
+            <>
+              {combatResult?.productLoot.map((product, index) => (
+                Array.from({ length: Math.min(product.quantity, 15) }).map((_, i) => {
+                  const delay = (i * 1000) / Math.min(product.quantity, 15);
+                  return (
+                    <motion.div
+                      key={`${product.name}-${i}`}
+                      initial={{ 
+                        opacity: 1, 
+                        x: rewardPositions[product.name]?.x, 
+                        y: rewardPositions[product.name]?.y, 
+                        scale: 1 
+                      }}
+                      animate={{ 
+                        opacity: 0, 
+                        x: windowSize.width - 50,
+                        y: 50,
+                        scale: 0.5 
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ 
+                        duration: 0.8, 
+                        delay: delay / 1000,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 10
+                      }}
+                      style={{
+                        position: 'fixed',
+                        fontSize: '2rem',
+                        color: 'white',
+                        zIndex: 1000,
+                      }}
+                    >
+                      {EProductIcon[product.name as keyof typeof EProductIcon]}
+                    </motion.div>
+                  );
+                })
+              ))}
+              {Array.from({ length: Math.min(Math.floor(combatResult?.loot ?? 0 / 10) || 0, 15) }).map((_, i) => {
+                const delay = (i * 1000) / Math.min(Math.floor(combatResult?.loot ?? 0 / 10) || 0, 15);
+                return (
+                  <motion.div
+                    key={`cash-${i}`}
+                    initial={{ 
+                      opacity: 1, 
+                      x: rewardPositions.cash?.x, 
+                      y: rewardPositions.cash?.y, 
+                      scale: 1 
+                    }}
+                    animate={{ 
+                      opacity: 0, 
+                      x: windowSize.width - 50,
+                      y: 50,
+                      scale: 0.5 
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{ 
+                      duration: 0.8, 
+                      delay: delay / 1000,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 10
+                    }}
+                    style={{
+                      position: 'fixed',
+                      fontSize: '2rem',
+                      color: '#00ff00',
+                      zIndex: 1000,
+                    }}
+                  >
+                    <BsCash />
+                  </motion.div>
+                );
+              })}
+            </>
+          )}
+        </AnimatePresence>
       </PvpContent>
     </PvpContainer>
   );

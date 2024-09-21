@@ -1,54 +1,55 @@
-import React from 'react';
-import styled from 'styled-components';
-import { NeonButton } from '../styled/cardStyled';
+import React from "react";
+import styled from "styled-components";
+import { NeonButton } from "../styled/cardStyled";
+import { CombatState } from "./Pvp";
 
-const NeonGreenButton = styled(NeonButton)`
-  border: 2px solid #32cd32;
-  box-shadow: 0 0 2px #32cd32, 0 0 6px #32cd32;
-
-  &:hover, &:active {
-    animation: greenGlow 1.5s infinite alternate, pulse 2s infinite;
-  }
-
-  @keyframes greenGlow {
-    0% {
-      box-shadow: 0 0 2px #32cd32, 0 0 4px #32cd32, 0 0 6px #32cd32,
-        0 0 8px #32cd32;
-    }
-    100% {
-      box-shadow: 0 0 8px #32cd32, 0 0 12px #32cd32, 0 0 16px #32cd32,
-        0 0 20px #32cd32;
-    }
-  }
+const ControlsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
 `;
 
 interface PvpControlsProps {
-  combatState: string;
+  combatState: CombatState;
   onButtonClick: () => void;
+  onCollect: () => void;
+  isWinner: boolean;
 }
 
-export const PvpControls: React.FC<PvpControlsProps> = ({ combatState, onButtonClick }) => {
+export const PvpControls: React.FC<PvpControlsProps> = ({
+  combatState,
+  onButtonClick,
+  onCollect,
+  isWinner,
+}) => {
   const getButtonText = () => {
     switch (combatState) {
       case "searching": return "Searching...";
       case "fighting": return "Attacking...";
       case "ready": return "Attack Opponent";
-      case "result": return "Collect & Search Again";
+      case "result": return isWinner ? "Collect & Return to Main Menu" : "Return to Main Menu";
       default: return "Search for Opponent";
     }
   };
 
-  const ButtonComponent = combatState === "result" ? NeonGreenButton : NeonButton;
+  const handleClick = () => {
+    if (combatState === "result" && isWinner) {
+      onCollect();
+    } else {
+      onButtonClick();
+    }
+  };
 
   return (
-    <div className="my-6 flex justify-center">
-      <ButtonComponent
-        onClick={onButtonClick}
+    <ControlsContainer>
+      <NeonButton
+        onClick={handleClick}
         disabled={combatState === "fighting" || combatState === "searching"}
         className={combatState === "fighting" || combatState === "searching" ? "disabled" : ""}
       >
         {getButtonText()}
-      </ButtonComponent>
-    </div>
+      </NeonButton>
+    </ControlsContainer>
   );
 };
