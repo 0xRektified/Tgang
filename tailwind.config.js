@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      rotate: {
+        '180': '180deg',
+      },
       keyframes: {
         fadeIn: {
           "0%": { opacity: 0 },
@@ -76,6 +79,9 @@ export default {
         "pulse-smooth": "pulseSmooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "subtle-bounce": "subtleBounce 2s ease-in-out infinite",
         "glowing-border": "glowingBorder 2s ease-in-out infinite",
+      },
+      transform: {
+        'flip-y': 'scaleY(-1)',
       },
     },
   },

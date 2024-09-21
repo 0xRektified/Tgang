@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { IUserInfo } from "../interfaces/user.interface";
 import { ICombatResult, useMultiplayer } from "../../hooks/useMultiplayer";
@@ -189,23 +189,18 @@ const DoorContainer = styled.div`
   pointer-events: none;
 `;
 
-const Door = styled(motion.div)`
+const Door = styled(motion.div)<{ $isBottom?: boolean }>`
   width: 100%;
   height: 50vh;
-  background-image: url('/assets/multi-door.png');
+  background-image: ${(props) =>
+    props.$isBottom
+      ? "url('/assets/multi-door-bottom.png')"
+      : "url('/assets/multi-door-top.png')"};
   background-size: cover;
   background-position: center;
   position: absolute;
+  ${(props) => (props.$isBottom ? "bottom: 0;" : "top: 0;")}
 `;
-
-const TopDoor = styled(Door)`
-  top: 0;
-`;
-
-const BottomDoor = styled(Door)`
-  bottom: 0;
-`;
-
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
@@ -231,8 +226,24 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const [opponentDamageReceived, setOpponentDamageReceived] = useState<
     number | undefined
   >(undefined);
-  const [attacksLeft, setAttacksLeft] = useState(userInfo.pvp?.attacksToday || 0);
+  const [attacksLeft, setAttacksLeft] = useState(
+    userInfo.pvp?.attacksToday || 0,
+  );
   const [showDoors, setShowDoors] = useState(false);
+
+  const [doorImages, setDoorImages] = useState<{
+    top: string | null;
+    bottom: string | null;
+  }>({ top: null, bottom: null });
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const topImage = await import("/assets/multi-door-top.png");
+      const bottomImage = await import("/assets/multi-door-bottom.png");
+      setDoorImages({ top: topImage.default, bottom: bottomImage.default });
+    };
+    loadImages();
+  }, []);
 
   const userControls = useAnimation();
   const opponentControls = useAnimation();
@@ -283,8 +294,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const resetCombatState = useCallback(() => {
     setUserDamageReceived(undefined);
     setOpponentDamageReceived(undefined);
-    setUserHealth(userInfo.pvp?.baseHp || 100);
-    setOpponentHealth(opponent?.pvp?.baseHp || 100);
+    setUserHealth(userInfo.pvp?.baseHp || 1000);
+    setOpponentHealth(opponent?.pvp?.baseHp || 1000);
   }, [userInfo.pvp?.baseHp, opponent]);
 
   const simulateCombat = useCallback(
@@ -354,10 +365,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
-    
+
     // Animate doors closing
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
@@ -370,9 +381,9 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     } else {
       setCombatState("idle");
     }
-    
+
     // Animate doors opening
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setShowDoors(false);
   }, [searchPlayer, resetCombatState]);
 
@@ -412,14 +423,21 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const handleButtonClick = useCallback(() => {
     switch (combatState) {
       case "idle":
-      case "result":
         handleSearch();
         break;
       case "ready":
         handleAttack();
         break;
+      case "result":
+        setShowDoors(true);
+        setTimeout(() => {
+          setCombatState("idle");
+          setShowDoors(false);
+          resetCombatState();
+        }, 1000); // Adjust timing as needed
+        break;
     }
-  }, [combatState, handleSearch, handleAttack]);
+  }, [combatState, handleSearch, handleAttack, resetCombatState]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -439,47 +457,62 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   return (
     <PvpContainer className="scrollable-content">
       <PvpContent>
-        <h1 className="text-3xl font-bold mb-4 text-center text-white">
-          Cartel War
-        </h1>
-        
-        <GaugeBar>
-          <GaugeFill
-            initial={{ width: "0%" }}
-            animate={{ width: `${(attacksLeft / 10) * 100}%` }}
-          />
-        </GaugeBar>
-        
-        <ButtonGroup>
-          <StyledButton onClick={handleGetMoreAttacks}>
-            <FaPlus /> Get More Attacks
-          </StyledButton>
-          <StyledButton onClick={handleArmoryClick}>
-            <FaWarehouse /> Armory
-          </StyledButton>
-        </ButtonGroup>
-
-        <div className="my-6 flex justify-center">
-          <button
-            onClick={handleSearch}
-            disabled={combatState === "fighting" || combatState === "searching"}
-            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
-              combatState === "ready"
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            {combatState === "searching"
-              ? "Searching..."
-              : combatState === "fighting"
-              ? "Attacking..."
-              : combatState === "ready"
-              ? "Attack Opponent"
-              : "Search for Opponent"}
-          </button>
-        </div>
-
         <AnimatePresence mode="wait">
+          {combatState === "idle" && (
+            <>
+              <h1 className="text-3xl font-bold mb-4 text-center text-white">
+                Cartel War
+              </h1>
+              <motion.div
+                key="gauge-and-buttons"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GaugeBar>
+                  <GaugeFill
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${(attacksLeft / 10) * 100}%` }}
+                  />
+                </GaugeBar>
+
+                <ButtonGroup>
+                  <StyledButton onClick={handleGetMoreAttacks}>
+                    <FaPlus /> Get More Attacks
+                  </StyledButton>
+                  <StyledButton onClick={handleArmoryClick}>
+                    <FaWarehouse /> Armory
+                  </StyledButton>
+                </ButtonGroup>
+              </motion.div>
+            </>
+          )}
+
+          {(combatState === "ready" || combatState === "fighting") &&
+            opponent && (
+              <motion.div
+                key="opponent-card"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div animate={opponentControls}>
+                  <PlayerCard
+                    player={opponent}
+                    title="Opponent"
+                    isAttacking={combatState === "fighting"}
+                    isDefending={combatState === "fighting"}
+                    onInfoClick={() => handleInfoClick(opponent)}
+                    health={opponentHealth}
+                    maxHealth={opponent.pvp?.baseHp || 100}
+                    damageReceived={opponentDamageReceived}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+
           {combatState === "result" && combatResult && (
             <ResultContainer
               key="result"
@@ -531,44 +564,31 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
               </ResultContent>
             </ResultContainer>
           )}
-          {(combatState === "ready" || combatState === "fighting") &&
-            opponent && (
-              <motion.div
-                key="opponent"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.div animate={opponentControls}>
-                  <PlayerCard
-                    player={opponent}
-                    title="Opponent"
-                    isAttacking={combatState === "fighting"}
-                    isDefending={combatState === "fighting"}
-                    onInfoClick={() => handleInfoClick(opponent)}
-                    health={opponentHealth}
-                    maxHealth={opponent.pvp?.baseHp || 100}
-                    damageReceived={opponentDamageReceived}
-                  />
-                </motion.div>
-              </motion.div>
-            )}
         </AnimatePresence>
 
-        <AnimatePresence>
-          {combatState === "searching" && (
-            <SpinnerContainer
-              key="spinner"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="loading loading-spinner loading-lg text-primary"></div>
-            </SpinnerContainer>
-          )}
-        </AnimatePresence>
+        <div className="my-6 flex justify-center">
+          <button
+            onClick={handleButtonClick}
+            disabled={combatState === "fighting" || combatState === "searching"}
+            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
+              combatState === "ready"
+                ? "bg-red-500 hover:bg-red-600"
+                : combatState === "result"
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {combatState === "searching"
+              ? "Searching..."
+              : combatState === "fighting"
+              ? "Attacking..."
+              : combatState === "ready"
+              ? "Attack Opponent"
+              : combatState === "result"
+              ? "Collect & Search Again"
+              : "Search for Opponent"}
+          </button>
+        </div>
 
         <motion.div animate={userControls}>
           <PlayerCard
@@ -610,21 +630,23 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
             </>
           )}
         </InfoModal>
-
         <AnimatePresence>
-          {showDoors && (
+          {showDoors && doorImages.top && doorImages.bottom && (
             <DoorContainer>
-              <TopDoor
+              <Door
                 initial={{ y: "-100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "-100%" }}
                 transition={{ duration: 0.5 }}
+                style={{ backgroundImage: `url(${doorImages.top})` }}
               />
-              <BottomDoor
+              <Door
+                $isBottom
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ duration: 0.5 }}
+                style={{ backgroundImage: `url(${doorImages.bottom})` }}
               />
             </DoorContainer>
           )}
