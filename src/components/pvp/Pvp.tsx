@@ -218,10 +218,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   }, [searchPlayer, resetCombatState]);
 
   const handleStart = useCallback(async () => {
-    if (!opponent) return;
     setCombatState("fighting");
     const result = await startFight(userInfo.id, opponent.id);
     if (result) {
+      setCombatResult(result);
       await simulateCombat(result);
       // const attacksToday = userInfo.pvp?.attacksToday ?? 0;
       // const attacksAvailable = userInfo.pvp?.attacksAvailable ?? 0;
@@ -251,11 +251,12 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
       //       : prevUserInfo.cashAmount - result.cashLoot,
       // }));
     }
-  }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo]);
+  }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo, setCombatResult]);
 
   const handleAttack = useCallback(async () => {
-    if (!opponent) return;
-    const result = await performAttack(opponent.id);
+    console.log("Attacking opponent", combatResult);
+    if (!combatResult) return;
+    const result = await performAttack(combatResult!.battleId);
     if (result) {
       await simulateCombat(result);
     }
