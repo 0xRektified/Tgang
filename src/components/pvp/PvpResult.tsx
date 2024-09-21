@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
-import { ICombatResult } from "../../hooks/useMultiplayer";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { IBattle } from "../interfaces/multiplayer.interface";
 
 const ResultContainer = styled(motion.div)`
   background-color: #2c2c2e;
@@ -83,8 +83,24 @@ const ProductQuantity = styled.p`
 `;
 
 interface PvpResultProps {
-  combatResult: ICombatResult;
+  combatResult: IBattle;
   username: string;
+}
+
+const getWinner = (combatResult: IBattle) => {
+  if (combatResult.winner === combatResult.attacker.username) {
+    return combatResult.attacker.username;
+  } else {
+    return combatResult.defender.username;
+  }
+}
+
+const getLooser = (combatResult: IBattle) => {
+  if (combatResult.winner !== combatResult.attacker.username) {
+    return combatResult.attacker.username;
+  } else {
+    return combatResult.defender.username;
+  }
 }
 
 export const PvpResult: React.FC<PvpResultProps> = ({
@@ -112,13 +128,13 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           <ResultItemIcon>
             <FaSkull />
           </ResultItemIcon>
-          <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
+          <ResultItemValue>{getLooser(combatResult)} Lost</ResultItemValue>
         </ResultItem>
         <ResultItem>
           <ResultItemIcon>
             <FaDollarSign />
           </ResultItemIcon>
-          You Stole <ResultItemValue> ${combatResult.loot}</ResultItemValue>
+          You Stole <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
         </ResultItem>
         <ProductsGrid>
           {Object.values(EProduct).map((productName: string) => {

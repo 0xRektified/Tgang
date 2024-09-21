@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { IUserInfo } from "../interfaces/user.interface";
-import { ICombatResult, useMultiplayer } from "../../hooks/useMultiplayer";
+import { useMultiplayer } from "../../hooks/useMultiplayer";
 import PlayerCard from "./PlayerCard";
 import InfoModal from "./InfoModal";
 import styled from "styled-components";
@@ -20,6 +20,7 @@ import {
 import { GiDodging } from "react-icons/gi";
 import { EProductIcon } from "../interfaces/product.interface";
 import { BsCash } from "react-icons/bs";
+import { IBattle } from "../interfaces/multiplayer.interface";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -71,8 +72,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const [combatState, setCombatState] = useState<CombatState>("idle");
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
-  const [combatResult, setCombatResult] = useState<ICombatResult | null>(null);
-  const [userHealth, setUserHealth] = useState(userInfo.pvp?.baseHp || 1000);
+  const [combatResult, setCombatResult] = useState<IBattle | null>(null);
+  const [userHealth, setUserHealth] = useState(userInfo.pvp?.healthPoints || 1000);
   const [opponentHealth, setOpponentHealth] = useState(0);
   const [userDamageReceived, setUserDamageReceived] = useState<
     number | undefined
@@ -132,15 +133,15 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const resetCombatState = useCallback(() => {
     setUserDamageReceived(undefined);
     setOpponentDamageReceived(undefined);
-    setUserHealth(userInfo.pvp?.baseHp || 1000);
-    setOpponentHealth(opponent?.pvp?.baseHp || 1000);
-  }, [userInfo.pvp?.baseHp, opponent]);
+    setUserHealth(userInfo.pvp?.healthPoints || 1000);
+    setOpponentHealth(opponent?.pvp?.healthPoints || 1000);
+  }, [userInfo.pvp?.healthPoints, opponent]);
 
   const simulateCombat = useCallback(
-    async (combatResult: ICombatResult) => {
+    async (combatResult: IBattle) => {
       if (!opponent) return;
-      let currentUserHealth = userInfo.pvp?.baseHp || 100;
-      let currentOpponentHealth = opponent.pvp?.baseHp || 100;
+      let currentUserHealth = userInfo.pvp?.healthPoints || 100;
+      let currentOpponentHealth = opponent.pvp?.healthPoints || 100;
 
       for (const round of combatResult.roundResults) {
         setOpponentDamageReceived(round.attackerDamage);
@@ -193,7 +194,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
       opponent,
       userControls,
       opponentControls,
-      userInfo.pvp?.baseHp,
+      userInfo.pvp?.healthPoints,
       resetCombatState,
     ],
   );
@@ -206,7 +207,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
-      setOpponentHealth(opponentData.pvp?.baseHp || 100);
+      setOpponentHealth(opponentData.pvp?.healthPoints || 100);
       setOpponent({
         ...opponentData,
         image: opponentData.image || "/assets/pvp/userImage.png",
@@ -234,21 +235,21 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
               ? (prevUserInfo.pvp?.victory ?? 0) + 1
               : prevUserInfo.pvp?.victory ?? 0,
           defeat:
-            result.loser === prevUserInfo.username
+            result.winner !== prevUserInfo.username
               ? (prevUserInfo.pvp?.defeat ?? 0) + 1
               : prevUserInfo.pvp?.defeat ?? 0,
           lastAttackDate: new Date(),
           attacksToday: attacksToday + 1,
           attacksAvailable: attacksAvailable - attacksToday + 1,
           lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
-          baseHp: prevUserInfo.pvp?.baseHp ?? 0,
+          healthPoints: prevUserInfo.pvp?.healthPoints ?? 0,
           damage: prevUserInfo.pvp?.damage ?? 0,
           lootPower: prevUserInfo.pvp?.lootPower ?? 0,
         },
         cashAmount:
           result.winner === prevUserInfo.username
-            ? prevUserInfo.cashAmount + result.loot
-            : prevUserInfo.cashAmount - result.loot,
+            ? prevUserInfo.cashAmount + result.cashLoot
+            : prevUserInfo.cashAmount - result.cashLoot,
       }));
     }
   }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo]);
@@ -336,7 +337,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     // Update user info with collected rewards
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
-      cashAmount: prevUserInfo.cashAmount + combatResult.loot,
+      cashAmount: prevUserInfo.cashAmount + combatResult.cashLoot,
       products: prevUserInfo.products.map(product => {
         const lootedProduct = combatResult.productLoot.find(p => p.name === product.name);
         return lootedProduct
@@ -386,7 +387,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
                   isDefending={combatState === "fighting"}
                   onInfoClick={() => handleInfoClick(opponent)}
                   health={opponentHealth}
-                  maxHealth={opponent.pvp?.baseHp || 100}
+                  maxHealth={opponent.pvp?.healthPoints || 100}
                   damageReceived={opponentDamageReceived}
                 />
               </motion.div>
@@ -416,7 +417,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
             isDefending={combatState === "fighting"}
             onInfoClick={() => handleInfoClick(userInfo)}
             health={userHealth}
-            maxHealth={userInfo.pvp?.baseHp || 100}
+            maxHealth={userInfo.pvp?.healthPoints || 100}
             damageReceived={userDamageReceived}
           />
         </motion.div>
@@ -490,8 +491,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
                   );
                 })
               ))}
-              {Array.from({ length: Math.min(Math.floor(combatResult?.loot ?? 0 / 10) || 0, 15) }).map((_, i) => {
-                const delay = (i * 1000) / Math.min(Math.floor(combatResult?.loot ?? 0 / 10) || 0, 15);
+              {Array.from({ length: Math.min(Math.floor(combatResult?.cashLoot ?? 0 / 10) || 0, 15) }).map((_, i) => {
+                const delay = (i * 1000) / Math.min(Math.floor(combatResult?.cashLoot ?? 0 / 10) || 0, 15);
                 return (
                   <motion.div
                     key={`cash-${i}`}

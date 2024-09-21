@@ -118,10 +118,11 @@ export interface IUserPvp {
   attacksToday: number;
   lastDefendDate: Date;
   attacksAvailable: number;
-  baseHp: number;
+  healthPoints: number;
   protection: number;
   damage: number;
   accuracy: number;
   evasion: number;
-  lootPower?: number;
+  lootPower: number;
+  criticalChance: number;
 }

@@ -1,27 +1,7 @@
 import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
-import { IUserInfo, IUserPvp } from "../components/interfaces/user.interface";
-import { EProduct } from "../components/interfaces/product.interface";
-
-export interface Loot {
-  name: EProduct;
-  quantity: number;
-}
-
-// Add this new interface
-export interface ICombatResult {
-  winner: string;
-  loser: string;
-  rounds: number;
-  roundResults: {
-    attackerHp: number;
-    defenderHp: number;
-    attackerDamage: number;
-    defenderDamage: number;
-  }[];
-  loot: number;
-  productLoot: Loot[];
-}
+import { IUserInfo } from "../components/interfaces/user.interface";
+import { IBattle } from "../components/interfaces/multiplayer.interface";
 
 export function useMultiplayer(
   userInfo: IUserInfo,
@@ -29,7 +9,7 @@ export function useMultiplayer(
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [combatResult, setCombatResult] = useState<ICombatResult | null>(null);
+  const [combatResult, setCombatResult] = useState<IBattle | null>(null);
 
   const searchPlayer = async () => {
     setLoading(true);
@@ -45,48 +25,48 @@ export function useMultiplayer(
     }
   };
 
+  const fetchuser = useCallback(async () => {
+    try {
+      const { data } = await axiosInstance.get<IUserInfo>(`/users`);
+      setUserInfo(data);
+    } catch (error: any) {
+      console.error("Failed to fetch user");
+    }
+  }, []);
+
+  const performAttack = async (battleId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await axiosInstance.post<IBattle>(
+        `/multiplayer/attack/${battleId}`,
+      );
+      setLoading(false);
+      setCombatResult(data);
+
+      if (data.winner) {
+        fetchuser();
+      }
+
+      return data;
+    } catch (err) {
+      setLoading(false);
+      setError("Failed to perform attack");
+      console.error(err);
+    }
+  };
+
   const startFight = useCallback(
     async (playerId: string, opponentId: string) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.post<ICombatResult>(
-          `/multiplayer/fight/${opponentId}`,
+        const response = await axiosInstance.post<IBattle>(
+          `/multiplayer/start/${opponentId}`,
         );
         setLoading(false);
         const result = response.data;
         setCombatResult(result);
-
-        setUserInfo((prevUserInfo: IUserInfo) => {
-          const isWinner = result.winner === prevUserInfo.username;
-          const updatedPvp: IUserPvp = prevUserInfo.pvp || {
-            victory: 0,
-            defeat: 0,
-            lastAttackDate: new Date(),
-            attacksToday: 0,
-            lastDefendDate: new Date(),
-            baseHp: 100,
-            protection: 0,
-            damage: 10,
-            accuracy: 50,
-            evasion: 5,
-            attacksAvailable: 0,
-          };
-
-          if (isWinner) {
-            updatedPvp.victory += 1;
-          } else {
-            updatedPvp.defeat = (updatedPvp.defeat ?? 0) + 1;
-          }
-
-          return {
-            ...prevUserInfo,
-            pvp: updatedPvp,
-            cashAmount: isWinner
-              ? prevUserInfo.cashAmount + result.loot
-              : prevUserInfo.cashAmount - result.loot,
-          };
-        });
 
         return result;
       } catch (err) {
@@ -101,6 +81,7 @@ export function useMultiplayer(
   return {
     searchPlayer,
     startFight,
+    performAttack,
     loading,
     error,
     combatResult,
