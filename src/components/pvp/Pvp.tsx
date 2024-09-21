@@ -64,7 +64,7 @@ export type CombatState =
   | "result";
 
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
-  const { searchPlayer, startFight, loading, error } = useMultiplayer(
+  const { searchPlayer, startFight, loading, error, performAttack } = useMultiplayer(
     userInfo,
     setUserInfo,
   );
@@ -140,51 +140,50 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   const simulateCombat = useCallback(
     async (combatResult: IBattle) => {
       if (!opponent) return;
-      let currentUserHealth = userInfo.pvp?.healthPoints || 100;
-      let currentOpponentHealth = opponent.pvp?.healthPoints || 100;
+      let currentUserHealth = combatResult.attacker.healthPoints || 100;
+      let currentOpponentHealth = combatResult.attacker.healthPoints || 100;
+      const round = combatResult.roundResults[combatResult.roundResults.length - 1];
 
-      for (const round of combatResult.roundResults) {
-        setOpponentDamageReceived(round.attackerDamage);
-        await userControls.start({
-          x: [0, 15, 0],
-          transition: { duration: 0.25 },
-        });
+      setOpponentDamageReceived(round.attackerDamage);
+      await userControls.start({
+        x: [0, 15, 0],
+        transition: { duration: 0.25 },
+      });
 
-        if (round.attackerDamage > 0) {
-          await opponentControls.start({
-            rotate: [0, -7, 7, 0],
-            transition: { duration: 0.25 },
-          });
-          currentOpponentHealth -= round.attackerDamage;
-          setOpponentHealth(currentOpponentHealth);
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setOpponentDamageReceived(undefined);
-
-        setUserDamageReceived(round.defenderDamage);
+      if (round.attackerDamage > 0) {
         await opponentControls.start({
-          x: [0, -15, 0],
+          rotate: [0, -7, 7, 0],
           transition: { duration: 0.25 },
         });
-
-        if (round.defenderDamage > 0) {
-          await userControls.start({
-            rotate: [0, -7, 7, 0],
-            transition: { duration: 0.25 },
-          });
-          currentUserHealth -= round.defenderDamage;
-          setUserHealth(currentUserHealth);
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setUserDamageReceived(undefined);
-
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        currentOpponentHealth -= round.attackerDamage;
+        setOpponentHealth(currentOpponentHealth);
       }
 
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setOpponentDamageReceived(undefined);
+
+      setUserDamageReceived(round.defenderDamage);
+      await opponentControls.start({
+        x: [0, -15, 0],
+        transition: { duration: 0.25 },
+      });
+
+      if (round.defenderDamage > 0) {
+        await userControls.start({
+          rotate: [0, -7, 7, 0],
+          transition: { duration: 0.25 },
+        });
+        currentUserHealth -= round.defenderDamage;
+        setUserHealth(currentUserHealth);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setUserDamageReceived(undefined);
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       setCombatResult(combatResult);
-      setCombatState("result");
+      // setCombatState("result");
 
       setTimeout(() => {
         resetCombatState();
@@ -218,48 +217,60 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     }
   }, [searchPlayer, resetCombatState]);
 
-  const handleAttack = useCallback(async () => {
+  const handleStart = useCallback(async () => {
     if (!opponent) return;
     setCombatState("fighting");
     const result = await startFight(userInfo.id, opponent.id);
     if (result) {
       await simulateCombat(result);
-      const attacksToday = userInfo.pvp?.attacksToday ?? 0;
-      const attacksAvailable = userInfo.pvp?.attacksAvailable ?? 0;
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        pvp: {
-          ...prevUserInfo.pvp!,
-          victory:
-            result.winner === prevUserInfo.username
-              ? (prevUserInfo.pvp?.victory ?? 0) + 1
-              : prevUserInfo.pvp?.victory ?? 0,
-          defeat:
-            result.winner !== prevUserInfo.username
-              ? (prevUserInfo.pvp?.defeat ?? 0) + 1
-              : prevUserInfo.pvp?.defeat ?? 0,
-          lastAttackDate: new Date(),
-          attacksToday: attacksToday + 1,
-          attacksAvailable: attacksAvailable - attacksToday + 1,
-          lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
-          healthPoints: prevUserInfo.pvp?.healthPoints ?? 0,
-          damage: prevUserInfo.pvp?.damage ?? 0,
-          lootPower: prevUserInfo.pvp?.lootPower ?? 0,
-        },
-        cashAmount:
-          result.winner === prevUserInfo.username
-            ? prevUserInfo.cashAmount + result.cashLoot
-            : prevUserInfo.cashAmount - result.cashLoot,
-      }));
+      // const attacksToday = userInfo.pvp?.attacksToday ?? 0;
+      // const attacksAvailable = userInfo.pvp?.attacksAvailable ?? 0;
+      // setUserInfo((prevUserInfo) => ({
+      //   ...prevUserInfo,
+      //   pvp: {
+      //     ...prevUserInfo.pvp!,
+      //     victory:
+      //       result.winner === prevUserInfo.username
+      //         ? (prevUserInfo.pvp?.victory ?? 0) + 1
+      //         : prevUserInfo.pvp?.victory ?? 0,
+      //     defeat:
+      //       result.winner !== prevUserInfo.username
+      //         ? (prevUserInfo.pvp?.defeat ?? 0) + 1
+      //         : prevUserInfo.pvp?.defeat ?? 0,
+      //     lastAttackDate: new Date(),
+      //     attacksToday: attacksToday + 1,
+      //     attacksAvailable: attacksAvailable - attacksToday + 1,
+      //     lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
+      //     healthPoints: prevUserInfo.pvp?.healthPoints ?? 0,
+      //     damage: prevUserInfo.pvp?.damage ?? 0,
+      //     lootPower: prevUserInfo.pvp?.lootPower ?? 0,
+      //   },
+      //   cashAmount:
+      //     result.winner === prevUserInfo.username
+      //       ? prevUserInfo.cashAmount + result.cashLoot
+      //       : prevUserInfo.cashAmount - result.cashLoot,
+      // }));
     }
   }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo]);
 
+  const handleAttack = useCallback(async () => {
+    if (!opponent) return;
+    const result = await performAttack(opponent.id);
+    if (result) {
+      await simulateCombat(result);
+    }
+  }, []);
+
   const handleButtonClick = useCallback(() => {
+    console.log("Button Clicked", combatState);
     switch (combatState) {
       case "idle":
         handleSearch();
         break;
       case "ready":
+        handleStart();
+        break;
+      case "fighting":
         handleAttack();
         break;
       case "result":
@@ -269,7 +280,7 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         resetCombatState();
         break;
     }
-  }, [combatState, handleSearch, handleAttack, resetCombatState]);
+  }, [combatState, handleSearch, handleStart, resetCombatState]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -393,12 +404,12 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
               </motion.div>
             )}
 
-            {combatState === "result" && combatResult && (
+            {/* {combatState === "result" && combatResult && (
               <PvpResult
                 combatResult={combatResult}
                 username={userInfo.username}
               />
-            )}
+            )} */}
           </motion.div>
         </AnimatePresence>
 
