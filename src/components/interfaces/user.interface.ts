@@ -117,6 +117,7 @@ export interface IUserPvp {
   lastAttackDate: Date;
   attacksToday: number;
   lastDefendDate: Date;
+  attacksAvailable: number;
   baseHp: number;
   protection: number;
   damage: number;

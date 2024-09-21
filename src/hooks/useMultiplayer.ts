@@ -43,7 +43,9 @@ export function useMultiplayer(
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.post<ICombatResult>(`/multiplayer/fight/${opponentId}`);
+        const response = await axiosInstance.post<ICombatResult>(
+          `/multiplayer/fight/${opponentId}`,
+        );
         setLoading(false);
         const result = response.data;
         setCombatResult(result);
@@ -56,11 +58,12 @@ export function useMultiplayer(
             lastAttackDate: new Date(),
             attacksToday: 0,
             lastDefendDate: new Date(),
-            baseHp: 100, // default value
-            protection: 0, // default value
-            damage: 10, // default value
-            accuracy: 50, // default value
-            evasion: 5, // default value
+            baseHp: 100,
+            protection: 0,
+            damage: 10,
+            accuracy: 50,
+            evasion: 5,
+            attacksAvailable: 0,
           };
 
           if (isWinner) {

@@ -5,21 +5,20 @@ import { ICombatResult, useMultiplayer } from "../../hooks/useMultiplayer";
 import PlayerCard from "./PlayerCard";
 import InfoModal from "./InfoModal";
 import styled from "styled-components";
+import { PvpHeader } from "./PvpHeader";
+import { PvpControls } from "./PvpControls";
+import { PvpResult } from "./PvpResult";
+import { PvpDoors } from "./PvpDoors";
 import {
-  FaTrophy,
-  FaSkull,
+  FaBomb,
   FaBullseye,
   FaFistRaised,
   FaHeart,
-  FaBomb,
   FaShieldAlt,
-  FaDollarSign,
-  FaClock,
-  FaPlus,
-  FaWarehouse,
+  FaSkull,
+  FaTrophy,
 } from "react-icons/fa";
-import { GiDodging, GiPunchBlast } from "react-icons/gi";
-import { SocialChannel } from "../interfaces/social.interface";
+import { GiDodging } from "react-icons/gi";
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -50,157 +49,6 @@ const PvpContent = styled.div`
   flex-direction: column;
 `;
 
-const ResultContainer = styled(motion.div)`
-  background-color: #2c2c2e;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  color: #ffffff;
-  width: 100%;
-  max-width: 600px;
-`;
-
-const ResultHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #4a4a4e;
-`;
-
-const ResultTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
-`;
-
-const ResultIcon = styled.div`
-  font-size: 2rem;
-  color: ${(props) => props.color};
-`;
-
-const ResultContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
-`;
-
-const ResultItem = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-`;
-
-const ResultItemIcon = styled.div`
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-  color: #a0aec0;
-`;
-
-const ResultItemValue = styled.span`
-  font-weight: bold;
-`;
-
-const ExplosionAnimation = styled(motion.div)`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 3rem;
-  color: #ff9900;
-  text-shadow: 0 0 10px #ff9900;
-`;
-
-const AttackButton = styled.button`
-  background-color: #ff4136;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ff1a1a;
-  }
-
-  &:disabled {
-    background-color: #999;
-    cursor: not-allowed;
-  }
-`;
-
-const SpinnerContainer = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const GaugeBar = styled.div`
-  width: 100%;
-  height: 30px;
-  background-color: #2c2c2e;
-  border-radius: 15px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-`;
-
-const GaugeFill = styled(motion.div)`
-  height: 100%;
-  background-color: #4a90e2;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const StyledButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #4a90e2;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  &:hover {
-    background-color: #357abd;
-  }
-`;
-
-const DoorContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  pointer-events: none;
-`;
-
-const Door = styled(motion.div)<{ $isBottom?: boolean }>`
-  width: 100%;
-  height: 50vh;
-  background-image: ${(props) =>
-    props.$isBottom
-      ? "url('/assets/multi-door-bottom.png')"
-      : "url('/assets/multi-door-top.png')"};
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  ${(props) => (props.$isBottom ? "bottom: 0;" : "top: 0;")}
-`;
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
@@ -393,6 +241,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     const result = await startFight(userInfo.id, opponent.id);
     if (result) {
       await simulateCombat(result);
+      const attacksToday = userInfo.pvp?.attacksToday ?? 0;
+      const attacksAvailable = userInfo.pvp?.attacksAvailable ?? 0;
       setUserInfo((prevUserInfo) => ({
         ...prevUserInfo,
         pvp: {
@@ -406,7 +256,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
               ? (prevUserInfo.pvp?.defeat ?? 0) + 1
               : prevUserInfo.pvp?.defeat ?? 0,
           lastAttackDate: new Date(),
-          attacksToday: (prevUserInfo.pvp?.attacksToday ?? 0) + 1,
+          attacksToday: attacksToday + 1,
+          attacksAvailable: attacksAvailable - attacksToday + 1,
           lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
           baseHp: prevUserInfo.pvp?.baseHp ?? 0,
           damage: prevUserInfo.pvp?.damage ?? 0,
@@ -455,39 +306,22 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     console.log("Navigating to Armory");
   };
 
+  // Add a new state for total attacks
+  const [totalAttacks, setTotalAttacks] = useState(
+    userInfo.pvp?.attacksAvailable || 10,
+  ); // Set an initial value, adjust as needed
+
   return (
     <PvpContainer className="scrollable-content">
       <PvpContent>
         <AnimatePresence mode="wait">
           {combatState === "idle" && (
-            <>
-              <h1 className="text-3xl font-bold mb-4 text-center text-white">
-                Cartel War
-              </h1>
-              <motion.div
-                key="gauge-and-buttons"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <GaugeBar>
-                  <GaugeFill
-                    initial={{ width: "0%" }}
-                    animate={{ width: `${(attacksLeft / 10) * 100}%` }}
-                  />
-                </GaugeBar>
-
-                <ButtonGroup>
-                  <StyledButton onClick={handleGetMoreAttacks}>
-                    <FaPlus /> Get More Attacks
-                  </StyledButton>
-                  <StyledButton onClick={handleArmoryClick}>
-                    <FaWarehouse /> Armory
-                  </StyledButton>
-                </ButtonGroup>
-              </motion.div>
-            </>
+            <PvpHeader
+              attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
+              totalAttacks={totalAttacks}
+              onGetMoreAttacks={handleGetMoreAttacks}
+              onArmoryClick={handleArmoryClick}
+            />
           )}
 
           {(combatState === "ready" || combatState === "fighting") &&
@@ -515,81 +349,17 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
             )}
 
           {combatState === "result" && combatResult && (
-            <ResultContainer
-              key="result"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ResultHeader>
-                <ResultTitle>
-                  {combatResult.winner === userInfo.username
-                    ? "Victory!"
-                    : "Defeat!"}
-                </ResultTitle>
-                <ResultIcon
-                  color={
-                    combatResult.winner === userInfo.username
-                      ? "#48bb78"
-                      : "#e53e3e"
-                  }
-                >
-                  {combatResult.winner === userInfo.username ? (
-                    <FaTrophy />
-                  ) : (
-                    <FaSkull />
-                  )}
-                </ResultIcon>
-              </ResultHeader>
-              <ResultContent>
-                <ResultItem>
-                  <ResultItemIcon>
-                    <FaDollarSign />
-                  </ResultItemIcon>
-                  Loot: <ResultItemValue>${combatResult.loot}</ResultItemValue>
-                </ResultItem>
-                <ResultItem>
-                  <ResultItemIcon>
-                    <FaClock />
-                  </ResultItemIcon>
-                  Rounds:{" "}
-                  <ResultItemValue>{combatResult.rounds}</ResultItemValue>
-                </ResultItem>
-                <ResultItem>
-                  <ResultItemIcon>
-                    <FaSkull />
-                  </ResultItemIcon>
-                  <ResultItemValue>{combatResult.loser} Lost</ResultItemValue>
-                </ResultItem>
-              </ResultContent>
-            </ResultContainer>
+            <PvpResult
+              combatResult={combatResult}
+              username={userInfo.username}
+            />
           )}
         </AnimatePresence>
 
-        <div className="my-6 flex justify-center">
-          <button
-            onClick={handleButtonClick}
-            disabled={combatState === "fighting" || combatState === "searching"}
-            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
-              combatState === "ready"
-                ? "bg-red-500 hover:bg-red-600"
-                : combatState === "result"
-                ? "bg-green-500 hover:bg-green-600"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            {combatState === "searching"
-              ? "Searching..."
-              : combatState === "fighting"
-              ? "Attacking..."
-              : combatState === "ready"
-              ? "Attack Opponent"
-              : combatState === "result"
-              ? "Collect & Search Again"
-              : "Search for Opponent"}
-          </button>
-        </div>
+        <PvpControls
+          combatState={combatState}
+          onButtonClick={handleButtonClick}
+        />
 
         <motion.div animate={userControls}>
           <PlayerCard
@@ -631,27 +401,8 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
             </>
           )}
         </InfoModal>
-        <AnimatePresence>
-          {showDoors && doorImages.top && doorImages.bottom && (
-            <DoorContainer>
-              <Door
-                initial={{ y: "-100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "-100%" }}
-                transition={{ duration: 0.5 }}
-                style={{ backgroundImage: `url(${doorImages.top})` }}
-              />
-              <Door
-                $isBottom
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ duration: 0.5 }}
-                style={{ backgroundImage: `url(${doorImages.bottom})` }}
-              />
-            </DoorContainer>
-          )}
-        </AnimatePresence>
+
+        <PvpDoors showDoors={showDoors} doorImages={doorImages} />
       </PvpContent>
     </PvpContainer>
   );
