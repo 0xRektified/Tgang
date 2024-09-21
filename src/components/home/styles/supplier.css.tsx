@@ -125,7 +125,6 @@ export const ScrollableTableContainer = styled.div`
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
-  background-color: #1a202c;
   margin-bottom: 0.2rem;
 
   &::-webkit-scrollbar {
