@@ -2,13 +2,27 @@ import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { IUserInfo, IUserPvp } from "../components/interfaces/user.interface";
 
+// Add this new interface
+export interface ICombatResult {
+  winner: string;
+  loser: string;
+  rounds: number;
+  roundResults: {
+    attackerHp: number;
+    defenderHp: number;
+    attackerDamage: number;
+    defenderDamage: number;
+  }[];
+  loot: number;
+}
+
 export function useMultiplayer(
   userInfo: IUserInfo,
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void,
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [combatResult, setCombatResult] = useState<any>(null);
+  const [combatResult, setCombatResult] = useState<ICombatResult | null>(null);
 
   const searchPlayer = async () => {
     setLoading(true);
@@ -29,7 +43,7 @@ export function useMultiplayer(
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.post(`/multiplayer/fight/${opponentId}`);
+        const response = await axiosInstance.post<ICombatResult>(`/multiplayer/fight/${opponentId}`);
         setLoading(false);
         const result = response.data;
         setCombatResult(result);

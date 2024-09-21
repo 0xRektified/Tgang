@@ -10,6 +10,8 @@ export const TopMenuContainer = styled.div`
   font-family: "Digital", sans-serif;
   border: 1px solid #333;
   touch-action: none;
+  position: relative;
+  z-index: 1000;
 `;
 
 export const Container = styled.div`

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useCallback } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { IUserInfo } from "../interfaces/user.interface";
-import { useMultiplayer } from "../../hooks/useMultiplayer";
+import { ICombatResult, useMultiplayer } from "../../hooks/useMultiplayer";
 import PlayerCard from "./PlayerCard";
 import InfoModal from "./InfoModal";
 import styled from "styled-components";
@@ -15,6 +15,8 @@ import {
   FaShieldAlt,
   FaDollarSign,
   FaClock,
+  FaPlus,
+  FaWarehouse,
 } from "react-icons/fa";
 import { GiDodging, GiPunchBlast } from "react-icons/gi";
 import { SocialChannel } from "../interfaces/social.interface";
@@ -137,6 +139,73 @@ const SpinnerContainer = styled(motion.div)`
   margin-bottom: 1rem;
 `;
 
+const GaugeBar = styled.div`
+  width: 100%;
+  height: 30px;
+  background-color: #2c2c2e;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+`;
+
+const GaugeFill = styled(motion.div)`
+  height: 100%;
+  background-color: #4a90e2;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const StyledButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: #357abd;
+  }
+`;
+
+const DoorContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  pointer-events: none;
+`;
+
+const Door = styled(motion.div)`
+  width: 100%;
+  height: 50vh;
+  background-image: url('/assets/multi-door.png');
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+`;
+
+const TopDoor = styled(Door)`
+  top: 0;
+`;
+
+const BottomDoor = styled(Door)`
+  bottom: 0;
+`;
+
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
@@ -145,19 +214,28 @@ interface PvpProps {
 type CombatState = "idle" | "searching" | "ready" | "fighting" | "result";
 
 export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
-  const {
-    searchPlayer,
-    startFight,
-    loading,
-    error,
-    combatResult,
-    setCombatResult,
-  } = useMultiplayer(userInfo, setUserInfo);
-  const [showEnableModal, setShowEnableModal] = useState(false);
+  const { searchPlayer, startFight, loading, error } = useMultiplayer(
+    userInfo,
+    setUserInfo,
+  );
   const [opponent, setOpponent] = useState<any>(null);
   const [combatState, setCombatState] = useState<CombatState>("idle");
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [combatResult, setCombatResult] = useState<ICombatResult | null>(null);
+  const [userHealth, setUserHealth] = useState(userInfo.pvp?.baseHp || 1000);
+  const [opponentHealth, setOpponentHealth] = useState(0);
+  const [userDamageReceived, setUserDamageReceived] = useState<
+    number | undefined
+  >(undefined);
+  const [opponentDamageReceived, setOpponentDamageReceived] = useState<
+    number | undefined
+  >(undefined);
+  const [attacksLeft, setAttacksLeft] = useState(userInfo.pvp?.attacksToday || 0);
+  const [showDoors, setShowDoors] = useState(false);
+
+  const userControls = useAnimation();
+  const opponentControls = useAnimation();
 
   const statIcons = [
     {
@@ -202,45 +280,134 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     },
   ];
 
-  useEffect(() => {
-    const social = userInfo.socials?.find((s) => s.channel === SocialChannel.TELEGRAM_CHANNEL);
-    if (!social?.member) {
-      setShowEnableModal(true);
-    }
-  }, [userInfo]);
+  const resetCombatState = useCallback(() => {
+    setUserDamageReceived(undefined);
+    setOpponentDamageReceived(undefined);
+    setUserHealth(userInfo.pvp?.baseHp || 100);
+    setOpponentHealth(opponent?.pvp?.baseHp || 100);
+  }, [userInfo.pvp?.baseHp, opponent]);
 
-  const handleEnablePvp = async () => {
-    // await enablePvp();
-    setShowEnableModal(false);
-  };
+  const simulateCombat = useCallback(
+    async (combatResult: ICombatResult) => {
+      if (!opponent) return;
+      let currentUserHealth = userInfo.pvp?.baseHp || 100;
+      let currentOpponentHealth = opponent.pvp?.baseHp || 100;
+
+      for (const round of combatResult.roundResults) {
+        setOpponentDamageReceived(round.attackerDamage);
+        await userControls.start({
+          x: [0, 15, 0],
+          transition: { duration: 0.25 },
+        });
+
+        if (round.attackerDamage > 0) {
+          await opponentControls.start({
+            rotate: [0, -7, 7, 0],
+            transition: { duration: 0.25 },
+          });
+          currentOpponentHealth -= round.attackerDamage;
+          setOpponentHealth(currentOpponentHealth);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setOpponentDamageReceived(undefined);
+
+        setUserDamageReceived(round.defenderDamage);
+        await opponentControls.start({
+          x: [0, -15, 0],
+          transition: { duration: 0.25 },
+        });
+
+        if (round.defenderDamage > 0) {
+          await userControls.start({
+            rotate: [0, -7, 7, 0],
+            transition: { duration: 0.25 },
+          });
+          currentUserHealth -= round.defenderDamage;
+          setUserHealth(currentUserHealth);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setUserDamageReceived(undefined);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+
+      setCombatResult(combatResult);
+      setCombatState("result");
+
+      setTimeout(() => {
+        resetCombatState();
+      }, 1000);
+    },
+    [
+      opponent,
+      userControls,
+      opponentControls,
+      userInfo.pvp?.baseHp,
+      resetCombatState,
+    ],
+  );
 
   const handleSearch = useCallback(async () => {
+    setShowDoors(true);
     setCombatState("searching");
-    setCombatResult(null);
     setOpponent(null);
+    resetCombatState();
+    
+    // Animate doors closing
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
+      setOpponentHealth(opponentData.pvp?.baseHp || 100);
       setOpponent({
         ...opponentData,
-        health: opponentData.maxHealth || 1000,
-        maxHealth: opponentData.maxHealth || 1000,
         image: opponentData.image || "/assets/pvp/userImage.png",
       });
       setCombatState("ready");
     } else {
       setCombatState("idle");
     }
-  }, [searchPlayer, setCombatResult]);
+    
+    // Animate doors opening
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setShowDoors(false);
+  }, [searchPlayer, resetCombatState]);
 
   const handleAttack = useCallback(async () => {
     if (!opponent) return;
     setCombatState("fighting");
-    await startFight(userInfo.id, opponent.id);
-    setTimeout(() => {
-      setCombatState("result");
-    }, 2000); // Adjust this timing as needed
-  }, [opponent, startFight, userInfo.id]);
+    const result = await startFight(userInfo.id, opponent.id);
+    if (result) {
+      await simulateCombat(result);
+      setUserInfo((prevUserInfo) => ({
+        ...prevUserInfo,
+        pvp: {
+          ...prevUserInfo.pvp!,
+          victory:
+            result.winner === prevUserInfo.username
+              ? (prevUserInfo.pvp?.victory ?? 0) + 1
+              : prevUserInfo.pvp?.victory ?? 0,
+          defeat:
+            result.loser === prevUserInfo.username
+              ? (prevUserInfo.pvp?.defeat ?? 0) + 1
+              : prevUserInfo.pvp?.defeat ?? 0,
+          lastAttackDate: new Date(),
+          attacksToday: (prevUserInfo.pvp?.attacksToday ?? 0) + 1,
+          lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
+          baseHp: prevUserInfo.pvp?.baseHp ?? 0,
+          damage: prevUserInfo.pvp?.damage ?? 0,
+          lootPower: prevUserInfo.pvp?.lootPower ?? 0,
+        },
+        cashAmount:
+          result.winner === prevUserInfo.username
+            ? prevUserInfo.cashAmount + result.loot
+            : prevUserInfo.cashAmount - result.loot,
+      }));
+    }
+  }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo]);
 
   const handleButtonClick = useCallback(() => {
     switch (combatState) {
@@ -259,12 +426,59 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     setIsInfoModalOpen(true);
   }, []);
 
+  const handleGetMoreAttacks = () => {
+    // Implement logic to get more attacks
+    console.log("Getting more attacks");
+  };
+
+  const handleArmoryClick = () => {
+    // Implement navigation to Armory view
+    console.log("Navigating to Armory");
+  };
+
   return (
     <PvpContainer className="scrollable-content">
       <PvpContent>
-        <h1 className="text-3xl font-bold mb-1 text-center text-white">
+        <h1 className="text-3xl font-bold mb-4 text-center text-white">
           Cartel War
         </h1>
+        
+        <GaugeBar>
+          <GaugeFill
+            initial={{ width: "0%" }}
+            animate={{ width: `${(attacksLeft / 10) * 100}%` }}
+          />
+        </GaugeBar>
+        
+        <ButtonGroup>
+          <StyledButton onClick={handleGetMoreAttacks}>
+            <FaPlus /> Get More Attacks
+          </StyledButton>
+          <StyledButton onClick={handleArmoryClick}>
+            <FaWarehouse /> Armory
+          </StyledButton>
+        </ButtonGroup>
+
+        <div className="my-6 flex justify-center">
+          <button
+            onClick={handleSearch}
+            disabled={combatState === "fighting" || combatState === "searching"}
+            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
+              combatState === "ready"
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {combatState === "searching"
+              ? "Searching..."
+              : combatState === "fighting"
+              ? "Attacking..."
+              : combatState === "ready"
+              ? "Attack Opponent"
+              : "Search for Opponent"}
+          </button>
+        </div>
+
         <AnimatePresence mode="wait">
           {combatState === "result" && combatResult && (
             <ResultContainer
@@ -326,13 +540,18 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <PlayerCard
-                  player={opponent}
-                  title="Opponent"
-                  isAttacking={combatState === "fighting"}
-                  isDefending={combatState === "fighting"}
-                  onInfoClick={() => handleInfoClick(opponent)}
-                />
+                <motion.div animate={opponentControls}>
+                  <PlayerCard
+                    player={opponent}
+                    title="Opponent"
+                    isAttacking={combatState === "fighting"}
+                    isDefending={combatState === "fighting"}
+                    onInfoClick={() => handleInfoClick(opponent)}
+                    health={opponentHealth}
+                    maxHealth={opponent.pvp?.baseHp || 100}
+                    damageReceived={opponentDamageReceived}
+                  />
+                </motion.div>
               </motion.div>
             )}
         </AnimatePresence>
@@ -351,69 +570,18 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
           )}
         </AnimatePresence>
 
-        <div className="my-6 flex justify-center">
-          <button
-            onClick={handleButtonClick}
-            disabled={combatState === "fighting" || combatState === "searching"}
-            className={`px-6 py-3 rounded-full font-bold text-white transition-all duration-300 transform hover:scale-105 ${
-              combatState === "ready"
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            {combatState === "searching"
-              ? "Searching..."
-              : combatState === "fighting"
-              ? "Attacking..."
-              : combatState === "ready"
-              ? "Attack Opponent"
-              : "Search for Opponent"}
-          </button>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <motion.div animate={userControls}>
           <PlayerCard
             player={userInfo}
             title="You"
             isAttacking={combatState === "fighting"}
             isDefending={combatState === "fighting"}
             onInfoClick={() => handleInfoClick(userInfo)}
+            health={userHealth}
+            maxHealth={userInfo.pvp?.baseHp || 100}
+            damageReceived={userDamageReceived}
           />
         </motion.div>
-
-        {showEnableModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="bg-white rounded-lg p-8 max-w-md w-full"
-            >
-              <h3 className="font-bold text-2xl mb-4">Enable PvP</h3>
-              <p className="text-gray-600 mb-6">
-                Do you want to enable PvP mode and enter the arena?
-              </p>
-              <div className="flex justify-end space-x-4">
-                <button
-                  onClick={() => setShowEnableModal(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleEnablePvp}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                >
-                  Enable PvP
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
 
         <InfoModal
           isOpen={isInfoModalOpen}
@@ -442,6 +610,25 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
             </>
           )}
         </InfoModal>
+
+        <AnimatePresence>
+          {showDoors && (
+            <DoorContainer>
+              <TopDoor
+                initial={{ y: "-100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "-100%" }}
+                transition={{ duration: 0.5 }}
+              />
+              <BottomDoor
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </DoorContainer>
+          )}
+        </AnimatePresence>
       </PvpContent>
     </PvpContainer>
   );
