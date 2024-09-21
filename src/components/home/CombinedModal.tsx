@@ -71,7 +71,6 @@ export const CombinedModal: React.FC<ModalProps> = ({
   }, [selectedProduct, quantity, userInfo.cashAmount]);
 
   const handleBuy = async () => {
-    console.log("handleBuy", totalCost, userInfo.cashAmount);
     if (totalCost > userInfo.cashAmount) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
