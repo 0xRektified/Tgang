@@ -432,9 +432,12 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
         setShowDoors(true);
         setTimeout(() => {
           setCombatState("idle");
-          setShowDoors(false);
+          setOpponent(null);
           resetCombatState();
-        }, 1000); // Adjust timing as needed
+          setTimeout(() => {
+            setShowDoors(false);
+          }, 500);
+        }, 500);
         break;
     }
   }, [combatState, handleSearch, handleAttack, resetCombatState]);
@@ -445,12 +448,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   }, []);
 
   const handleGetMoreAttacks = () => {
-    // Implement logic to get more attacks
     console.log("Getting more attacks");
   };
 
   const handleArmoryClick = () => {
-    // Implement navigation to Armory view
     console.log("Navigating to Armory");
   };
 
