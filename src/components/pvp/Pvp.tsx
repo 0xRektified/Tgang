@@ -8,19 +8,21 @@ import styled from "styled-components";
 import { PvpHeader } from "./PvpHeader";
 import { PvpControls } from "./PvpControls";
 import { PvpResult } from "./PvpResult";
-import {
-  FaBomb,
-  FaBullseye,
-  FaHeart,
-  FaShieldAlt,
-  FaSkull,
-  FaTrophy,
-  FaSpinner,
-} from "react-icons/fa";
-import { GiDodging } from "react-icons/gi";
-import { EProductIcon } from "../interfaces/product.interface";
-import { BsCash } from "react-icons/bs";
+import { FaSpinner } from "react-icons/fa";
 import { IBattle } from "../interfaces/multiplayer.interface";
+import PvpModal from "./PvpModal";
+import WebApp from "@twa-dev/sdk";
+import { useVerifySocial } from "../../hooks/useVerifySocial";
+import { useJoinSocial } from "../../hooks/useJoinSocial";
+import { SocialChannel, SocialData } from "../interfaces/social.interface";
+import { statIcons } from "./Pvp.constant";
+import PvpCollectReward from "./PvpCollectReward";
+import { ApiToast } from "../ApiToast";
+
+const PvpWrapper = styled.div`
+  position: relative;
+  height: 100%;
+`;
 
 const PvpContainer = styled.div`
   background-color: #000000;
@@ -54,6 +56,7 @@ const PvpContent = styled.div`
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
+  socials: Record<SocialChannel, SocialData>;
 }
 
 export type CombatState =
@@ -63,17 +66,39 @@ export type CombatState =
   | "fighting"
   | "result";
 
-export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
-  const { searchPlayer, startFight, loading, error, performAttack } = useMultiplayer(
-    userInfo,
-    setUserInfo,
-  );
+export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
+  const {
+    searchPlayer,
+    startFight,
+    loading: multiplayerLoading,
+    error: multiplayerError,
+    errorCode,
+    performAttack,
+    successMessage: multiplayerSuccessMessage,
+  } = useMultiplayer(userInfo, setUserInfo);
+
+  const {
+    verifySocial,
+    loading: verifyLoading,
+    error: verifyError,
+    successMessage: verifySuccessMessage,
+  } = useVerifySocial();
+
+  const {
+    joinSocial,
+    loading: joinLoading,
+    error: joinError,
+    successMessage: joinSuccessMessage,
+  } = useJoinSocial();
+
   const [opponent, setOpponent] = useState<any>(null);
   const [combatState, setCombatState] = useState<CombatState>("idle");
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [combatResult, setCombatResult] = useState<IBattle | null>(null);
-  const [userHealth, setUserHealth] = useState(userInfo.pvp?.healthPoints || 1000);
+  const [userHealth, setUserHealth] = useState(
+    userInfo.pvp?.healthPoints || 1000,
+  );
   const [opponentHealth, setOpponentHealth] = useState(0);
   const [userDamageReceived, setUserDamageReceived] = useState<
     number | undefined
@@ -85,50 +110,29 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     userInfo.pvp?.attacksToday || 0,
   );
   const [collectingRewards, setCollectingRewards] = useState(false);
-  const [rewardPositions, setRewardPositions] = useState<{
-    [key: string]: { x: number; y: number };
-  }>({});
+  const [isChannelModalOpen, setIsChannelModalOpen] = useState(false);
 
   const userControls = useAnimation();
   const opponentControls = useAnimation();
 
-  const statIcons = [
-    {
-      icon: FaTrophy,
-      label: "Victories",
-      description: "Total number of PvP battles won",
-    },
-    {
-      icon: FaSkull,
-      label: "Defeats",
-      description: "Total number of PvP battles lost",
-    },
-    {
-      icon: FaBullseye,
-      label: "Accuracy",
-      description: "Chance to hit the opponent in battle",
-    },
-    {
-      icon: FaHeart,
-      label: "Base HP",
-      description: "Base health points of the character",
-    },
-    {
-      icon: FaBomb,
-      label: "Damage",
-      description: "Amount of damage dealt in battles",
-    },
-    {
-      icon: GiDodging,
-      label: "Evasion",
-      description: "Chance to dodge enemy attacks",
-    },
-    {
-      icon: FaShieldAlt,
-      label: "Protection",
-      description: "Percentage of damage reduction",
-    },
-  ];
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call once to set initial size
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (errorCode === 412) {
+      setIsChannelModalOpen(true);
+    }
+  }, [errorCode]);
 
   const resetCombatState = useCallback(() => {
     setUserDamageReceived(undefined);
@@ -139,10 +143,15 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
 
   const simulateCombat = useCallback(
     async (combatResult: IBattle) => {
+      console.log(`combatResult`);
+      console.log(combatResult);
+      console.log(`opponent`);
+      console.log(opponent);
       if (!opponent) return;
       let currentUserHealth = combatResult.attacker.healthPoints || 100;
       let currentOpponentHealth = combatResult.attacker.healthPoints || 100;
-      const round = combatResult.roundResults[combatResult.roundResults.length - 1];
+      const round =
+        combatResult.roundResults[combatResult.roundResults.length - 1];
 
       setOpponentDamageReceived(round.attackerDamage);
       await userControls.start({
@@ -206,10 +215,12 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
+      console.log(`opponentData`);
+      console.log(opponentData);
       setOpponentHealth(opponentData.pvp?.healthPoints || 100);
       setOpponent({
         ...opponentData,
-        image: opponentData.image || "/assets/pvp/userImage.png",
+        image: "/assets/pvp/userImage.png",
       });
       setCombatState("ready");
     } else {
@@ -218,40 +229,13 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
   }, [searchPlayer, resetCombatState]);
 
   const handleStart = useCallback(async () => {
-    setCombatState("fighting");
     const result = await startFight(userInfo.id, opponent.id);
     if (result) {
+      setCombatState("fighting");
       setCombatResult(result);
       await simulateCombat(result);
-      // const attacksToday = userInfo.pvp?.attacksToday ?? 0;
-      // const attacksAvailable = userInfo.pvp?.attacksAvailable ?? 0;
-      // setUserInfo((prevUserInfo) => ({
-      //   ...prevUserInfo,
-      //   pvp: {
-      //     ...prevUserInfo.pvp!,
-      //     victory:
-      //       result.winner === prevUserInfo.username
-      //         ? (prevUserInfo.pvp?.victory ?? 0) + 1
-      //         : prevUserInfo.pvp?.victory ?? 0,
-      //     defeat:
-      //       result.winner !== prevUserInfo.username
-      //         ? (prevUserInfo.pvp?.defeat ?? 0) + 1
-      //         : prevUserInfo.pvp?.defeat ?? 0,
-      //     lastAttackDate: new Date(),
-      //     attacksToday: attacksToday + 1,
-      //     attacksAvailable: attacksAvailable - attacksToday + 1,
-      //     lastDefendDate: prevUserInfo.pvp?.lastDefendDate ?? new Date(),
-      //     healthPoints: prevUserInfo.pvp?.healthPoints ?? 0,
-      //     damage: prevUserInfo.pvp?.damage ?? 0,
-      //     lootPower: prevUserInfo.pvp?.lootPower ?? 0,
-      //   },
-      //   cashAmount:
-      //     result.winner === prevUserInfo.username
-      //       ? prevUserInfo.cashAmount + result.cashLoot
-      //       : prevUserInfo.cashAmount - result.cashLoot,
-      // }));
     }
-  }, [opponent, startFight, userInfo.id, simulateCombat, setUserInfo, setCombatResult]);
+  }, [opponent, startFight, userInfo.id, simulateCombat]);
 
   const handleAttack = useCallback(async () => {
     console.log("Attacking opponent", combatResult);
@@ -300,49 +284,13 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     userInfo.pvp?.attacksAvailable || 10,
   );
 
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    }
-    
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Call once to set initial size
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const handleCollectAndReturn = useCallback(async () => {
     if (!combatResult) return;
 
     setCollectingRewards(true);
 
-    const resultElement = document.querySelector('.pvp-result');
-    if (resultElement) {
-      const rect = resultElement.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const newRewardPositions: { [key: string]: { x: number; y: number } } = {};
-
-      combatResult.productLoot.forEach((product, index) => {
-        const angle = (index / combatResult.productLoot.length) * Math.PI * 2;
-        const radius = 100; // Adjust this value to change the spread of the starting positions
-        newRewardPositions[product.name] = { 
-          x: centerX + Math.cos(angle) * radius, 
-          y: centerY + Math.sin(angle) * radius 
-        };
-      });
-
-      // Position cash slightly below the center
-      newRewardPositions.cash = { x: centerX, y: centerY + 50 };
-
-      setRewardPositions(newRewardPositions);
-    }
-
     // Simulate collecting rewards
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     setCollectingRewards(false);
 
@@ -350,8 +298,10 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
       cashAmount: prevUserInfo.cashAmount + combatResult.cashLoot,
-      products: prevUserInfo.products.map(product => {
-        const lootedProduct = combatResult.productLoot.find(p => p.name === product.name);
+      products: prevUserInfo.products.map((product) => {
+        const lootedProduct = combatResult.productLoot.find(
+          (p) => p.name === product.name,
+        );
         return lootedProduct
           ? { ...product, quantity: product.quantity + lootedProduct.quantity }
           : product;
@@ -364,185 +314,157 @@ export default function Pvp({ userInfo, setUserInfo }: PvpProps) {
     setCombatResult(null);
   }, [combatResult, setUserInfo]);
 
+  const handleJoinChannel = useCallback(() => {
+    const telegramChannel = socials[SocialChannel.TELEGRAM_CHANNEL];
+    console.log(`telegramChannel`);
+    console.log(telegramChannel);
+    if (telegramChannel) {
+      WebApp.openTelegramLink(telegramChannel.url);
+      joinSocial(SocialChannel.TELEGRAM_CHANNEL, setIsChannelModalOpen);
+    } else {
+      console.error("Telegram channel not found in socials data");
+    }
+  }, [joinSocial, socials]);
+
+  const handleVerifyChannel = useCallback(() => {
+    verifySocial(SocialChannel.TELEGRAM_CHANNEL, setUserInfo);
+    setIsChannelModalOpen(false);
+  }, [verifySocial, setUserInfo]);
+
+  const loading = multiplayerLoading || verifyLoading || joinLoading;
+  const error = multiplayerError || verifyError || joinError;
+  const successMessage =
+    multiplayerSuccessMessage || verifySuccessMessage || joinSuccessMessage;
+  console.log(`error`);
+  console.log(error);
+  console.log(`successMessage`);
+  console.log(successMessage);
   return (
-    <PvpContainer className="scrollable-content">
-      <PvpContent>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={combatState === "fighting" ? "fighting" : combatState}
-            className={combatState !== "fighting" ? "w-full animate-slide-in-from-right-bounce" : "w-full"}
-          >
-            {combatState === "idle" && (
-              <>
-                <PvpHeader
-                  attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
-                  totalAttacks={totalAttacks}
-                  onGetMoreAttacks={handleGetMoreAttacks}
-                  onArmoryClick={handleArmoryClick}
+    <PvpWrapper>
+      <PvpContainer className="scrollable-content">
+        <PvpContent>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={combatState === "fighting" ? "fighting" : combatState}
+              className={
+                combatState !== "fighting"
+                  ? "w-full animate-slide-in-from-right-bounce"
+                  : "w-full"
+              }
+            >
+              {combatState === "idle" && (
+                <>
+                  <PvpHeader
+                    attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
+                    totalAttacks={totalAttacks}
+                    onGetMoreAttacks={handleGetMoreAttacks}
+                    onArmoryClick={handleArmoryClick}
+                  />
+                </>
+              )}
+
+              {combatState === "searching" && (
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <FaSpinner className="animate-spin text-4xl text-white" />
+                  <p className="text-white text-lg">Looking for Opponent...</p>
+                </div>
+              )}
+
+              {(combatState === "ready" || combatState === "fighting") &&
+                opponent && (
+                  <motion.div animate={opponentControls}>
+                    <PlayerCard
+                      player={opponent}
+                      title="Opponent"
+                      isAttacking={combatState === "fighting"}
+                      isDefending={combatState === "fighting"}
+                      onInfoClick={() => handleInfoClick(opponent)}
+                      health={opponentHealth}
+                      maxHealth={opponent.pvp?.healthPoints || 100}
+                      damageReceived={opponentDamageReceived}
+                    />
+                  </motion.div>
+                )}
+
+              {/* {combatState === "result" && combatResult && (
+                <PvpResult
+                  combatResult={combatResult}
+                  username={userInfo.username}
                 />
+              )} */}
+            </motion.div>
+          </AnimatePresence>
+
+          <PvpControls
+            combatState={combatState}
+            onButtonClick={handleButtonClick}
+            onCollect={handleCollectAndReturn}
+            isWinner={combatResult?.winner === userInfo.username}
+          />
+
+          <motion.div animate={userControls}>
+            <PlayerCard
+              player={userInfo}
+              title="You"
+              isAttacking={combatState === "fighting"}
+              isDefending={combatState === "fighting"}
+              onInfoClick={() => handleInfoClick(userInfo)}
+              health={userHealth}
+              maxHealth={userInfo.pvp?.healthPoints || 100}
+              damageReceived={userDamageReceived}
+            />
+          </motion.div>
+
+          <InfoModal
+            isOpen={isInfoModalOpen}
+            onClose={() => setIsInfoModalOpen(false)}
+          >
+            {selectedPlayer && (
+              <>
+                <h2 className="text-xl font-bold mb-4">
+                  Player Stats: {selectedPlayer.username}
+                </h2>
+                <ul className="space-y-4">
+                  {statIcons.map((stat, index) => (
+                    <li key={index} className="flex items-center">
+                      <span className="text-2xl mr-4">
+                        <stat.icon />
+                      </span>
+                      <div>
+                        <strong className="block">{stat.label}</strong>
+                        <span className="text-sm text-gray-600">
+                          {stat.description}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </>
             )}
+          </InfoModal>
 
-            {combatState === "searching" && (
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <FaSpinner className="animate-spin text-4xl text-white" />
-                <p className="text-white text-lg">Looking for Opponent...</p>
-              </div>
-            )}
-
-            {(combatState === "ready" || combatState === "fighting") && opponent && (
-              <motion.div animate={opponentControls}>
-                <PlayerCard
-                  player={opponent}
-                  title="Opponent"
-                  isAttacking={combatState === "fighting"}
-                  isDefending={combatState === "fighting"}
-                  onInfoClick={() => handleInfoClick(opponent)}
-                  health={opponentHealth}
-                  maxHealth={opponent.pvp?.healthPoints || 100}
-                  damageReceived={opponentDamageReceived}
-                />
-              </motion.div>
-            )}
-
-            {/* {combatState === "result" && combatResult && (
-              <PvpResult
-                combatResult={combatResult}
-                username={userInfo.username}
-              />
-            )} */}
-          </motion.div>
-        </AnimatePresence>
-
-        <PvpControls
-          combatState={combatState}
-          onButtonClick={handleButtonClick}
-          onCollect={handleCollectAndReturn}
-          isWinner={combatResult?.winner === userInfo.username}
-        />
-
-        <motion.div animate={userControls}>
-          <PlayerCard
-            player={userInfo}
-            title="You"
-            isAttacking={combatState === "fighting"}
-            isDefending={combatState === "fighting"}
-            onInfoClick={() => handleInfoClick(userInfo)}
-            health={userHealth}
-            maxHealth={userInfo.pvp?.healthPoints || 100}
-            damageReceived={userDamageReceived}
+          <PvpCollectReward
+            combatResult={combatResult}
+            collectingRewards={collectingRewards}
+            windowSize={windowSize}
           />
-        </motion.div>
 
-        <InfoModal
-          isOpen={isInfoModalOpen}
-          onClose={() => setIsInfoModalOpen(false)}
-        >
-          {selectedPlayer && (
-            <>
-              <h2 className="text-xl font-bold mb-4">
-                Player Stats: {selectedPlayer.username}
-              </h2>
-              <ul className="space-y-4">
-                {statIcons.map((stat, index) => (
-                  <li key={index} className="flex items-center">
-                    <span className="text-2xl mr-4">
-                      <stat.icon />
-                    </span>
-                    <div>
-                      <strong className="block">{stat.label}</strong>
-                      <span className="text-sm text-gray-600">
-                        {stat.description}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </InfoModal>
-
-        <AnimatePresence>
-          {collectingRewards && (
-            <>
-              {combatResult?.productLoot.map((product, index) => (
-                Array.from({ length: Math.min(product.quantity, 15) }).map((_, i) => {
-                  const delay = (i * 1000) / Math.min(product.quantity, 15);
-                  return (
-                    <motion.div
-                      key={`${product.name}-${i}`}
-                      initial={{ 
-                        opacity: 1, 
-                        x: rewardPositions[product.name]?.x, 
-                        y: rewardPositions[product.name]?.y, 
-                        scale: 1 
-                      }}
-                      animate={{ 
-                        opacity: 0, 
-                        x: windowSize.width - 50,
-                        y: 50,
-                        scale: 0.5 
-                      }}
-                      exit={{ opacity: 0 }}
-                      transition={{ 
-                        duration: 0.8, 
-                        delay: delay / 1000,
-                        type: "spring",
-                        stiffness: 100,
-                        damping: 10
-                      }}
-                      style={{
-                        position: 'fixed',
-                        fontSize: '2rem',
-                        color: 'white',
-                        zIndex: 1000,
-                      }}
-                    >
-                      {EProductIcon[product.name as keyof typeof EProductIcon]}
-                    </motion.div>
-                  );
-                })
-              ))}
-              {Array.from({ length: Math.min(Math.floor(combatResult?.cashLoot ?? 0 / 10) || 0, 15) }).map((_, i) => {
-                const delay = (i * 1000) / Math.min(Math.floor(combatResult?.cashLoot ?? 0 / 10) || 0, 15);
-                return (
-                  <motion.div
-                    key={`cash-${i}`}
-                    initial={{ 
-                      opacity: 1, 
-                      x: rewardPositions.cash?.x, 
-                      y: rewardPositions.cash?.y, 
-                      scale: 1 
-                    }}
-                    animate={{ 
-                      opacity: 0, 
-                      x: windowSize.width - 50,
-                      y: 50,
-                      scale: 0.5 
-                    }}
-                    exit={{ opacity: 0 }}
-                    transition={{ 
-                      duration: 0.8, 
-                      delay: delay / 1000,
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 10
-                    }}
-                    style={{
-                      position: 'fixed',
-                      fontSize: '2rem',
-                      color: '#00ff00',
-                      zIndex: 1000,
-                    }}
-                  >
-                    <BsCash />
-                  </motion.div>
-                );
-              })}
-            </>
-          )}
-        </AnimatePresence>
-      </PvpContent>
-    </PvpContainer>
+          <PvpModal
+            isOpen={isChannelModalOpen}
+            onClose={() => setIsChannelModalOpen(false)}
+            title="Join Channel Required"
+            onJoin={handleJoinChannel}
+            onVerify={handleVerifyChannel}
+          >
+            <p>You must join our Community channel to participate in PvP.</p>
+          </PvpModal>
+        </PvpContent>
+      </PvpContainer>
+      <ApiToast
+        loading={loading}
+        error={error}
+        successMessage={successMessage}
+      />
+    </PvpWrapper>
   );
 }

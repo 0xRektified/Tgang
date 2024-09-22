@@ -3,27 +3,42 @@ import axiosInstance from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { IBattle } from "../components/interfaces/multiplayer.interface";
 
+interface ErrorResponse {
+  statusCode: number;
+  message: string;
+}
+
 export function useMultiplayer(
   userInfo: IUserInfo,
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void,
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [combatResult, setCombatResult] = useState<IBattle | null>(null);
+  const [errorCode, setErrorCode] = useState<number | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const searchPlayer = async () => {
+  const searchPlayer = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setErrorCode(null);
+    setSuccessMessage(null);
     try {
-      const response = await axiosInstance.get(`/multiplayer/search`);
-      return response.data;
-    } catch (err) {
-      setError("Failed to search player");
-      return null;
-    } finally {
+      const response = await axiosInstance.get<IUserInfo[]>("/multiplayer/search");
       setLoading(false);
+      setSuccessMessage("Opponent found successfully");
+      return response.data;
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+        setErrorCode(err.response.status);
+      } else {
+        setError("Failed to search for players");
+      }
+      console.error(err);
+      return null;
     }
-  };
+  }, []);
 
   const fetchuser = useCallback(async () => {
     try {
@@ -34,45 +49,57 @@ export function useMultiplayer(
     }
   }, []);
 
-  const performAttack = async (battleId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await axiosInstance.post<IBattle>(
-        `/multiplayer/attack/${battleId}`,
-      );
-      setLoading(false);
-      setCombatResult(data);
-
-      if (data.winner) {
-        fetchuser();
+  const performAttack = useCallback(
+    async (battleId: string) => {
+      setLoading(true);
+      setError(null);
+      setErrorCode(null);
+      setSuccessMessage(null);
+      try {
+        const response = await axiosInstance.post<IBattle>(
+          `/multiplayer/attack/${battleId}`,
+        );
+        setLoading(false);
+        setSuccessMessage("Attack performed successfully");
+        return response.data;
+      } catch (err: any) {
+        setLoading(false);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+          setErrorCode(err.response.status);
+        } else {
+          setError("Failed to perform attack");
+        }
+        console.error(err);
+        return null;
       }
-
-      return data;
-    } catch (err) {
-      setLoading(false);
-      setError("Failed to perform attack");
-      console.error(err);
-    }
-  };
+    },
+    [setUserInfo],
+  );
 
   const startFight = useCallback(
     async (playerId: string, opponentId: string) => {
       setLoading(true);
       setError(null);
+      setErrorCode(null);
+      setSuccessMessage(null);
       try {
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
         );
         setLoading(false);
-        const result = response.data;
-        setCombatResult(result);
-
-        return result;
-      } catch (err) {
+        setSuccessMessage("Fight started successfully");
+        return response.data;
+      } catch (err: any) {
         setLoading(false);
-        setError("Failed to start fight");
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+          setErrorCode(err.response.status);
+        } else {
+          setError("Failed to start fight");
+        }
         console.error(err);
+        return null;
       }
     },
     [setUserInfo],
@@ -84,7 +111,7 @@ export function useMultiplayer(
     performAttack,
     loading,
     error,
-    combatResult,
-    setCombatResult,
+    errorCode,
+    successMessage,
   };
 }
