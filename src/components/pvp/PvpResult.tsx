@@ -6,6 +6,7 @@ import { BsCash } from "react-icons/bs";
 
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { IBattle } from "../interfaces/multiplayer.interface";
+import { NeonGreenButton } from "../styled/cardStyled";
 
 const ResultContainer = styled(motion.div)`
   background-color: #2c2c2e;
@@ -231,14 +232,12 @@ export const PvpResult: React.FC<PvpResultProps> = ({
         )}
       </AnimatePresence>
 
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <NeonGreenButton
         onClick={onCollect}
         className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
       >
         💰 Collect Rewards
-      </motion.button>
+      </NeonGreenButton>
 
       <audio ref={audioRef} src="/assets/cash.mp3" />
     </ResultContainer>

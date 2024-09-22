@@ -13,35 +13,34 @@ const ControlsContainer = styled.div`
 interface PvpControlsProps {
   combatState: CombatState;
   onButtonClick: () => void;
-  onCollect: () => void;
   isWinner: boolean;
 }
 
 export const PvpControls: React.FC<PvpControlsProps> = ({
   combatState,
   onButtonClick,
-  onCollect,
   isWinner,
 }) => {
   const getButtonText = () => {
     switch (combatState) {
-      case "searching": return "Searching...";
-      case "fighting": return "Attack";
-      case "ready": return "Start";
-      case "result": return isWinner ? "Collect & Return to Main Menu" : "Return to Main Menu";
-      default: return "Search for Opponent";
+      case "searching":
+        return "Searching...";
+      case "fighting":
+        return "Attack";
+      case "ready":
+        return "Start";
+      case "result":
+        return "Collect & Return to Main Menu";
+      default:
+        return "Search for Opponent";
     }
   };
 
   const handleClick = () => {
-    if (combatState === "result" && isWinner) {
-      onCollect();
-    } else {
-      onButtonClick();
-    }
+    onButtonClick();
   };
 
-  return (
+  return !isWinner ? (
     <ControlsContainer>
       <NeonButton
         onClick={handleClick}
@@ -51,5 +50,5 @@ export const PvpControls: React.FC<PvpControlsProps> = ({
         {getButtonText()}
       </NeonButton>
     </ControlsContainer>
-  );
+  ) : null;
 };

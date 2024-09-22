@@ -3,17 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IBattle } from '../interfaces/multiplayer.interface';
 import { EProductIcon } from '../interfaces/product.interface';
 import { BsCash } from 'react-icons/bs';
+import { NeonGreenButton } from '../styled/cardStyled';
 
 interface PvpCollectRewardProps {
   combatResult: IBattle | null;
   collectingRewards: boolean;
   windowSize: { width: number; height: number };
+  onCollect: () => void;
 }
 
 const PvpCollectReward: React.FC<PvpCollectRewardProps> = ({
   combatResult,
   collectingRewards,
   windowSize,
+  onCollect,
 }) => {
   const [rewardPositions, setRewardPositions] = useState<{
     [key: string]: { x: number; y: number };

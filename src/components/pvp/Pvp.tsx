@@ -397,7 +397,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           <PvpControls
             combatState={combatState}
             onButtonClick={handleButtonClick}
-            onCollect={handleCollectAndReturn}
             isWinner={combatResult?.winner === "attacker"}
           />
 
