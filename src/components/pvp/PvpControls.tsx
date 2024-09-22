@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { NeonButton } from "../styled/cardStyled";
-import { CombatState } from "./Pvp";
+
+// Update the CombatState type
+type CombatState = "idle" | "result" | "searching" | "ready" | "fighting";
 
 const ControlsContainer = styled.div`
   display: flex;
@@ -23,16 +25,14 @@ export const PvpControls: React.FC<PvpControlsProps> = ({
 }) => {
   const getButtonText = () => {
     switch (combatState) {
-      case "searching":
-        return "Searching...";
       case "fighting":
         return "Attack";
       case "ready":
-        return "Start";
+        return "Start Fight";
       case "result":
         return "Collect & Return to Main Menu";
       default:
-        return "Search for Opponent";
+        return "";
     }
   };
 
@@ -40,12 +40,12 @@ export const PvpControls: React.FC<PvpControlsProps> = ({
     onButtonClick();
   };
 
-  return !isWinner ? (
+  return !isWinner && combatState !== "idle" ? (
     <ControlsContainer>
       <NeonButton
         onClick={handleClick}
-        disabled={combatState === "searching"}
-        className={combatState === "searching" ? "disabled" : ""}
+        // disabled={combatState === "idle"}
+        // className={combatState === "idle" ? "disabled" : ""}
       >
         {getButtonText()}
       </NeonButton>

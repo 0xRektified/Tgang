@@ -203,7 +203,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     [opponent, userControls, opponentControls, userHealth, opponentHealth],
   );
 
-  const handleSearch = useCallback(async () => {
+  const handleDeathmatchClick = useCallback(async () => {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
@@ -211,8 +211,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     const players = await searchPlayer();
     if (players && players.length > 0) {
       const opponentData = players[0];
-      console.log(`opponentData`);
-      console.log(opponentData);
       setOpponentHealth(opponentData.pvp?.healthPoints || 100);
       setOpponent({
         ...opponentData,
@@ -242,27 +240,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       await simulateCombat(result);
     }
   }, [currentBattle, performAttack, simulateCombat]);
-
-  const handleButtonClick = useCallback(() => {
-    console.log("Button Clicked", combatState);
-    switch (combatState) {
-      case "idle":
-        handleSearch();
-        break;
-      case "ready":
-        handleStart();
-        break;
-      case "fighting":
-        handleAttack();
-        break;
-      case "result":
-        setCombatState("idle");
-        setOpponent(null);
-        setCombatResult(null);
-        resetCombatState();
-        break;
-    }
-  }, [combatState, handleSearch, handleStart, handleAttack, resetCombatState]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -297,7 +274,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       cashAmount: prevUserInfo.cashAmount + (combatResult.cashLoot || 0),
       products: prevUserInfo.products.map((product) => {
         const lootedProduct = combatResult.productLoot?.find(
-          (p) => p.name === product.name
+          (p) => p.name === product.name,
         );
         return lootedProduct
           ? { ...product, quantity: product.quantity + lootedProduct.quantity }
@@ -336,82 +313,92 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   console.log(error);
   console.log(`successMessage`);
   console.log(successMessage);
+
+  const handleControlButtonClick = useCallback(() => {
+    if (combatState === "ready") {
+      handleStart();
+    } else if (combatState === "fighting") {
+      handleAttack();
+    } else if (combatState === "result") {
+      handleCollectAndReturn();
+    }
+  }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);
+
   return (
     <PvpWrapper>
       <PvpContainer className="scrollable-content">
         <PvpContent>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={combatState === "fighting" ? "fighting" : combatState}
-              className={
-                combatState !== "fighting"
-                  ? "w-full animate-slide-in-from-right-bounce"
-                  : "w-full"
-              }
-            >
-              {combatState === "idle" && (
-                <>
-                  <PvpHeader
-                    attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
-                    totalAttacks={totalAttacks}
-                    onGetMoreAttacks={handleGetMoreAttacks}
-                    onArmoryClick={handleArmoryClick}
-                  />
-                </>
-              )}
-
-              {combatState === "searching" && (
-                <div className="flex flex-col items-center justify-center space-y-4">
-                  <FaSpinner className="animate-spin text-4xl text-white" />
-                  <p className="text-white text-lg">Looking for Opponent...</p>
-                </div>
-              )}
-
-              {(combatState === "ready" || combatState === "fighting") &&
-                opponent && (
-                  <motion.div animate={opponentControls}>
-                    <PlayerCard
-                      player={opponent}
-                      title="Opponent"
-                      isAttacking={combatState === "fighting"}
-                      isDefending={combatState === "fighting"}
-                      onInfoClick={() => handleInfoClick(opponent)}
-                      health={opponentHealth}
-                      maxHealth={opponent.pvp?.healthPoints || 100}
-                      damageReceived={opponentDamageReceived}
-                    />
-                  </motion.div>
-                )}
-
-              {combatState === "result" && combatResult && (
-                <PvpResult
-                  combatResult={combatResult}
-                  username={userInfo.username}
-                  onCollect={handleCollectAndReturn}
-                  collectingRewards={collectingRewards}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          <PvpControls
+          <PvpHeader
+            attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
+            totalAttacks={totalAttacks}
+            onGetMoreAttacks={handleGetMoreAttacks}
+            onArmoryClick={handleArmoryClick}
+            onDeathmatchClick={handleDeathmatchClick}
             combatState={combatState}
-            onButtonClick={handleButtonClick}
-            isWinner={combatResult?.winner === "attacker"}
           />
 
-          <motion.div animate={userControls}>
-            <PlayerCard
-              player={userInfo}
-              title="You"
-              isAttacking={combatState === "fighting"}
-              isDefending={combatState === "fighting"}
-              onInfoClick={() => handleInfoClick(userInfo)}
-              health={userHealth}
-              maxHealth={userInfo.pvp?.healthPoints || 100}
-              damageReceived={userDamageReceived}
-            />
-          </motion.div>
+          <AnimatePresence>
+            {combatState !== "idle" && (
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 0.3 }}
+              >
+                {combatState === "searching" && (
+                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
+                    <FaSpinner className="animate-spin text-4xl text-white" />
+                    <p className="text-white text-lg">Looking for Opponent...</p>
+                  </div>
+                )}
+
+                {(combatState === "ready" || combatState === "fighting") && opponent && (
+                  <>
+                    <motion.div
+                      initial={{ x: "100%" }}
+                      animate={{ x: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PlayerCard
+                        player={opponent}
+                        title="Opponent"
+                        isAttacking={combatState === "fighting"}
+                        isDefending={combatState === "fighting"}
+                        onInfoClick={() => handleInfoClick(opponent)}
+                        health={opponentHealth}
+                        maxHealth={opponent.pvp?.healthPoints || 100}
+                        damageReceived={opponentDamageReceived}
+                      />
+                    </motion.div>
+                    <PvpControls
+                      combatState={combatState}
+                      onButtonClick={handleControlButtonClick}
+                      isWinner={combatResult?.winner === "attacker"}
+                    />
+                    <PlayerCard
+                      player={userInfo}
+                      title="You"
+                      isAttacking={combatState === "fighting"}
+                      isDefending={combatState === "fighting"}
+                      onInfoClick={() => handleInfoClick(userInfo)}
+                      health={userHealth}
+                      maxHealth={userInfo.pvp?.healthPoints || 100}
+                      damageReceived={userDamageReceived}
+                    />
+                  </>
+                )}
+
+                {combatState === "result" && combatResult && (
+                  <PvpResult
+                    combatResult={combatResult}
+                    username={userInfo.username}
+                    onCollect={handleCollectAndReturn}
+                    collectingRewards={collectingRewards}
+                  />
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <InfoModal
             isOpen={isInfoModalOpen}
