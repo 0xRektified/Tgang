@@ -16,7 +16,6 @@ import { useVerifySocial } from "../../hooks/useVerifySocial";
 import { useJoinSocial } from "../../hooks/useJoinSocial";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { statIcons } from "./Pvp.constant";
-import PvpCollectReward from "./PvpCollectReward";
 import { ApiToast } from "../ApiToast";
 
 const PvpWrapper = styled.div`
@@ -90,7 +89,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     error: joinError,
     successMessage: joinSuccessMessage,
   } = useJoinSocial();
-
+  const [currentBattle, setCurrentBattle] = useState<IBattle | null>(null);
   const [opponent, setOpponent] = useState<any>(null);
   const [combatState, setCombatState] = useState<CombatState>("idle");
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -148,8 +147,8 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       console.log(`opponent`);
       console.log(opponent);
       if (!opponent) return;
-      let currentUserHealth = combatResult.attacker.healthPoints || 100;
-      let currentOpponentHealth = combatResult.attacker.healthPoints || 100;
+      let currentUserHealth = userHealth;
+      let currentOpponentHealth = opponentHealth;
       const round =
         combatResult.roundResults[combatResult.roundResults.length - 1];
 
@@ -192,19 +191,16 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       setCombatResult(combatResult);
-      // setCombatState("result");
 
-      setTimeout(() => {
-        resetCombatState();
-      }, 1000);
+      if (combatResult.winner) {
+        setCombatState("result");
+      } else {
+        setCombatState("fighting");
+      }
+
+      setCurrentBattle(combatResult);
     },
-    [
-      opponent,
-      userControls,
-      opponentControls,
-      userInfo.pvp?.healthPoints,
-      resetCombatState,
-    ],
+    [opponent, userControls, opponentControls, userHealth, opponentHealth],
   );
 
   const handleSearch = useCallback(async () => {
@@ -230,21 +226,22 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
 
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id);
+    console.log(`result`);
+    console.log(result);
     if (result) {
       setCombatState("fighting");
-      setCombatResult(result);
+      setCurrentBattle(result);
       await simulateCombat(result);
     }
   }, [opponent, startFight, userInfo.id, simulateCombat]);
 
   const handleAttack = useCallback(async () => {
-    console.log("Attacking opponent", combatResult);
-    if (!combatResult) return;
-    const result = await performAttack(combatResult!.battleId);
+    if (!currentBattle) return;
+    const result = await performAttack(currentBattle.battleId);
     if (result) {
       await simulateCombat(result);
     }
-  }, []);
+  }, [currentBattle, performAttack, simulateCombat]);
 
   const handleButtonClick = useCallback(() => {
     console.log("Button Clicked", combatState);
@@ -265,7 +262,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         resetCombatState();
         break;
     }
-  }, [combatState, handleSearch, handleStart, resetCombatState]);
+  }, [combatState, handleSearch, handleStart, handleAttack, resetCombatState]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -290,17 +287,17 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCollectingRewards(true);
 
     // Simulate collecting rewards
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     setCollectingRewards(false);
 
     // Update user info with collected rewards
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
-      cashAmount: prevUserInfo.cashAmount + combatResult.cashLoot,
+      cashAmount: prevUserInfo.cashAmount + (combatResult.cashLoot || 0),
       products: prevUserInfo.products.map((product) => {
-        const lootedProduct = combatResult.productLoot.find(
-          (p) => p.name === product.name,
+        const lootedProduct = combatResult.productLoot?.find(
+          (p) => p.name === product.name
         );
         return lootedProduct
           ? { ...product, quantity: product.quantity + lootedProduct.quantity }
@@ -386,12 +383,14 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   </motion.div>
                 )}
 
-              {/* {combatState === "result" && combatResult && (
+              {combatState === "result" && combatResult && (
                 <PvpResult
                   combatResult={combatResult}
                   username={userInfo.username}
+                  onCollect={handleCollectAndReturn}
+                  collectingRewards={collectingRewards}
                 />
-              )} */}
+              )}
             </motion.div>
           </AnimatePresence>
 
@@ -399,7 +398,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
             combatState={combatState}
             onButtonClick={handleButtonClick}
             onCollect={handleCollectAndReturn}
-            isWinner={combatResult?.winner === userInfo.username}
+            isWinner={combatResult?.winner === "attacker"}
           />
 
           <motion.div animate={userControls}>
@@ -442,12 +441,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
               </>
             )}
           </InfoModal>
-
-          <PvpCollectReward
-            combatResult={combatResult}
-            collectingRewards={collectingRewards}
-            windowSize={windowSize}
-          />
 
           <PvpModal
             isOpen={isChannelModalOpen}

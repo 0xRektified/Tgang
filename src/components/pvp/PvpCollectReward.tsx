@@ -29,8 +29,8 @@ const PvpCollectReward: React.FC<PvpCollectRewardProps> = ({
 
         const newRewardPositions: { [key: string]: { x: number; y: number } } = {};
 
-        combatResult.productLoot.forEach((product, index) => {
-          const angle = (index / combatResult.productLoot.length) * Math.PI * 2;
+        combatResult.productLoot?.forEach((product, index) => {
+          const angle = (index / (combatResult.productLoot?.length || 1)) * Math.PI * 2;
           const radius = 100;
           newRewardPositions[product.name] = {
             x: centerX + Math.cos(angle) * radius,
@@ -49,7 +49,7 @@ const PvpCollectReward: React.FC<PvpCollectRewardProps> = ({
     <AnimatePresence>
       {collectingRewards && combatResult && (
         <>
-          {combatResult.productLoot.map((product, index) =>
+          {combatResult.productLoot?.map((product, index) =>
             Array.from({ length: Math.min(product.quantity, 15) }).map((_, i) => {
               const delay = (i * 1000) / Math.min(product.quantity, 15);
               return (
@@ -88,9 +88,9 @@ const PvpCollectReward: React.FC<PvpCollectRewardProps> = ({
             }),
           )}
           {Array.from({
-            length: Math.min(Math.floor(combatResult.cashLoot / 10) || 0, 15),
+            length: Math.min(Math.floor((combatResult.cashLoot || 0) / 10) || 0, 15),
           }).map((_, i) => {
-            const delay = (i * 1000) / Math.min(Math.floor(combatResult.cashLoot / 10) || 0, 15);
+            const delay = (i * 1000) / Math.min(Math.floor((combatResult.cashLoot || 0) / 10) || 0, 15);
             return (
               <motion.div
                 key={`cash-${i}`}

@@ -64,6 +64,10 @@ export default {
           "0%, 100%": { boxShadow: "0 0 5px rgba(255, 255, 255, 0.5)" },
           "50%": { boxShadow: "0 0 20px rgba(255, 255, 255, 0.8)" },
         },
+        moveUpRight: {
+          "0%": { transform: "translate(0, 0)", opacity: 0 },
+          "100%": { transform: "translate(100px, -150px)", opacity: 1 },
+        },
       },
       animation: {
         "fade-in": "fadeIn 1s forwards",
@@ -79,6 +83,7 @@ export default {
         "pulse-smooth": "pulseSmooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "subtle-bounce": "subtleBounce 2s ease-in-out infinite",
         "glowing-border": "glowingBorder 2s ease-in-out infinite",
+        "move-up-right": "moveUpRight 1s forwards",
       },
       transform: {
         'flip-y': 'scaleY(-1)',

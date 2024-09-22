@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
+import { BsCash } from "react-icons/bs";
+
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { IBattle } from "../interfaces/multiplayer.interface";
 
@@ -85,6 +87,8 @@ const ProductQuantity = styled.p`
 interface PvpResultProps {
   combatResult: IBattle;
   username: string;
+  onCollect: () => void;
+  collectingRewards: boolean;
 }
 
 const getWinner = (combatResult: IBattle) => {
@@ -93,7 +97,7 @@ const getWinner = (combatResult: IBattle) => {
   } else {
     return combatResult.defender.username;
   }
-}
+};
 
 const getLooser = (combatResult: IBattle) => {
   if (combatResult.winner !== combatResult.attacker.username) {
@@ -101,13 +105,53 @@ const getLooser = (combatResult: IBattle) => {
   } else {
     return combatResult.defender.username;
   }
-}
+};
 
 export const PvpResult: React.FC<PvpResultProps> = ({
   combatResult,
   username,
+  onCollect,
+  collectingRewards,
 }) => {
   const isWinner = combatResult.winner === username;
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [visibleRewards, setVisibleRewards] = useState<Array<{ type: string; name?: string; index: number }>>([]);
+
+  useEffect(() => {
+    if (collectingRewards) {
+      const rewards = [
+        { type: "cash", amount: combatResult.cashLoot },
+        ...combatResult.productLoot.map((product) => ({
+          type: "product",
+          ...product,
+        })),
+      ];
+
+      rewards.forEach((item, itemIndex) => {
+        const isCash = item.type === "cash";
+        const quantity = isCash
+          ? Math.min(Math.floor((item as { amount: number }).amount / 10) || 0, 15)
+          : Math.min((item as { quantity: number }).quantity, 15);
+
+        Array.from({ length: quantity }).forEach((_, index) => {
+          const delay = itemIndex * 500 + index * 200;
+          setTimeout(() => {
+            setVisibleRewards((prev) => [
+              ...prev,
+              { type: item.type, name: isCash ? "cash" : (item as { name: string }).name, index },
+            ]);
+          }, delay);
+        });
+      });
+    }
+  }, [collectingRewards, combatResult]);
+
+  const playSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
+  };
 
   return (
     <ResultContainer
@@ -126,12 +170,6 @@ export const PvpResult: React.FC<PvpResultProps> = ({
       <ResultContent>
         <ResultItem>
           <ResultItemIcon>
-            <FaSkull />
-          </ResultItemIcon>
-          <ResultItemValue>{getLooser(combatResult)} Lost</ResultItemValue>
-        </ResultItem>
-        <ResultItem>
-          <ResultItemIcon>
             <FaDollarSign />
           </ResultItemIcon>
           You Stole <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
@@ -145,7 +183,11 @@ export const PvpResult: React.FC<PvpResultProps> = ({
             const emoji =
               EProductIcon[productName as keyof typeof EProductIcon];
             return (
-              <ProductItem key={productName}>
+              <ProductItem
+                key={productName}
+                className="product-item"
+                data-product={productName}
+              >
                 <ProductIcon>{emoji}</ProductIcon>
                 <ProductQuantity>{quantity}</ProductQuantity>
               </ProductItem>
@@ -153,6 +195,52 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           })}
         </ProductsGrid>
       </ResultContent>
+
+      <AnimatePresence>
+        {collectingRewards && (
+          <motion.div className="absolute top-60 left-15 transform -translate-x-1/2  animate-move-up-right">
+            {visibleRewards.map(({ type, name, index }) => {
+              const isCash = type === "cash";
+              const emoji = isCash ? "💰" : EProductIcon[name as EProduct];
+              const text = isCash ? "10$" : "";
+
+              return (
+                <motion.div
+                  key={`${type}-${name}-${index}`}
+                  className="h-6 w-6 animate-move-up-right"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  onAnimationStart={playSound}
+                  style={{
+                    fontSize: "2rem",
+                    color: type === "cash" ? "#00ff00" : "white",
+                    position: "absolute",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                  }}
+                >
+                  {emoji}
+                  {text}
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onCollect}
+        className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
+      >
+        💰 Collect Rewards
+      </motion.button>
+
+      <audio ref={audioRef} src="/assets/cash.mp3" />
     </ResultContainer>
   );
 };

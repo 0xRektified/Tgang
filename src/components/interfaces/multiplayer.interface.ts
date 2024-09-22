@@ -1,7 +1,6 @@
 import { EProduct } from "./product.interface";
 import { IUserPvp } from "./user.interface";
 
-
 export interface Loot {
   name: EProduct;
   quantity: number;
@@ -10,6 +9,14 @@ export interface Loot {
 export interface IBattleParticipant extends IUserPvp {
   id: number;
   username: string;
+  healthPoints: number;
+}
+
+export interface IRoundResult {
+  attackerDamage: number;
+  defenderDamage: number;
+  attackerCritical: boolean;
+  defenderCritical: boolean;
 }
 
 export interface IBattle {
@@ -17,12 +24,7 @@ export interface IBattle {
   attacker: IBattleParticipant;
   defender: IBattleParticipant;
   round: number;
-  roundResults: {
-    attackerDamage: number;
-    defenderDamage: number;
-    attackerCritical: boolean;
-    defenderCritical: boolean;
-  }[];
+  roundResults: IRoundResult[];
   winner?: string;
   cashLoot: number;
   productLoot: Loot[];
