@@ -160,11 +160,13 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+
   useEffect(() => {
-    if (errorCode === 412) {
+    if (socialNetworkRequired) {
       setIsChannelModalOpen(true);
     }
-  }, [errorCode]);
+  }, [socialNetworkRequired]);
 
   const resetCombatState = useCallback(() => {
     setUserDamageReceived(undefined);
@@ -459,7 +461,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   </div>
                 )}
 
-                {socialNetworkRequired && (
+                {!maxAttacksReached && socialNetworkRequired && (
                   <div className="flex flex-col items-center justify-center space-y-4 mt-4">
                     <p className="text-white text-lg">
                       You need to join our social network to participate in PvP.
