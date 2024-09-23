@@ -91,24 +91,9 @@ interface PvpResultProps {
   combatResult: IBattle;
   username: string;
   onCollect: () => void;
+  onTryAgain: () => void;
   collectingRewards: boolean;
 }
-
-const getWinner = (combatResult: IBattle) => {
-  if (combatResult.winner === combatResult.attacker.username) {
-    return combatResult.attacker.username;
-  } else {
-    return combatResult.defender.username;
-  }
-};
-
-const getLooser = (combatResult: IBattle) => {
-  if (combatResult.winner !== combatResult.attacker.username) {
-    return combatResult.attacker.username;
-  } else {
-    return combatResult.defender.username;
-  }
-};
 
 const CollectRewardButton = styled(NeonGreenButton)`
   width: 80%;
@@ -121,6 +106,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
   combatResult,
   username,
   onCollect,
+  onTryAgain,
   collectingRewards,
 }) => {
   const isWinner = combatResult.winner === "attacker";
@@ -172,10 +158,13 @@ export const PvpResult: React.FC<PvpResultProps> = ({
     }
   };
 
-  const handleCollect = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
-    onCollect();
-  }, [onCollect]);
+  const handleButtonClick = () => {
+    if (isWinner) {
+      onCollect();
+    } else {
+      onTryAgain();
+    }
+  };
 
   return (
     <ResultContainer
@@ -258,7 +247,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
       </AnimatePresence>
 
       <CollectRewardButton
-        onClick={handleCollect}
+        onClick={handleButtonClick}
         className="bg-green-500 text-white px-4 py-2 rounded"
         disabled={collectingRewards}
       >

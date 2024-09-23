@@ -331,7 +331,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   );
 
   const handleCollectAndReturn = useCallback(async () => {
-    if (!combatResult) return;
+    if (!combatResult || combatResult.winner !== "attacker") return;
 
     setCollectingRewards(true);
 
@@ -362,6 +362,13 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setOpponent(null);
     setCombatResult(null);
   }, [combatResult, setUserInfo, upsertBattleResult]);
+
+  const handleTryAgain = useCallback(() => {
+    // Just return to the main menu
+    setCombatState("idle");
+    setOpponent(null);
+    setCombatResult(null);
+  }, []);
 
   const handleJoinChannel = useCallback(() => {
     const telegramChannel = socials[SocialChannel.TELEGRAM_CHANNEL];
@@ -501,6 +508,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                     combatResult={combatResult}
                     username={userInfo.username}
                     onCollect={handleCollectAndReturn}
+                    onTryAgain={handleTryAgain}
                     collectingRewards={collectingRewards}
                   />
                 )}
@@ -559,7 +567,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           </PvpModal>
         </PvpContent>
       </PvpContainer>
-      <ApiToast error={error} loading={false}successMessage={null} />
+      <ApiToast error={error} loading={false} successMessage={null} />
     </PvpWrapper>
   );
 }
