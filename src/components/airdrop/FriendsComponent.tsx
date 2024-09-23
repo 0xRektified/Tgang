@@ -225,13 +225,13 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             <h3 className="font-bold">
               Per invite <span className="text-2xl">💰</span>
             </h3>
-            <p>$1000 & 100rep</p>
+            <p>$1000 & 2000 XP</p>
           </div>
           <div className="card flex flex-col justify-center items-center text-center">
             <h3 className="font-bold">
               Premium <span className="text-2xl">💰💰</span>
             </h3>
-            <p>$2000 & 1000rep</p>
+            <p>$2000 & 5000 XP</p>
           </div>
         </div>
         <ScrollableTableContainer>

@@ -257,6 +257,11 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             <PvpTitle>
               <GiPistolGun /> Cartel War
             </PvpTitle>
+            <RewardInfo>
+              <FaTrophy />
+              <StatDesc>XP per win:</StatDesc>
+              <RewardAmount>2000 XP</RewardAmount>
+            </RewardInfo>
 
             <RewardInfo>
               <FaCoins />
