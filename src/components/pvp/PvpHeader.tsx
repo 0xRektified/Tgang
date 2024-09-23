@@ -1,22 +1,19 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaPlus,
   FaSkull,
-  FaHistory,
   FaCoins,
   FaSpinner,
   FaTrophy,
   FaTimesCircle,
 } from "react-icons/fa";
-import { GiPistolGun, GiCrossedSwords } from "react-icons/gi";
+import { GiPistolGun } from "react-icons/gi";
 import styled from "styled-components";
 import { formatPrice } from "../utils/formater";
 
 import { CombatState } from "./Pvp";
-import { IBattle } from "../interfaces/multiplayer.interface";
 import { IHistoryBattleResult } from "../interfaces/multiplayer.interface";
-import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { EProductIcon } from "../interfaces/product.interface";
 import PlayerCard from "./PlayerCard"; // Import the PlayerCard component
 import { IUserInfo } from "../interfaces/user.interface";
 
@@ -73,24 +70,10 @@ const PvpButton = styled.button`
 `;
 
 const PvpButtonDeatchmatch = styled(PvpButton)`
-  animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  animation: glow 1.5s infinite alternate;
   padding: 0.5rem 0.75rem;
-`;
-
-const GoldenNeonButton = styled(PvpButton)`
-  border: 2px solid #ffd700;
-  box-shadow: 0 0 5px #ffd700;
-
-  &:hover {
-    box-shadow: 0 0 10px #ffd700;
-  }
-`;
-
-const PvpButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  // Removed margin-bottom
+  width: 100%;
+  margin: 0 auto;
 `;
 
 const RewardInfo = styled.div`
@@ -115,11 +98,6 @@ const RewardAmount = styled.span`
   font-size: 1rem;
   font-weight: 600;
   color: white;
-`;
-
-const GetMoreAttacksButton = styled(PvpButton)`
-  padding: 0.5rem 0.75rem;
-  font-size: 1rem;
 `;
 
 const CombatHistoryTitle = styled.h3`
@@ -227,10 +205,21 @@ const ArmoryButton = styled(PvpButton)`
   }
 `;
 
-// Helper function to get product icon
 const getProductIcon = (productName: string): string => {
   return EProductIcon[productName as keyof typeof EProductIcon] || "❓";
 };
+
+const Separator = styled.hr`
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0)
+  );
+  margin: 1rem 0;
+`;
 
 interface PvpHeaderProps {
   userInfo: IUserInfo;
@@ -269,6 +258,9 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               <GiPistolGun /> Cartel War
             </PvpTitle>
 
+            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
+              <FaSkull /> Deathmatch
+            </PvpButtonDeatchmatch>
             <RewardInfo>
               <FaCoins />
               <StatDesc>Attacks Available:</StatDesc>
@@ -276,8 +268,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 {attacksLeft} / {totalAttacks}
               </RewardAmount>
             </RewardInfo>
-            
-            {/* Wrap PlayerCard in a div */}
+
             <div>
               <PlayerCard
                 player={userInfo}
@@ -292,9 +283,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               />
             </div>
 
-            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
-              <FaSkull /> Deathmatch
-            </PvpButtonDeatchmatch>
+            <Separator />
 
             <CombatHistoryTitle>Combat History</CombatHistoryTitle>
             {isHistoryLoading ? (
