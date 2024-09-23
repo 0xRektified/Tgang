@@ -62,7 +62,7 @@ const StyledButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 0 5px #1e90ff;
-  
+
   &:hover {
     box-shadow: 0 0 10px #1e90ff;
   }
@@ -240,22 +240,29 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
-    setSearchingStep('searching');
+    setSearchingStep("searching");
 
     try {
       const players = await searchPlayer();
       if (players && players.length > 0) {
-        const opponentData = players[0];
-        setOpponentHealth(opponentData.pvp?.healthPoints || 100);
-        setOpponent({
-          ...opponentData,
-          image: "/assets/pvp/userImage.png",
-        });
-        
-        setSearchingStep('starting');
-        const result = await startFight(userInfo.id, opponentData.id);
-        
+        const opponentId = players[0].id;
+        console.log(`players0`);
+        console.log(players[0]);
+        setSearchingStep("starting");
+        const result = await startFight(userInfo.id, opponentId);
+        console.log(`result`);
+        console.log(result);
         if (result) {
+          const opponentData = result.opponent || players[0];
+          const opponentHealth =
+            result.defender.healthPoints || players[0]?.pvp?.healthPoints;
+          setOpponentHealth(opponentHealth || 100);
+          setUserHealth(result.attacker.healthPoints || 100);
+          setOpponent({
+            ...opponentData,
+            image: "/assets/pvp/userImage.png",
+          });
+
           setCombatState("fighting");
           setCurrentBattle(result);
           await simulateCombat(result);
@@ -270,7 +277,14 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         setIsChannelModalOpen(true);
       }
     }
-  }, [searchPlayer, resetCombatState, startFight, userInfo.id, simulateCombat, socialNetworkRequired]);
+  }, [
+    searchPlayer,
+    resetCombatState,
+    startFight,
+    userInfo.id,
+    simulateCombat,
+    socialNetworkRequired,
+  ]);
 
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id);
@@ -421,14 +435,18 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                 exit={{ x: "100%" }}
                 transition={{ duration: 0.3 }}
               >
-                {combatState === "searching" && !maxAttacksReached && !socialNetworkRequired && (
-                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
-                    <FaSpinner className="animate-spin text-4xl text-white" />
-                    <p className="text-white text-lg">
-                      {searchingStep === 'searching' ? 'Looking for Opponent...' : 'Starting Fight...'}
-                    </p>
-                  </div>
-                )}
+                {combatState === "searching" &&
+                  !maxAttacksReached &&
+                  !socialNetworkRequired && (
+                    <div className="flex flex-col items-center justify-center space-y-4 mt-4">
+                      <FaSpinner className="animate-spin text-4xl text-white" />
+                      <p className="text-white text-lg">
+                        {searchingStep === "searching"
+                          ? "Looking for Opponent..."
+                          : "Starting Fight..."}
+                      </p>
+                    </div>
+                  )}
 
                 {maxAttacksReached && (
                   <div className="flex flex-col items-center justify-center space-y-4 mt-4">

@@ -1,7 +1,10 @@
 import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
-import { IBattle, IHistoryBattleResult } from "../components/interfaces/multiplayer.interface";
+import {
+  IBattle,
+  IHistoryBattleResult,
+} from "../components/interfaces/multiplayer.interface";
 
 // Add these constants at the top of the file
 const PRECONDITION_REQUIRED = 428; // For social network requirement
@@ -20,7 +23,9 @@ export function useMultiplayer(
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [battleHistory, setBattleHistory] = useState<IHistoryBattleResult[]>([]);
+  const [battleHistory, setBattleHistory] = useState<IHistoryBattleResult[]>(
+    [],
+  );
   const [maxAttacksReached, setMaxAttacksReached] = useState(false);
   const [socialNetworkRequired, setSocialNetworkRequired] = useState(false);
 
@@ -30,7 +35,9 @@ export function useMultiplayer(
     setErrorCode(null);
     setSuccessMessage(null);
     try {
-      const response = await axiosInstance.get<IUserInfo[]>("/multiplayer/search");
+      const response = await axiosInstance.get<IUserInfo[]>(
+        "/multiplayer/search",
+      );
       setLoading(false);
       setSuccessMessage("Opponent found successfully");
       return response.data;
@@ -56,33 +63,30 @@ export function useMultiplayer(
     }
   }, [setUserInfo]);
 
-  const performAttack = useCallback(
-    async (battleId: string) => {
-      setLoading(true);
-      setError(null);
-      setErrorCode(null);
-      setSuccessMessage(null);
-      try {
-        const response = await axiosInstance.post<IBattle>(
-          `/multiplayer/attack/${battleId}`,
-        );
-        setLoading(false);
-        setSuccessMessage("Attack performed successfully");
-        return response.data;
-      } catch (err: any) {
-        setLoading(false);
-        if (err.response && err.response.data) {
-          setError(err.response.data.message);
-          setErrorCode(err.response.status);
-        } else {
-          setError("Failed to perform attack");
-        }
-        console.error(err);
-        return null;
+  const performAttack = useCallback(async (battleId: string) => {
+    setLoading(true);
+    setError(null);
+    setErrorCode(null);
+    setSuccessMessage(null);
+    try {
+      const response = await axiosInstance.post<IBattle>(
+        `/multiplayer/attack/${battleId}`,
+      );
+      setLoading(false);
+      setSuccessMessage("Attack performed successfully");
+      return response.data;
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+        setErrorCode(err.response.status);
+      } else {
+        setError("Failed to perform attack");
       }
-    },
-    [],
-  );
+      console.error(err);
+      return null;
+    }
+  }, []);
 
   const startFight = useCallback(
     async (playerId: string, opponentId: string) => {
@@ -96,6 +100,8 @@ export function useMultiplayer(
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
         );
+        console.log(`response`);
+        console.log(response);
         setLoading(false);
         setSuccessMessage("Fight started successfully");
         return response.data;
@@ -125,7 +131,9 @@ export function useMultiplayer(
     setErrorCode(null);
     setSuccessMessage(null);
     try {
-      const response = await axiosInstance.get<IHistoryBattleResult[]>("/multiplayer/battle-results");
+      const response = await axiosInstance.get<IHistoryBattleResult[]>(
+        "/multiplayer/battle-results",
+      );
       setLoading(false);
       setBattleHistory(response.data);
       return response.data;
@@ -143,7 +151,7 @@ export function useMultiplayer(
   }, []);
 
   const upsertBattleResult = useCallback((newBattle: IBattle) => {
-    setBattleHistory(prevHistory => {
+    setBattleHistory((prevHistory) => {
       const historyBattle: IHistoryBattleResult = {
         battleId: newBattle.battleId,
         attacker: {
@@ -155,12 +163,17 @@ export function useMultiplayer(
           username: newBattle.defender.username,
         },
         round: newBattle.round,
-        winner: newBattle.winner === 'attacker' ? newBattle.attacker.id.toString() : newBattle.defender.id.toString(),
+        winner:
+          newBattle.winner === "attacker"
+            ? newBattle.attacker.id.toString()
+            : newBattle.defender.id.toString(),
         cashLoot: newBattle.cashLoot,
         productLoot: newBattle.productLoot,
       };
 
-      const index = prevHistory.findIndex(battle => battle.battleId === newBattle.battleId);
+      const index = prevHistory.findIndex(
+        (battle) => battle.battleId === newBattle.battleId,
+      );
       if (index !== -1) {
         const updatedHistory = [...prevHistory];
         updatedHistory[index] = historyBattle;

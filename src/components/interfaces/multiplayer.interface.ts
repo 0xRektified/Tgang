@@ -1,5 +1,5 @@
 import { EProduct } from "./product.interface";
-import { IUserPvp } from "./user.interface";
+import { IUserInfo, IUserPvp } from "./user.interface";
 
 export interface Loot {
   name: EProduct;
@@ -23,6 +23,7 @@ export interface IBattle {
   battleId: string;
   attacker: IBattleParticipant;
   defender: IBattleParticipant;
+  opponent?: IUserInfo;
   round: number;
   roundResults: IRoundResult[];
   winner?: string;
