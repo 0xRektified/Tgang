@@ -24,12 +24,11 @@ const PvpWrapper = styled.div`
 `;
 
 const PvpContainer = styled.div`
-  background-color: #000000;
+  background-color: #1c1c1e;
   height: 100em;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
   width: 100%;
 
   overflow-y: auto;
@@ -46,8 +45,6 @@ const PvpContent = styled.div`
   max-width: 1200px;
   padding: 1rem;
   margin-bottom: 4rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
 `;
@@ -69,10 +66,13 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   const {
     searchPlayer,
     startFight,
+    performAttack,
+    fetchBattleHistory,
+    upsertBattleResult,
+    battleHistory,
     loading: multiplayerLoading,
     error: multiplayerError,
     errorCode,
-    performAttack,
     successMessage: multiplayerSuccessMessage,
   } = useMultiplayer(userInfo, setUserInfo);
 
@@ -105,9 +105,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   const [opponentDamageReceived, setOpponentDamageReceived] = useState<
     number | undefined
   >(undefined);
-  const [attacksLeft, setAttacksLeft] = useState(
-    userInfo.pvp?.attacksToday || 0,
-  );
+
   const [collectingRewards, setCollectingRewards] = useState(false);
   const [isChannelModalOpen, setIsChannelModalOpen] = useState(false);
 
@@ -115,6 +113,9 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   const opponentControls = useAnimation();
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  const [searchingStep, setSearchingStep] = useState<'searching' | 'starting'>('searching');
+  const [isAttacking, setIsAttacking] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -136,8 +137,8 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   const resetCombatState = useCallback(() => {
     setUserDamageReceived(undefined);
     setOpponentDamageReceived(undefined);
-    setUserHealth(userInfo.pvp?.healthPoints || 1000);
-    setOpponentHealth(opponent?.pvp?.healthPoints || 1000);
+    setUserHealth(userInfo.pvp?.healthPoints || 100);
+    setOpponentHealth(opponent?.pvp?.healthPoints || 100);
   }, [userInfo.pvp?.healthPoints, opponent]);
 
   const simulateCombat = useCallback(
@@ -207,20 +208,34 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
+    setSearchingStep('searching');
 
-    const players = await searchPlayer();
-    if (players && players.length > 0) {
-      const opponentData = players[0];
-      setOpponentHealth(opponentData.pvp?.healthPoints || 100);
-      setOpponent({
-        ...opponentData,
-        image: "/assets/pvp/userImage.png",
-      });
-      setCombatState("ready");
-    } else {
+    try {
+      const players = await searchPlayer();
+      if (players && players.length > 0) {
+        const opponentData = players[0];
+        setOpponentHealth(opponentData.pvp?.healthPoints || 100);
+        setOpponent({
+          ...opponentData,
+          image: "/assets/pvp/userImage.png",
+        });
+        
+        setSearchingStep('starting');
+        const result = await startFight(userInfo.id, opponentData.id);
+        
+        if (result) {
+          setCombatState("fighting");
+          setCurrentBattle(result);
+          await simulateCombat(result);
+        }
+      } else {
+        setCombatState("idle");
+      }
+    } catch (error) {
+      console.error("Error in deathmatch:", error);
       setCombatState("idle");
     }
-  }, [searchPlayer, resetCombatState]);
+  }, [searchPlayer, resetCombatState, startFight, userInfo.id, simulateCombat]);
 
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id);
@@ -234,12 +249,20 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   }, [opponent, startFight, userInfo.id, simulateCombat]);
 
   const handleAttack = useCallback(async () => {
-    if (!currentBattle) return;
-    const result = await performAttack(currentBattle.battleId);
-    if (result) {
-      await simulateCombat(result);
+    if (!opponent || !currentBattle || isAttacking) return;
+
+    setIsAttacking(true);
+    try {
+      const result = await performAttack(currentBattle.battleId);
+      if (result) {
+        await simulateCombat(result);
+      }
+    } catch (error) {
+      console.error("Attack error:", error);
+    } finally {
+      setIsAttacking(false);
     }
-  }, [currentBattle, performAttack, simulateCombat]);
+  }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -282,11 +305,14 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       }),
     }));
 
+    // Upsert the combat result in the battle history
+    upsertBattleResult(combatResult);
+
     // Return to the main menu
     setCombatState("idle");
     setOpponent(null);
     setCombatResult(null);
-  }, [combatResult, setUserInfo]);
+  }, [combatResult, setUserInfo, upsertBattleResult]);
 
   const handleJoinChannel = useCallback(() => {
     const telegramChannel = socials[SocialChannel.TELEGRAM_CHANNEL];
@@ -309,10 +335,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   const error = multiplayerError || verifyError || joinError;
   const successMessage =
     multiplayerSuccessMessage || verifySuccessMessage || joinSuccessMessage;
-  console.log(`error`);
-  console.log(error);
-  console.log(`successMessage`);
-  console.log(successMessage);
 
   const handleControlButtonClick = useCallback(() => {
     if (combatState === "ready") {
@@ -324,17 +346,23 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     }
   }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);
 
+  useEffect(() => {
+    fetchBattleHistory();
+  }, [fetchBattleHistory]);
+
   return (
     <PvpWrapper>
       <PvpContainer className="scrollable-content">
         <PvpContent>
           <PvpHeader
-            attacksLeft={userInfo.pvp?.attacksAvailable ?? 0}
+            attacksLeft={(userInfo.pvp?.attacksToday ?? 0) - (userInfo.pvp?.attacksAvailable ?? 0)}
             totalAttacks={totalAttacks}
             onGetMoreAttacks={handleGetMoreAttacks}
             onArmoryClick={handleArmoryClick}
             onDeathmatchClick={handleDeathmatchClick}
             combatState={combatState}
+            battleHistory={battleHistory}
+            isHistoryLoading={multiplayerLoading}
           />
 
           <AnimatePresence>
@@ -348,45 +376,49 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                 {combatState === "searching" && (
                   <div className="flex flex-col items-center justify-center space-y-4 mt-4">
                     <FaSpinner className="animate-spin text-4xl text-white" />
-                    <p className="text-white text-lg">Looking for Opponent...</p>
+                    <p className="text-white text-lg">
+                      {searchingStep === 'searching' ? 'Looking for Opponent...' : 'Starting Fight...'}
+                    </p>
                   </div>
                 )}
 
-                {(combatState === "ready" || combatState === "fighting") && opponent && (
-                  <>
-                    <motion.div
-                      initial={{ x: "100%" }}
-                      animate={{ x: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
+                {(combatState === "ready" || combatState === "fighting") &&
+                  opponent && (
+                    <>
+                      <motion.div
+                        initial={{ x: "100%" }}
+                        animate={{ x: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <PlayerCard
+                          player={opponent}
+                          title="Opponent"
+                          isAttacking={combatState === "fighting"}
+                          isDefending={combatState === "fighting"}
+                          onInfoClick={() => handleInfoClick(opponent)}
+                          health={opponentHealth}
+                          maxHealth={opponent.pvp?.healthPoints || 100}
+                          damageReceived={opponentDamageReceived}
+                        />
+                      </motion.div>
+                      <PvpControls
+                        combatState={combatState}
+                        onButtonClick={handleControlButtonClick}
+                        isWinner={combatResult?.winner === "attacker"}
+                        isAttacking={isAttacking}
+                      />
                       <PlayerCard
-                        player={opponent}
-                        title="Opponent"
+                        player={userInfo}
+                        title="You"
                         isAttacking={combatState === "fighting"}
                         isDefending={combatState === "fighting"}
-                        onInfoClick={() => handleInfoClick(opponent)}
-                        health={opponentHealth}
-                        maxHealth={opponent.pvp?.healthPoints || 100}
-                        damageReceived={opponentDamageReceived}
+                        onInfoClick={() => handleInfoClick(userInfo)}
+                        health={userHealth}
+                        maxHealth={userInfo.pvp?.healthPoints || 100}
+                        damageReceived={userDamageReceived}
                       />
-                    </motion.div>
-                    <PvpControls
-                      combatState={combatState}
-                      onButtonClick={handleControlButtonClick}
-                      isWinner={combatResult?.winner === "attacker"}
-                    />
-                    <PlayerCard
-                      player={userInfo}
-                      title="You"
-                      isAttacking={combatState === "fighting"}
-                      isDefending={combatState === "fighting"}
-                      onInfoClick={() => handleInfoClick(userInfo)}
-                      health={userHealth}
-                      maxHealth={userInfo.pvp?.healthPoints || 100}
-                      damageReceived={userDamageReceived}
-                    />
-                  </>
-                )}
+                    </>
+                  )}
 
                 {combatState === "result" && combatResult && (
                   <PvpResult

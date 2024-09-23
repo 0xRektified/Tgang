@@ -29,3 +29,20 @@ export interface IBattle {
   cashLoot: number;
   productLoot: Loot[];
 }
+
+export interface IHistoryBattleResult {
+  battleId: string;
+  attacker: {
+    id: number;
+    username: string;
+  };
+  defender: {
+    id: number;
+    username: string;
+  };
+  round: number;
+  winner: string;
+  cashLoot: number;
+  productLoot: Loot[];
+  createdAt?: Date;
+}

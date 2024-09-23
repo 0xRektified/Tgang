@@ -1,80 +1,214 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaPlus, FaSkull, FaHistory } from "react-icons/fa";
+import {
+  FaPlus,
+  FaSkull,
+  FaHistory,
+  FaCoins,
+  FaSpinner,
+  FaTrophy,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { GiPistolGun } from "react-icons/gi";
 import styled from "styled-components";
+import { formatPrice } from "../utils/formater";
 
 import { CombatState } from "./Pvp";
-import { StyledButton } from "../styled/shopStyled";
+import { IBattle } from "../interfaces/multiplayer.interface";
+import { IHistoryBattleResult } from "../interfaces/multiplayer.interface";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
 
-const ButtonGroup = styled.div`
+const PvpCard = styled.div`
+  background-color: #34373e;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px #636363;
+  overflow: hidden;
+  position: relative;
+  padding: 1rem;
+  border: 2px solid #636363;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.5rem;
   margin-bottom: 1rem;
+  font-family: "Roboto", sans-serif;
 `;
 
-const NeonButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #4a90e2;
+const PvpTitle = styled.h1`
   color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px #4a90e2, 0 0 20px #4a90e2, 0 0 30px #4a90e2;
-
-  &:hover {
-    background-color: #357abd;
-    box-shadow: 0 0 20px #4a90e2, 0 0 40px #4a90e2, 0 0 60px #4a90e2;
-  }
-`;
-
-const AttackCount = styled.span`
-  color: white;
-  font-weight: bold;
-  margin-left: 1rem;
-`;
-
-const PageTitle = styled.h1`
-  font-family: "Bangers", cursive; // Cool font (make sure to import it)
-  color: #ff4500; // Bright red-orange color
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  font-size: 3rem;
+  font-size: 2rem;
+  margin-bottom: 0;
+  font-weight: 700;
 `;
 
-const ProgressBar = styled.div`
-  width: 100%;
-  height: 20px;
-  background-color: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div<{ width: string }>`
-  width: ${(props) => props.width};
-  height: 100%;
-  background-color: #4a90e2;
-  transition: width 0.3s ease-in-out;
-`;
-
-const GoldButton = styled(StyledButton)`
-  background-color: gold;
-  color: black;
+const PvpButton = styled.button`
+  background-color: #27272a;
+  color: white;
+  border: 2px solid #1e90ff;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px #1e90ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   &:hover {
-    background-color: #ffd700;
+    box-shadow: 0 0 10px #1e90ff;
+  }
+
+  svg {
+    font-size: 1rem;
   }
 `;
+
+const PvpButtonDeatchmatch = styled(PvpButton)`
+  animation: glow 1.5s infinite alternate, pulse 2s infinite;
+  padding: 0.5rem 0.75rem;
+`;
+
+const GoldenNeonButton = styled(PvpButton)`
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 5px #ffd700;
+
+  &:hover {
+    box-shadow: 0 0 10px #ffd700;
+  }
+`;
+
+const PvpButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  // Removed margin-bottom
+`;
+
+const RewardInfo = styled.div`
+  background-color: rgba(74, 144, 226, 0.1);
+  border: 1px solid rgba(74, 144, 226, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: white;
+  font-size: 1rem;
+`;
+
+const StatDesc = styled.span`
+  font-weight: 600;
+  color: white;
+  margin: 0 0.5rem;
+`;
+
+const RewardAmount = styled.span`
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+`;
+
+const GetMoreAttacksButton = styled(PvpButton)`
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+`;
+
+const CombatHistoryTitle = styled.h3`
+  margin-top: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+`;
+
+const CombatHistoryList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+`;
+
+const CombatHistoryItem = styled.li`
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const BattleHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+const PlayerName = styled.span`
+  font-weight: bold;
+`;
+
+const WinnerIcon = styled.span`
+  font-size: 1.5rem;
+  color: gold;
+`;
+
+const LoserIcon = styled.span`
+  font-size: 1.5rem;
+  color: #ff4136;
+`;
+
+const LootInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+`;
+
+const LootItem = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const CashLoot = styled.span`
+  color: #4adf81;
+`;
+
+const DateInfo = styled.div`
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 0.5rem;
+`;
+
+const LoadingSpinner = styled(FaSpinner)`
+  animation: spin 1s linear infinite;
+  font-size: 1.5rem;
+  color: white;
+`;
+
+const ProductIcon = styled.span`
+  font-size: 1.2rem;
+  margin-right: 0.25rem;
+`;
+
+// Helper function to get product icon
+const getProductIcon = (productName: string): string => {
+  return EProductIcon[productName as keyof typeof EProductIcon] || "❓";
+};
 
 interface PvpHeaderProps {
   attacksLeft: number;
@@ -83,6 +217,8 @@ interface PvpHeaderProps {
   onDeathmatchClick: () => void;
   onArmoryClick: () => void;
   combatState: CombatState;
+  battleHistory: IHistoryBattleResult[];
+  isHistoryLoading: boolean;
 }
 
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
@@ -92,43 +228,83 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
   onDeathmatchClick,
   onArmoryClick,
   combatState,
+  battleHistory,
+  isHistoryLoading,
 }) => {
   return (
     <AnimatePresence>
-      {combatState === 'idle' && (
+      {combatState === "idle" && (
         <motion.div
           initial={{ x: 0 }}
           animate={{ x: 0 }}
-          exit={{ x: '-100%' }}
+          exit={{ x: "-100%" }}
           transition={{ duration: 0.3 }}
         >
-          <PageTitle>
-            <GiPistolGun /> Cartel War
-          </PageTitle>
-          <ButtonGroup>
-            <div>
-              <h2>Attacks Available</h2>
-              <AttackCount>
+          <PvpCard>
+            <PvpTitle>
+              <GiPistolGun /> Cartel War
+            </PvpTitle>
+
+            <RewardInfo>
+              <FaCoins />
+              <StatDesc>Attacks Available:</StatDesc>
+              <RewardAmount>
                 {attacksLeft} / {totalAttacks}
-              </AttackCount>
-              <NeonButton onClick={onGetMoreAttacks}>
-                <FaPlus /> Get More
-              </NeonButton>
-            </div>
-            <ProgressBar>
-              <ProgressFill width={`${(attacksLeft / totalAttacks) * 100}%`} />
-            </ProgressBar>
-          </ButtonGroup>
-          <NeonButton onClick={onArmoryClick}>
-            <FaSkull /> Armory
-          </NeonButton>
-          <NeonButton onClick={onDeathmatchClick}>
-            <FaSkull /> Deathmatch
-          </NeonButton>
-          <h3>
-            <FaHistory /> Combat History
-          </h3>
-          {/* Combat history list will be added here */}
+              </RewardAmount>
+              <GetMoreAttacksButton onClick={onGetMoreAttacks}>
+                <FaPlus />
+              </GetMoreAttacksButton>
+            </RewardInfo>
+            <PvpButtonGroup>
+              <PvpButton onClick={onArmoryClick}>
+                <FaSkull /> Armory
+              </PvpButton>
+            </PvpButtonGroup>
+            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
+              <FaSkull /> Deathmatch
+            </PvpButtonDeatchmatch>
+            <CombatHistoryTitle>Combat History</CombatHistoryTitle>
+            {isHistoryLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <CombatHistoryList>
+                {battleHistory.slice(0, 5).map((battle) => (
+                  <CombatHistoryItem key={battle.battleId}>
+                    <BattleHeader>
+                      <PlayerName>{battle.attacker.username}</PlayerName>
+                      <span>vs</span>
+                      <PlayerName>{battle.defender.username}</PlayerName>
+                    </BattleHeader>
+                    <LootInfo>
+                      {battle.winner === battle.attacker.id.toString() ? (
+                        <WinnerIcon>
+                          <FaTrophy />
+                        </WinnerIcon>
+                      ) : (
+                        <LoserIcon>
+                          <FaTimesCircle />
+                        </LoserIcon>
+                      )}
+                      <LootItem>
+                        <CashLoot>
+                          {formatPrice(battle.cashLoot, false)}
+                        </CashLoot>
+                      </LootItem>
+                      {battle.productLoot.map((loot, index) => (
+                        <LootItem key={index}>
+                          <ProductIcon>{getProductIcon(loot.name)}</ProductIcon>
+                          {loot.quantity}
+                        </LootItem>
+                      ))}
+                    </LootInfo>
+                    {/* <DateInfo>
+                      {new Date(battle.createdAt).toLocaleString()}
+                    </DateInfo> */}
+                  </CombatHistoryItem>
+                ))}
+              </CombatHistoryList>
+            )}
+          </PvpCard>
         </motion.div>
       )}
     </AnimatePresence>

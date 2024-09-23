@@ -108,15 +108,24 @@ const getLooser = (combatResult: IBattle) => {
   }
 };
 
+const CollectRewardButton = styled(NeonGreenButton)`
+  width: 80%;
+  max-width: 300px;
+  margin: 1rem auto 0;
+  display: block;
+`;
+
 export const PvpResult: React.FC<PvpResultProps> = ({
   combatResult,
   username,
   onCollect,
   collectingRewards,
 }) => {
-  const isWinner = combatResult.winner === username;
+  const isWinner = combatResult.winner === "attacker";
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [visibleRewards, setVisibleRewards] = useState<Array<{ type: string; name?: string; index: number }>>([]);
+  const [visibleRewards, setVisibleRewards] = useState<
+    Array<{ type: string; name?: string; index: number }>
+  >([]);
 
   useEffect(() => {
     if (collectingRewards) {
@@ -131,7 +140,10 @@ export const PvpResult: React.FC<PvpResultProps> = ({
       rewards.forEach((item, itemIndex) => {
         const isCash = item.type === "cash";
         const quantity = isCash
-          ? Math.min(Math.floor((item as { amount: number }).amount / 10) || 0, 15)
+          ? Math.min(
+              Math.floor((item as { amount: number }).amount / 10) || 0,
+              15,
+            )
           : Math.min((item as { quantity: number }).quantity, 15);
 
         Array.from({ length: quantity }).forEach((_, index) => {
@@ -139,7 +151,11 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           setTimeout(() => {
             setVisibleRewards((prev) => [
               ...prev,
-              { type: item.type, name: isCash ? "cash" : (item as { name: string }).name, index },
+              {
+                type: item.type,
+                name: isCash ? "cash" : (item as { name: string }).name,
+                index,
+              },
             ]);
           }, delay);
         });
@@ -232,12 +248,12 @@ export const PvpResult: React.FC<PvpResultProps> = ({
         )}
       </AnimatePresence>
 
-      <NeonGreenButton
+      <CollectRewardButton
         onClick={onCollect}
-        className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
+        className="bg-green-500 text-white px-4 py-2 rounded"
       >
         💰 Collect Rewards
-      </NeonGreenButton>
+      </CollectRewardButton>
 
       <audio ref={audioRef} src="/assets/cash.mp3" />
     </ResultContainer>

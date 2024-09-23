@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
-import { IBattle } from "../components/interfaces/multiplayer.interface";
+import { IBattle, IHistoryBattleResult } from "../components/interfaces/multiplayer.interface";
 
 interface ErrorResponse {
   statusCode: number;
@@ -16,6 +16,7 @@ export function useMultiplayer(
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [battleHistory, setBattleHistory] = useState<IHistoryBattleResult[]>([]);
 
   const searchPlayer = useCallback(async () => {
     setLoading(true);
@@ -47,7 +48,7 @@ export function useMultiplayer(
     } catch (error: any) {
       console.error("Failed to fetch user");
     }
-  }, []);
+  }, [setUserInfo]);
 
   const performAttack = useCallback(
     async (battleId: string) => {
@@ -74,7 +75,7 @@ export function useMultiplayer(
         return null;
       }
     },
-    [setUserInfo],
+    [],
   );
 
   const startFight = useCallback(
@@ -102,13 +103,68 @@ export function useMultiplayer(
         return null;
       }
     },
-    [setUserInfo],
+    [],
   );
+
+  const fetchBattleHistory = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setErrorCode(null);
+    setSuccessMessage(null);
+    try {
+      const response = await axiosInstance.get<IHistoryBattleResult[]>("/multiplayer/battle-results");
+      setLoading(false);
+      setBattleHistory(response.data);
+      return response.data;
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+        setErrorCode(err.response.status);
+      } else {
+        setError("Failed to fetch battle history");
+      }
+      console.error(err);
+      return null;
+    }
+  }, []);
+
+  const upsertBattleResult = useCallback((newBattle: IBattle) => {
+    setBattleHistory(prevHistory => {
+      const historyBattle: IHistoryBattleResult = {
+        battleId: newBattle.battleId,
+        attacker: {
+          id: newBattle.attacker.id,
+          username: newBattle.attacker.username,
+        },
+        defender: {
+          id: newBattle.defender.id,
+          username: newBattle.defender.username,
+        },
+        round: newBattle.round,
+        winner: newBattle.winner === 'attacker' ? newBattle.attacker.id.toString() : newBattle.defender.id.toString(),
+        cashLoot: newBattle.cashLoot,
+        productLoot: newBattle.productLoot,
+      };
+
+      const index = prevHistory.findIndex(battle => battle.battleId === newBattle.battleId);
+      if (index !== -1) {
+        const updatedHistory = [...prevHistory];
+        updatedHistory[index] = historyBattle;
+        return updatedHistory;
+      } else {
+        return [historyBattle, ...prevHistory];
+      }
+    });
+  }, []);
 
   return {
     searchPlayer,
     startFight,
     performAttack,
+    fetchBattleHistory,
+    upsertBattleResult,
+    battleHistory,
     loading,
     error,
     errorCode,
