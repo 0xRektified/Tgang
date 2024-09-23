@@ -148,6 +148,12 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   );
   const [isAttacking, setIsAttacking] = useState(false);
 
+  const playSound = (sound: string) => {
+    const audio = new Audio(sound);
+    audio.volume = 0.4;
+    audio.play();
+  }
+
   useEffect(() => {
     function handleResize() {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -187,7 +193,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.attackerDamage > 0) {
-        new Audio("/assets/sounds/blunthit.wav").play();
+        playSound("/assets/sounds/blunthit.wav");
         WebApp.HapticFeedback.impactOccurred("rigid");
         await opponentControls.start({
           rotate: [0, -7, 7, 0],
@@ -196,7 +202,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         currentOpponentHealth -= round.attackerDamage;
         setOpponentHealth(currentOpponentHealth);
       } else {
-        new Audio("/assets/sounds/bluntmiss.wav").play();
+        playSound("/assets/sounds/bluntmiss.wav");
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -209,7 +215,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.defenderDamage > 0) {
-        new Audio("/assets/sounds/blunthit.wav").play();
+        playSound("/assets/sounds/blunthit.wav");
         WebApp.HapticFeedback.impactOccurred("rigid");
         await userControls.start({
           rotate: [0, -7, 7, 0],
@@ -218,7 +224,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         currentUserHealth -= round.defenderDamage;
         setUserHealth(currentUserHealth);
       } else {
-        new Audio("/assets/sounds/bluntmiss.wav").play();
+        playSound("/assets/sounds/bluntmiss.wav");
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
