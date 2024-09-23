@@ -430,9 +430,9 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           <AnimatePresence>
             {combatState !== "idle" && (
               <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
                 {combatState === "searching" &&
@@ -477,19 +477,21 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                       <motion.div
                         initial={{ x: "100%" }}
                         animate={{ x: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
                       >
-                        <PlayerCard
-                          player={opponent}
-                          title="Opponent"
-                          isAttacking={combatState === "fighting"}
-                          isDefending={combatState === "fighting"}
-                          onInfoClick={() => handleInfoClick(opponent)}
-                          health={opponentHealth}
-                          maxHealth={opponent.pvp?.healthPoints || 100}
-                          damageReceived={opponentDamageReceived}
-                          light={false}
-                        />
+                        <motion.div animate={opponentControls}>
+                          <PlayerCard
+                            player={opponent}
+                            title="Opponent"
+                            isAttacking={combatState === "fighting"}
+                            isDefending={combatState === "fighting"}
+                            onInfoClick={() => handleInfoClick(opponent)}
+                            health={opponentHealth}
+                            maxHealth={opponent.pvp?.healthPoints || 100}
+                            damageReceived={opponentDamageReceived}
+                            light={false}
+                          />
+                        </motion.div>
                       </motion.div>
                       <PvpControls
                         combatState={combatState}
@@ -510,17 +512,25 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   />
                 )}
 
-                <PlayerCard
-                  player={userInfo}
-                  title="You"
-                  isAttacking={combatState === "fighting"}
-                  isDefending={combatState === "fighting"}
-                  onInfoClick={() => handleInfoClick(userInfo)}
-                  health={userHealth}
-                  maxHealth={userInfo.pvp?.healthPoints || 100}
-                  damageReceived={userDamageReceived}
-                  light={false}
-                />
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <motion.div animate={userControls}>
+                    <PlayerCard
+                      player={userInfo}
+                      title="You"
+                      isAttacking={combatState === "fighting"}
+                      isDefending={combatState === "fighting"}
+                      onInfoClick={() => handleInfoClick(userInfo)}
+                      health={userHealth}
+                      maxHealth={userInfo.pvp?.healthPoints || 100}
+                      damageReceived={userDamageReceived}
+                      light={false}
+                    />
+                  </motion.div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>

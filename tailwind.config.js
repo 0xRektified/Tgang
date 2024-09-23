@@ -68,6 +68,15 @@ export default {
           "0%": { transform: "translate(0, 0)", opacity: 0 },
           "100%": { transform: "translate(100px, -150px)", opacity: 1 },
         },
+        bounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%, 60%': { transform: 'translateX(-5px)' },
+          '40%, 80%': { transform: 'translateX(5px)' },
+        },
       },
       animation: {
         "fade-in": "fadeIn 1s forwards",
@@ -84,6 +93,8 @@ export default {
         "subtle-bounce": "subtleBounce 2s ease-in-out infinite",
         "glowing-border": "glowingBorder 2s ease-in-out infinite",
         "move-up-right": "moveUpRight 1s forwards",
+        'bounce-attack': 'bounce 0.3s ease-in-out',
+        'shake-damage': 'shake 0.4s ease-in-out',
       },
       transform: {
         'flip-y': 'scaleY(-1)',
