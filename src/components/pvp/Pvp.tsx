@@ -148,8 +148,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   );
   const [isAttacking, setIsAttacking] = useState(false);
 
-  console.log(`userInfo.pvp`);
-  console.log(userInfo.pvp);
   useEffect(() => {
     function handleResize() {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -176,10 +174,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
 
   const simulateCombat = useCallback(
     async (combatResult: IBattle) => {
-      console.log(`combatResult`);
-      console.log(combatResult);
-      console.log(`opponent`);
-      console.log(opponent);
       if (!opponent) return;
       let currentUserHealth = userHealth;
       let currentOpponentHealth = opponentHealth;
@@ -193,6 +187,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.attackerDamage > 0) {
+        WebApp.HapticFeedback.impactOccurred("rigid");
         await opponentControls.start({
           rotate: [0, -7, 7, 0],
           transition: { duration: 0.25 },
@@ -211,6 +206,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.defenderDamage > 0) {
+        WebApp.HapticFeedback.impactOccurred("rigid");
         await userControls.start({
           rotate: [0, -7, 7, 0],
           transition: { duration: 0.25 },
@@ -304,8 +300,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setIsAttacking(true);
     try {
       const result = await performAttack(currentBattle.battleId);
-      console.log(`result`);
-      console.log(result);
       if (result) {
         await simulateCombat(result);
       }
