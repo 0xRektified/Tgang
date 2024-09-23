@@ -282,6 +282,34 @@ export const NeonRedButton = styled(NeonButton)`
     }
   }
 `;
+
+export const NeonGreenButton = styled(NeonButton)`
+  background-color: rgb(39 39 42) !important;
+  color: #e4e4e7;
+  border: 2px solid #32cd32;
+  box-shadow: 0 0 2px #32cd32, 0 0 4px #32cd32, 0 0 6px #32cd32, 0 0 8px #32cd32;
+
+  &:hover {
+    background-color: rgb(24 24 27);
+    animation: greenGlow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  &:active {
+    animation: greenGlow 1.5s infinite alternate, pulse 2s infinite;
+  }
+
+  @keyframes greenGlow {
+    0% {
+      box-shadow: 0 0 2px #32cd32, 0 0 4px #32cd32, 0 0 6px #32cd32,
+        0 0 8px #32cd32;
+    }
+    100% {
+      box-shadow: 0 0 8px #32cd32, 0 0 12px #32cd32, 0 0 16px #32cd32,
+        0 0 20px #32cd32;
+    }
+  }
+`;
+
 export const SmallButton = styled(Button)`
   font-size: 0.8rem;
   padding: 0.3rem 0.6rem;

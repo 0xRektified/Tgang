@@ -181,7 +181,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               }
             });
           }
-          const upgradeEffect = userUpgrade?.upgradeMarketDiscount
+          const upgradeEffect = (userUpgrade?.upgradeMarketDiscount && userUpgrade?.level > 0)
             ? `From -${userUpgrade?.marketDiscount.toFixed(
                 2,
               )}% to -${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`

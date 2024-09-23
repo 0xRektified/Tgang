@@ -79,9 +79,9 @@ export interface IReferredUsers {
 }
 
 export interface IUserSocial {
-  channel: SocialChannel,
-  member: boolean,
-  joined?: Date,
+  channel: SocialChannel;
+  member: boolean;
+  joined?: Date;
 }
 
 export interface IUserInfo {
@@ -108,4 +108,21 @@ export interface IUserInfo {
   userLevel: IReputationLevel;
   socials?: IUserSocial[];
   wallet?: string;
+  pvp?: IUserPvp;
+}
+
+export interface IUserPvp {
+  victory: number;
+  defeat: number;
+  lastAttackDate: Date;
+  attacksToday: number;
+  lastDefendDate: Date;
+  attacksAvailable: number;
+  healthPoints: number;
+  protection: number;
+  damage: number;
+  accuracy: number;
+  evasion: number;
+  lootPower: number;
+  criticalChance: number;
 }

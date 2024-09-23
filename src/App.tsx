@@ -177,7 +177,7 @@ function App() {
           />
         );
       case "Pvp":
-        return <Pvp userInfo={userInfo} />;
+        return <Pvp userInfo={userInfo} setUserInfo={setUserInfo} socials={socials!}/>;
       case "Leaderboard":
         return <Leaderboard userInfo={userInfo} />;
       default:

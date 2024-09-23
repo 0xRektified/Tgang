@@ -3,10 +3,7 @@ export const CardContainer = styled.div<{ locked?: boolean }>`
   display: flex;
   background-color: #282b2c;
   border-radius: 0.8rem;
-<<<<<<< HEAD
-=======
   padding: 0.75rem;
->>>>>>> main
   box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
   color: #e4e4e7;
   width: 100%;
