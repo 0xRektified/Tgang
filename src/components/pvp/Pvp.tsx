@@ -193,7 +193,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.attackerDamage > 0) {
-        playSound("/assets/sounds/blunthit.wav");
+        playSound("/assets/sounds/melehit.wav");
         WebApp.HapticFeedback.impactOccurred("rigid");
         await opponentControls.start({
           rotate: [0, -7, 7, 0],
@@ -202,7 +202,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         currentOpponentHealth -= round.attackerDamage;
         setOpponentHealth(currentOpponentHealth);
       } else {
-        playSound("/assets/sounds/bluntmiss.wav");
+        playSound("/assets/sounds/melemiss.wav");
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -215,7 +215,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       });
 
       if (round.defenderDamage > 0) {
-        playSound("/assets/sounds/blunthit.wav");
+        playSound("/assets/sounds/melehit.wav");
         WebApp.HapticFeedback.impactOccurred("rigid");
         await userControls.start({
           rotate: [0, -7, 7, 0],
@@ -224,7 +224,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
         currentUserHealth -= round.defenderDamage;
         setUserHealth(currentUserHealth);
       } else {
-        playSound("/assets/sounds/bluntmiss.wav");
+        playSound("/assets/sounds/melemiss.wav");
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
