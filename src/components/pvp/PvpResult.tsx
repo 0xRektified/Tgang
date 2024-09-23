@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
-import { BsCash } from "react-icons/bs";
-
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { IBattle } from "../interfaces/multiplayer.interface";
 import { NeonGreenButton } from "../styled/cardStyled";
@@ -16,7 +14,7 @@ const ResultContainer = styled(motion.div)`
   color: #ffffff;
   width: 100%;
   max-width: 600px;
-  margin-bottom:3em;
+  margin-bottom: 3em;
 `;
 
 const ResultHeader = styled.div`
@@ -166,9 +164,16 @@ export const PvpResult: React.FC<PvpResultProps> = ({
     }
   };
 
+  const getRandomEndPosition = () => {
+    const randomX =
+      Math.random() * window.innerWidth * 0.6 + window.innerWidth * 0.2;
+    const randomY = -Math.random() * window.innerHeight * 0.6 - 50;
+    return { x: randomX, y: randomY };
+  };
+
   return (
     <ResultContainer
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
@@ -186,7 +191,8 @@ export const PvpResult: React.FC<PvpResultProps> = ({
             <ResultItemIcon>
               <FaDollarSign />
             </ResultItemIcon>
-            You Stole <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
+            You Stole{" "}
+            <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
           </ResultItem>
           <ProductsGrid>
             {Object.values(EProduct).map((productName: string) => {
@@ -213,36 +219,45 @@ export const PvpResult: React.FC<PvpResultProps> = ({
 
       <AnimatePresence>
         {collectingRewards && isWinner && (
-          <motion.div className="absolute top-60 left-15 transform -translate-x-1/2  animate-move-up-right">
+          <>
             {visibleRewards.map(({ type, name, index }) => {
               const isCash = type === "cash";
               const emoji = isCash ? "💰" : EProductIcon[name as EProduct];
-              const text = isCash ? "10$" : "";
+              const endPosition = getRandomEndPosition();
 
               return (
                 <motion.div
-                  key={`${type}-${name}-${index}`}
-                  className="h-6 w-6 animate-move-up-right"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  key={`${type}-${name}-${index}-${Math.random()}`}
+                  initial={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                  animate={{
+                    opacity: [1, 1, 0],
+                    x: endPosition.x,
+                    y: endPosition.y,
+                    scale: [1, 1.2, 0.5],
+                  }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
+                  transition={{
+                    duration: 5, // Increased duration for slower movement
+                    type: "spring",
+                    stiffness: 50, // Reduced stiffness for slower movement
+                    damping: 10,
+                  }}
                   onAnimationStart={playSound}
                   style={{
+                    position: "fixed",
                     fontSize: "2rem",
-                    color: type === "cash" ? "#00ff00" : "white",
-                    position: "absolute",
-                    bottom: 0,
+                    color: isCash ? "#00ff00" : "white",
+                    zIndex: 1000,
                     left: "50%",
-                    transform: "translateX(-50%)",
+                    top: "40%", // Moved initial position up
+                    transform: "translate(-50%, -50%)",
                   }}
                 >
                   {emoji}
-                  {text}
                 </motion.div>
               );
             })}
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
 

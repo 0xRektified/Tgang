@@ -335,25 +335,20 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
 
     setCollectingRewards(true);
 
-    // Simulate collecting rewards
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     setCollectingRewards(false);
 
-    // Update user info with collected rewards
     fetchuser();
 
-    // Upsert the combat result in the battle history
     upsertBattleResult(combatResult);
 
-    // Return to the main menu
     setCombatState("idle");
     setOpponent(null);
     setCombatResult(null);
   }, [combatResult, setUserInfo, upsertBattleResult]);
 
   const handleTryAgain = useCallback(() => {
-    // Just return to the main menu
     setCombatState("idle");
     setOpponent(null);
     setCombatResult(null);
