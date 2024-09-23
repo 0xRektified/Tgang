@@ -342,7 +342,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
                 <GreenIcon>
                   <FaDollarSign />
                 </GreenIcon>
-                {player.cashAmount}
+                {Math.floor(player.cashAmount)}
               </CashAmount>
             </UserLevel>
             <StatsRow>
