@@ -471,45 +471,33 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   </div>
                 )}
 
-                {(combatState === "ready" || combatState === "fighting") &&
-                  opponent && (
-                    <>
-                      <motion.div
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <PlayerCard
-                          player={opponent}
-                          title="Opponent"
-                          isAttacking={combatState === "fighting"}
-                          isDefending={combatState === "fighting"}
-                          onInfoClick={() => handleInfoClick(opponent)}
-                          health={opponentHealth}
-                          maxHealth={opponent.pvp?.healthPoints || 100}
-                          damageReceived={opponentDamageReceived}
-                          light={false}
-                        />
-                      </motion.div>
-                      <PvpControls
-                        combatState={combatState}
-                        onButtonClick={handleControlButtonClick}
-                        isWinner={combatResult?.winner === "attacker"}
-                        isAttacking={isAttacking}
-                      />
+                {(combatState === "ready" || combatState === "fighting") && opponent && (
+                  <>
+                    <motion.div
+                      initial={{ x: "100%" }}
+                      animate={{ x: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
                       <PlayerCard
-                        player={userInfo}
-                        title="You"
+                        player={opponent}
+                        title="Opponent"
                         isAttacking={combatState === "fighting"}
                         isDefending={combatState === "fighting"}
-                        onInfoClick={() => handleInfoClick(userInfo)}
-                        health={userHealth}
-                        maxHealth={userInfo.pvp?.healthPoints || 100}
-                        damageReceived={userDamageReceived}
+                        onInfoClick={() => handleInfoClick(opponent)}
+                        health={opponentHealth}
+                        maxHealth={opponent.pvp?.healthPoints || 100}
+                        damageReceived={opponentDamageReceived}
                         light={false}
                       />
-                    </>
-                  )}
+                    </motion.div>
+                    <PvpControls
+                      combatState={combatState}
+                      onButtonClick={handleControlButtonClick}
+                      isWinner={combatResult?.winner === "attacker"}
+                      isAttacking={isAttacking}
+                    />
+                  </>
+                )}
 
                 {combatState === "result" && combatResult && (
                   <PvpResult
@@ -519,6 +507,18 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                     collectingRewards={collectingRewards}
                   />
                 )}
+
+                <PlayerCard
+                  player={userInfo}
+                  title="You"
+                  isAttacking={combatState === "fighting"}
+                  isDefending={combatState === "fighting"}
+                  onInfoClick={() => handleInfoClick(userInfo)}
+                  health={userHealth}
+                  maxHealth={userInfo.pvp?.healthPoints || 100}
+                  damageReceived={userDamageReceived}
+                  light={false}
+                />
               </motion.div>
             )}
           </AnimatePresence>

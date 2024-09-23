@@ -16,6 +16,7 @@ const ResultContainer = styled(motion.div)`
   color: #ffffff;
   width: 100%;
   max-width: 600px;
+  margin-bottom:3em;
 `;
 
 const ResultHeader = styled.div`
