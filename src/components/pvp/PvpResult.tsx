@@ -129,7 +129,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
   >([]);
 
   useEffect(() => {
-    if (collectingRewards) {
+    if (collectingRewards && isWinner) {
       const rewards = [
         { type: "cash", amount: combatResult.cashLoot },
         ...combatResult.productLoot.map((product) => ({
@@ -162,7 +162,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
         });
       });
     }
-  }, [collectingRewards, combatResult]);
+  }, [collectingRewards, combatResult, isWinner]);
 
   const playSound = () => {
     if (audioRef.current) {
@@ -185,37 +185,39 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           {isWinner ? <FaTrophy /> : <FaSkull />}
         </ResultIcon>
       </ResultHeader>
-      <ResultContent>
-        <ResultItem>
-          <ResultItemIcon>
-            <FaDollarSign />
-          </ResultItemIcon>
-          You Stole <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
-        </ResultItem>
-        <ProductsGrid>
-          {Object.values(EProduct).map((productName: string) => {
-            const lootedProduct = combatResult.productLoot.find(
-              (p) => p.name === productName,
-            );
-            const quantity = lootedProduct ? lootedProduct.quantity : 0;
-            const emoji =
-              EProductIcon[productName as keyof typeof EProductIcon];
-            return (
-              <ProductItem
-                key={productName}
-                className="product-item"
-                data-product={productName}
-              >
-                <ProductIcon>{emoji}</ProductIcon>
-                <ProductQuantity>{quantity}</ProductQuantity>
-              </ProductItem>
-            );
-          })}
-        </ProductsGrid>
-      </ResultContent>
+      {isWinner && (
+        <ResultContent>
+          <ResultItem>
+            <ResultItemIcon>
+              <FaDollarSign />
+            </ResultItemIcon>
+            You Stole <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
+          </ResultItem>
+          <ProductsGrid>
+            {Object.values(EProduct).map((productName: string) => {
+              const lootedProduct = combatResult.productLoot.find(
+                (p) => p.name === productName,
+              );
+              const quantity = lootedProduct ? lootedProduct.quantity : 0;
+              const emoji =
+                EProductIcon[productName as keyof typeof EProductIcon];
+              return (
+                <ProductItem
+                  key={productName}
+                  className="product-item"
+                  data-product={productName}
+                >
+                  <ProductIcon>{emoji}</ProductIcon>
+                  <ProductQuantity>{quantity}</ProductQuantity>
+                </ProductItem>
+              );
+            })}
+          </ProductsGrid>
+        </ResultContent>
+      )}
 
       <AnimatePresence>
-        {collectingRewards && (
+        {collectingRewards && isWinner && (
           <motion.div className="absolute top-60 left-15 transform -translate-x-1/2  animate-move-up-right">
             {visibleRewards.map(({ type, name, index }) => {
               const isCash = type === "cash";
@@ -253,7 +255,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
         onClick={onCollect}
         className="bg-green-500 text-white px-4 py-2 rounded"
       >
-        💰 Collect Rewards
+        {isWinner ? "💰 Collect Rewards" : "🔄 Try Again"}
       </CollectRewardButton>
 
       <audio ref={audioRef} src="/assets/cash.mp3" />
