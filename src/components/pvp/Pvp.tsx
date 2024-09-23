@@ -95,6 +95,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     performAttack,
     fetchBattleHistory,
     upsertBattleResult,
+    fetchuser,
     battleHistory,
     loading: multiplayerLoading,
     error: multiplayerError,
@@ -303,6 +304,8 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setIsAttacking(true);
     try {
       const result = await performAttack(currentBattle.battleId);
+      console.log(`result`);
+      console.log(result);
       if (result) {
         await simulateCombat(result);
       }
@@ -331,7 +334,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   );
 
   const handleCollectAndReturn = useCallback(async () => {
-    if (!combatResult || combatResult.winner !== "attacker") return;
+    if (!combatResult || combatResult.winner !== "attacker") {
+      fetchuser();
+      return;
+    }
 
     setCollectingRewards(true);
 
@@ -341,18 +347,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCollectingRewards(false);
 
     // Update user info with collected rewards
-    setUserInfo((prevUserInfo) => ({
-      ...prevUserInfo,
-      cashAmount: prevUserInfo.cashAmount + (combatResult.cashLoot || 0),
-      products: prevUserInfo.products.map((product) => {
-        const lootedProduct = combatResult.productLoot?.find(
-          (p) => p.name === product.name,
-        );
-        return lootedProduct
-          ? { ...product, quantity: product.quantity + lootedProduct.quantity }
-          : product;
-      }),
-    }));
+    fetchuser();
 
     // Upsert the combat result in the battle history
     upsertBattleResult(combatResult);
@@ -454,9 +449,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   )}
 
                 {maxAttacksReached && (
-                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
-                    <p className="text-white text-lg">
-                      You have reached the maximum number of fights for today.
+                  <div className="flex flex-col items-center justify-center space-y-4 mt-4 mb-10">
+                    <p className="text-white text-lg  mb-5">
+                      You have reached the maximum number of fights for today,
+                      come back tomorrow
                     </p>
                     <StyledButton onClick={handleReturnToMain}>
                       Return to Main Page
@@ -465,8 +461,8 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                 )}
 
                 {!maxAttacksReached && socialNetworkRequired && (
-                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
-                    <p className="text-white text-lg">
+                  <div className="flex flex-col items-center justify-center space-y-4 mt-4  mb-10">
+                    <p className="text-white text-lg  mb-5">
                       You need to join our social network to participate in PvP.
                     </p>
                     <StyledButton onClick={handleReturnToMain}>
@@ -475,33 +471,34 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   </div>
                 )}
 
-                {(combatState === "ready" || combatState === "fighting") && opponent && (
-                  <>
-                    <motion.div
-                      initial={{ x: "100%" }}
-                      animate={{ x: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <PlayerCard
-                        player={opponent}
-                        title="Opponent"
-                        isAttacking={combatState === "fighting"}
-                        isDefending={combatState === "fighting"}
-                        onInfoClick={() => handleInfoClick(opponent)}
-                        health={opponentHealth}
-                        maxHealth={opponent.pvp?.healthPoints || 100}
-                        damageReceived={opponentDamageReceived}
-                        light={false}
+                {(combatState === "ready" || combatState === "fighting") &&
+                  opponent && (
+                    <>
+                      <motion.div
+                        initial={{ x: "100%" }}
+                        animate={{ x: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <PlayerCard
+                          player={opponent}
+                          title="Opponent"
+                          isAttacking={combatState === "fighting"}
+                          isDefending={combatState === "fighting"}
+                          onInfoClick={() => handleInfoClick(opponent)}
+                          health={opponentHealth}
+                          maxHealth={opponent.pvp?.healthPoints || 100}
+                          damageReceived={opponentDamageReceived}
+                          light={false}
+                        />
+                      </motion.div>
+                      <PvpControls
+                        combatState={combatState}
+                        onButtonClick={handleControlButtonClick}
+                        isWinner={combatResult?.winner === "attacker"}
+                        isAttacking={isAttacking}
                       />
-                    </motion.div>
-                    <PvpControls
-                      combatState={combatState}
-                      onButtonClick={handleControlButtonClick}
-                      isWinner={combatResult?.winner === "attacker"}
-                      isAttacking={isAttacking}
-                    />
-                  </>
-                )}
+                    </>
+                  )}
 
                 {combatState === "result" && combatResult && (
                   <PvpResult

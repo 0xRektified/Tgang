@@ -190,6 +190,7 @@ export function useMultiplayer(
     performAttack,
     fetchBattleHistory,
     upsertBattleResult,
+    fetchuser,
     battleHistory,
     loading,
     error,

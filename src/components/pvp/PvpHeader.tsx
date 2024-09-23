@@ -268,11 +268,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             <PvpTitle>
               <GiPistolGun /> Cartel War
             </PvpTitle>
-            {/* <PvpButtonGroup>
-              <ArmoryButton onClick={onArmoryClick}>
-                <GiCrossedSwords /> Armory
-              </ArmoryButton>
-            </PvpButtonGroup> */}
 
             <RewardInfo>
               <FaCoins />
@@ -280,22 +275,22 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               <RewardAmount>
                 {attacksLeft} / {totalAttacks}
               </RewardAmount>
-              {/* <GetMoreAttacksButton onClick={onGetMoreAttacks}>
-                <FaPlus />
-              </GetMoreAttacksButton> */}
             </RewardInfo>
-            <PlayerCard
-              player={userInfo}
-              title="You"
-              isAttacking={false}
-              isDefending={false}
-              onInfoClick={() => {}}
-              health={userInfo.pvp?.healthPoints || 100}
-              maxHealth={userInfo.pvp?.healthPoints || 100}
-              damageReceived={undefined}
-              light={true}
-            />
-            {/* New Player Card */}
+            
+            {/* Wrap PlayerCard in a div */}
+            <div>
+              <PlayerCard
+                player={userInfo}
+                title="You"
+                isAttacking={false}
+                isDefending={false}
+                onInfoClick={() => {}}
+                health={userInfo.pvp?.healthPoints || 100}
+                maxHealth={userInfo.pvp?.healthPoints || 100}
+                damageReceived={undefined}
+                light={true}
+              />
+            </div>
 
             <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
               <FaSkull /> Deathmatch

@@ -91,7 +91,7 @@ const UsernameLine = styled.div`
   align-items: center;
 `;
 
-const Username = styled.h3`
+const Username = styled.div`
   font-size: 1rem;
   font-weight: bold;
   color: #ffffff;
@@ -101,10 +101,16 @@ const Username = styled.h3`
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: 0.5rem; // Add small gap between username and stats
+  gap: 0.5rem;
 `;
 
-const UserLevel = styled.p`
+const UsernameText = styled.span`
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+`;
+
+const UserLevel = styled.div`
   font-size: 0.8rem;
   color: #48bb78;
   margin: 0;
@@ -312,7 +318,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           <UserDetails>
             <UsernameLine>
               <Username title={player.username}>
-                {truncateUsername(player.username)}
+                <UsernameText>{truncateUsername(player.username)}</UsernameText>
                 <StatGroup>
                   <StatItem>
                     <GoldIcon>
@@ -330,7 +336,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               </Username>
             </UsernameLine>
             <UserLevel>
-              (Level {player.userLevel.level}) {player.userLevel.title}
+              <span>(Level {player.userLevel.level})</span>
+              <span>{player.userLevel.title}</span>
               <CashAmount>
                 <GreenIcon>
                   <FaDollarSign />
