@@ -17,6 +17,8 @@ import { CombatState } from "./Pvp";
 import { IBattle } from "../interfaces/multiplayer.interface";
 import { IHistoryBattleResult } from "../interfaces/multiplayer.interface";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import PlayerCard from "./PlayerCard"; // Import the PlayerCard component
+import { IUserInfo } from "../interfaces/user.interface";
 
 const PvpCard = styled.div`
   background-color: #34373e;
@@ -225,13 +227,13 @@ const ArmoryButton = styled(PvpButton)`
   }
 `;
 
-
 // Helper function to get product icon
 const getProductIcon = (productName: string): string => {
   return EProductIcon[productName as keyof typeof EProductIcon] || "❓";
 };
 
 interface PvpHeaderProps {
+  userInfo: IUserInfo;
   attacksLeft: number;
   totalAttacks: number;
   onGetMoreAttacks: () => void;
@@ -243,6 +245,7 @@ interface PvpHeaderProps {
 }
 
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
+  userInfo,
   attacksLeft,
   totalAttacks,
   onGetMoreAttacks,
@@ -265,11 +268,12 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             <PvpTitle>
               <GiPistolGun /> Cartel War
             </PvpTitle>
-            <PvpButtonGroup>
+            {/* <PvpButtonGroup>
               <ArmoryButton onClick={onArmoryClick}>
                 <GiCrossedSwords /> Armory
               </ArmoryButton>
-            </PvpButtonGroup>
+            </PvpButtonGroup> */}
+
             <RewardInfo>
               <FaCoins />
               <StatDesc>Attacks Available:</StatDesc>
@@ -280,10 +284,23 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 <FaPlus />
               </GetMoreAttacksButton> */}
             </RewardInfo>
+            <PlayerCard
+              player={userInfo}
+              title="You"
+              isAttacking={false}
+              isDefending={false}
+              onInfoClick={() => {}}
+              health={userInfo.pvp?.healthPoints || 100}
+              maxHealth={userInfo.pvp?.healthPoints || 100}
+              damageReceived={undefined}
+              light={true}
+            />
+            {/* New Player Card */}
 
             <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
               <FaSkull /> Deathmatch
             </PvpButtonDeatchmatch>
+
             <CombatHistoryTitle>Combat History</CombatHistoryTitle>
             {isHistoryLoading ? (
               <LoadingSpinner />

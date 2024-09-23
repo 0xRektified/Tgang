@@ -254,6 +254,7 @@ interface PlayerCardProps {
   health: number;
   maxHealth: number;
   damageReceived?: number;
+  light: boolean;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -265,6 +266,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   health,
   maxHealth,
   damageReceived,
+  light,
 }) => {
   console.log("player", player);
   if (!player || !player.pvp) return null;
@@ -371,26 +373,28 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           <HealthText>{`${health} / ${maxHealth}`}</HealthText>
         </HealthBarContainer>
       </CardHeader>
-      <CardContent>
-        <div>
-          <ProductsGrid>
-            {Object.values(EProduct).map((productName: string) => {
-              const product = player.products.find(
-                (p: { name: string }) => p.name === productName,
-              );
-              const quantity = product ? product.quantity : 0;
-              const emoji =
-                EProductIcon[productName as keyof typeof EProductIcon];
-              return (
-                <ProductItem key={productName}>
-                  <ProductIcon>{emoji}</ProductIcon>
-                  <ProductQuantity>{quantity}</ProductQuantity>
-                </ProductItem>
-              );
-            })}
-          </ProductsGrid>
-        </div>
-      </CardContent>
+      {!light && (
+        <CardContent>
+          <div>
+            <ProductsGrid>
+              {Object.values(EProduct).map((productName: string) => {
+                const product = player.products.find(
+                  (p: { name: string }) => p.name === productName,
+                );
+                const quantity = product ? product.quantity : 0;
+                const emoji =
+                  EProductIcon[productName as keyof typeof EProductIcon];
+                return (
+                  <ProductItem key={productName}>
+                    <ProductIcon>{emoji}</ProductIcon>
+                    <ProductQuantity>{quantity}</ProductQuantity>
+                  </ProductItem>
+                );
+              })}
+            </ProductsGrid>
+          </div>
+        </CardContent>
+      )}
     </StyledCard>
   );
 };

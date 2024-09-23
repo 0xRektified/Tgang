@@ -160,8 +160,6 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-
   useEffect(() => {
     if (socialNetworkRequired) {
       setIsChannelModalOpen(true);
@@ -416,6 +414,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       <PvpContainer className="scrollable-content">
         <PvpContent>
           <PvpHeader
+            userInfo={userInfo}
             attacksLeft={
               (userInfo.pvp?.attacksAvailable ?? 0) -
               (userInfo.pvp?.attacksToday ?? 0)
@@ -489,6 +488,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                           health={opponentHealth}
                           maxHealth={opponent.pvp?.healthPoints || 100}
                           damageReceived={opponentDamageReceived}
+                          light={false}
                         />
                       </motion.div>
                       <PvpControls
@@ -506,6 +506,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                         health={userHealth}
                         maxHealth={userInfo.pvp?.healthPoints || 100}
                         damageReceived={userDamageReceived}
+                        light={false}
                       />
                     </>
                   )}
