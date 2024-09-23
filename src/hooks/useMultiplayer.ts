@@ -3,6 +3,10 @@ import axiosInstance from "../api/axiosConfig";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { IBattle, IHistoryBattleResult } from "../components/interfaces/multiplayer.interface";
 
+// Add these constants at the top of the file
+const PRECONDITION_REQUIRED = 428; // For social network requirement
+const PRECONDITION_FAILED = 412; // For max attacks reached
+
 interface ErrorResponse {
   statusCode: number;
   message: string;
@@ -17,6 +21,8 @@ export function useMultiplayer(
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [battleHistory, setBattleHistory] = useState<IHistoryBattleResult[]>([]);
+  const [maxAttacksReached, setMaxAttacksReached] = useState(false);
+  const [socialNetworkRequired, setSocialNetworkRequired] = useState(false);
 
   const searchPlayer = useCallback(async () => {
     setLoading(true);
@@ -84,6 +90,8 @@ export function useMultiplayer(
       setError(null);
       setErrorCode(null);
       setSuccessMessage(null);
+      setMaxAttacksReached(false);
+      setSocialNetworkRequired(false);
       try {
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
@@ -96,6 +104,11 @@ export function useMultiplayer(
         if (err.response && err.response.data) {
           setError(err.response.data.message);
           setErrorCode(err.response.status);
+          if (err.response.status === PRECONDITION_FAILED) {
+            setMaxAttacksReached(true);
+          } else if (err.response.status === PRECONDITION_REQUIRED) {
+            setSocialNetworkRequired(true);
+          }
         } else {
           setError("Failed to start fight");
         }
@@ -169,5 +182,7 @@ export function useMultiplayer(
     error,
     errorCode,
     successMessage,
+    maxAttacksReached,
+    socialNetworkRequired,
   };
 }

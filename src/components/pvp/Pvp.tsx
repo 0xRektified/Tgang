@@ -49,6 +49,32 @@ const PvpContent = styled.div`
   flex-direction: column;
 `;
 
+const StyledButton = styled.button`
+  background-color: #27272a;
+  color: white;
+  border: 2px solid #1e90ff;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px #1e90ff;
+  
+  &:hover {
+    box-shadow: 0 0 10px #1e90ff;
+  }
+
+  &:disabled {
+    background-color: #4a5568;
+    border-color: #4a5568;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+`;
+
 interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
@@ -74,6 +100,8 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     error: multiplayerError,
     errorCode,
     successMessage: multiplayerSuccessMessage,
+    maxAttacksReached,
+    socialNetworkRequired,
   } = useMultiplayer(userInfo, setUserInfo);
 
   const {
@@ -212,7 +240,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
-    setSearchingStep("searching");
+    setSearchingStep('searching');
 
     try {
       const players = await searchPlayer();
@@ -223,10 +251,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           ...opponentData,
           image: "/assets/pvp/userImage.png",
         });
-
-        setSearchingStep("starting");
+        
+        setSearchingStep('starting');
         const result = await startFight(userInfo.id, opponentData.id);
-
+        
         if (result) {
           setCombatState("fighting");
           setCurrentBattle(result);
@@ -238,8 +266,11 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     } catch (error) {
       console.error("Error in deathmatch:", error);
       setCombatState("idle");
+      if (socialNetworkRequired) {
+        setIsChannelModalOpen(true);
+      }
     }
-  }, [searchPlayer, resetCombatState, startFight, userInfo.id, simulateCombat]);
+  }, [searchPlayer, resetCombatState, startFight, userInfo.id, simulateCombat, socialNetworkRequired]);
 
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id);
@@ -335,6 +366,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setIsChannelModalOpen(false);
   }, [verifySocial, setUserInfo]);
 
+  const handleReturnToMain = useCallback(() => {
+    setCombatState("idle");
+  }, []);
+
   const loading = multiplayerLoading || verifyLoading || joinLoading;
   const error = multiplayerError || verifyError || joinError;
   const successMessage =
@@ -353,6 +388,12 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   useEffect(() => {
     fetchBattleHistory();
   }, [fetchBattleHistory]);
+
+  useEffect(() => {
+    if (socialNetworkRequired) {
+      setIsChannelModalOpen(true);
+    }
+  }, [socialNetworkRequired]);
 
   return (
     <PvpWrapper>
@@ -380,14 +421,34 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                 exit={{ x: "100%" }}
                 transition={{ duration: 0.3 }}
               >
-                {combatState === "searching" && (
+                {combatState === "searching" && !maxAttacksReached && !socialNetworkRequired && (
                   <div className="flex flex-col items-center justify-center space-y-4 mt-4">
                     <FaSpinner className="animate-spin text-4xl text-white" />
                     <p className="text-white text-lg">
-                      {searchingStep === "searching"
-                        ? "Looking for Opponent..."
-                        : "Starting Fight..."}
+                      {searchingStep === 'searching' ? 'Looking for Opponent...' : 'Starting Fight...'}
                     </p>
+                  </div>
+                )}
+
+                {maxAttacksReached && (
+                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
+                    <p className="text-white text-lg">
+                      You have reached the maximum number of fights for today.
+                    </p>
+                    <StyledButton onClick={handleReturnToMain}>
+                      Return to Main Page
+                    </StyledButton>
+                  </div>
+                )}
+
+                {socialNetworkRequired && (
+                  <div className="flex flex-col items-center justify-center space-y-4 mt-4">
+                    <p className="text-white text-lg">
+                      You need to join our social network to participate in PvP.
+                    </p>
+                    <StyledButton onClick={handleReturnToMain}>
+                      Return to Main Page
+                    </StyledButton>
                   </div>
                 )}
 
