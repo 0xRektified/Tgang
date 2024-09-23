@@ -258,9 +258,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               <GiPistolGun /> Cartel War
             </PvpTitle>
 
-            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
-              <FaSkull /> Deathmatch
-            </PvpButtonDeatchmatch>
             <RewardInfo>
               <FaCoins />
               <StatDesc>Attacks Available:</StatDesc>
@@ -282,7 +279,9 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 light={true}
               />
             </div>
-
+            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
+              <FaSkull /> Deathmatch
+            </PvpButtonDeatchmatch>
             <Separator />
 
             <CombatHistoryTitle>Combat History</CombatHistoryTitle>
