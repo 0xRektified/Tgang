@@ -349,6 +349,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
   }, [combatResult, setUserInfo, upsertBattleResult]);
 
   const handleTryAgain = useCallback(() => {
+    fetchuser();
     setCombatState("idle");
     setOpponent(null);
     setCombatResult(null);
@@ -379,10 +380,13 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
 
   const handleControlButtonClick = useCallback(() => {
     if (combatState === "ready") {
+      WebApp.HapticFeedback.impactOccurred("heavy");
       handleStart();
     } else if (combatState === "fighting") {
+      WebApp.HapticFeedback.impactOccurred("heavy");
       handleAttack();
     } else if (combatState === "result") {
+      WebApp.HapticFeedback.impactOccurred("heavy");
       handleCollectAndReturn();
     }
   }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);

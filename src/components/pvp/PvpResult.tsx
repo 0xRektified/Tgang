@@ -5,6 +5,7 @@ import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { IBattle } from "../interfaces/multiplayer.interface";
 import { NeonGreenButton } from "../styled/cardStyled";
+import WebApp from "@twa-dev/sdk";
 
 const ResultContainer = styled(motion.div)`
   background-color: #2c2c2e;
@@ -55,9 +56,13 @@ const ResultItemIcon = styled.div`
   color: #a0aec0;
 `;
 
+const ResultItemLabel = styled.span`
+  padding-right: 0.5em;
+`;
+
 const ResultItemValue = styled.span`
   font-weight: bold;
-  padding-right: 0.5em;
+  padding-left: 1em;
 `;
 
 const ProductsGrid = styled.div`
@@ -122,9 +127,13 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           ...product,
         })),
       ];
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      WebApp.HapticFeedback.impactOccurred("heavy");
 
       rewards.forEach((item, itemIndex) => {
         const isCash = item.type === "cash";
+
         const quantity = isCash
           ? Math.min(
               Math.floor((item as { amount: number }).amount / 10) || 0,
@@ -133,6 +142,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           : Math.min((item as { quantity: number }).quantity, 15);
 
         Array.from({ length: quantity }).forEach((_, index) => {
+          WebApp.HapticFeedback.impactOccurred("heavy");
           const delay = itemIndex * 500 + index * 200;
           setTimeout(() => {
             setVisibleRewards((prev) => [
@@ -158,8 +168,11 @@ export const PvpResult: React.FC<PvpResultProps> = ({
 
   const handleButtonClick = () => {
     if (isWinner) {
+      WebApp.HapticFeedback.impactOccurred("heavy");
+
       onCollect();
     } else {
+      WebApp.HapticFeedback.impactOccurred("heavy");
       onTryAgain();
     }
   };
@@ -191,8 +204,8 @@ export const PvpResult: React.FC<PvpResultProps> = ({
             <ResultItemIcon>
               <FaDollarSign />
             </ResultItemIcon>
-            You Stole{" "}
-            <ResultItemValue> ${combatResult.cashLoot}</ResultItemValue>
+            <ResultItemLabel>You Stole</ResultItemLabel>
+            <ResultItemValue>${combatResult.cashLoot}</ResultItemValue>
           </ResultItem>
           <ProductsGrid>
             {Object.values(EProduct).map((productName: string) => {
