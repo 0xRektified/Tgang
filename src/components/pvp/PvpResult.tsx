@@ -1,0 +1,288 @@
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { IBattle } from "../interfaces/multiplayer.interface";
+import { NeonGreenButton } from "../styled/cardStyled";
+import WebApp from "@twa-dev/sdk";
+
+const ResultContainer = styled(motion.div)`
+  background-color: #2c2c2e;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 3em;
+`;
+
+const ResultHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #4a4a4e;
+`;
+
+const ResultTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+`;
+
+const ResultIcon = styled.div`
+  font-size: 2rem;
+  color: ${(props) => props.color};
+`;
+
+const ResultContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+`;
+
+const ResultItem = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+`;
+
+const ResultItemIcon = styled.div`
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  color: #a0aec0;
+`;
+
+const ResultItemLabel = styled.span`
+  padding-right: 0.5em;
+`;
+
+const ResultItemValue = styled.span`
+  font-weight: bold;
+  padding-left: 1em;
+`;
+
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+`;
+
+const ProductItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const ProductIcon = styled.div`
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+`;
+
+const ProductQuantity = styled.p`
+  font-size: 0.7rem;
+  color: #a0aec0;
+  margin: 0;
+`;
+
+interface PvpResultProps {
+  combatResult: IBattle;
+  username: string;
+  onCollect: () => void;
+  onTryAgain: () => void;
+  collectingRewards: boolean;
+}
+
+const CollectRewardButton = styled(NeonGreenButton)`
+  width: 80%;
+  max-width: 300px;
+  margin: 1rem auto 0;
+  display: block;
+`;
+
+export const PvpResult: React.FC<PvpResultProps> = ({
+  combatResult,
+  username,
+  onCollect,
+  onTryAgain,
+  collectingRewards,
+}) => {
+  const isWinner = combatResult.winner === "attacker";
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [visibleRewards, setVisibleRewards] = useState<
+    Array<{ type: string; name?: string; index: number }>
+  >([]);
+
+  useEffect(() => {
+    if (collectingRewards && isWinner) {
+      const rewards = [
+        { type: "cash", amount: combatResult.cashLoot },
+        ...combatResult.productLoot.map((product) => ({
+          type: "product",
+          ...product,
+        })),
+      ];
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      WebApp.HapticFeedback.impactOccurred("heavy");
+
+      rewards.forEach((item, itemIndex) => {
+        const isCash = item.type === "cash";
+
+        const quantity = isCash
+          ? Math.min(
+              Math.floor((item as { amount: number }).amount / 10) || 0,
+              15,
+            )
+          : Math.min((item as { quantity: number }).quantity, 15);
+
+        Array.from({ length: quantity }).forEach((_, index) => {
+          WebApp.HapticFeedback.impactOccurred("heavy");
+          const delay = itemIndex * 500 + index * 200;
+          setTimeout(() => {
+            setVisibleRewards((prev) => [
+              ...prev,
+              {
+                type: item.type,
+                name: isCash ? "cash" : (item as { name: string }).name,
+                index,
+              },
+            ]);
+          }, delay);
+        });
+      });
+    }
+  }, [collectingRewards, combatResult, isWinner]);
+
+  const playSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (isWinner) {
+      WebApp.HapticFeedback.impactOccurred("heavy");
+
+      onCollect();
+    } else {
+      WebApp.HapticFeedback.impactOccurred("heavy");
+      onTryAgain();
+    }
+  };
+
+  const getRandomEndPosition = () => {
+    const randomX =
+      Math.random() * window.innerWidth * 0.6 + window.innerWidth * 0.2;
+    const randomY = -Math.random() * window.innerHeight * 0.6 - 50;
+    return { x: randomX, y: randomY };
+  };
+
+  return (
+    <ResultContainer
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="pvp-result"
+    >
+      <ResultHeader>
+        <ResultTitle>{isWinner ? "Victory!" : "Defeat!"}</ResultTitle>
+        <ResultIcon color={isWinner ? "gold" : "white"}>
+          {isWinner ? <FaTrophy /> : <FaSkull />}
+        </ResultIcon>
+      </ResultHeader>
+      {isWinner && (
+        <ResultContent>
+          <ResultItem>
+            <ResultItemIcon>
+              <FaDollarSign />
+            </ResultItemIcon>
+            <ResultItemLabel>You Stole</ResultItemLabel>
+            <ResultItemValue>${combatResult.cashLoot}</ResultItemValue>
+          </ResultItem>
+          <ProductsGrid>
+            {Object.values(EProduct).map((productName: string) => {
+              const lootedProduct = combatResult.productLoot.find(
+                (p) => p.name === productName,
+              );
+              const quantity = lootedProduct ? lootedProduct.quantity : 0;
+              const emoji =
+                EProductIcon[productName as keyof typeof EProductIcon];
+              return (
+                <ProductItem
+                  key={productName}
+                  className="product-item"
+                  data-product={productName}
+                >
+                  <ProductIcon>{emoji}</ProductIcon>
+                  <ProductQuantity>{quantity}</ProductQuantity>
+                </ProductItem>
+              );
+            })}
+          </ProductsGrid>
+        </ResultContent>
+      )}
+
+      <AnimatePresence>
+        {collectingRewards && isWinner && (
+          <>
+            {visibleRewards.map(({ type, name, index }) => {
+              const isCash = type === "cash";
+              const emoji = isCash ? "💰" : EProductIcon[name as EProduct];
+              const endPosition = getRandomEndPosition();
+
+              return (
+                <motion.div
+                  key={`${type}-${name}-${index}-${Math.random()}`}
+                  initial={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                  animate={{
+                    opacity: [1, 1, 0],
+                    x: endPosition.x,
+                    y: endPosition.y,
+                    scale: [1, 1.2, 0.5],
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: 5, // Increased duration for slower movement
+                    type: "spring",
+                    stiffness: 50, // Reduced stiffness for slower movement
+                    damping: 10,
+                  }}
+                  onAnimationStart={playSound}
+                  style={{
+                    position: "fixed",
+                    fontSize: "2rem",
+                    color: isCash ? "#00ff00" : "white",
+                    zIndex: 1000,
+                    left: "50%",
+                    top: "40%", // Moved initial position up
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  {emoji}
+                </motion.div>
+              );
+            })}
+          </>
+        )}
+      </AnimatePresence>
+
+      <CollectRewardButton
+        onClick={handleButtonClick}
+        className="bg-green-500 text-white px-4 py-2 rounded"
+        disabled={collectingRewards}
+      >
+        {isWinner ? "💰 Collect Rewards" : "🔄 Try Again"}
+      </CollectRewardButton>
+
+      <audio ref={audioRef} src="/assets/cash.mp3" />
+    </ResultContainer>
+  );
+};
