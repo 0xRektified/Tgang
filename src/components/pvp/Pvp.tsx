@@ -114,9 +114,13 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  const [searchingStep, setSearchingStep] = useState<'searching' | 'starting'>('searching');
+  const [searchingStep, setSearchingStep] = useState<"searching" | "starting">(
+    "searching",
+  );
   const [isAttacking, setIsAttacking] = useState(false);
 
+  console.log(`userInfo.pvp`);
+  console.log(userInfo.pvp);
   useEffect(() => {
     function handleResize() {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -208,7 +212,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCombatState("searching");
     setOpponent(null);
     resetCombatState();
-    setSearchingStep('searching');
+    setSearchingStep("searching");
 
     try {
       const players = await searchPlayer();
@@ -219,10 +223,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           ...opponentData,
           image: "/assets/pvp/userImage.png",
         });
-        
-        setSearchingStep('starting');
+
+        setSearchingStep("starting");
         const result = await startFight(userInfo.id, opponentData.id);
-        
+
         if (result) {
           setCombatState("fighting");
           setCurrentBattle(result);
@@ -355,7 +359,10 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
       <PvpContainer className="scrollable-content">
         <PvpContent>
           <PvpHeader
-            attacksLeft={(userInfo.pvp?.attacksToday ?? 0) - (userInfo.pvp?.attacksAvailable ?? 0)}
+            attacksLeft={
+              (userInfo.pvp?.attacksAvailable ?? 0) -
+              (userInfo.pvp?.attacksToday ?? 0)
+            }
             totalAttacks={totalAttacks}
             onGetMoreAttacks={handleGetMoreAttacks}
             onArmoryClick={handleArmoryClick}
@@ -377,7 +384,9 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
                   <div className="flex flex-col items-center justify-center space-y-4 mt-4">
                     <FaSpinner className="animate-spin text-4xl text-white" />
                     <p className="text-white text-lg">
-                      {searchingStep === 'searching' ? 'Looking for Opponent...' : 'Starting Fight...'}
+                      {searchingStep === "searching"
+                        ? "Looking for Opponent..."
+                        : "Starting Fight..."}
                     </p>
                   </div>
                 )}

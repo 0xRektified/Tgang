@@ -58,6 +58,7 @@ const ResultItemIcon = styled.div`
 
 const ResultItemValue = styled.span`
   font-weight: bold;
+  padding-right: 0.5em;
 `;
 
 const ProductsGrid = styled.div`

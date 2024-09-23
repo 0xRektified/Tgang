@@ -9,7 +9,7 @@ import {
   FaTrophy,
   FaTimesCircle,
 } from "react-icons/fa";
-import { GiPistolGun } from "react-icons/gi";
+import { GiPistolGun, GiCrossedSwords } from "react-icons/gi";
 import styled from "styled-components";
 import { formatPrice } from "../utils/formater";
 
@@ -86,7 +86,7 @@ const GoldenNeonButton = styled(PvpButton)`
 
 const PvpButtonGroup = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   // Removed margin-bottom
 `;
@@ -205,6 +205,27 @@ const ProductIcon = styled.span`
   margin-right: 0.25rem;
 `;
 
+const ArmoryButton = styled(PvpButton)`
+  background-color: #4a5568;
+  border: 2px solid #718096;
+  color: #e2e8f0;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #2d3748;
+    border-color: #a0aec0;
+    box-shadow: 0 0 15px rgba(160, 174, 192, 0.5);
+  }
+
+  svg {
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+  }
+`;
+
+
 // Helper function to get product icon
 const getProductIcon = (productName: string): string => {
   return EProductIcon[productName as keyof typeof EProductIcon] || "❓";
@@ -244,22 +265,22 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             <PvpTitle>
               <GiPistolGun /> Cartel War
             </PvpTitle>
-
+            <PvpButtonGroup>
+              <ArmoryButton onClick={onArmoryClick}>
+                <GiCrossedSwords /> Armory
+              </ArmoryButton>
+            </PvpButtonGroup>
             <RewardInfo>
               <FaCoins />
               <StatDesc>Attacks Available:</StatDesc>
               <RewardAmount>
                 {attacksLeft} / {totalAttacks}
               </RewardAmount>
-              <GetMoreAttacksButton onClick={onGetMoreAttacks}>
+              {/* <GetMoreAttacksButton onClick={onGetMoreAttacks}>
                 <FaPlus />
-              </GetMoreAttacksButton>
+              </GetMoreAttacksButton> */}
             </RewardInfo>
-            <PvpButtonGroup>
-              <PvpButton onClick={onArmoryClick}>
-                <FaSkull /> Armory
-              </PvpButton>
-            </PvpButtonGroup>
+
             <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
               <FaSkull /> Deathmatch
             </PvpButtonDeatchmatch>
