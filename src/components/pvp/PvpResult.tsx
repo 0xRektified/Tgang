@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTrophy, FaSkull, FaDollarSign } from "react-icons/fa";
@@ -172,6 +172,11 @@ export const PvpResult: React.FC<PvpResultProps> = ({
     }
   };
 
+  const handleCollect = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    onCollect();
+  }, [onCollect]);
+
   return (
     <ResultContainer
       initial={{ opacity: 0, y: -20 }}
@@ -253,8 +258,9 @@ export const PvpResult: React.FC<PvpResultProps> = ({
       </AnimatePresence>
 
       <CollectRewardButton
-        onClick={onCollect}
+        onClick={handleCollect}
         className="bg-green-500 text-white px-4 py-2 rounded"
+        disabled={collectingRewards}
       >
         {isWinner ? "💰 Collect Rewards" : "🔄 Try Again"}
       </CollectRewardButton>

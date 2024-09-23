@@ -384,10 +384,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     setCombatState("idle");
   }, []);
 
-  const loading = multiplayerLoading || verifyLoading || joinLoading;
   const error = multiplayerError || verifyError || joinError;
-  const successMessage =
-    multiplayerSuccessMessage || verifySuccessMessage || joinSuccessMessage;
 
   const handleControlButtonClick = useCallback(() => {
     if (combatState === "ready") {
@@ -562,11 +559,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
           </PvpModal>
         </PvpContent>
       </PvpContainer>
-      <ApiToast
-        loading={loading}
-        error={error}
-        successMessage={successMessage}
-      />
+      <ApiToast error={error} loading={false}successMessage={null} />
     </PvpWrapper>
   );
 }
