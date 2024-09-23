@@ -42,16 +42,30 @@ const FooterButton = styled.button<{ active: boolean }>`
   }
 `;
 
+const NewLabel = styled.span`
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  background-color: #10c810;
+  color: #000000;
+  font-size: 0.6em;
+  padding: 2px 4px;
+  border-radius: 10px;
+  font-weight: bold;
+`;
+
+const FooterButtonWrapper = styled.div`
+  position: relative;
+`;
+
 interface FooterMenuProps {
   setCurrentView: (view: string) => void;
   currentView: string;
-
 }
 
 export const FooterMenu: React.FC<FooterMenuProps> = ({
   setCurrentView,
   currentView,
-
 }) => {
   return (
     <FooterContainer>
@@ -83,13 +97,16 @@ export const FooterMenu: React.FC<FooterMenuProps> = ({
         <img src={`/assets/coin.gif`} alt="Logo" style={{ maxWidth: "25px" }} />
         <span className="btm-nav-label text-white-grey">Airdrop </span>
       </FooterButton>
-      <FooterButton
-        onClick={() => setCurrentView("Pvp")}
-        active={currentView === "Pvp"}
-      >
-        <GiPistolGun />
-        <span className="btm-nav-label text-white-grey">Pvp </span>
-      </FooterButton>
+      <FooterButtonWrapper>
+        <FooterButton
+          onClick={() => setCurrentView("Pvp")}
+          active={currentView === "Pvp"}
+        >
+          <GiPistolGun />
+          <span className="btm-nav-label text-white-grey">Pvp</span>
+        </FooterButton>
+        <NewLabel>NEW</NewLabel>
+      </FooterButtonWrapper>
     </FooterContainer>
   );
 };
