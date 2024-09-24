@@ -177,7 +177,7 @@ function App() {
           />
         );
       case "Pvp":
-        return <Pvp userInfo={userInfo} setUserInfo={setUserInfo} socials={socials!}/>;
+        return <Pvp userInfo={userInfo} setUserInfo={setUserInfo} socials={socials!} referralToken={userInfo!.referralToken}/>;
       case "Leaderboard":
         return <Leaderboard userInfo={userInfo} />;
       default:

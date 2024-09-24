@@ -128,7 +128,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                   <RewardIcon>
                     <GiRank3 />
                   </RewardIcon>
-                  <RewardText>Rep:</RewardText>
+                  <RewardText>XP:</RewardText>
                   <RewardAmount>+100</RewardAmount>
                 </RewardItem>
               </RewardInfo>

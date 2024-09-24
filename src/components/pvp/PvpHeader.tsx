@@ -6,16 +6,42 @@ import {
   FaSpinner,
   FaTrophy,
   FaTimesCircle,
+  FaUserFriends,
+  FaCheck,
+  FaHistory,
 } from "react-icons/fa";
-import { GiPistolGun } from "react-icons/gi";
-import styled from "styled-components";
+import { GiPistolGun, GiRank3 } from "react-icons/gi";
+import { PiCopySimpleBold } from "react-icons/pi";
 import { formatPrice } from "../utils/formater";
-
 import { CombatState } from "./Pvp";
 import { IHistoryBattleResult } from "../interfaces/multiplayer.interface";
 import { EProductIcon } from "../interfaces/product.interface";
-import PlayerCard from "./PlayerCard"; // Import the PlayerCard component
+import PlayerCard from "./PlayerCard";
 import { IUserInfo } from "../interfaces/user.interface";
+import WebApp from "@twa-dev/sdk";
+import styled, { css, keyframes } from "styled-components";
+import { GiAk47 } from "react-icons/gi";
+// Define keyframes before using them
+const glowingBorder = keyframes`
+  0%, 100% { 
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+  }
+`;
+
+const subtleBounce = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+`;
+
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+`;
 
 const PvpCard = styled.div`
   background-color: #34373e;
@@ -70,34 +96,43 @@ const PvpButton = styled.button`
 `;
 
 const PvpButtonDeatchmatch = styled(PvpButton)`
-  animation: glow 1.5s infinite alternate;
-  padding: 0.5rem 0.75rem;
-  width: 100%;
-  margin: 0 auto;
-`;
-
-const RewardInfo = styled.div`
-  background-color: rgba(74, 144, 226, 0.1);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  background-color: #27272a;
   color: white;
-  font-size: 1rem;
+  border: 2px solid #1e90ff;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px #1e90ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  width: 50%;
+  margin: 0 auto;
+  animation: ${glowingBorder} 3s infinite, ${subtleBounce} 2s infinite,
+    ${pulse} 2s infinite;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #1e90ff;
+  }
+
+  svg {
+    font-size: 1.5rem; // Increase from 1.2rem
+    animation: ${pulse} 2s infinite;
+    font-weight: bold; // Add this line to make it bolder
+  }
 `;
 
 const StatDesc = styled.span`
   font-weight: 600;
   color: white;
   margin: 0 0.5rem;
-`;
-
-const RewardAmount = styled.span`
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
 `;
 
 const CombatHistoryTitle = styled.h3`
@@ -200,7 +235,7 @@ const ArmoryButton = styled(PvpButton)`
   }
 
   svg {
-    font-size: 1.3rem;
+    font-size: 2rem;
     margin-right: 0.5rem;
   }
 `;
@@ -218,7 +253,219 @@ const Separator = styled.hr`
     rgba(255, 255, 255, 0.75),
     rgba(255, 255, 255, 0)
   );
-  margin: 1rem 0;
+`;
+
+const PvpInfoBox = styled.div`
+  background-color: rgba(39, 39, 42, 0.8);
+  border: 1px solid #4a5568;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #e2e8f0;
+`;
+
+const InfoTitle = styled.h2`
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #60a5fa;
+  text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+`;
+
+const InfoList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const InfoItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(55, 65, 81, 0.5);
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(75, 85, 99, 0.5);
+  }
+`;
+
+const InfoLabel = styled.span`
+  font-weight: 600;
+  color: #d1d5db;
+`;
+
+const InfoValue = styled.span`
+  font-weight: 700;
+  font-family: "Roboto Mono", monospace;
+  color: white;
+`;
+
+const FriendCount = styled.span`
+  font-weight: 700;
+  color: #60a5fa;
+`;
+
+const InviteButton = styled.button`
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+
+  &:hover {
+    background-color: #2563eb;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+    transform: translateY(-2px);
+  }
+`;
+
+const FriendInviteCard = styled.div`
+  background-color: rgba(39, 39, 42, 0.8);
+  border: 1px solid #4a5568;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #e2e8f0;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+`;
+
+const FriendInviteButton = styled.button`
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  width: 100%;
+
+  &:hover {
+    background-color: #2563eb;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+    transform: translateY(-2px);
+  }
+`;
+
+const CopyButton = styled(FriendInviteButton)`
+  width: 3rem;
+  padding: 0;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const RewardInfo = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
+const RewardItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const RewardIcon = styled.span`
+  font-size: 1.2rem;
+  color: #60a5fa;
+`;
+
+const RewardText = styled.span`
+  font-weight: 600;
+`;
+
+const RewardAmount = styled.span`
+  font-weight: 700;
+  color: white;
+`;
+
+const RewardInfoBox = styled.div``;
+
+const RewardRow = styled(InfoItem)`
+  background-color: rgba(39, 39, 42, 0.8);
+  justify-content: space-between;
+  padding: 0.7rem;
+  border: 1px solid #4a5568;
+  border-radius: 0.5rem;
+`;
+
+const RewardLabel = styled(InfoLabel)`
+  color: white;
+  font-size: 1.1rem;
+`;
+
+const RewardValue = styled(InfoValue)`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const XpLootInfo = styled(InfoItem)`
+  background-color: rgba(39, 39, 42, 0.8);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.7rem;
+  border: 1px solid #4a5568;
+  border-radius: 0.5rem;
+`;
+
+const XpLootRow = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 1.1rem;
+`;
+
+const XpLootIcon = styled.span`
+  margin-right: 0.5rem;
+`;
+
+const XpLootText = styled.span`
+  color: white;
+`;
+
+const XpLootValue = styled.span`
+  padding-left: 0.3em;
+  font-weight: bold;
+  color: white;
 `;
 
 interface PvpHeaderProps {
@@ -231,6 +478,7 @@ interface PvpHeaderProps {
   combatState: CombatState;
   battleHistory: IHistoryBattleResult[];
   isHistoryLoading: boolean;
+  referralToken: string;
 }
 
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
@@ -243,7 +491,22 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
   combatState,
   battleHistory,
   isHistoryLoading,
+  referralToken,
 }) => {
+  const handleRefForward = () => {
+    WebApp.openTelegramLink(
+      `https://t.me/share/url?url=${
+        import.meta.env.VITE_WEB_APP_URL
+      }?startapp=${referralToken}`,
+    );
+  };
+
+  const handleRefClick = () => {
+    navigator.clipboard.writeText(
+      `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
+    );
+  };
+
   return (
     <AnimatePresence>
       {combatState === "idle" && (
@@ -254,22 +517,33 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
           transition={{ duration: 0.3 }}
         >
           <PvpCard>
-            <PvpTitle>
-              <GiPistolGun /> Cartel War
-            </PvpTitle>
-            <RewardInfo>
-              <FaTrophy />
-              <StatDesc>XP per win:</StatDesc>
-              <RewardAmount>2000 XP</RewardAmount>
-            </RewardInfo>
+            <PvpTitle>Cartel War</PvpTitle>
 
-            <RewardInfo>
-              <FaCoins />
-              <StatDesc>Attacks Available:</StatDesc>
-              <RewardAmount>
-                {attacksLeft} / {totalAttacks}
-              </RewardAmount>
-            </RewardInfo>
+            <RewardInfoBox>
+              <RewardRow>
+                <RewardLabel>Attacks Available:</RewardLabel>
+                <RewardValue>
+                  <FaCoins />
+                  {attacksLeft} / {totalAttacks}
+                </RewardValue>
+              </RewardRow>
+              <XpLootInfo>
+                <XpLootRow>
+                  <XpLootIcon>
+                    <FaTrophy />
+                  </XpLootIcon>
+                  <XpLootText>XP per win:</XpLootText>
+                  <XpLootValue> 2000</XpLootValue>
+                </XpLootRow>
+                <XpLootRow>
+                  <XpLootIcon>
+                    <FaCoins />
+                  </XpLootIcon>
+                  <XpLootText>Cash + resources loot:</XpLootText>
+                  <XpLootValue> 1%</XpLootValue>
+                </XpLootRow>
+              </XpLootInfo>
+            </RewardInfoBox>
 
             <div>
               <PlayerCard
@@ -285,11 +559,64 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               />
             </div>
             <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
-              <FaSkull /> Deathmatch
+              <GiAk47 style={{ marginRight: "0.5rem", fontSize: "2em" }} />
+              Raid
+              <GiAk47 style={{ marginLeft: "0.5rem", fontSize: "2em" }} />
             </PvpButtonDeatchmatch>
             <Separator />
-
-            <CombatHistoryTitle>Combat History</CombatHistoryTitle>
+            <FriendInviteCard>
+              <SectionTitle>
+                <FaUserFriends /> More Raids
+              </SectionTitle>
+              <InfoList>
+                <InfoItem>
+                  <InfoLabel>
+                    More than <FriendCount>20</FriendCount> friends:
+                  </InfoLabel>
+                  <InfoValue>+3 attacks</InfoValue>
+                </InfoItem>
+                <InfoItem>
+                  <InfoLabel>
+                    More than <FriendCount>10</FriendCount> friends:
+                  </InfoLabel>
+                  <InfoValue>+2 attacks</InfoValue>
+                </InfoItem>
+                <InfoItem>
+                  <InfoLabel>
+                    More than <FriendCount>5</FriendCount> friends:
+                  </InfoLabel>
+                  <InfoValue>+1 attack</InfoValue>
+                </InfoItem>
+              </InfoList>
+              <RewardInfo>
+                <RewardItem>
+                  <RewardIcon>
+                    <FaCoins />
+                  </RewardIcon>
+                  <RewardText>Reward</RewardText>
+                  <RewardAmount>1000$</RewardAmount>
+                </RewardItem>
+                <RewardItem>
+                  <RewardIcon>
+                    <GiRank3 />
+                  </RewardIcon>
+                  <RewardText>XP</RewardText>
+                  <RewardAmount>+2000</RewardAmount>
+                </RewardItem>
+              </RewardInfo>
+              <ButtonContainer>
+                <FriendInviteButton onClick={handleRefForward}>
+                  <FaUserFriends /> Invite Friends
+                </FriendInviteButton>
+                <CopyButton onClick={handleRefClick}>
+                  <PiCopySimpleBold />
+                </CopyButton>
+              </ButtonContainer>
+            </FriendInviteCard>
+            <Separator />
+            <SectionTitle>
+              <FaHistory /> Combat History
+            </SectionTitle>
             {isHistoryLoading ? (
               <LoadingSpinner />
             ) : (
@@ -323,9 +650,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                         </LootItem>
                       ))}
                     </LootInfo>
-                    {/* <DateInfo>
-                      {new Date(battle.createdAt).toLocaleString()}
-                    </DateInfo> */}
                   </CombatHistoryItem>
                 ))}
               </CombatHistoryList>

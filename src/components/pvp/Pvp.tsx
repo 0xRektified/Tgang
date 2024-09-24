@@ -79,6 +79,7 @@ interface PvpProps {
   userInfo: IUserInfo;
   setUserInfo: (value: React.SetStateAction<IUserInfo>) => void;
   socials: Record<SocialChannel, SocialData>;
+  referralToken: string;
 }
 
 export type CombatState =
@@ -88,7 +89,12 @@ export type CombatState =
   | "fighting"
   | "result";
 
-export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
+export default function Pvp({
+  userInfo,
+  setUserInfo,
+  socials,
+  referralToken,
+}: PvpProps) {
   const {
     searchPlayer,
     startFight,
@@ -152,7 +158,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
     const audio = new Audio(sound);
     audio.volume = 0.4;
     audio.play();
-  }
+  };
 
   useEffect(() => {
     function handleResize() {
@@ -430,6 +436,7 @@ export default function Pvp({ userInfo, setUserInfo, socials }: PvpProps) {
             combatState={combatState}
             battleHistory={battleHistory}
             isHistoryLoading={multiplayerLoading}
+            referralToken={referralToken}
           />
 
           <AnimatePresence>
