@@ -183,7 +183,7 @@ const WinnerIcon = styled.span`
 
 const LoserIcon = styled.span`
   font-size: 1.5rem;
-  color: #ff4136;
+  color: white;
 `;
 
 const LootInfo = styled.div`
@@ -635,7 +635,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                         </WinnerIcon>
                       ) : (
                         <LoserIcon>
-                          <FaTimesCircle />
+                          <FaSkull />
                         </LoserIcon>
                       )}
                       <LootItem>
