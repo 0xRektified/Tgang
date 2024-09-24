@@ -521,7 +521,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
 
             <RewardInfoBox>
               <RewardRow>
-                <RewardLabel>Attacks Available:</RewardLabel>
+                <RewardLabel>Raids Available:</RewardLabel>
                 <RewardValue>
                   <FaCoins />
                   {attacksLeft} / {totalAttacks}
