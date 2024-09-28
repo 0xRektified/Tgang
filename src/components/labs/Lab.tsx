@@ -230,9 +230,6 @@ export const Lab: React.FC<LabProps> = ({
   const handleOpenLabModal = (plot: LabPlot) => {
     setSelectedPlot(plot);
     setIsLabModalOpen(true);
-    console.log(`In handleOpenLabModal tutorial.tutorialStep`);
-    console.log(tutorial.tutorialStep);
-
     if (tutorial.tutorialStep === 3) {
       tutorial.onTutorialProgress();
       tutorial.tutorialStep = 4;

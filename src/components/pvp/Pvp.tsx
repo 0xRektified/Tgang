@@ -261,12 +261,8 @@ export default function Pvp({
       const players = await searchPlayer();
       if (players && players.length > 0) {
         const opponentId = players[0].id;
-        console.log(`players0`);
-        console.log(players[0]);
         setSearchingStep("starting");
         const result = await startFight(userInfo.id, opponentId);
-        console.log(`result`);
-        console.log(result);
         if (result) {
           const opponentData = result.opponent || players[0];
           const opponentHealth =
@@ -303,8 +299,6 @@ export default function Pvp({
 
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id);
-    console.log(`result`);
-    console.log(result);
     if (result) {
       setCombatState("fighting");
       setCurrentBattle(result);
@@ -375,8 +369,6 @@ export default function Pvp({
 
   const handleJoinChannel = useCallback(() => {
     const telegramChannel = socials[SocialChannel.TELEGRAM_CHANNEL];
-    console.log(`telegramChannel`);
-    console.log(telegramChannel);
     if (telegramChannel) {
       WebApp.openTelegramLink(telegramChannel.url);
       joinSocial(SocialChannel.TELEGRAM_CHANNEL, setIsChannelModalOpen);
