@@ -188,19 +188,23 @@ const LoserIcon = styled.span`
 
 const LootInfo = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   font-size: 0.9rem;
 `;
 
 const LootItem = styled.span`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 `;
 
-const CashLoot = styled.span`
+const CashLoot = styled(LootItem)`
   color: #4adf81;
+  font-weight: bold;
 `;
 
 const DateInfo = styled.div`
@@ -253,25 +257,6 @@ const Separator = styled.hr`
     rgba(255, 255, 255, 0.75),
     rgba(255, 255, 255, 0)
   );
-`;
-
-const PvpInfoBox = styled.div`
-  background-color: rgba(39, 39, 42, 0.8);
-  border: 1px solid #4a5568;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  color: #e2e8f0;
-`;
-
-const InfoTitle = styled.h2`
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #60a5fa;
-  text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
 `;
 
 const InfoList = styled.ul`
@@ -468,6 +453,10 @@ const XpLootValue = styled.span`
   color: white;
 `;
 
+const AttackInfo = styled.span`
+  font-weight: bold;
+`;
+
 interface PvpHeaderProps {
   userInfo: IUserInfo;
   attacksLeft: number;
@@ -479,7 +468,13 @@ interface PvpHeaderProps {
   battleHistory: IHistoryBattleResult[];
   isHistoryLoading: boolean;
   referralToken: string;
+  won?: boolean;
 }
+
+const BattleResult = styled.span`
+  font-weight: bold;
+  color: white;
+`;
 
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
   userInfo,
@@ -506,7 +501,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
     );
   };
-
   return (
     <AnimatePresence>
       {combatState === "idle" && (
@@ -624,12 +618,29 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 {battleHistory.slice(0, 5).map((battle) => (
                   <CombatHistoryItem key={battle.battleId}>
                     <BattleHeader>
-                      <PlayerName>{battle.attacker.username}</PlayerName>
-                      <span>vs</span>
-                      <PlayerName>{battle.defender.username}</PlayerName>
+                      <PlayerName>
+                        {battle.attacker.id.toString() == userInfo.id
+                          ? userInfo.username
+                          : battle.attacker.username}
+                      </PlayerName>
+                      {battle.attacker.id.toString() != userInfo.id ? (
+                        <AttackInfo>
+                          attacked you and
+                          <BattleResult>
+                            {battle.winner == userInfo.id
+                              ? " lost"
+                              : " won"}
+                          </BattleResult>
+                        </AttackInfo>
+                      ) : (
+                        <>
+                          <span>vs</span>
+                          <PlayerName>{battle.defender.username}</PlayerName>
+                        </>
+                      )}
                     </BattleHeader>
                     <LootInfo>
-                      {battle.winner === battle.attacker.id.toString() ? (
+                      {battle.winner === userInfo.id.toString() ? (
                         <WinnerIcon>
                           <FaTrophy />
                         </WinnerIcon>
@@ -638,11 +649,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                           <FaSkull />
                         </LoserIcon>
                       )}
-                      <LootItem>
-                        <CashLoot>
-                          {formatPrice(battle.cashLoot, false)}
-                        </CashLoot>
-                      </LootItem>
+                      <CashLoot>{formatPrice(battle.cashLoot, false)}</CashLoot>
                       {battle.productLoot.map((loot, index) => (
                         <LootItem key={index}>
                           <ProductIcon>{getProductIcon(loot.name)}</ProductIcon>

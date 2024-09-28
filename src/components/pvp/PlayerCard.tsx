@@ -274,7 +274,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   damageReceived,
   light,
 }) => {
-  console.log("player", player);
   if (!player || !player.pvp) return null;
 
   const healthPercentage = (health / maxHealth) * 100;

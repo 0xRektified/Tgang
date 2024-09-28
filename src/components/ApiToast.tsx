@@ -63,7 +63,6 @@ export const ApiToast: React.FC<ApiToastProps> = ({
     }
   }, [loading, error, successMessage]);
 
-  console.log("visible", visible);
   if (!visible) return null;
 
   return (

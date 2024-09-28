@@ -100,8 +100,6 @@ export function useMultiplayer(
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
         );
-        console.log(`response`);
-        console.log(response);
         setLoading(false);
         setSuccessMessage("Fight started successfully");
         return response.data;
