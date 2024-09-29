@@ -192,51 +192,55 @@ export default function Pvp({
       const round =
         combatResult.roundResults[combatResult.roundResults.length - 1];
 
+      // Attacker's turn
       setOpponentDamageReceived(round.attackerDamage);
       await userControls.start({
         x: [0, 15, 0],
         transition: { duration: 0.25 },
       });
 
-      if (round.attackerDamage > 0) {
+      if (round.attackerDamage > 0 && currentOpponentHealth > 0) {
         playSound("/assets/sounds/melehit.wav");
         WebApp.HapticFeedback.impactOccurred("rigid");
         await opponentControls.start({
           rotate: [0, -7, 7, 0],
           transition: { duration: 0.25 },
         });
-        currentOpponentHealth -= round.attackerDamage;
+        currentOpponentHealth = Math.max(0, currentOpponentHealth - round.attackerDamage);
         setOpponentHealth(currentOpponentHealth);
-      } else {
+      } else if (currentOpponentHealth > 0) {
         playSound("/assets/sounds/melemiss.wav");
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
       setOpponentDamageReceived(undefined);
 
-      setUserDamageReceived(round.defenderDamage);
-      await opponentControls.start({
-        x: [0, -15, 0],
-        transition: { duration: 0.25 },
-      });
-
-      if (round.defenderDamage > 0) {
-        playSound("/assets/sounds/melehit.wav");
-        WebApp.HapticFeedback.impactOccurred("rigid");
-        await userControls.start({
-          rotate: [0, -7, 7, 0],
+      // Defender's turn (only if opponent is still alive)
+      if (currentOpponentHealth > 0) {
+        setUserDamageReceived(round.defenderDamage);
+        await opponentControls.start({
+          x: [0, -15, 0],
           transition: { duration: 0.25 },
         });
-        currentUserHealth -= round.defenderDamage;
-        setUserHealth(currentUserHealth);
-      } else {
-        playSound("/assets/sounds/melemiss.wav");
+
+        if (round.defenderDamage > 0) {
+          playSound("/assets/sounds/melehit.wav");
+          WebApp.HapticFeedback.impactOccurred("rigid");
+          await userControls.start({
+            rotate: [0, -7, 7, 0],
+            transition: { duration: 0.25 },
+          });
+          currentUserHealth = Math.max(0, currentUserHealth - round.defenderDamage);
+          setUserHealth(currentUserHealth);
+        } else {
+          playSound("/assets/sounds/melemiss.wav");
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setUserDamageReceived(undefined);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setUserDamageReceived(undefined);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
 
       setCombatResult(combatResult);
 
@@ -248,7 +252,7 @@ export default function Pvp({
 
       setCurrentBattle(combatResult);
     },
-    [opponent, userControls, opponentControls, userHealth, opponentHealth],
+    [opponent, userControls, opponentControls, userHealth, opponentHealth]
   );
 
   const handleDeathmatchClick = useCallback(async () => {
