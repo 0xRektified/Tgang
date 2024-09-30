@@ -19,6 +19,7 @@ import { useUpgradeLabProduction } from "../../hooks/useUpgradeLabProduction";
 import { useTutorial } from "../../hooks/useTutorial";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { SkipButton } from "../home/Home";
+import { CraftingStation } from "./CraftingStation";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -177,6 +178,29 @@ const HighlightedPlotItem = styled(PlotItem)`
   }
 `;
 
+const TabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+`;
+
+const TabButton = styled.button<{ active: boolean }>`
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: ${props => props.active ? '#3a3a3c' : '#2c2c2e'};
+  color: ${props => props.active ? '#ffffff' : '#a0a0a0'};
+  border: none;
+  border-radius: 0.25rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #3a3a3c;
+    color: #ffffff;
+  }
+`;
+
 interface LabProps {
   userInfo: IUserInfo;
   labs: Record<string, ILab>;
@@ -200,6 +224,7 @@ export const Lab: React.FC<LabProps> = ({
   const [showBalanceErrorToast, setShowBalanceErrorToast] =
     useState<boolean>(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
+  const [activeTab, setActiveTab] = useState<'production' | 'crafting'>('production');
 
   const {
     buyLabPlot,
@@ -262,6 +287,10 @@ export const Lab: React.FC<LabProps> = ({
     tutorial.tutorialCompleted = true;
   };
 
+  const handleTabChange = (tab: 'production' | 'crafting') => {
+    setActiveTab(tab);
+  };
+
   const production = {
     [EProduct.HERB]: 0,
     [EProduct.MUSHROOM]: 0,
@@ -314,77 +343,98 @@ export const Lab: React.FC<LabProps> = ({
   };
   return (
     <LabContainer>
-      <CombinedProduction
-        currentAmount={mapProductsToProduction(userInfo.products)}
-        productionPerHour={production}
-      />
+      <TabContainer>
+        <TabButton
+          active={activeTab === 'production'}
+          onClick={() => handleTabChange('production')}
+        >
+          Production
+        </TabButton>
+        <TabButton
+          active={activeTab === 'crafting'}
+          onClick={() => handleTabChange('crafting')}
+        >
+          Crafting
+        </TabButton>
+      </TabContainer>
 
-      <Divider />
-      <DescriptionContainer>
-        <DescriptionText>
-          Expand your empire by producing resources
-        </DescriptionText>
-      </DescriptionContainer>
-      {!tutorial.tutorialCompleted && tutorial.tutorialStep === 3 ? (
-        <TutorialOverlay>
-          <TutorialText>CLICK ON THE "BUILD LAB" ICON 👇</TutorialText>
-          <FlexBoxRow className="w-full justify-center">
-            {userInfo.labPlots.map((labPlot) => {
-              if (!labPlot.lab) {
+      {activeTab === 'production' ? (
+        <>
+          <CombinedProduction
+            currentAmount={mapProductsToProduction(userInfo.products)}
+            productionPerHour={production}
+          />
+
+          <Divider />
+          <DescriptionContainer>
+            <DescriptionText>
+              Expand your empire by producing resources
+            </DescriptionText>
+          </DescriptionContainer>
+          {!tutorial.tutorialCompleted && tutorial.tutorialStep === 3 ? (
+            <TutorialOverlay>
+              <TutorialText>CLICK ON THE "BUILD LAB" ICON 👇</TutorialText>
+              <FlexBoxRow className="w-full justify-center">
+                {userInfo.labPlots.map((labPlot) => {
+                  if (!labPlot.lab) {
+                    return (
+                      <HighlightedPlotItem key={labPlot.plotId}>
+                        <AddLabButton
+                          onClick={() => handleOpenLabModal(labPlot)}
+                          className="build-new-lab-button tutorial-highlight"
+                        >
+                          <MdConstruction />
+                        </AddLabButton>
+                      </HighlightedPlotItem>
+                    );
+                  }
+                  return null;
+                })}
+              </FlexBoxRow>
+              <TutorialText>Collect resources as 🌱 supply grows.</TutorialText>
+              <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
+            </TutorialOverlay>
+          ) : (
+            <LabsGrid className="scrollable-content">
+              {userInfo.labPlots.map((labPlot) => {
+                if (labPlot.lab) {
+                  return (
+                    <PurchasedLab
+                      key={labPlot.plotId}
+                      plot={labPlot}
+                      setUserInfo={setUserInfo}
+                      handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
+                    />
+                  );
+                }
                 return (
-                  <HighlightedPlotItem key={labPlot.plotId}>
+                  <PlotItem key={labPlot.plotId}>
+                    <div>Build a new lab</div>
                     <AddLabButton
                       onClick={() => handleOpenLabModal(labPlot)}
-                      className="build-new-lab-button tutorial-highlight"
+                      className={`build-new-lab-button ${
+                        tutorial.tutorialStep === 4 ? "tutorial-highlight" : ""
+                      }`}
                     >
                       <MdConstruction />
                     </AddLabButton>
-                  </HighlightedPlotItem>
+                  </PlotItem>
                 );
-              }
-              return null;
-            })}
-          </FlexBoxRow>
-          <TutorialText>Collect resources as 🌱 supply grows.</TutorialText>
-          <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
-        </TutorialOverlay>
-      ) : (
-        <LabsGrid className="scrollable-content">
-          {userInfo.labPlots.map((labPlot) => {
-            if (labPlot.lab) {
-              return (
-                <PurchasedLab
-                  key={labPlot.plotId}
-                  plot={labPlot}
-                  setUserInfo={setUserInfo}
-                  handleOpenPurchasedLabModal={handleOpenPurchasedLabModal}
-                />
-              );
-            }
-            return (
-              <PlotItem key={labPlot.plotId}>
-                <div>Build a new lab</div>
-                <AddLabButton
-                  onClick={() => handleOpenLabModal(labPlot)}
-                  className={`build-new-lab-button ${
-                    tutorial.tutorialStep === 4 ? "tutorial-highlight" : ""
-                  }`}
+              })}
+              <PlotItem>
+                <div>Expand your territory</div>
+                <AddPlotButton
+                  onClick={handleOpenLabPlotModal}
+                  className="skeleton"
                 >
-                  <MdConstruction />
-                </AddLabButton>
+                  +
+                </AddPlotButton>
               </PlotItem>
-            );
-          })}
-          <PlotItem>
-            <div>Expand your territory</div>
-            <AddPlotButton
-              onClick={handleOpenLabPlotModal}
-              className="skeleton"
-            >
-              +
-            </AddPlotButton>
-          </PlotItem>
-        </LabsGrid>
+            </LabsGrid>
+          )}
+        </>
+      ) : (
+        <CraftingStation userInfo={userInfo} setUserInfo={setUserInfo} />
       )}
 
       {isLabModalOpen && (
