@@ -105,7 +105,6 @@ export const FooterMenu: React.FC<FooterMenuProps> = ({
           <GiPistolGun />
           <span className="btm-nav-label text-white-grey">Pvp</span>
         </FooterButton>
-        <NewLabel>NEW</NewLabel>
       </FooterButtonWrapper>
     </FooterContainer>
   );

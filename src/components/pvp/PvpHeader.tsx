@@ -531,7 +531,9 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                   <XpLootIcon>
                     <FaTrophy />
                   </XpLootIcon>
-                  <XpLootText><TickerSymbol>2000 $KRTLP</TickerSymbol> per victory</XpLootText>
+                  <XpLootText>
+                    <TickerSymbol>2000 $KRTLP</TickerSymbol> per victory
+                  </XpLootText>
                 </XpLootRow>
                 <XpLootRow>
                   <XpLootIcon>
@@ -619,7 +621,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               <LoadingSpinner />
             ) : (
               <CombatHistoryList>
-                {battleHistory.slice(0, 5).map((battle) => (
+                {battleHistory.map((battle) => (
                   <CombatHistoryItem key={battle.battleId}>
                     <BattleHeader>
                       <PlayerName>
@@ -631,9 +633,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                         <AttackInfo>
                           attacked you and
                           <BattleResult>
-                            {battle.winner == userInfo.id
-                              ? " lost"
-                              : " won"}
+                            {battle.winner == userInfo.id ? " lost" : " won"}
                           </BattleResult>
                         </AttackInfo>
                       ) : (

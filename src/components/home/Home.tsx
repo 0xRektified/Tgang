@@ -95,22 +95,17 @@ export const Home: React.FC<HomeProps> = ({
   const { userInfo, setUserInfo, decreaseCustomer, handleSell } =
     useCustomerManagement(initialUserInfo);
 
-  // Add a check to prevent setting empty user info
   useEffect(() => {
-    if (initialUserInfo && initialUserInfo.username) {
+    if (initialUserInfo && initialUserInfo.username && JSON.stringify(initialUserInfo) !== JSON.stringify(userInfo)) {
       setUserInfo(initialUserInfo);
     }
-  }, [initialUserInfo, setUserInfo]);
-
-  // Add a useEffect to log when initialUserInfo changes
-  useEffect(() => {
-    console.log('initialUserInfo changed:', initialUserInfo);
   }, [initialUserInfo]);
 
-  // Also log when local userInfo changes
   useEffect(() => {
-    console.log('local userInfo changed:', userInfo);
-  }, [userInfo]);
+    if (JSON.stringify(userInfo) !== JSON.stringify(initialUserInfo)) {
+      setGlobalUserInfo(userInfo);
+    }
+  }, [userInfo, setGlobalUserInfo, initialUserInfo]);
 
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
@@ -136,10 +131,6 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
-
-  useEffect(() => {
-    setGlobalUserInfo(userInfo);
-  }, [userInfo, setGlobalUserInfo]);
 
   const handleCloseSupplierModal = () => {
     setIsLocalSupplierModalOpen(false);

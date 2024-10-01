@@ -92,14 +92,6 @@ function App() {
     }
   }, [loading, error]);
 
-  useEffect(() => {
-    console.log('App re-rendered');
-  }, []);
-
-  useEffect(() => {
-    console.log('userInfo changed in App:', userInfo);
-  }, [userInfo]);
-
   const handleUnlockClick = useCallback((tab?: string) => {
     if (tab) {
       setActiveTab(tab);
@@ -233,11 +225,18 @@ function App() {
     return <MobileOnly />;
   }
 
+  const memoizedSetCurrentView = useCallback((view: string) => {
+    setCurrentView(view);
+  }, []);
+
   return (
     <StyledApp data-theme="dark">
       {!isContentLoaded && <Loading isContentLoaded={isContentLoaded}/>}
       <AppContainer>
-        <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
+        <TopMenu 
+          userInfo={userInfo || undefined} 
+          setCurrentView={memoizedSetCurrentView} 
+        />
         <ContentWrapper>{renderCurrentView()}</ContentWrapper>
         <FooterMenu
           setCurrentView={handleSetCurrentView}
