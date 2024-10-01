@@ -1,8 +1,7 @@
 import "./App.css";
 import styled from "styled-components";
-import { FlexBoxColNoGap } from "./components/styled/globalStyled";
 import "@twa-dev/sdk";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { FooterMenu } from "./components/FooterMenu";
 import { Home } from "./components/home/Home";
 import { Upgrade } from "./components/upgrade/Upgrade";
@@ -62,6 +61,18 @@ function App() {
   } = useInitializeGame();
   const tutorial = useTutorial();
 
+  const [currentView, setCurrentView] = useState("Base");
+  const [activeTab, setActiveTab] = useState<string>("dealer");
+  const [isCombinedModalOpen, setIsCombinedModalOpen] = useState(false);
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
+
+  useEffect(() => {
+    initializeApp();
+    return () => {
+      cleanupApp();
+    };
+  }, []);
+
   useEffect(() => {
     const mixpanelToken = import.meta.env.VITE_MIXPANEL_TOKEN;
     if (mixpanelToken) {
@@ -72,30 +83,22 @@ function App() {
     }
   }, []);
 
-  const [currentView, setCurrentView] = useState("Base");
-  const [activeTab, setActiveTab] = useState<string>("dealer");
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [isCombinedModalOpen, setIsCombinedModalOpen] = useState(false);
-
   useEffect(() => {
-    initializeApp();
-    return () => {
-      cleanupApp();
-    };
-  }, []);
-
-  useEffect(() => {
-    const test = document.getElementById("mainView");
-    if (test) {
-      test.scrollIntoView();
+    if (!loading && !error) {
+      const timer = setTimeout(() => {
+        setIsContentLoaded(true);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
+  }, [loading, error]);
 
-    const timeout = setTimeout(() => {
-      setIsInitialLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
+  useEffect(() => {
+    console.log('App re-rendered');
   }, []);
+
+  useEffect(() => {
+    console.log('userInfo changed in App:', userInfo);
+  }, [userInfo]);
 
   const handleUnlockClick = useCallback((tab?: string) => {
     if (tab) {
@@ -114,12 +117,12 @@ function App() {
       mixpanel.track("Page View", { page: tab });
       setCurrentView(tab);
     },
-    [userInfo, tutorial],
+    [userInfo],
   );
 
   const handleHomeTutorialComplete = useCallback(() => {
     setCurrentView("Lab");
-  }, [tutorial]);
+  }, []);
 
   const handleLabTutorialComplete = useCallback(() => {
     tutorial.onTutorialProgress();
@@ -142,6 +145,7 @@ function App() {
             handleTutorialComplete={handleHomeTutorialComplete}
             isCombinedModalOpen={isCombinedModalOpen}
             closeCombinedModal={() => setIsCombinedModalOpen(false)}
+            isContentLoaded={isContentLoaded}
           />
         );
       case "Lab":
@@ -202,6 +206,8 @@ function App() {
             handleTutorialComplete={handleHomeTutorialComplete}
             isCombinedModalOpen={isCombinedModalOpen}
             closeCombinedModal={() => setIsCombinedModalOpen(false)}
+            isContentLoaded={isContentLoaded}
+
           />
         );
     }
@@ -210,28 +216,26 @@ function App() {
     userInfo,
     marketInfo,
     setUserInfo,
-    setMarketInfo,
     handleUnlockClick,
     shippingMethods,
     labs,
     activeTab,
     upgrades,
     setUpgrades,
+    tutorial,
+    isCombinedModalOpen,
+    isContentLoaded,
   ]);
+
+  const memoizedUserInfo = useMemo(() => userInfo, [userInfo]);
 
   if (WebApp.platform !== "android" && WebApp.platform !== "ios") {
     return <MobileOnly />;
   }
 
-  if (loading || isInitialLoading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
   return (
     <StyledApp data-theme="dark">
+      {!isContentLoaded && <Loading isContentLoaded={isContentLoaded}/>}
       <AppContainer>
         <TopMenu userInfo={userInfo} setCurrentView={handleSetCurrentView} />
         <ContentWrapper>{renderCurrentView()}</ContentWrapper>

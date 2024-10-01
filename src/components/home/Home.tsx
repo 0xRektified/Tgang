@@ -76,6 +76,7 @@ interface HomeProps {
   handleTutorialComplete: () => void;
   isCombinedModalOpen: boolean;
   closeCombinedModal: () => void;
+  isContentLoaded: boolean; // Add this line
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -89,11 +90,28 @@ export const Home: React.FC<HomeProps> = ({
   handleTutorialComplete,
   isCombinedModalOpen,
   closeCombinedModal,
+  isContentLoaded, // Add this line
 }) => {
   const { userInfo, setUserInfo, decreaseCustomer, handleSell } =
     useCustomerManagement(initialUserInfo);
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  // Add a check to prevent setting empty user info
+  useEffect(() => {
+    if (initialUserInfo && initialUserInfo.username) {
+      setUserInfo(initialUserInfo);
+    }
+  }, [initialUserInfo, setUserInfo]);
+
+  // Add a useEffect to log when initialUserInfo changes
+  useEffect(() => {
+    console.log('initialUserInfo changed:', initialUserInfo);
+  }, [initialUserInfo]);
+
+  // Also log when local userInfo changes
+  useEffect(() => {
+    console.log('local userInfo changed:', userInfo);
+  }, [userInfo]);
+
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.HERB);
@@ -237,6 +255,8 @@ export const Home: React.FC<HomeProps> = ({
     setIsLocalSupplierModalOpen(true);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   return (
     <HomeContainer>
       <ClickableAreaWithSmoke
@@ -253,7 +273,12 @@ export const Home: React.FC<HomeProps> = ({
         tutorial={tutorial}
         handleOpenTilkRoadModal={() => handleOpenModal("TilkRoad")}
         handleOpenTedexModal={() => handleOpenModal("Tedex")}
-        style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        style={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          visibility: isContentLoaded ? 'visible' : 'hidden'
+        }}
       />
 
       <TouchPoints

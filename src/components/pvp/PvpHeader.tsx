@@ -476,6 +476,11 @@ const BattleResult = styled.span`
   color: white;
 `;
 
+const TickerSymbol = styled.span`
+  color: #1da1f2;
+  font-weight: bold;
+`;
+
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
   userInfo,
   attacksLeft,
@@ -526,8 +531,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                   <XpLootIcon>
                     <FaTrophy />
                   </XpLootIcon>
-                  <XpLootText>XP per win:</XpLootText>
-                  <XpLootValue> 2000</XpLootValue>
+                  <XpLootText><TickerSymbol>2000 $KRTLP</TickerSymbol> per victory</XpLootText>
                 </XpLootRow>
                 <XpLootRow>
                   <XpLootIcon>
@@ -594,7 +598,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                   <RewardIcon>
                     <GiRank3 />
                   </RewardIcon>
-                  <RewardText>XP</RewardText>
+                  <RewardText>$KRTLP</RewardText>
                   <RewardAmount>+2000</RewardAmount>
                 </RewardItem>
               </RewardInfo>
