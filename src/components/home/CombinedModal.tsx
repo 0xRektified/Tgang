@@ -20,6 +20,7 @@ import {
   IShippingMethod,
 } from "../interfaces/shipping.interface";
 import { useTutorial } from "../../hooks/useTutorial";
+import { ApiToast } from "../ApiToast";
 
 interface ModalProps {
   userInfo: IUserInfo;
@@ -47,18 +48,26 @@ export const CombinedModal: React.FC<ModalProps> = ({
   initialTab,
 }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
-  const { buyProduct, loading, error } = useBuyProduct();
-  const { shipProduct } = useShipProduct();
+  const {
+    buyProduct,
+    loading: buyLoading,
+    error: buyError,
+    successMessage: buySuccess,
+  } = useBuyProduct();
+  const {
+    shipProduct,
+    loading: shipLoading,
+    error: shipError,
+    successMessage: shipSuccess,
+  } = useShipProduct();
   const [selectedProduct, setSelectedProduct] = useState<
     Product | MarketProduct | null
   >(null);
   const [quantity, setQuantity] = useState<number>(1);
-  const [showToast, setShowToast] = useState<boolean>(false);
   const [totalCost, setTotalCost] = useState<number>(0);
   const [remainingCash, setRemainingCash] = useState<number>(
     userInfo.cashAmount,
   );
-  const [purchaseAmount, setPurchaseAmount] = useState(0);
 
   useEffect(() => {
     if (selectedProduct && "discountPrice" in selectedProduct) {
@@ -71,11 +80,6 @@ export const CombinedModal: React.FC<ModalProps> = ({
   }, [selectedProduct, quantity, userInfo.cashAmount]);
 
   const handleBuy = async () => {
-    if (totalCost > userInfo.cashAmount) {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
-      return;
-    }
     if (selectedProduct && "discountPrice" in selectedProduct) {
       await buyProduct("NY", selectedProduct.name, quantity, setUserInfo);
 
@@ -129,7 +133,7 @@ export const CombinedModal: React.FC<ModalProps> = ({
         amount,
       },
       setUserInfo,
-    ); // TODO
+    );
   };
 
   if (!isOpen) return null;
@@ -165,17 +169,14 @@ export const CombinedModal: React.FC<ModalProps> = ({
           ></TedexModal>
         )}
 
+        <ApiToast
+          loading={buyLoading || shipLoading}
+          error={buyError || shipError}
+          successMessage={buySuccess || shipSuccess}
+        />
+
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <RoundButton onClick={onClose}>&times;</RoundButton>
-        {showToast && (
-          <div className="fixed top-0 right-0 m-4 animate-slide-in-from-left animate-slide-out-to-right">
-            <div className="toast toast-top toast-end">
-              <div className="alert alert-error p-4 rounded shadow-lg text-white bg-red-600 font-bold">
-                <span>{error ? error : `Not enough cash.`}</span>
-              </div>
-            </div>
-          </div>
-        )}
       </ModalContainer>
     </FixedOverlay>
   );

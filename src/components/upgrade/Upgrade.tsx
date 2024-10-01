@@ -1,9 +1,10 @@
+import WebApp from "@twa-dev/sdk";
 import React, { useState, useEffect } from "react";
 import { TouchPoints } from "../utils/touchPoints";
 import {
   FlexBoxRow,
-  Tab,
-  Tabs,
+  TabButton,
+  TabContainer,
   UpgradeContainer,
   ShopContainer,
 } from "../styled/shopStyled";
@@ -89,6 +90,7 @@ export const Upgrade: React.FC<UpgradeProps> = ({
   }, [showBalanceErrorToast]);
 
   const handleTabClick = (tab: string) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setCurrentTab(tab);
     mixpanel.track("Shop Tab Changed", { tab });
   };
@@ -128,24 +130,22 @@ export const Upgrade: React.FC<UpgradeProps> = ({
   return (
     <>
       <ShopContainer>
-        <FlexBoxRow>
-          <Tabs role="tablist">
-            <Tab
-              role="tab"
-              active={currentTab === "dealer"}
-              onClick={() => handleTabClick("dealer")}
-            >
-              Production
-            </Tab>
-            <Tab
-              role="tab"
-              active={currentTab === "shipping"}
-              onClick={() => handleTabClick("shipping")}
-            >
-              Shipping
-            </Tab>
-          </Tabs>
-        </FlexBoxRow>
+        <TabContainer>
+          <TabButton
+            role="tab"
+            active={currentTab === "dealer"}
+            onClick={() => handleTabClick("dealer")}
+          >
+            Production
+          </TabButton>
+          <TabButton
+            role="tab"
+            active={currentTab === "shipping"}
+            onClick={() => handleTabClick("shipping")}
+          >
+            Shipping
+          </TabButton>
+        </TabContainer>
         <UpgradeContainer>
           {currentTab === "dealer" && renderUpgrades()}
           {currentTab === "shipping" && renderShipping()}

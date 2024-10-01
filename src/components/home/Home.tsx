@@ -231,6 +231,8 @@ export const Home: React.FC<HomeProps> = ({
   const [activeTab, setActiveTab] = useState<"TilkRoad" | "Tedex">("TilkRoad");
 
   const handleOpenModal = (tab: "TilkRoad" | "Tedex") => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
+
     setActiveTab(tab);
     setIsLocalSupplierModalOpen(true);
   };
