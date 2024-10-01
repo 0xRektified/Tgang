@@ -157,6 +157,7 @@ export const ModalContainer = styled.div`
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+  border: 2px solid white;
   z-index: 1000;
   display: flex;
   flex-direction: column;

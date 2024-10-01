@@ -1,3 +1,4 @@
+import WebApp from "@twa-dev/sdk";
 import { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
@@ -228,6 +229,7 @@ export const Lab: React.FC<LabProps> = ({
   } = useUpgradeLabProduction();
 
   const handleOpenLabModal = (plot: LabPlot) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setSelectedPlot(plot);
     setIsLabModalOpen(true);
     if (tutorial.tutorialStep === 3) {
@@ -237,23 +239,28 @@ export const Lab: React.FC<LabProps> = ({
   };
 
   const handleOpenPurchasedLabModal = (plot: LabPlot) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setSelectedPlot(plot);
     setIsPurchasedLabModalOpen(true);
   };
 
   const handleOpenLabPlotModal = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setIsLabPlotModalOpen(true);
   };
 
   const handleCloseLabModal = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setIsLabModalOpen(false);
   };
 
   const handleCloseLabPlotModal = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setIsLabPlotModalOpen(false);
   };
 
   const handleClosePurchasedLabModal = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setIsPurchasedLabModalOpen(false);
   };
 

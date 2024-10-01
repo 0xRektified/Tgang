@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import WebApp from "@twa-dev/sdk";
 import {
   CardContainer,
   CardHeader,
@@ -127,6 +128,8 @@ const BuyCard: React.FC<BuyCardProps> = ({
   };
 
   const handleCardClick = async (price: number) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
+
     if (userInfo.cashAmount >= price) {
       await onBuyClick(
         { category, upgrade: upgradeKey, upgradePrice: price },
@@ -152,15 +155,18 @@ const BuyCard: React.FC<BuyCardProps> = ({
   };
 
   const handleConfirmBuy = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setShowBuyConfirmation(false);
     handleCardClick(item.cost);
   };
 
   const handleBuyClick = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setShowBuyConfirmation(true);
   };
 
   const handleUpgradeClick = () => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setShowUpgradeModal(true);
   };
 

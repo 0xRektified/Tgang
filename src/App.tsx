@@ -106,6 +106,8 @@ function App() {
 
   const handleSetCurrentView = useCallback(
     (tab: string) => {
+      WebApp.HapticFeedback.impactOccurred("heavy");
+
       if (userInfo && userInfo.id) {
         mixpanel.identify(userInfo.id.toString());
       }
@@ -177,7 +179,14 @@ function App() {
           />
         );
       case "Pvp":
-        return <Pvp userInfo={userInfo} setUserInfo={setUserInfo} socials={socials!} referralToken={userInfo!.referralToken}/>;
+        return (
+          <Pvp
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            socials={socials!}
+            referralToken={userInfo!.referralToken}
+          />
+        );
       case "Leaderboard":
         return <Leaderboard userInfo={userInfo} />;
       default:

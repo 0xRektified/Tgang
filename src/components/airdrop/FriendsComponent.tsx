@@ -17,14 +17,6 @@ import styled from "styled-components";
 import { NeonButton } from "../styled/cardStyled";
 import { SkipButton } from "../home/Home";
 
-const AirdropContainer = styled.div`
-  background: #171c24;
-  color: white;
-  padding: 0.3rem;
-  width: 100%;
-  font-family: "Digital", sans-serif;
-`;
-
 const DigitalFont = styled.span`
   font-family: "Digital", sans-serif;
   font-size: 0.9rem;
@@ -147,54 +139,22 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
   };
 
   return (
-    <div className="space-y-4 scrollable-content">
-      <AirdropContainer>
-        {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? (
-          <TutorialOverlay>
-            <TutorialText>
-              "Invite Friends" below to win real-world money
-            </TutorialText>
-            <FriendNeonButton onClick={handleRefForward}>
-              Invite Friends
-            </FriendNeonButton>
-            <AnnouncementContainer>
-              <p>
-                🎉 Exciting news! Beta testers can win real-world prizes
-                totaling over $600 USD!
-              </p>
-              <AnnouncementLink
-                href="https://t.me/cartel_game_community"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Details in our community page
-              </AnnouncementLink>{" "}
-              🚀
-            </AnnouncementContainer>
-
-            <SkipButton onClick={handleSkipTutorial}>
-              End of the Tutorial
-            </SkipButton>
-          </TutorialOverlay>
-        ) : (
-          <>
-            <AnnouncementContainer>
-              <p>
-                🎉 Exciting news! Beta testers can win real-world prizes
-                totaling over $600 USD!
-              </p>
-              <AnnouncementLink
-                href="https://t.me/cartel_game_community"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Details in our community page
-              </AnnouncementLink>{" "}
-              🚀
-            </AnnouncementContainer>
-          </>
-        )}
-      </AirdropContainer>
+    <div className="scrollable-content">
+      {!tutorial.tutorialCompleted && tutorial.tutorialStep === 5 ? (
+        <TutorialOverlay>
+          <TutorialText>
+            "Invite Friends" below to win real-world money
+          </TutorialText>
+          <FriendNeonButton onClick={handleRefForward}>
+            Invite Friends
+          </FriendNeonButton>
+          <SkipButton onClick={handleSkipTutorial}>
+            End of the Tutorial
+          </SkipButton>
+        </TutorialOverlay>
+      ) : (
+        <></>
+      )}
       <Card className="scrollable-content">
         <div className="flex flex-row items-center justify-start mb-4">
           <Stats>
