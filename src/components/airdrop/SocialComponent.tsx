@@ -25,6 +25,12 @@ import {
   RewardIcon,
   RewardText,
 } from "./styles/socialStyled.css";
+import styled from 'styled-components';
+
+const TickerSymbol = styled.span`
+  color: #1da1f2;
+  font-weight: bold;
+`;
 
 interface SocialComponentProps {
   socials: Record<SocialChannel, SocialData>;
@@ -128,8 +134,7 @@ const SocialComponent: React.FC<SocialComponentProps> = ({
                   <RewardIcon>
                     <GiRank3 />
                   </RewardIcon>
-                  <RewardText>XP:</RewardText>
-                  <RewardAmount>+500</RewardAmount>
+                  <RewardText><TickerSymbol>500 $KRTLP</TickerSymbol></RewardText>
                 </RewardItem>
               </RewardInfo>
             </SocialCard>

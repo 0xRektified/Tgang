@@ -476,6 +476,11 @@ const BattleResult = styled.span`
   color: white;
 `;
 
+const TickerSymbol = styled.span`
+  color: #1da1f2;
+  font-weight: bold;
+`;
+
 export const PvpHeader: React.FC<PvpHeaderProps> = ({
   userInfo,
   attacksLeft,
@@ -526,8 +531,9 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                   <XpLootIcon>
                     <FaTrophy />
                   </XpLootIcon>
-                  <XpLootText>XP per win:</XpLootText>
-                  <XpLootValue> 2000</XpLootValue>
+                  <XpLootText>
+                    <TickerSymbol>2000 $KRTLP</TickerSymbol> per victory
+                  </XpLootText>
                 </XpLootRow>
                 <XpLootRow>
                   <XpLootIcon>
@@ -594,7 +600,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                   <RewardIcon>
                     <GiRank3 />
                   </RewardIcon>
-                  <RewardText>XP</RewardText>
+                  <RewardText>$KRTLP</RewardText>
                   <RewardAmount>+2000</RewardAmount>
                 </RewardItem>
               </RewardInfo>
@@ -615,7 +621,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               <LoadingSpinner />
             ) : (
               <CombatHistoryList>
-                {battleHistory.slice(0, 5).map((battle) => (
+                {battleHistory.map((battle) => (
                   <CombatHistoryItem key={battle.battleId}>
                     <BattleHeader>
                       <PlayerName>
@@ -627,9 +633,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                         <AttackInfo>
                           attacked you and
                           <BattleResult>
-                            {battle.winner == userInfo.id
-                              ? " lost"
-                              : " won"}
+                            {battle.winner == userInfo.id ? " lost" : " won"}
                           </BattleResult>
                         </AttackInfo>
                       ) : (

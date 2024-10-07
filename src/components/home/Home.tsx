@@ -76,6 +76,7 @@ interface HomeProps {
   handleTutorialComplete: () => void;
   isCombinedModalOpen: boolean;
   closeCombinedModal: () => void;
+  isContentLoaded: boolean; // Add this line
 }
 
 export const Home: React.FC<HomeProps> = ({
@@ -89,11 +90,23 @@ export const Home: React.FC<HomeProps> = ({
   handleTutorialComplete,
   isCombinedModalOpen,
   closeCombinedModal,
+  isContentLoaded, // Add this line
 }) => {
   const { userInfo, setUserInfo, decreaseCustomer, handleSell } =
     useCustomerManagement(initialUserInfo);
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  useEffect(() => {
+    if (initialUserInfo && initialUserInfo.username && JSON.stringify(initialUserInfo) !== JSON.stringify(userInfo)) {
+      setUserInfo(initialUserInfo);
+    }
+  }, [initialUserInfo]);
+
+  useEffect(() => {
+    if (JSON.stringify(userInfo) !== JSON.stringify(initialUserInfo)) {
+      setGlobalUserInfo(userInfo);
+    }
+  }, [userInfo, setGlobalUserInfo, initialUserInfo]);
+
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [selectedProduct, setSelectedProduct] = useState<string>(EProduct.HERB);
@@ -118,10 +131,6 @@ export const Home: React.FC<HomeProps> = ({
     const value = calculateTotalQuantity(userInfo.products);
     setTotalQuantity(value);
   }, [userInfo.products]);
-
-  useEffect(() => {
-    setGlobalUserInfo(userInfo);
-  }, [userInfo, setGlobalUserInfo]);
 
   const handleCloseSupplierModal = () => {
     setIsLocalSupplierModalOpen(false);
@@ -237,6 +246,8 @@ export const Home: React.FC<HomeProps> = ({
     setIsLocalSupplierModalOpen(true);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   return (
     <HomeContainer>
       <ClickableAreaWithSmoke
@@ -253,7 +264,12 @@ export const Home: React.FC<HomeProps> = ({
         tutorial={tutorial}
         handleOpenTilkRoadModal={() => handleOpenModal("TilkRoad")}
         handleOpenTedexModal={() => handleOpenModal("Tedex")}
-        style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        style={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          visibility: isContentLoaded ? 'visible' : 'hidden'
+        }}
       />
 
       <TouchPoints

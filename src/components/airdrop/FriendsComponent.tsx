@@ -90,6 +90,11 @@ const TutorialText = styled.div`
   max-width: 80%;
 `;
 
+const TickerSymbol = styled.span`
+  color: #1da1f2;
+  font-weight: bold;
+`;
+
 interface FriendsComponentProps {
   referralToken: string;
   referredUsers: IReferredUsers[];
@@ -185,13 +190,13 @@ const FriendsComponent: React.FC<FriendsComponentProps> = ({
             <h3 className="font-bold">
               Per invite <span className="text-2xl">💰</span>
             </h3>
-            <p>$1000 & 2000 XP</p>
+            <p>$1000 & <TickerSymbol>2000 $KRTLP</TickerSymbol></p>
           </div>
           <div className="card flex flex-col justify-center items-center text-center">
             <h3 className="font-bold">
               Premium <span className="text-2xl">💰💰</span>
             </h3>
-            <p>$2000 & 5000 XP</p>
+            <p>$2000 & <TickerSymbol>5000 $KRTLP</TickerSymbol></p>
           </div>
         </div>
         <ScrollableTableContainer>
