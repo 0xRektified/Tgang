@@ -35,7 +35,7 @@ const BackgroundImage = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  padding-top: 12em;
+  padding-top: 16em;
   z-index: 10;
   text-align: center;
   color: white;
@@ -53,14 +53,14 @@ const LoadingSpinner = styled.span`
 `;
 
 const LoadingText = styled.h2`
-  font-size: 2rem;
+  font-size: 1.2rem;
 `;
 
 const InfoSection = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  margin-top: 2rem;
-  padding: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
 `;
 
 const InfoSectionTitle = styled.h1`
@@ -123,11 +123,6 @@ const Loading: React.FC<LoadingProps> = ({ isContentLoaded }) => {
         <ContentWrapper>
           <LoadingSpinner className="loading loading-spinner loading-md" />
           <LoadingText>Loading ...</LoadingText>
-          <InfoSection>
-            <InfoSectionTitle>Buy, Sell, Produce resources</InfoSectionTitle>
-            <InfoSectionTitle>Challenge other player</InfoSectionTitle>
-            <InfoSectionTitle>Conquer the Cartel</InfoSectionTitle>
-          </InfoSection>
         </ContentWrapper>
         <SocialInfoContainer>
           <SocialTitle>Stay tuned</SocialTitle>

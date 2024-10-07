@@ -137,10 +137,6 @@ export const TopMenu: React.FC<TopMenuProps> = ({
     setPrevProgress(progress);
   }, [progress, prevProgress]);
 
-  console.log(`userInfo`);
-  console.log(userInfo);
-  console.log(`username`);
-  console.log(username);
   if (!userInfo) return null;
 
   return (
