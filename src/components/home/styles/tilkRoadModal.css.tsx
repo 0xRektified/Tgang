@@ -67,7 +67,7 @@ export const ProductTopRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const ProductIconWrapper = styled.div`
@@ -87,7 +87,8 @@ export const Price = styled.span`
 `;
 
 export const PriceChange = styled.span<{ increase: boolean }>`
-  font-size: 0.8rem;
+  font-size: 1rem;
+  font-weight: 700;
   color: ${(props) => (props.increase ? "#48bb78" : "#f56565")};
   display: flex;
   align-items: center;
@@ -101,7 +102,8 @@ export const PriceChange = styled.span<{ increase: boolean }>`
 export const ProductControls = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 1em;
 `;
 
 export const BuyControlsRow = styled.div`

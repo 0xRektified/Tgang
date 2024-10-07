@@ -3,16 +3,18 @@ import styled from "styled-components";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import WalletComponent from "./WalletComponent";
 import FriendsComponent from "./FriendsComponent";
-import { FlexBoxRow, Tab, Tabs } from "../styled/shopStyled";
+import { TabButton, TabContainer } from "../styled/shopStyled";
 import mixpanel from "mixpanel-browser";
 import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import MissionsComponent from "./MissionsComponent";
 import { useTutorial } from "../../hooks/useTutorial";
 import SocialComponent from "./SocialComponent";
 import SocialModal from "./SocialModal";
+import WebApp from "@twa-dev/sdk";
 
 const AirdropContainer = styled.div`
-  background: #1c1c1e;
+  background-color: #2a2a2e;
+
   color: white;
   padding: 0.3rem;
   width: 100%;
@@ -26,6 +28,8 @@ const AirdropTabContainer = styled.div`
   height: calc(100vh - 50px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  margin-bottom: 10px;
+  background-color: #2a2a2e;
 `;
 
 interface AirdropProps {
@@ -54,37 +58,33 @@ const Airdrop: React.FC<AirdropProps> = ({
   };
 
   const handleTabClick = (tab: string) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setCurrentTab(tab);
     mixpanel.track("Airdrop Tab Changed", { tab });
   };
 
   return (
     <AirdropContainer className="scrollable-content">
-      <FlexBoxRow>
-        <Tabs role="tablist">
-          <Tab
-            role="tab"
-            active={currentTab === "friends"}
-            onClick={() => handleTabClick("friends")}
-          >
-            Friends
-          </Tab>
-          <Tab
-            role="tab"
-            active={currentTab === "missions"}
-            onClick={() => handleTabClick("missions")}
-          >
-            Missions
-          </Tab>
-          <Tab
-            role="tab"
-            active={currentTab === "wallet"}
-            onClick={() => handleTabClick("wallet")}
-          >
-            Wallet
-          </Tab>
-        </Tabs>
-      </FlexBoxRow>
+      <TabContainer>
+        <TabButton
+          active={currentTab === "friends"}
+          onClick={() => handleTabClick("friends")}
+        >
+          Friends
+        </TabButton>
+        <TabButton
+          active={currentTab === "missions"}
+          onClick={() => handleTabClick("missions")}
+        >
+          Missions
+        </TabButton>
+        <TabButton
+          active={currentTab === "wallet"}
+          onClick={() => handleTabClick("wallet")}
+        >
+          Wallet
+        </TabButton>
+      </TabContainer>
       <AirdropTabContainer className="scrollable-content">
         {currentTab === "friends" && (
           <FriendsComponent

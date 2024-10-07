@@ -55,7 +55,7 @@ const CombinedProduction: React.FC<CombinedProductionProps> = ({
   return (
     <ProductionPanel>
       {Object.values(EProduct).map((product) => (
-        <ProductionColumn>
+        <ProductionColumn key={product}>
           <Amount>
             {currentAmount[product as keyof typeof currentAmount]}
           </Amount>

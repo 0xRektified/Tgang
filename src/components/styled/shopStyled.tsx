@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle, css, keyframes } from "styled-components";
 
 // Styled components
 export const FlexBoxRow = styled.div`
@@ -289,4 +289,60 @@ export const Notch = styled.div`
   background-color: #2d3748;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+`;
+
+export const TabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  padding-bottom: 15px;
+`;
+
+export const TabButton = styled.button<{ active: boolean }>`
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #242627;
+  color: white;
+  border: 2px solid ${(props) => (props.active ? 'white' : '#374151')};
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: all 0.3s ease;
+  position: relative;
+  min-width: 3em;
+
+  ${({ active }) =>
+    active &&
+    css`
+      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+      animation: ${bounce} 1s infinite, ${glow} 1.5s infinite alternate;
+    `}
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+// Add these keyframe animations
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+`;
+
+const glow = keyframes`
+  0% {
+    box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+  }
+  100% {
+    box-shadow: 0 0 8px #1e90ff, 0 0 12px #1e90ff, 0 0 16px #1e90ff, 0 0 20px #1e90ff;
+  }
 `;

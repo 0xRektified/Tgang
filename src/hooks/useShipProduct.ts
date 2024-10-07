@@ -8,6 +8,7 @@ import { EShippingMethod } from "../components/interfaces/shipping.interface";
 const useShipProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const shipProduct = async (
     marketId: string,
@@ -17,9 +18,10 @@ const useShipProduct = () => {
       amount: number;
     },
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
-  ): Promise<boolean> => {
+  ): Promise<void> => {
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
       const response = await axiosInstance.post<IUserInfo>(
@@ -29,7 +31,7 @@ const useShipProduct = () => {
         }
       );
       setUserInfo(response.data);
-      return true; // Indicate success
+      setSuccessMessage(`Successfully shipped ${batch.amount} ${batch.product}(s) using ${batch.shippingMethod}.`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message || error.message;
@@ -37,13 +39,12 @@ const useShipProduct = () => {
       } else {
         setError("An unexpected error occurred");
       }
-      return false; // Indicate failure
     } finally {
       setLoading(false);
     }
   };
 
-  return { shipProduct, loading, error };
+  return { shipProduct, loading, error, successMessage };
 };
 
 export default useShipProduct;
