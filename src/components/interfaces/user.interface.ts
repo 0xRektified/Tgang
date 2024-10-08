@@ -1,3 +1,4 @@
+import { ECRAFTABLE_ITEM } from "./craftableItem.interface";
 import { EProduct } from "./product.interface";
 import { EShippingMethod } from "./shipping.interface";
 import { SocialChannel } from "./social.interface";
@@ -84,6 +85,11 @@ export interface IUserSocial {
   joined?: Date;
 }
 
+export interface ICraftedItems {
+  itemId: ECRAFTABLE_ITEM;
+  quantity: number;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
@@ -109,6 +115,7 @@ export interface IUserInfo {
   socials?: IUserSocial[];
   wallet?: string;
   pvp?: IUserPvp;
+  craftedItems?: ICraftedItems[];
 }
 
 export interface IUserPvp {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaSkull,
@@ -21,6 +21,9 @@ import { IUserInfo } from "../interfaces/user.interface";
 import WebApp from "@twa-dev/sdk";
 import styled, { css, keyframes } from "styled-components";
 import { GiAk47 } from "react-icons/gi";
+import { CRAFTABLE_ITEMS, ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
+import CraftedItemModal from "./craftedItemModal";
+
 // Define keyframes before using them
 const glowingBorder = keyframes`
   0%, 100% { 
@@ -457,6 +460,57 @@ const AttackInfo = styled.span`
   font-weight: bold;
 `;
 
+const SpecialItemButton = styled.button`
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const ItemGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const ItemButton = styled.button<{ isSelected: boolean }>`
+  background-color: ${props => props.isSelected ? 'rgba(30, 144, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+  border: 2px solid ${props => props.isSelected ? '#1e90ff' : 'transparent'};
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
 interface PvpHeaderProps {
   userInfo: IUserInfo;
   attacksLeft: number;
@@ -469,6 +523,9 @@ interface PvpHeaderProps {
   isHistoryLoading: boolean;
   referralToken: string;
   won?: boolean;
+  userItems: { itemId: ECRAFTABLE_ITEM; quantity: number }[];
+  selectedItem: ECRAFTABLE_ITEM | null;
+  onSelectItem: (item: ECRAFTABLE_ITEM | null) => void;
 }
 
 const BattleResult = styled.span`
@@ -492,7 +549,12 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
   battleHistory,
   isHistoryLoading,
   referralToken,
+  userItems,
+  selectedItem,
+  onSelectItem,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleRefForward = () => {
     WebApp.openTelegramLink(
       `https://t.me/share/url?url=${
@@ -506,6 +568,15 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
     );
   };
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleSelectItem = (item: ECRAFTABLE_ITEM) => {
+    onSelectItem(selectedItem === item ? null : item);
+    handleCloseModal();
+  };
+
   return (
     <AnimatePresence>
       {combatState === "idle" && (
@@ -544,6 +615,10 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 </XpLootRow>
               </XpLootInfo>
             </RewardInfoBox>
+
+            <SpecialItemButton onClick={handleOpenModal}>
+              {selectedItem ? CRAFTABLE_ITEMS[selectedItem].name : 'Special Item'} {!selectedItem && '+'}
+            </SpecialItemButton>
 
             <div>
               <PlayerCard
@@ -666,6 +741,22 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               </CombatHistoryList>
             )}
           </PvpCard>
+
+          <CraftedItemModal isOpen={isModalOpen} onClose={handleCloseModal} title="Select Special Item">
+            <ItemGrid>
+              {userItems.map((item) => (
+                <ItemButton
+                  key={item.itemId}
+                  isSelected={selectedItem === item.itemId}
+                  onClick={() => handleSelectItem(item.itemId)}
+                  disabled={item.quantity === 0}
+                >
+                  {CRAFTABLE_ITEMS[item.itemId].name}
+                  <span>({item.quantity})</span>
+                </ItemButton>
+              ))}
+            </ItemGrid>
+          </CraftedItemModal>
         </motion.div>
       )}
     </AnimatePresence>

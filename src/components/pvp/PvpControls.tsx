@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { CombatState } from "./Pvp";
+import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
 
 const ControlButton = styled.button`
   // ... existing styles ...
@@ -34,6 +35,8 @@ interface PvpControlsProps {
   onButtonClick: () => void;
   isWinner?: boolean;
   isAttacking: boolean;
+  onUseItem: () => void;
+  selectedItem: ECRAFTABLE_ITEM | null;
 }
 
 export const PvpControls: React.FC<PvpControlsProps> = ({
@@ -41,6 +44,8 @@ export const PvpControls: React.FC<PvpControlsProps> = ({
   onButtonClick,
   isWinner,
   isAttacking,
+  onUseItem,
+  selectedItem,
 }) => {
   const getButtonText = () => {
     if (combatState === "ready") return "Start Fight";
@@ -50,13 +55,21 @@ export const PvpControls: React.FC<PvpControlsProps> = ({
   };
 
   return (
-    <div className="flex justify-center my-4">
+    <div className="flex justify-center my-4 space-x-4">
       <ControlButton
         onClick={onButtonClick}
         disabled={isAttacking}
       >
         {getButtonText()}
       </ControlButton>
+      {combatState === "fighting" && selectedItem && (
+        <ControlButton
+          onClick={onUseItem}
+          disabled={isAttacking}
+        >
+          Use Item
+        </ControlButton>
+      )}
     </div>
   );
 };

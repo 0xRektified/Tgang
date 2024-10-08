@@ -5,6 +5,8 @@ import {
   IBattle,
   IHistoryBattleResult,
 } from "../components/interfaces/multiplayer.interface";
+import { ECRAFTABLE_ITEM } from "../components/interfaces/craftableItem.interface";
+
 
 // Add these constants at the top of the file
 const PRECONDITION_REQUIRED = 428; // For social network requirement
@@ -89,7 +91,7 @@ export function useMultiplayer(
   }, []);
 
   const startFight = useCallback(
-    async (playerId: string, opponentId: string) => {
+    async (playerId: string, opponentId: string, selectedItem: ECRAFTABLE_ITEM | null) => {
       setLoading(true);
       setError(null);
       setErrorCode(null);
@@ -99,6 +101,7 @@ export function useMultiplayer(
       try {
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
+          { selectedItem }
         );
         setLoading(false);
         setSuccessMessage("Fight started successfully");
@@ -182,6 +185,32 @@ export function useMultiplayer(
     });
   }, []);
 
+  const useItem = useCallback(async (battleId: string, itemId: ECRAFTABLE_ITEM) => {
+    setLoading(true);
+    setError(null);
+    setErrorCode(null);
+    setSuccessMessage(null);
+    try {
+      const response = await axiosInstance.post<IBattle>(
+        `/multiplayer/use-item/${battleId}`,
+        { itemId }
+      );
+      setLoading(false);
+      setSuccessMessage("Item used successfully");
+      return response.data;
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+        setErrorCode(err.response.status);
+      } else {
+        setError("Failed to use item");
+      }
+      console.error(err);
+      return null;
+    }
+  }, []);
+
   return {
     searchPlayer,
     startFight,
@@ -196,5 +225,6 @@ export function useMultiplayer(
     successMessage,
     maxAttacksReached,
     socialNetworkRequired,
+    useItem,
   };
 }

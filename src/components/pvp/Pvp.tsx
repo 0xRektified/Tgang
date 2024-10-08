@@ -18,6 +18,8 @@ import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { statIcons } from "./Pvp.constant";
 import { ApiToast } from "../ApiToast";
 
+import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
+
 const PvpWrapper = styled.div`
   position: relative;
   height: 100%;
@@ -109,6 +111,7 @@ export default function Pvp({
     successMessage: multiplayerSuccessMessage,
     maxAttacksReached,
     socialNetworkRequired,
+    useItem,
   } = useMultiplayer(userInfo, setUserInfo);
 
   const {
@@ -153,6 +156,7 @@ export default function Pvp({
     "searching",
   );
   const [isAttacking, setIsAttacking] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ECRAFTABLE_ITEM | null>(null);
 
   const playSound = (sound: string) => {
     const audio = new Audio(sound);
@@ -266,7 +270,7 @@ export default function Pvp({
       if (players && players.length > 0) {
         const opponentId = players[0].id;
         setSearchingStep("starting");
-        const result = await startFight(userInfo.id, opponentId);
+        const result = await startFight(userInfo.id, opponentId, selectedItem);
         if (result) {
           const opponentData = result.opponent || players[0];
           const opponentHealth =
@@ -299,16 +303,17 @@ export default function Pvp({
     userInfo.id,
     simulateCombat,
     socialNetworkRequired,
+    selectedItem,
   ]);
 
   const handleStart = useCallback(async () => {
-    const result = await startFight(userInfo.id, opponent.id);
+    const result = await startFight(userInfo.id, opponent.id, selectedItem);
     if (result) {
       setCombatState("fighting");
       setCurrentBattle(result);
       await simulateCombat(result);
     }
-  }, [opponent, startFight, userInfo.id, simulateCombat]);
+  }, [opponent, startFight, userInfo.id, simulateCombat, selectedItem]);
 
   const handleAttack = useCallback(async () => {
     if (!opponent || !currentBattle || isAttacking) return;
@@ -405,6 +410,20 @@ export default function Pvp({
     }
   }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);
 
+  const handleUseItem = useCallback(async () => {
+    if (!currentBattle || !selectedItem) return;
+
+    try {
+      const result = await useItem(currentBattle.battleId, selectedItem);
+      if (result) {
+        await simulateCombat(result);
+        setSelectedItem(null); // Reset selected item after use
+      }
+    } catch (error) {
+      console.error("Use item error:", error);
+    }
+  }, [currentBattle, selectedItem, useItem, simulateCombat]);
+
   useEffect(() => {
     fetchBattleHistory();
   }, [fetchBattleHistory]);
@@ -433,6 +452,9 @@ export default function Pvp({
             battleHistory={battleHistory}
             isHistoryLoading={multiplayerLoading}
             referralToken={referralToken}
+            userItems={userInfo.craftedItems || []}
+            selectedItem={selectedItem}
+            onSelectItem={setSelectedItem}
           />
 
           <AnimatePresence>
@@ -506,6 +528,8 @@ export default function Pvp({
                         onButtonClick={handleControlButtonClick}
                         isWinner={combatResult?.winner === "attacker"}
                         isAttacking={isAttacking}
+                        onUseItem={handleUseItem}
+                        selectedItem={selectedItem}
                       />
                     </>
                   )}
