@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { IReferredUsers, IUserInfo } from "../interfaces/user.interface";
 import WalletComponent from "./WalletComponent";
@@ -11,6 +11,8 @@ import { useTutorial } from "../../hooks/useTutorial";
 import SocialComponent from "./SocialComponent";
 import SocialModal from "./SocialModal";
 import WebApp from "@twa-dev/sdk";
+import AchievementsComponent from "./AchievementsComponent";
+import { useAchievements } from "../../hooks/useAchievements";
 
 const AirdropContainer = styled.div`
   background-color: #2a2a2e;
@@ -52,6 +54,12 @@ const Airdrop: React.FC<AirdropProps> = ({
 }) => {
   const [currentTab, setCurrentTab] = useState<string>("friends");
   const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
+  const { achievements, fetchAchievements, unlockAchievement } =
+    useAchievements(setUserInfo);
+
+  useEffect(() => {
+    fetchAchievements();
+  }, []);
 
   const handleCloseSocialModal = () => {
     setIsSocialModalOpen(false);
@@ -84,6 +92,12 @@ const Airdrop: React.FC<AirdropProps> = ({
         >
           Wallet
         </TabButton>
+        <TabButton
+          active={currentTab === "achievements"}
+          onClick={() => handleTabClick("achievements")}
+        >
+          Achievements
+        </TabButton>
       </TabContainer>
       <AirdropTabContainer className="scrollable-content">
         {currentTab === "friends" && (
@@ -107,6 +121,13 @@ const Airdrop: React.FC<AirdropProps> = ({
               setIsSocialModalOpen={setIsSocialModalOpen}
             />
           </>
+        )}
+        {currentTab === "achievements" && (
+          <AchievementsComponent 
+            userInfo={userInfo} 
+            achievements={achievements}
+            setUserInfo={setUserInfo}
+          />
         )}
       </AirdropTabContainer>
       {isSocialModalOpen && <SocialModal onClose={handleCloseSocialModal} />}

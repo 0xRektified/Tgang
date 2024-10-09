@@ -84,6 +84,10 @@ export interface IUserSocial {
   joined?: Date;
 }
 
+export interface IUserAchievements {
+  [key: number]: boolean;
+}
+
 export interface IUserInfo {
   id: string;
   username: string;
@@ -109,6 +113,7 @@ export interface IUserInfo {
   socials?: IUserSocial[];
   wallet?: string;
   pvp?: IUserPvp;
+  achievements?: IUserAchievements;
 }
 
 export interface IUserPvp {
