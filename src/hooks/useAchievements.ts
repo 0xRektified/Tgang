@@ -16,7 +16,7 @@ export const useAchievements = (
     setLoading(true);
     setError(null);
     try {
-      const { data } = await axiosInstance.get("/users/achievements");
+      const { data } = await axiosInstance.get("/achievements");
       setAchievements(data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -35,7 +35,7 @@ export const useAchievements = (
     setError(null);
     setSuccessMessage(null);
     try {
-      await axiosInstance.get(`/users/unlock-achievement/${achievementId}`);
+      await axiosInstance.get(`/achievements/unlock/${achievementId}`);
       setAchievements((prevAchievements) =>
         prevAchievements.map((achievement) =>
           achievement.id === achievementId

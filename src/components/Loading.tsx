@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaTelegram } from "react-icons/fa";
 import { RiTwitterXLine } from "react-icons/ri";
 import styled from "styled-components";
@@ -78,13 +78,30 @@ const SocialInfoContainer = styled.div`
   color: white;
   font-size: 1.4rem;
   font-weight: 800;
-  background-color: rgba(0, 0, 0, 0.2);
 `;
-
-const SocialTitle = styled.h2``;
 
 const SocialSubtitle = styled.b`
   display: block;
+  margin-bottom: 1rem;
+`;
+const TipContainer = styled.div`
+  position: absolute;
+  bottom: 6rem; // Adjust this value to position above the SocialInfoContainer
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+  color: white;
+`;
+
+const SocialTitle = styled.h2`
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+`;
+
+const TipText = styled.p`
+  font-size: 1rem;
+  font-style: italic;
   margin-bottom: 1rem;
 `;
 
@@ -107,11 +124,42 @@ const SocialIcon = styled.span`
   }
 `;
 
+const NewsContainer = styled.div`
+  text-align: center;
+  color: white;
+  padding: 1rem;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+`;
+
+const NewsContent = styled.p`
+  font-family: "Roboto", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+`;
+const tips = [
+  "Remember to claim your daily rewards!",
+  "Join our Discord community for the latest updates.",
+  "Participate in events to earn exclusive rewards.",
+  "Don't forget to upgrade your characters regularly.",
+  "Check the marketplace for rare items and deals.",
+];
+
 interface LoadingProps {
   isContentLoaded: boolean;
 }
 
 const Loading: React.FC<LoadingProps> = ({ isContentLoaded }) => {
+  const [randomTip, setRandomTip] = useState("");
+
+  useEffect(() => {
+    setRandomTip(tips[Math.floor(Math.random() * tips.length)]);
+  }, []);
+
   if (isContentLoaded) {
     return null;
   }
@@ -121,11 +169,18 @@ const Loading: React.FC<LoadingProps> = ({ isContentLoaded }) => {
       <LoadingContainer>
         <BackgroundImage />
         <ContentWrapper>
+          <NewsContainer>
+            <NewsContent>
+              Claim your OG Badge Now in the airdrop/achievements section !
+            </NewsContent>
+          </NewsContainer>
           <LoadingSpinner className="loading loading-spinner loading-md" />
           <LoadingText>Loading ...</LoadingText>
         </ContentWrapper>
+        {/* <TipContainer>
+          <TipText>Tips: {randomTip}</TipText>
+        </TipContainer> */}
         <SocialInfoContainer>
-          <SocialTitle>Stay tuned</SocialTitle>
           <SocialSubtitle>More info on official channels</SocialSubtitle>
           <div>
             <SocialIcon>
