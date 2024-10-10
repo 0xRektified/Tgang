@@ -2,7 +2,7 @@ import React from "react";
 import { FaLock, FaUnlock } from "react-icons/fa";
 import { ApiToast } from "../ApiToast";
 import { useAchievements } from "../../hooks/useAchievements";
-import { useCountdown } from "../../hooks/useCountDown"; // We'll create this custom hook
+import { useCountdown } from "../../hooks/useCountDown";
 
 import {
   AchievementCard,
