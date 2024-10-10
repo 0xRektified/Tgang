@@ -5,6 +5,7 @@ import { IShippingMethod } from "../interfaces/shipping.interface";
 import { IUserShipping } from "../interfaces/user.interface";
 import { Duration } from "date-fns";
 import { convertSecondsToReadableTime } from "../utils/formater";
+import { useCountdown } from "../../hooks/useCountDown";
 
 const ShippingCardMiddle = styled.div`
   display: flex;
@@ -187,55 +188,20 @@ export const ShippingCard: React.FC<{
   handleUnlockClick: () => void;
   handleOpenModal: (userShipping: IUserShipping) => void;
 }> = ({ method, userShipping, locked, handleUnlockClick, handleOpenModal }) => {
-  const [countdown, setCountdown] = useState<Duration>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const { formattedCountdown, isExpired } = useCountdown(
+    userShipping ? new Date(userShipping.nextShipment) : undefined
+  );
   const [loading, setLoading] = useState(true);
 
-  const shipmentInProgress = (nextShipment: Date) => {
-    return nextShipment.getTime() > new Date().getTime();
-  };
+  useEffect(() => {
+    if (userShipping && !locked) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
 
-  const calculateCountdown = (nextShipment: Date) => {
-    const now = new Date().getTime();
-    const nextShipmentTime = nextShipment.getTime();
-    if (nextShipmentTime < now) {
-      return {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      };
+      return () => clearTimeout(timer);
     }
-    const duration = {
-      hours: Math.floor(
-        (nextShipment.getTime() - new Date().getTime()) / (1000 * 60 * 60),
-      ),
-      minutes:
-        Math.floor(
-          (nextShipment.getTime() - new Date().getTime()) / (1000 * 60),
-        ) % 60,
-      seconds:
-        Math.floor((nextShipment.getTime() - new Date().getTime()) / 1000) % 60,
-    };
-    return duration;
-  };
-
-  const formatCountdown = (countdown: Duration): string => {
-    const { hours, minutes, seconds } = countdown;
-
-    if (hours === 0 && minutes === 0 && seconds === 0) {
-      return "Ship now";
-    }
-
-    const parts = [];
-    if (hours && hours > 0) parts.push(`${hours}h`);
-    if (minutes && minutes > 0) parts.push(`${minutes}m`);
-    if (seconds && seconds > 0) parts.push(`${seconds}s`);
-
-    return parts.join(" ");
-  };
+  }, [userShipping, locked]);
 
   const renderLockedInfo = (method: IShippingMethod) => (
     <ShippingCardMiddle>
@@ -251,38 +217,10 @@ export const ShippingCard: React.FC<{
     </ShippingCardMiddle>
   );
 
-  useEffect(() => {
-    if (userShipping && !locked) {
-      setLoading(true);
-      const timer = setTimeout(() => {
-        setLoading(false);
-        const newCountdown = calculateCountdown(
-          new Date(userShipping.nextShipment),
-        );
-        setCountdown(newCountdown);
-      }, 1000);
-
-      const interval = setInterval(() => {
-        const newCountdown = calculateCountdown(
-          new Date(userShipping.nextShipment),
-        );
-        setCountdown(newCountdown);
-      }, 1000);
-
-      return () => {
-        clearTimeout(timer);
-        clearInterval(interval);
-      };
-    }
-  }, [userShipping, locked]);
-
   const renderShippingButton = () => {
     if (locked) {
       return <NeonButton onClick={handleUnlockClick}>Unlock</NeonButton>;
-    } else if (
-      userShipping &&
-      shipmentInProgress(new Date(userShipping.nextShipment))
-    ) {
+    } else if (userShipping && !isExpired) {
       return <NeonButton disabled>In Progress</NeonButton>;
     } else if (userShipping) {
       return (
@@ -309,12 +247,12 @@ export const ShippingCard: React.FC<{
               <div>
                 {loading ? (
                   <LoadingSpinner />
-                ) : formatCountdown(countdown) === "Ship now" ? (
+                ) : formattedCountdown === "Ship now" ? (
                   <ShipNowText>Next shipment Ready</ShipNowText>
                 ) : (
                   <div>
                     <div>Next shipment</div>
-                    <div>{formatCountdown(countdown)}</div>
+                    <div>{formattedCountdown}</div>
                   </div>
                 )}
               </div>

@@ -39,7 +39,7 @@ const AchievementComponent: React.FC<{
   onUnlock: () => void;
   loading: boolean;
 }> = ({ achievement, isUnlocked, onUnlock, loading }) => {
-  const countdown = useCountdown(achievement?.timeLimit || new Date());
+  const { formattedCountdown, isExpired } = useCountdown(achievement?.timeLimit);
 
   return (
     <div style={{ marginTop: "2em" }}>
@@ -58,11 +58,11 @@ const AchievementComponent: React.FC<{
             <AchievementIcon src={achievement.image} alt={achievement.name} />
           </AchievementIconContainer>
         </AchievementTopRow>
-        {!isUnlocked && countdown && (
+        {!isUnlocked && !isExpired && (
           <LimitedOfferBanner>
             <StopwatchIcon />
             Expired in
-            <CountdownTimer>{countdown}</CountdownTimer>
+            <CountdownTimer>{formattedCountdown}</CountdownTimer>
           </LimitedOfferBanner>
         )}
         <AchievementBottomRow>
