@@ -5,10 +5,6 @@ import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IUserInfo } from "../interfaces/user.interface";
 import WebApp from "@twa-dev/sdk";
 import {
-  Countdown,
-  RedDot,
-  GreenDot,
-  GreenText,
   ItalicText,
   StatDesc,
   StatValue,
@@ -18,7 +14,6 @@ import { ApiToast } from "../ApiToast";
 import { NeonButton } from "../styled/cardStyled";
 import styled from "styled-components";
 import { FaCoins } from "react-icons/fa";
-import { BsClock } from "react-icons/bs";
 import CountdownComponent from "./CountdownComponent";
 
 const InlineStatDesc = styled(StatDesc)`

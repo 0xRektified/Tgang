@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import WebApp from "@twa-dev/sdk";
 import {
   CardContainer,
-  CardHeader,
   CardImageContainer,
   CardImage,
   CardDetails,
@@ -15,7 +14,6 @@ import {
   CardTitle,
   CardDescription,
   RequirementText,
-  CardFooter,
   CardCost,
   CardButtonContainer,
   CardRightColumn,
@@ -28,6 +26,7 @@ import { TouchPoint } from "./utils/types";
 import { formatPrice } from "./utils/formater";
 import { RequirementType } from "./interfaces/upgrade.interface";
 import styled from "styled-components";
+import { useCountdown } from "../hooks/useCountDown";
 
 interface BuyCardProps {
   item: {
@@ -49,6 +48,7 @@ interface BuyCardProps {
     } | null;
   };
   locked: boolean;
+  nextUpgrade?: Date;
   onBuyClick: (
     params: any,
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
@@ -65,6 +65,7 @@ interface BuyCardProps {
     valueDiff: string;
     price: number;
     icon: React.ReactElement;
+    nextUpgrade: Date;
     onClick: () => void;
   }[];
 }
@@ -76,6 +77,7 @@ const DummyRequirement = styled.div`
 const BuyCard: React.FC<BuyCardProps> = ({
   item,
   locked,
+  nextUpgrade,
   onBuyClick,
   upgradeOption,
   userInfo,
@@ -88,6 +90,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
 }) => {
   const [showBuyConfirmation, setShowBuyConfirmation] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const { formattedCountdown, isExpired } = useCountdown(nextUpgrade);
 
   const {
     image,
@@ -125,6 +128,26 @@ const BuyCard: React.FC<BuyCardProps> = ({
           }`;
 
     return <RequirementText>{requirementText}</RequirementText>;
+  };
+
+  const renderCardContainer = () => {
+    if (locked) {
+      return <SmallButton disabled>Locked</SmallButton>
+    } else if (!isExpired) {
+      return <SmallButton disabled>{formattedCountdown}</SmallButton>
+    } else {
+      return <>
+        {upgradeOption ? (
+          <SmallNeonButton onClick={handleUpgradeClick}>
+            Upgrade
+          </SmallNeonButton>
+        ) : (
+          <SmallNeonButton onClick={handleBuyClick}>
+            Buy
+          </SmallNeonButton>
+        )}
+      </>
+    }
   };
 
   const handleCardClick = async (price: number) => {
@@ -178,21 +201,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
             <CardImage src={image} alt={title} loading="lazy" />
           </CardImageContainer>
           <CardButtonContainer>
-            {locked ? (
-              <SmallButton disabled>Locked</SmallButton>
-            ) : (
-              <>
-                {upgradeOption ? (
-                  <SmallNeonButton onClick={handleUpgradeClick}>
-                    Upgrade
-                  </SmallNeonButton>
-                ) : (
-                  <SmallNeonButton onClick={handleBuyClick}>
-                    Buy
-                  </SmallNeonButton>
-                )}
-              </>
-            )}
+            {renderCardContainer()}
           </CardButtonContainer>
         </CardLeftColumn>
         <CardRightColumn>

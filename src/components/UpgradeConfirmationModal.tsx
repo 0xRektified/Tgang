@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { CardTitle, NeonButton } from "./styled/cardStyled";
+import { CardTitle, LockedButton, NeonButton } from "./styled/cardStyled";
 import { formatPrice } from "./utils/formater";
+import { useCountdown } from "../hooks/useCountDown";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -93,7 +94,7 @@ const ModalHeader = styled(CardTitle)`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 1rem;
+  top: 0.5rem;
   right: 1rem;
   background-color: #ef44449c;
   border: none;
@@ -126,11 +127,21 @@ const StyledNeonButton = styled(NeonButton)`
   }
 `;
 
+const StyledLockedButton = styled(LockedButton)`
+  color: #e4e4e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
 interface UpgradeOption {
   label: string;
   valueDiff: string;
   price: number;
   icon: React.ReactElement;
+  nextUpgrade?: Date;
   onClick: () => void;
 }
 
@@ -176,22 +187,29 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>{title}</ModalHeader>
         <OptionsGrid>
-          {options.map((option, index) => (
-            <OptionCard key={index}>
-              <OptionIcon>{option.icon}</OptionIcon>
-              <OptionLabel>
-                {option.label}{" "}
-                <OptionValue>{formatTimeDiff(option.valueDiff)}</OptionValue>
-              </OptionLabel>
-              <OptionPrice>
-                <CostLabel>Cost: </CostLabel>
-                {formatPrice(option.price, false)}
-              </OptionPrice>
-              <StyledNeonButton onClick={() => handleState(option)}>
-                {option.icon} Purchase
-              </StyledNeonButton>
-            </OptionCard>
-          ))}
+          {options.map((option, index) => {
+            const { formattedCountdown, isExpired } = useCountdown(option.nextUpgrade);
+            return (
+              <OptionCard key={index}>
+                <OptionIcon>{option.icon}</OptionIcon>
+                <OptionLabel>
+                  {option.label}{" "}
+                  <OptionValue>{formatTimeDiff(option.valueDiff)}</OptionValue>
+                </OptionLabel>
+                <OptionPrice>
+                  <CostLabel>Cost: </CostLabel>
+                  {formatPrice(option.price, false)}
+                </OptionPrice>
+                {isExpired ? (
+                  <StyledNeonButton onClick={() => handleState(option)}>
+                    {option.icon} Purchase
+                  </StyledNeonButton>
+                ) : (
+                  <StyledLockedButton disabled>{formattedCountdown}</StyledLockedButton>
+                )}
+              </OptionCard>
+            )
+          })}
         </OptionsGrid>
       </ModalContent>
     </ModalBackground>
