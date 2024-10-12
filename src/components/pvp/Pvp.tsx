@@ -111,7 +111,6 @@ export default function Pvp({
     successMessage: multiplayerSuccessMessage,
     maxAttacksReached,
     socialNetworkRequired,
-    useItem,
   } = useMultiplayer(userInfo, setUserInfo);
 
   const {
@@ -157,6 +156,7 @@ export default function Pvp({
   );
   const [isAttacking, setIsAttacking] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ECRAFTABLE_ITEM | null>(null);
+  const [specialItem, setSpecialItem] = useState<ECRAFTABLE_ITEM | null>(null);
 
   const playSound = (sound: string) => {
     const audio = new Audio(sound);
@@ -282,6 +282,7 @@ export default function Pvp({
             image: "/assets/pvp/userImage.png",
           });
 
+          setSpecialItem(selectedItem);
           setCombatState("fighting");
           setCurrentBattle(result);
           await simulateCombat(result);
@@ -311,6 +312,8 @@ export default function Pvp({
     if (result) {
       setCombatState("fighting");
       setCurrentBattle(result);
+      setSpecialItem(selectedItem);
+      setSelectedItem(null);
       await simulateCombat(result);
     }
   }, [opponent, startFight, userInfo.id, simulateCombat, selectedItem]);
@@ -330,6 +333,23 @@ export default function Pvp({
       setIsAttacking(false);
     }
   }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking]);
+
+  const handleUseSpecialItem = useCallback(async () => {
+    if (!opponent || !currentBattle || isAttacking || !specialItem) return;
+
+    setIsAttacking(true);
+    try {
+      const result = await performAttack(currentBattle.battleId, specialItem);
+      if (result) {
+        await simulateCombat(result);
+        setSpecialItem(null); // Remove the special item after use
+      }
+    } catch (error) {
+      console.error("Use special item error:", error);
+    } finally {
+      setIsAttacking(false);
+    }
+  }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking, specialItem]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -403,26 +423,12 @@ export default function Pvp({
       handleStart();
     } else if (combatState === "fighting") {
       WebApp.HapticFeedback.impactOccurred("heavy");
-      handleAttack();
+      handleAttack(); // Always perform a regular attack when this button is clicked
     } else if (combatState === "result") {
       WebApp.HapticFeedback.impactOccurred("heavy");
       handleCollectAndReturn();
     }
   }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);
-
-  const handleUseItem = useCallback(async () => {
-    if (!currentBattle || !selectedItem) return;
-
-    try {
-      const result = await useItem(currentBattle.battleId, selectedItem);
-      if (result) {
-        await simulateCombat(result);
-        setSelectedItem(null); // Reset selected item after use
-      }
-    } catch (error) {
-      console.error("Use item error:", error);
-    }
-  }, [currentBattle, selectedItem, useItem, simulateCombat]);
 
   useEffect(() => {
     fetchBattleHistory();
@@ -433,6 +439,10 @@ export default function Pvp({
       setIsChannelModalOpen(true);
     }
   }, [socialNetworkRequired]);
+
+  const handleSelectItem = useCallback((item: ECRAFTABLE_ITEM | null) => {
+    setSelectedItem(item);
+  }, []);
 
   return (
     <PvpWrapper>
@@ -525,11 +535,12 @@ export default function Pvp({
                       </motion.div>
                       <PvpControls
                         combatState={combatState}
-                        onButtonClick={handleControlButtonClick}
+                        onAttackClick={handleAttack}
+                        onUseSpecialItemClick={handleUseSpecialItem}
                         isWinner={combatResult?.winner === "attacker"}
                         isAttacking={isAttacking}
-                        onUseItem={handleUseItem}
-                        selectedItem={selectedItem}
+                        specialItem={specialItem}
+                        onStartBattle={handleStart}
                       />
                     </>
                   )}

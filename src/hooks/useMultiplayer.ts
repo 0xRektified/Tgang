@@ -7,8 +7,6 @@ import {
 } from "../components/interfaces/multiplayer.interface";
 import { ECRAFTABLE_ITEM } from "../components/interfaces/craftableItem.interface";
 
-
-// Add these constants at the top of the file
 const PRECONDITION_REQUIRED = 428; // For social network requirement
 const PRECONDITION_FAILED = 412; // For max attacks reached
 
@@ -30,6 +28,11 @@ export function useMultiplayer(
   );
   const [maxAttacksReached, setMaxAttacksReached] = useState(false);
   const [socialNetworkRequired, setSocialNetworkRequired] = useState(false);
+  const [activeEffects, setActiveEffects] = useState<Array<{
+    itemId: ECRAFTABLE_ITEM;
+    effect: { [key: string]: number };
+    remainingRounds: number;
+  }>>([]);
 
   const searchPlayer = useCallback(async () => {
     setLoading(true);
@@ -65,31 +68,6 @@ export function useMultiplayer(
     }
   }, [setUserInfo]);
 
-  const performAttack = useCallback(async (battleId: string) => {
-    setLoading(true);
-    setError(null);
-    setErrorCode(null);
-    setSuccessMessage(null);
-    try {
-      const response = await axiosInstance.post<IBattle>(
-        `/multiplayer/attack/${battleId}`,
-      );
-      setLoading(false);
-      setSuccessMessage("Attack performed successfully");
-      return response.data;
-    } catch (err: any) {
-      setLoading(false);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-        setErrorCode(err.response.status);
-      } else {
-        setError("Failed to perform attack");
-      }
-      console.error(err);
-      return null;
-    }
-  }, []);
-
   const startFight = useCallback(
     async (playerId: string, opponentId: string, selectedItem: ECRAFTABLE_ITEM | null) => {
       setLoading(true);
@@ -101,7 +79,7 @@ export function useMultiplayer(
       try {
         const response = await axiosInstance.post<IBattle>(
           `/multiplayer/start/${opponentId}`,
-          { selectedItem }
+          { selectedItemIds: selectedItem ? [selectedItem] : undefined }
         );
         setLoading(false);
         setSuccessMessage("Fight started successfully");
@@ -125,6 +103,32 @@ export function useMultiplayer(
     },
     [],
   );
+
+  const performAttack = useCallback(async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
+    setLoading(true);
+    setError(null);
+    setErrorCode(null);
+    setSuccessMessage(null);
+    try {
+      const response = await axiosInstance.post<IBattle>(
+        `/multiplayer/attack/${battleId}`,
+        { itemId }
+      );
+      setLoading(false);
+      setSuccessMessage("Attack performed successfully");
+      return response.data;
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+        setErrorCode(err.response.status);
+      } else {
+        setError("Failed to perform attack");
+      }
+      console.error(err);
+      return null;
+    }
+  }, []);
 
   const fetchBattleHistory = useCallback(async () => {
     setLoading(true);
@@ -185,31 +189,9 @@ export function useMultiplayer(
     });
   }, []);
 
-  const useItem = useCallback(async (battleId: string, itemId: ECRAFTABLE_ITEM) => {
-    setLoading(true);
-    setError(null);
-    setErrorCode(null);
-    setSuccessMessage(null);
-    try {
-      const response = await axiosInstance.post<IBattle>(
-        `/multiplayer/use-item/${battleId}`,
-        { itemId }
-      );
-      setLoading(false);
-      setSuccessMessage("Item used successfully");
-      return response.data;
-    } catch (err: any) {
-      setLoading(false);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-        setErrorCode(err.response.status);
-      } else {
-        setError("Failed to use item");
-      }
-      console.error(err);
-      return null;
-    }
-  }, []);
+  const getActiveEffects = useCallback(() => {
+    return activeEffects;
+  }, [activeEffects]);
 
   return {
     searchPlayer,
@@ -225,6 +207,7 @@ export function useMultiplayer(
     successMessage,
     maxAttacksReached,
     socialNetworkRequired,
-    useItem,
+    getActiveEffects,
+    activeEffects,
   };
 }

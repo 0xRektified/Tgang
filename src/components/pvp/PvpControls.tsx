@@ -4,7 +4,6 @@ import { CombatState } from "./Pvp";
 import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
 
 const ControlButton = styled.button`
-  // ... existing styles ...
   background-color: #27272a;
   color: white;
   border: 2px solid #1e90ff;
@@ -17,7 +16,8 @@ const ControlButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 0 5px #1e90ff;
-  
+  margin: 0.5rem;
+
   &:hover {
     box-shadow: 0 0 10px #1e90ff;
   }
@@ -30,46 +30,65 @@ const ControlButton = styled.button`
   }
 `;
 
+const ControlsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
 interface PvpControlsProps {
   combatState: CombatState;
-  onButtonClick: () => void;
-  isWinner?: boolean;
+  onAttackClick: () => void;
+  onUseSpecialItemClick: () => void;
+  isWinner: boolean;
   isAttacking: boolean;
-  onUseItem: () => void;
-  selectedItem: ECRAFTABLE_ITEM | null;
+  specialItem: ECRAFTABLE_ITEM | null;
+  onStartBattle: () => void;
 }
 
-export const PvpControls: React.FC<PvpControlsProps> = ({
+export function PvpControls({
   combatState,
-  onButtonClick,
+  onAttackClick,
+  onUseSpecialItemClick,
   isWinner,
   isAttacking,
-  onUseItem,
-  selectedItem,
-}) => {
-  const getButtonText = () => {
-    if (combatState === "ready") return "Start Fight";
-    if (combatState === "fighting") return isAttacking ? "Attacking..." : "Attack";
-    if (combatState === "result") return isWinner ? "Collect Rewards" : "Return to Menu";
-    return "";
+  specialItem,
+  onStartBattle,
+}: PvpControlsProps) {
+  const getItemName = (itemId: ECRAFTABLE_ITEM) => {
+    // Replace this with your actual item name mapping
+    return itemId.replace(/_/g, ' ').toLowerCase();
   };
 
   return (
-    <div className="flex justify-center my-4 space-x-4">
-      <ControlButton
-        onClick={onButtonClick}
-        disabled={isAttacking}
-      >
-        {getButtonText()}
-      </ControlButton>
-      {combatState === "fighting" && selectedItem && (
-        <ControlButton
-          onClick={onUseItem}
-          disabled={isAttacking}
-        >
-          Use Item
+    <ControlsContainer>
+      {combatState === "fighting" && (
+        <>
+          <ControlButton
+            onClick={onAttackClick}
+            disabled={isAttacking}
+          >
+            Attack
+          </ControlButton>
+          <ControlButton
+            onClick={onUseSpecialItemClick}
+            disabled={isAttacking || !specialItem}
+          >
+            Use {specialItem ? getItemName(specialItem) : "Special Item"}
+          </ControlButton>
+        </>
+      )}
+      {combatState === "ready" && (
+        <ControlButton onClick={onStartBattle}>
+          Start Battle
         </ControlButton>
       )}
-    </div>
+      {combatState === "result" && (
+        <ControlButton onClick={onAttackClick}>
+          {isWinner ? "Collect Rewards" : "Try Again"}
+        </ControlButton>
+      )}
+    </ControlsContainer>
   );
-};
+}
