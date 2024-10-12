@@ -14,8 +14,12 @@ export interface UserLab {
   production: number;
   upgradeCapacityPrice: number;
   upgradeCapacity: number;
+  lastCapacityUpgrade: Date;
+  nextCapacityUpgrade: Date;
   upgradeProductionPrice: number;
   upgradeProduction: number;
+  lastProductionUpgrade: Date;
+  nextProductionUpgrade: Date;
   collectTime: Date;
   produced: number;
 }
@@ -35,8 +39,12 @@ export interface IUserShipping {
   shippingTime: number;
   upgradeCapacityPrice: number;
   upgradeCapacity: number;
+  lastCapacityUpgrade: Date;
+  nextCapacityUpgrade: Date;
   upgradeShippingTimePrice: number;
   upgradeShippingTime: number;
+  lastShippingTimeUpgrade: Date;
+  nextShippingTimeUpgrade: Date;
   lastShipment: Date;
   nextShipment: Date;
   requirements: IRequirement[] | null;
@@ -48,6 +56,8 @@ export interface Product {
   image: string;
   level: number;
   upgradePrice: number;
+  lastUpgrade: Date;
+  nextUpgrade: Date;
   marketDiscount: number;
   upgradeMarketDiscount: number;
   selected: boolean;
@@ -62,6 +72,8 @@ export interface UserDealerUpgrade {
   level: number;
   amount: number;
   upgradePrice: number;
+  lastUpgrade: Date;
+  nextUpgrade: Date;
   upgradeAmount: number;
   requirements: IRequirement[] | null;
 }
@@ -88,6 +100,9 @@ export interface IUserSocial {
 export interface ICraftedItems {
   itemId: ECRAFTABLE_ITEM;
   quantity: number;
+}
+  export interface IUserAchievements {
+  [key: number]: boolean;
 }
 
 export interface IUserInfo {
@@ -116,6 +131,7 @@ export interface IUserInfo {
   wallet?: string;
   pvp?: IUserPvp;
   craftedItems?: ICraftedItems[];
+  achievements?: IUserAchievements;
 }
 
 export interface IUserPvp {

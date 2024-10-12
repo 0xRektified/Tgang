@@ -299,15 +299,18 @@ export const TabContainer = styled.div`
 `;
 
 export const TabButton = styled.button<{ active: boolean }>`
-  padding: 8px 16px;
-  font-size: 14px;
+  padding-right: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 6px;
+  font-size: 0.8em;
   font-weight: 600;
   background-color: #242627;
   color: white;
-  border: 2px solid ${(props) => (props.active ? 'white' : '#374151')};
+  border: 2px solid ${(props) => (props.active ? "white" : "#374151")};
   border-radius: 12px;
   cursor: pointer;
-  margin: 0 4px;
+  margin: 8px;
   transition: all 0.3s ease;
   position: relative;
   min-width: 3em;
@@ -315,7 +318,8 @@ export const TabButton = styled.button<{ active: boolean }>`
   ${({ active }) =>
     active &&
     css`
-      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff, 0 0 8px #1e90ff;
+      box-shadow: 0 0 2px #1e90ff, 0 0 4px #1e90ff, 0 0 6px #1e90ff,
+        0 0 8px #1e90ff;
       animation: ${bounce} 1s infinite, ${glow} 1.5s infinite alternate;
     `}
 

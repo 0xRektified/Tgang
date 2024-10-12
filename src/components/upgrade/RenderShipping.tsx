@@ -68,6 +68,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             ).toString(),
             price: shipping.upgradeCapacityPrice || 0,
             icon: <LuPackagePlus />,
+            nextUpgrade: shipping.nextCapacityUpgrade,
             onClick: async () => {
               await upgradeShippingCapacity(shipping.method, setUserInfo);
             },
@@ -79,6 +80,7 @@ export const RenderShipping: React.FC<RenderShippingProps> = ({
             ).toString(),
             price: shipping.upgradeShippingTimePrice || 0,
             icon: <FaShippingFast />,
+            nextUpgrade: shipping.nextShippingTimeUpgrade,
             onClick: async () => {
               await upgradeShippingShippingTime(shipping.method, setUserInfo);
             },

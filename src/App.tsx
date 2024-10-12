@@ -199,7 +199,6 @@ function App() {
             isCombinedModalOpen={isCombinedModalOpen}
             closeCombinedModal={() => setIsCombinedModalOpen(false)}
             isContentLoaded={isContentLoaded}
-
           />
         );
     }
@@ -231,11 +230,11 @@ function App() {
 
   return (
     <StyledApp data-theme="dark">
-      {!isContentLoaded && <Loading isContentLoaded={isContentLoaded}/>}
+      {!isContentLoaded && <Loading isContentLoaded={isContentLoaded} />}
       <AppContainer>
-        <TopMenu 
-          userInfo={userInfo || undefined} 
-          setCurrentView={memoizedSetCurrentView} 
+        <TopMenu
+          userInfo={userInfo || undefined}
+          setCurrentView={memoizedSetCurrentView}
         />
         <ContentWrapper>{renderCurrentView()}</ContentWrapper>
         <FooterMenu
