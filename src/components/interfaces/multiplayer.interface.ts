@@ -1,15 +1,17 @@
 import { EProduct } from "./product.interface";
 import { IUserInfo, IUserPvp } from "./user.interface";
+import { ECRAFTABLE_ITEM } from "./craftableItem.interface";
 
 export interface Loot {
   name: EProduct;
   quantity: number;
 }
 
-export interface IBattleParticipant extends IUserPvp {
+export interface IBattleParticipant {
   id: number;
   username: string;
-  healthPoints: number;
+  pvp: IUserPvp;
+  selectedItems?: { itemId: ECRAFTABLE_ITEM; quantity: number }[];
 }
 
 export interface IRoundResult {
@@ -17,6 +19,7 @@ export interface IRoundResult {
   defenderDamage: number;
   attackerCritical: boolean;
   defenderCritical: boolean;
+  usedItem?: ECRAFTABLE_ITEM;
 }
 
 export interface IBattle {
@@ -27,8 +30,8 @@ export interface IBattle {
   round: number;
   roundResults: IRoundResult[];
   winner?: string;
-  cashLoot: number;
-  productLoot: Loot[];
+  cashLoot?: number;
+  productLoot?: Loot[];
 }
 
 export interface IHistoryBattleResult {

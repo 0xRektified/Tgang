@@ -273,16 +273,19 @@ export default function Pvp({
         const result = await startFight(userInfo.id, opponentId, selectedItem);
         if (result) {
           const opponentData = result.opponent || players[0];
-          const opponentHealth =
-            result.defender.healthPoints || players[0]?.pvp?.healthPoints;
+          const opponentHealth = result.defender.pvp.healthPoints || players[0]?.pvp?.healthPoints;
           setOpponentHealth(opponentHealth || 100);
-          setUserHealth(result.attacker.healthPoints || 100);
+          setUserHealth(result.attacker.pvp.healthPoints || 100);
           setOpponent({
             ...opponentData,
             image: "/assets/pvp/userImage.png",
           });
 
-          setSpecialItem(selectedItem);
+          // Check if there's an active special item
+          const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
+          setSpecialItem(activeItem || selectedItem);
+          setSelectedItem(null);
+
           setCombatState("fighting");
           setCurrentBattle(result);
           await simulateCombat(result);
@@ -310,10 +313,16 @@ export default function Pvp({
   const handleStart = useCallback(async () => {
     const result = await startFight(userInfo.id, opponent.id, selectedItem);
     if (result) {
+      setUserHealth(result.attacker.pvp.healthPoints || 100);
+      setOpponentHealth(result.defender.pvp.healthPoints || 100);
+
+      // Check if there's an active special item
+      const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
+      setSpecialItem(activeItem || selectedItem);
+      setSelectedItem(null);
+
       setCombatState("fighting");
       setCurrentBattle(result);
-      setSpecialItem(selectedItem);
-      setSelectedItem(null);
       await simulateCombat(result);
     }
   }, [opponent, startFight, userInfo.id, simulateCombat, selectedItem]);

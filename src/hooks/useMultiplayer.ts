@@ -172,8 +172,8 @@ export function useMultiplayer(
           newBattle.winner === "attacker"
             ? newBattle.attacker.id.toString()
             : newBattle.defender.id.toString(),
-        cashLoot: newBattle.cashLoot,
-        productLoot: newBattle.productLoot,
+        cashLoot: newBattle.cashLoot || 0,
+        productLoot: newBattle.productLoot || [],
       };
 
       const index = prevHistory.findIndex(

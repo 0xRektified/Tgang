@@ -3,6 +3,7 @@ import { EProduct } from "./product.interface";
 import { EShippingMethod } from "./shipping.interface";
 import { SocialChannel } from "./social.interface";
 import { EDealerUpgrade, IRequirement, IUpgrade } from "./upgrade.interface";
+import { IAchievement } from "./achievements.interface";
 
 export interface UserLab {
   product: EProduct;
@@ -97,11 +98,12 @@ export interface IUserSocial {
   joined?: Date;
 }
 
-export interface ICraftedItems {
+export interface ICraftedItem {
   itemId: ECRAFTABLE_ITEM;
   quantity: number;
 }
-  export interface IUserAchievements {
+
+export interface IUserAchievements {
   [key: number]: boolean;
 }
 
@@ -130,22 +132,21 @@ export interface IUserInfo {
   socials?: IUserSocial[];
   wallet?: string;
   pvp?: IUserPvp;
-  craftedItems?: ICraftedItems[];
+  craftedItems?: ICraftedItem[];
   achievements?: IUserAchievements;
 }
 
 export interface IUserPvp {
-  victory: number;
-  defeat: number;
+  healthPoints: number;
+  attackPower: number;
+  defensePower: number;
+  criticalChance: number;
   lastAttackDate: Date;
   attacksToday: number;
-  lastDefendDate: Date;
   attacksAvailable: number;
-  healthPoints: number;
-  protection: number;
-  damage: number;
-  accuracy: number;
-  evasion: number;
-  lootPower: number;
-  criticalChance: number;
+  activeEffects: Array<{
+    itemId: ECRAFTABLE_ITEM;
+    effect: { [key: string]: number };
+    remainingRounds: number;
+  }>;
 }
