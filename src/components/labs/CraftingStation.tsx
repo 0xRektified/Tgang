@@ -6,94 +6,97 @@ import {
 } from "../interfaces/craftableItem.interface";
 import { IUserInfo } from "../interfaces/user.interface";
 import { useCraftItem } from "../../hooks/useCraftItem";
+import { ApiToast } from "../ApiToast";
+import { FaPlus, FaMinus } from "react-icons/fa";
+
+const CraftingContainer = styled.div`
+  background-color: #1c1c1e;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
 
 const CraftingGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const CraftingItem = styled.div<{ selected: boolean }>`
-  background-color: ${(props) => (props.selected ? "#4a4a4c" : "#3a3a3c")};
+  background: ${(props) =>
+    props.selected
+      ? "linear-gradient(135deg, #3a3a3c, #2c2c2e)"
+      : "linear-gradient(135deg, #2c2c2e, #1c1c1e)"};
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.75rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  height: 150px;
+  height: 180px;
+  border: 2px solid ${(props) => (props.selected ? "#1e90ff" : "transparent")};
+  box-shadow: ${(props) =>
+    props.selected ? "0 0 10px rgba(30, 144, 255, 0.5)" : "none"};
 
   &:hover {
-    background-color: #4a4a4c;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
 
 const ItemName = styled.div`
   color: #ffffff;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: bold;
   text-align: center;
   margin-bottom: 0.5rem;
 `;
 
-const ItemContent = styled.div`
-  display: flex;
-  flex-grow: 1;
-`;
-
-const ItemImageContainer = styled.div`
-  flex: 0 0 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const ItemImage = styled.img`
-  width: 40px;
-  height: 40px;
-  margin-top: 30px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
-`;
-
-const ItemRequirements = styled.div`
-  font-size: 0.6rem;
-  color: #a0a0a0;
-  text-align: center;
+  margin: 0 auto;
 `;
 
 const ItemDetails = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  font-size: 0.7rem;
+  justify-content: space-between;
+  font-size: 0.8rem;
   color: #a0a0a0;
-  padding-left: 0.5rem;
+  margin-top: 0.5rem;
 `;
 
 const ItemEffect = styled.div`
   margin-bottom: 0.25rem;
 `;
 
-const ItemDuration = styled.div``;
+const ItemDuration = styled.div`
+  color: #4ade80;
+`;
 
 const CraftingDetails = styled.div`
-  margin-top: 1rem;
-  background-color: #3a3a3c;
+  background-color: #2c2c2e;
   border-radius: 0.5rem;
   padding: 1rem;
+  margin-top: 1rem;
 `;
 
 const RequirementsList = styled.ul`
   list-style-type: none;
   padding: 0;
+  margin-bottom: 1rem;
 `;
 
 const RequirementItem = styled.li`
   color: #ffffff;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const QuantityControl = styled.div`
@@ -104,50 +107,82 @@ const QuantityControl = styled.div`
 `;
 
 const QuantityButton = styled.button`
-  background-color: #007aff;
+  background-color: #3a3a3c;
   color: #ffffff;
   border: none;
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #4a4a4c;
   }
 
   &:disabled {
-    background-color: #4a4a4c;
+    background-color: #2c2c2e;
     cursor: not-allowed;
   }
 `;
 
 const QuantityDisplay = styled.span`
   color: #ffffff;
-  font-size: 1rem;
-  margin: 0 0.5rem;
+  font-size: 1.2rem;
+  margin: 0 1rem;
+  min-width: 30px;
+  text-align: center;
 `;
 
 const CraftButton = styled.button`
-  background-color: #007aff;
+  background-color: #1e90ff;
   color: #ffffff;
   border: none;
   border-radius: 0.25rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   margin-top: 1rem;
+  width: 100%;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #1a7ae0;
+    box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
   }
 
   &:disabled {
     background-color: #4a4a4c;
     cursor: not-allowed;
   }
+`;
+
+const NotEnoughResourcesBox = styled.div`
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+`;
+
+const MissingResourcesList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+`;
+
+const MissingResourceItem = styled.li`
+  color: #ff9999;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
 `;
 
 interface CraftingStationProps {
@@ -177,8 +212,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
   const handleCraft = async () => {
     if (selectedItem) {
       try {
-        const updatedUser = await craftItem(selectedItem, quantity);
-        setUserInfo(updatedUser);
+        await craftItem(selectedItem, quantity, setUserInfo);
       } catch (err) {
         console.error("Failed to craft item:", err);
       }
@@ -192,6 +226,21 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
       const userProduct = userInfo.products.find((p) => p.name === product);
       return userProduct && userProduct.quantity >= amount * quantity;
     });
+  };
+
+  const getMissingResources = () => {
+    if (!selectedItem) return [];
+    const item = CRAFTABLE_ITEMS[selectedItem];
+    return Object.entries(item.requirements)
+      .filter(([product, amount]) => {
+        const userProduct = userInfo.products.find((p) => p.name === product);
+        return !userProduct || userProduct.quantity < amount * quantity;
+      })
+      .map(([product, amount]) => {
+        const userProduct = userInfo.products.find((p) => p.name === product);
+        const missingAmount = amount * quantity - (userProduct?.quantity || 0);
+        return `${product}: ${missingAmount}`;
+      });
   };
 
   const renderRequirements = (
@@ -211,7 +260,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
   };
 
   return (
-    <>
+    <CraftingContainer className="scrollable-content">
       <CraftingGrid>
         {Object.entries(CRAFTABLE_ITEMS).map(([itemId, item]) => (
           <CraftingItem
@@ -220,16 +269,11 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
             selected={selectedItem === itemId}
           >
             <ItemName>{item.name}</ItemName>
-            <ItemContent>
-              <ItemImageContainer>
-                <ItemImage src={item.image} alt={item.name} />
-                {/* <ItemRequirements>{renderRequirements(item)}</ItemRequirements> */}
-              </ItemImageContainer>
-              <ItemDetails>
-                <ItemEffect>{renderEffectText(item)}</ItemEffect>
-                <ItemDuration>Duration: {item.duration} rounds</ItemDuration>
-              </ItemDetails>
-            </ItemContent>
+            <ItemImage src={item.image} alt={item.name} />
+            <ItemDetails>
+              <ItemEffect>{renderEffectText(item)}</ItemEffect>
+              <ItemDuration>Duration: {item.duration} rounds</ItemDuration>
+            </ItemDetails>
           </CraftingItem>
         ))}
       </CraftingGrid>
@@ -240,10 +284,10 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
             {Object.entries(CRAFTABLE_ITEMS[selectedItem].requirements).map(
               ([product, amount]) => (
                 <RequirementItem key={product}>
-                  {product}: {amount * quantity} (You have:{" "}
-                  {userInfo.products.find((p) => p.name === product)
-                    ?.quantity || 0}
-                  )
+                  <span>{product}:</span>
+                  <span>
+                    {amount * quantity} / {userInfo.products.find((p) => p.name === product)?.quantity || 0}
+                  </span>
                 </RequirementItem>
               ),
             )}
@@ -253,20 +297,36 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
             >
-              -
+              <FaMinus />
             </QuantityButton>
             <QuantityDisplay>{quantity}</QuantityDisplay>
             <QuantityButton onClick={() => handleQuantityChange(1)}>
-              +
+              <FaPlus />
             </QuantityButton>
           </QuantityControl>
-          <CraftButton onClick={handleCraft} disabled={!canCraft() || loading}>
-            {loading ? "Crafting..." : "Craft"}
-          </CraftButton>
+          {canCraft() ? (
+            <CraftButton onClick={handleCraft} disabled={loading}>
+              {loading ? "Crafting..." : `Craft ${CRAFTABLE_ITEMS[selectedItem].name}`}
+            </CraftButton>
+          ) : (
+            <NotEnoughResourcesBox>
+              Not enough resources to craft
+              <MissingResourcesList>
+                {getMissingResources().map((resource, index) => (
+                  <MissingResourceItem key={index}>
+                    {resource}
+                  </MissingResourceItem>
+                ))}
+              </MissingResourcesList>
+            </NotEnoughResourcesBox>
+          )}
         </CraftingDetails>
       )}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
-    </>
+      <ApiToast
+        loading={loading}
+        error={error}
+        successMessage={successMessage}
+      />
+    </CraftingContainer>
   );
 };
