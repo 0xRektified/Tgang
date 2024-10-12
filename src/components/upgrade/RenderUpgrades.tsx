@@ -6,12 +6,10 @@ import {
   IRequirement,
   IUpgrade,
   ProductUpgrade,
-  RequirementType,
 } from "../interfaces/upgrade.interface";
 import { IUserInfo, Product } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import BuyCard from "../BuyCard";
-import { CardRequirement } from "../styled/cardStyled";
 import { TouchPoint } from "../utils/types";
 import { IMarketInfo } from "../interfaces/market.interface";
 
@@ -54,6 +52,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
     level: number,
     upgradeEffect?: string,
     locked?: boolean,
+    nextUpgrade?: Date,
   ) => {
     return (
       <BuyCard
@@ -74,6 +73,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             : null,
         }}
         locked={locked || false}
+        nextUpgrade={nextUpgrade}
         onBuyClick={(params) => buyUpgrade(params, setUserInfo, setMarketInfo)}
         upgradeOption={false}
         userInfo={userInfo}
@@ -146,6 +146,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             level,
             upgradeEffect,
             locked,
+            userUpgrade?.nextUpgrade
           );
         })}
       </div>
@@ -194,6 +195,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
             level,
             upgradeEffect,
             locked,
+            userUpgrade?.nextUpgrade
           );
         })}
       </div>

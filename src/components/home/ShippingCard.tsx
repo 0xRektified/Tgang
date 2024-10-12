@@ -247,7 +247,7 @@ export const ShippingCard: React.FC<{
               <div>
                 {loading ? (
                   <LoadingSpinner />
-                ) : formattedCountdown === "Ship now" ? (
+                ) : formattedCountdown === null ? (
                   <ShipNowText>Next shipment Ready</ShipNowText>
                 ) : (
                   <div>

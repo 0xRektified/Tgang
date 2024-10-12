@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import "tailwindcss/tailwind.css";
-import { CardTitle, NeonButton } from "./styled/cardStyled";
+import { CardTitle, LockedButton, NeonButton } from "./styled/cardStyled";
 import { formatPrice } from "./utils/formater";
+import { useCountdown } from "../hooks/useCountDown";
+import TimerComponent from "./TimerComponent";
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -93,7 +95,7 @@ const ModalHeader = styled(CardTitle)`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 1rem;
+  top: 0.5rem;
   right: 1rem;
   background-color: #ef44449c;
   border: none;
@@ -126,11 +128,41 @@ const StyledNeonButton = styled(NeonButton)`
   }
 `;
 
+const StyledLockedButton = styled(LockedButton)`
+  color: #e4e4e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
+const TimerContainer = styled.div`
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const TimerText = styled.span`
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+const TimerIcon = styled.span`
+  margin-right: 8px;
+  font-size: 16px;
+`;
+
 interface UpgradeOption {
   label: string;
   valueDiff: string;
   price: number;
   icon: React.ReactElement;
+  nextUpgrade?: Date;
   onClick: () => void;
 }
 
@@ -165,9 +197,15 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
   options,
   onClose,
 }) => {
+  const [expiredOptions, setExpiredOptions] = useState<Set<number>>(new Set());
+
   const handleState = async (option: UpgradeOption) => {
     await option.onClick();
     onClose();
+  };
+
+  const handleExpired = (index: number) => {
+    setExpiredOptions(prev => new Set(prev).add(index));
   };
 
   return (
@@ -176,22 +214,32 @@ export const UpgradeConfirmationModal: React.FC<GenericUpgradeModalProps> = ({
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>{title}</ModalHeader>
         <OptionsGrid>
-          {options.map((option, index) => (
-            <OptionCard key={index}>
-              <OptionIcon>{option.icon}</OptionIcon>
-              <OptionLabel>
-                {option.label}{" "}
-                <OptionValue>{formatTimeDiff(option.valueDiff)}</OptionValue>
-              </OptionLabel>
-              <OptionPrice>
-                <CostLabel>Cost: </CostLabel>
-                {formatPrice(option.price, false)}
-              </OptionPrice>
-              <StyledNeonButton onClick={() => handleState(option)}>
-                {option.icon} Purchase
-              </StyledNeonButton>
-            </OptionCard>
-          ))}
+          {options.map((option, index) => {
+            const isExpired = expiredOptions.has(index);
+            return (
+              <OptionCard key={index}>
+                <OptionIcon>{option.icon}</OptionIcon>
+                <OptionLabel>
+                  {option.label}{" "}
+                  <OptionValue>{formatTimeDiff(option.valueDiff)}</OptionValue>
+                </OptionLabel>
+                <OptionPrice>
+                  <CostLabel>Cost: </CostLabel>
+                  {formatPrice(option.price, false)}
+                </OptionPrice>
+                {isExpired || !option.nextUpgrade ? (
+                  <StyledNeonButton onClick={() => handleState(option)}>
+                    {option.icon} Purchase
+                  </StyledNeonButton>
+                ) : (
+                  <TimerComponent 
+                    nextUpgrade={option.nextUpgrade} 
+                    onExpired={() => handleExpired(index)}
+                  />
+                )}
+              </OptionCard>
+            )
+          })}
         </OptionsGrid>
       </ModalContent>
     </ModalBackground>
