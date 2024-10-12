@@ -27,6 +27,8 @@ import { formatPrice } from "./utils/formater";
 import { RequirementType } from "./interfaces/upgrade.interface";
 import styled from "styled-components";
 import { useCountdown } from "../hooks/useCountDown";
+import TimerComponent from "./TimerComponent";
+
 
 interface BuyCardProps {
   item: {
@@ -132,21 +134,21 @@ const BuyCard: React.FC<BuyCardProps> = ({
 
   const renderCardContainer = () => {
     if (locked) {
-      return <SmallButton disabled>Locked</SmallButton>
+      return <SmallButton disabled>Locked</SmallButton>;
     } else if (!isExpired) {
-      return <SmallButton disabled>{formattedCountdown}</SmallButton>
+      return <TimerComponent nextUpgrade={nextUpgrade} />;
     } else {
-      return <>
-        {upgradeOption ? (
-          <SmallNeonButton onClick={handleUpgradeClick}>
-            Upgrade
-          </SmallNeonButton>
-        ) : (
-          <SmallNeonButton onClick={handleBuyClick}>
-            Buy
-          </SmallNeonButton>
-        )}
-      </>
+      return (
+        <>
+          {upgradeOption ? (
+            <SmallNeonButton onClick={handleUpgradeClick}>
+              Upgrade
+            </SmallNeonButton>
+          ) : (
+            <SmallNeonButton onClick={handleBuyClick}>Buy</SmallNeonButton>
+          )}
+        </>
+      );
     }
   };
 
@@ -200,9 +202,7 @@ const BuyCard: React.FC<BuyCardProps> = ({
           <CardImageContainer>
             <CardImage src={image} alt={title} loading="lazy" />
           </CardImageContainer>
-          <CardButtonContainer>
-            {renderCardContainer()}
-          </CardButtonContainer>
+          <CardButtonContainer>{renderCardContainer()}</CardButtonContainer>
         </CardLeftColumn>
         <CardRightColumn>
           <CardDetails>

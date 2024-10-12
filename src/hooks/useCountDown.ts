@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface CountdownResult {
-  formattedCountdown: string;
+  formattedCountdown: string | null;
   isExpired: boolean;
 }
 
@@ -36,7 +36,7 @@ export const useCountdown = (targetDate?: Date): CountdownResult => {
         if (minutes > 0) parts.push(`${minutes}m`);
         if (seconds > 0) parts.push(`${seconds}s`);
 
-        const formattedCountdown = parts.join(' ') || 'Ship now';
+        const formattedCountdown = parts.length > 0 ? parts.join(' ') : null;
         setCountdown({ formattedCountdown, isExpired: false });
       }
     };
