@@ -3,7 +3,6 @@ import { EProduct } from "./product.interface";
 import { EShippingMethod } from "./shipping.interface";
 import { SocialChannel } from "./social.interface";
 import { EDealerUpgrade, IRequirement, IUpgrade } from "./upgrade.interface";
-import { IAchievement } from "./achievements.interface";
 
 export interface UserLab {
   product: EProduct;

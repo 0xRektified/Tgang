@@ -1,9 +1,9 @@
 import { EProduct } from "./product.interface";
 
 export enum ECRAFTABLE_ITEM {
-  BOOSTER_ATTACK_2 = "BOOSTER_ATTACK_2",
+  BOOSTER_ATTACK_1 = "BOOSTER_ATTACK_1",
   BOOSTER_DEFENSE_1 = "BOOSTER_DEFENSE_1",
-  HEALTH_POTION = "HEALTH_POTION",
+  HEALTH_POTION_SMALL = "HEALTH_POTION_SMALL",
 }
 
 export type PvpEffect = {
@@ -27,17 +27,17 @@ export interface CraftableItem {
 }
 
 export const CRAFTABLE_ITEMS: Record<ECRAFTABLE_ITEM, CraftableItem> = {
-  [ECRAFTABLE_ITEM.BOOSTER_ATTACK_2]: {
-    itemId: ECRAFTABLE_ITEM.BOOSTER_ATTACK_2,
+  [ECRAFTABLE_ITEM.BOOSTER_ATTACK_1]: {
+    itemId: ECRAFTABLE_ITEM.BOOSTER_ATTACK_1,
     name: "Attack Booster II",
     image: "/assets/pvp/craftables/caps1.png",
     requirements: {
-      [EProduct.HERB]: 2,
-      [EProduct.MUSHROOM]: 1,
+      [EProduct.POWDER]: 3,
+      [EProduct.PILL]: 1,
     },
     pvpEffect: {
-      damage: 2,
-      criticalChance: 5,
+      damage: 10,
+      criticalChance: 3,
     },
     duration: 3,
   },
@@ -46,25 +46,25 @@ export const CRAFTABLE_ITEMS: Record<ECRAFTABLE_ITEM, CraftableItem> = {
     name: "Defense Booster I",
     image: "/assets/pvp/craftables/caps2.png",
     requirements: {
-      [EProduct.ACID]: 1,
-      [EProduct.CRYSTAL]: 1,
+      [EProduct.HERB]: 10,
+      [EProduct.MUSHROOM]: 5,
     },
     pvpEffect: {
-      protection: 1,
+      protection: 7,
       evasion: 3,
     },
-    duration: 2,
+    duration: 3,
   },
-  [ECRAFTABLE_ITEM.HEALTH_POTION]: {
-    itemId: ECRAFTABLE_ITEM.HEALTH_POTION,
+  [ECRAFTABLE_ITEM.HEALTH_POTION_SMALL]: {
+    itemId: ECRAFTABLE_ITEM.HEALTH_POTION_SMALL,
     name: "Health Potion",
     image: "/assets/pvp/craftables/caps3.png",
     requirements: {
-      [EProduct.HERB]: 1,
-      [EProduct.PILL]: 1,
+      [EProduct.HERB]: 10,
+      [EProduct.ACID]: 3,
     },
     pvpEffect: {
-      healthPoints: 10,
+      healthPoints: 25,
     },
     duration: 1,
   },

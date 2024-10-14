@@ -8,8 +8,8 @@ import { IUserInfo } from "../interfaces/user.interface";
 import { useCraftItem } from "../../hooks/useCraftItem";
 import { ApiToast } from "../ApiToast";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { EProduct } from "../interfaces/product.interface";
 import { FlexBoxRow } from "../styled/globalStyled";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CraftingContainer = styled.div`
   background-color: #1c1c1e;
@@ -215,6 +215,50 @@ const CraftedItemQuantity = styled.span`
   font-size: 0.9rem;
 `;
 
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85); // Increased opacity
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled(motion.div)`
+  background-color: #2c2c2e;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  max-width: 80%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Center the content horizontally
+`;
+
+const ModalIcon = styled.img`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+  object-fit: contain; // Ensure the image maintains its aspect ratio
+`;
+
+const ModalText = styled.p`
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+`;
+
+const ModalQuantity = styled.p`
+  color: #4ade80;
+  font-size: 1.5rem;
+  font-weight: bold;
+`;
+
 interface CraftingStationProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
@@ -229,6 +273,12 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
   );
   const [quantity, setQuantity] = useState(1);
   const { craftItem, loading, error, successMessage } = useCraftItem();
+  const [showModal, setShowModal] = useState(false);
+  const [craftedItemInfo, setCraftedItemInfo] = useState<{
+    name: string;
+    quantity: number;
+    image: string;
+  } | null>(null);
 
   const handleItemSelect = (itemId: ECRAFTABLE_ITEM) => {
     setSelectedItem(itemId);
@@ -242,7 +292,16 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
   const handleCraft = async () => {
     if (selectedItem) {
       try {
-        await craftItem(selectedItem, quantity, setUserInfo);
+        const success = await craftItem(selectedItem, quantity, setUserInfo);
+        if (success) {
+          setCraftedItemInfo({
+            name: CRAFTABLE_ITEMS[selectedItem].name,
+            quantity: quantity,
+            image: CRAFTABLE_ITEMS[selectedItem].image,
+          });
+          setShowModal(true);
+          setTimeout(() => setShowModal(false), 1000);
+        }
       } catch (err) {
         console.error("Failed to craft item:", err);
       }
@@ -271,14 +330,6 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
         const missingAmount = amount * quantity - (userProduct?.quantity || 0);
         return `${product}: ${missingAmount}`;
       });
-  };
-
-  const renderRequirements = (
-    item: (typeof CRAFTABLE_ITEMS)[ECRAFTABLE_ITEM],
-  ) => {
-    return Object.entries(item.requirements)
-      .map(([product, amount]) => `${product}: ${amount}`)
-      .join("\n");
   };
 
   const renderEffectText = (
@@ -335,7 +386,9 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
                 <RequirementItem key={product}>
                   <span>{product}:</span>
                   <span>
-                    {amount * quantity} / {userInfo.products.find((p) => p.name === product)?.quantity || 0}
+                    {amount * quantity} /{" "}
+                    {userInfo.products.find((p) => p.name === product)
+                      ?.quantity || 0}
                   </span>
                 </RequirementItem>
               ),
@@ -355,7 +408,9 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
           </QuantityControl>
           {canCraft() ? (
             <CraftButton onClick={handleCraft} disabled={loading}>
-              {loading ? "Crafting..." : `Craft ${CRAFTABLE_ITEMS[selectedItem].name}`}
+              {loading
+                ? "Crafting..."
+                : `Craft ${CRAFTABLE_ITEMS[selectedItem].name}`}
             </CraftButton>
           ) : (
             <NotEnoughResourcesBox>
@@ -374,8 +429,31 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
       <ApiToast
         loading={loading}
         error={error}
-        successMessage={successMessage}
+        successMessage={null} // We're not using ApiToast for success anymore
       />
+      <AnimatePresence>
+        {showModal && craftedItemInfo && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ModalContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+            >
+              <ModalIcon
+                src={craftedItemInfo.image}
+                alt={craftedItemInfo.name}
+              />
+              <ModalText>Successfully crafted</ModalText>
+              <ModalText>{craftedItemInfo.name}</ModalText>
+              <ModalQuantity>x{craftedItemInfo.quantity}</ModalQuantity>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
     </CraftingContainer>
   );
 };

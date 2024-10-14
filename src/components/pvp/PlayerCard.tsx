@@ -1,38 +1,15 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
-import {
-  FaTrophy,
-  FaSkull,
-  FaBullseye,
-  FaFistRaised,
-  FaHeart,
-  FaBomb,
-  FaShieldAlt,
-  FaQuestionCircle,
-  FaDollarSign,
-} from "react-icons/fa";
-import { GiDodging } from "react-icons/gi";
+import { FaQuestionCircle, FaDollarSign } from "react-icons/fa";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
+import { renderStatIcon } from "./Pvp.constant";
 
-// Add this helper function at the top of the file
 const truncateUsername = (username: string, maxLength: number = 19) => {
   if (username.length <= maxLength) return username;
   return `${username.slice(0, maxLength - 3)}...`;
 };
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  gap: 0.5rem;
-`;
-
-const StatValue = styled.p`
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 0;
-`;
 
 const QuestionButton = styled.button`
   position: absolute;
@@ -268,6 +245,15 @@ const HealthBarContainer = styled.div`
   margin-top: 0.5rem;
 `;
 
+const StatValue = styled.span<{ increased?: boolean }>`
+  color: ${({ increased }) => (increased ? "#4299e1" : "inherit")};
+`;
+
+const StatIncrease = styled.span`
+  color: #4299e1;
+  margin-left: 0.2rem;
+`;
+
 interface PlayerCardProps {
   player: any;
   title: string;
@@ -279,6 +265,10 @@ interface PlayerCardProps {
   damageReceived?: number;
   light: boolean;
   hasActiveEffect: boolean;
+  itemUsed?: {
+    itemId: ECRAFTABLE_ITEM;
+    effects: Record<string, number>;
+  } | null;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -292,10 +282,26 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   damageReceived,
   light,
   hasActiveEffect,
+  itemUsed,
 }) => {
   if (!player || !player.pvp) return null;
 
   const healthPercentage = (health / maxHealth) * 100;
+
+  const renderStat = (key: string, value: number) => {
+    const increase = itemUsed?.effects[key];
+    const isIncreased = increase !== undefined;
+
+    return (
+      <StatItem key={key}>
+        <StatIcon>{renderStatIcon(key, key === "victory" ? "gold" : undefined)}</StatIcon>
+        <StatValue increased={isIncreased}>
+          {value}
+          {isIncreased && <StatIncrease>(+{increase})</StatIncrease>}
+        </StatValue>
+      </StatItem>
+    );
+  };
 
   return (
     <StyledCard hasActiveEffect={hasActiveEffect}>
@@ -338,18 +344,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               <Username title={player.username}>
                 <UsernameText>{truncateUsername(player.username)}</UsernameText>
                 <StatGroup>
-                  <StatItem>
-                    <GoldIcon>
-                      <FaTrophy />
-                    </GoldIcon>
-                    {player.pvp.victory}
-                  </StatItem>
-                  <StatItem>
-                    <WhiteIcon>
-                      <FaSkull />
-                    </WhiteIcon>
-                    {player.pvp.defeat}
-                  </StatItem>
+                  {renderStat("victory", player.pvp.victory)}
+                  {renderStat("defeat", player.pvp.defeat)}
                 </StatGroup>
               </Username>
             </UsernameLine>
@@ -364,26 +360,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               </CashAmount>
             </UserLevel>
             <StatsRow>
-              <StatGroup>
-                <StatItem>
-                  <WhiteIcon>
-                    <FaShieldAlt />
-                  </WhiteIcon>
-                  {player.pvp.protection}%
-                </StatItem>
-                <StatItem>
-                  <WhiteIcon>
-                    <FaBomb />
-                  </WhiteIcon>
-                  {player.pvp.damage}
-                </StatItem>
-                <StatItem>
-                  <WhiteIcon>
-                    <GiDodging />
-                  </WhiteIcon>
-                  {player.pvp.evasion}%
-                </StatItem>
-              </StatGroup>
+              {renderStat("protection", player.pvp.protection)}
+              {renderStat("damage", player.pvp.damage)}
+              {renderStat("evasion", player.pvp.evasion)}
+              {renderStat("accuracy", player.pvp.accuracy)}
+              {renderStat("criticalChance", player.pvp.criticalChance)}
             </StatsRow>
           </UserDetails>
         </UserInfo>

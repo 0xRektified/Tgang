@@ -117,8 +117,8 @@ const PvpButtonDeatchmatch = styled(PvpButton)`
   justify-content: center;
   gap: 0.3rem;
   padding: 0.4rem;
-  width: 9em;
-  margin: 0;
+  width: 12em; // Increased width for better proportion
+  margin: 0 auto; // Center the button within its container
   height: 4em;
   animation: ${glowingBorder} 3s infinite, ${subtleBounce} 2s infinite,
     ${pulse} 2s infinite;
@@ -129,9 +129,9 @@ const PvpButtonDeatchmatch = styled(PvpButton)`
   }
 
   svg {
-    font-size: 1.5rem; // Increase from 1.2rem
+    font-size: 1.5rem;
     animation: ${pulse} 2s infinite;
-    font-weight: bold; // Add this line to make it bolder
+    font-weight: bold;
   }
 `;
 
@@ -465,9 +465,8 @@ const AttackInfo = styled.span`
 
 const ActionRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center; // Center the content horizontally
   align-items: center;
-  gap: 1rem;
   margin-bottom: 1rem;
 `;
 

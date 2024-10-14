@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { statIcons } from "./Pvp.constant";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -70,7 +71,23 @@ const InfoModal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalTitle>Player Stats</ModalTitle>
-        <ModalBody>{children}</ModalBody>
+        <ModalBody>
+          <ul className="space-y-4">
+            {statIcons.map((stat, index) => (
+              <li key={index} className="flex items-center">
+                <span className="text-2xl mr-4">
+                  <stat.icon />
+                </span>
+                <div>
+                  <strong className="block">{stat.label}</strong>
+                  <span className="text-sm text-gray-600">
+                    {stat.description}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </ModalBody>
       </ModalContent>
     </ModalOverlay>
   );
