@@ -45,7 +45,7 @@ const QuestionButton = styled.button`
   cursor: pointer;
 `;
 
-const StyledCard = styled(motion.div)`
+const StyledCard = styled(motion.div)<{ hasActiveEffect: boolean }>`
   background-color: #2c2c2e;
   border-radius: 1rem;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -53,6 +53,23 @@ const StyledCard = styled(motion.div)`
   position: relative;
   width: 100%;
   font-size: 0.9rem;
+  ${({ hasActiveEffect }) =>
+    hasActiveEffect &&
+    `
+    box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+    animation: pulse 2s infinite;
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 25px 10px rgba(30, 144, 255, 0.9);
+      }
+      100% {
+        box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+      }
+    }
+  `}
 `;
 
 const CardHeader = styled.div`
@@ -261,6 +278,7 @@ interface PlayerCardProps {
   maxHealth: number;
   damageReceived?: number;
   light: boolean;
+  hasActiveEffect: boolean;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -273,13 +291,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   maxHealth,
   damageReceived,
   light,
+  hasActiveEffect,
 }) => {
   if (!player || !player.pvp) return null;
 
   const healthPercentage = (health / maxHealth) * 100;
 
   return (
-    <StyledCard>
+    <StyledCard hasActiveEffect={hasActiveEffect}>
       <AnimatePresence>
         {damageReceived !== undefined && (
           <DamagePastil

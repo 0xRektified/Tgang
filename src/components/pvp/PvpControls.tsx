@@ -1,7 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { CombatState } from "./Pvp";
-import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
+import {
+  ECRAFTABLE_ITEM,
+  CRAFTABLE_ITEMS,
+} from "../interfaces/craftableItem.interface";
+import { FaFistRaised, FaBomb, FaShieldAlt } from "react-icons/fa";
+import { GiDodging } from "react-icons/gi";
 
 const ControlButton = styled.button`
   background-color: #27272a;
@@ -30,6 +35,54 @@ const ControlButton = styled.button`
   }
 `;
 
+const SpecialItemButton = styled(ControlButton)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  height: 60px;
+  width: auto;
+`;
+
+const ItemIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 0.2em;
+`;
+
+const ItemIcon = styled.img`
+  width: 30px;
+  height: 30px;
+`;
+
+const UseText = styled.span`
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap: 0px;
+`;
+
+const ItemStats = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const StatIcon = styled.div`
+  font-size: 0.9rem;
+  color: #a0aec0;
+`;
+
+const StatValue = styled.span`
+  font-size: 0.8rem;
+  color: #ffffff;
+`;
+
 const ControlsContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -56,33 +109,58 @@ export function PvpControls({
   specialItem,
   onStartBattle,
 }: PvpControlsProps) {
-  const getItemName = (itemId: ECRAFTABLE_ITEM) => {
-    // Replace this with your actual item name mapping
-    return itemId.replace(/_/g, ' ').toLowerCase();
+  const renderSpecialItemButton = () => {
+    if (!specialItem) return null;
+
+    const item = CRAFTABLE_ITEMS[specialItem];
+    return (
+      <SpecialItemButton onClick={onUseSpecialItemClick} disabled={isAttacking}>
+        <ItemIconContainer>
+          <UseText>Use</UseText>
+          <ItemIcon src={item.image} alt={item.name} />
+        </ItemIconContainer>
+        <ItemStats>
+          {item.pvpEffect.damage && (
+            <StatItem>
+              <StatValue>+{item.pvpEffect.damage}</StatValue>
+              <StatIcon>
+                <FaBomb />
+              </StatIcon>
+            </StatItem>
+          )}
+          {item.pvpEffect.protection && (
+            <StatItem>
+              <StatValue>+{item.pvpEffect.protection}%</StatValue>
+              <StatIcon>
+                <FaShieldAlt />
+              </StatIcon>
+            </StatItem>
+          )}
+          {item.pvpEffect.evasion && (
+            <StatItem>
+              <StatValue>+{item.pvpEffect.evasion}%</StatValue>
+              <StatIcon>
+                <GiDodging />
+              </StatIcon>
+            </StatItem>
+          )}
+        </ItemStats>
+      </SpecialItemButton>
+    );
   };
 
   return (
     <ControlsContainer>
       {combatState === "fighting" && (
         <>
-          <ControlButton
-            onClick={onAttackClick}
-            disabled={isAttacking}
-          >
+          <ControlButton onClick={onAttackClick} disabled={isAttacking}>
             Attack
           </ControlButton>
-          <ControlButton
-            onClick={onUseSpecialItemClick}
-            disabled={isAttacking || !specialItem}
-          >
-            Use {specialItem ? getItemName(specialItem) : "Special Item"}
-          </ControlButton>
+          {renderSpecialItemButton()}
         </>
       )}
       {combatState === "ready" && (
-        <ControlButton onClick={onStartBattle}>
-          Start Battle
-        </ControlButton>
+        <ControlButton onClick={onStartBattle}>Start Battle</ControlButton>
       )}
       {combatState === "result" && (
         <ControlButton onClick={onAttackClick}>

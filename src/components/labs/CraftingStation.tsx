@@ -8,6 +8,8 @@ import { IUserInfo } from "../interfaces/user.interface";
 import { useCraftItem } from "../../hooks/useCraftItem";
 import { ApiToast } from "../ApiToast";
 import { FaPlus, FaMinus } from "react-icons/fa";
+import { EProduct } from "../interfaces/product.interface";
+import { FlexBoxRow } from "../styled/globalStyled";
 
 const CraftingContainer = styled.div`
   background-color: #1c1c1e;
@@ -185,6 +187,34 @@ const MissingResourceItem = styled.li`
   margin-bottom: 0.25rem;
 `;
 
+const CraftedItemsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const CraftedItemBox = styled.div`
+  background-color: #2c2c2e;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 100px;
+`;
+
+const CraftedItemIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+`;
+
+const CraftedItemQuantity = styled.span`
+  color: #ffffff;
+  font-size: 0.9rem;
+`;
+
 interface CraftingStationProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
@@ -259,8 +289,27 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
       .join("\n");
   };
 
+  const getCraftedItemQuantity = (itemId: ECRAFTABLE_ITEM) => {
+    if (!userInfo.craftedItems) return 0;
+    const item = userInfo.craftedItems.find((item) => item.itemId === itemId);
+    return item ? item.quantity : 0;
+  };
+
   return (
     <CraftingContainer className="scrollable-content">
+      <CraftedItemsContainer>
+        {Object.entries(CRAFTABLE_ITEMS).map(([itemId, item]) => (
+          <CraftedItemBox key={itemId}>
+            <FlexBoxRow>
+              <CraftedItemIcon src={item.image} alt={item.name} />
+              <CraftedItemQuantity>
+                {getCraftedItemQuantity(itemId as ECRAFTABLE_ITEM)}
+              </CraftedItemQuantity>
+            </FlexBoxRow>
+          </CraftedItemBox>
+        ))}
+      </CraftedItemsContainer>
+
       <CraftingGrid>
         {Object.entries(CRAFTABLE_ITEMS).map(([itemId, item]) => (
           <CraftingItem

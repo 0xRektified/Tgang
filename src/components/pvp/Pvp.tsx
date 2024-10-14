@@ -155,8 +155,13 @@ export default function Pvp({
     "searching",
   );
   const [isAttacking, setIsAttacking] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ECRAFTABLE_ITEM | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ECRAFTABLE_ITEM | null>(
+    null,
+  );
   const [specialItem, setSpecialItem] = useState<ECRAFTABLE_ITEM | null>(null);
+
+  const [userHasActiveEffect, setUserHasActiveEffect] = useState(false);
+  const [opponentHasActiveEffect, setOpponentHasActiveEffect] = useState(false);
 
   const playSound = (sound: string) => {
     const audio = new Audio(sound);
@@ -210,7 +215,10 @@ export default function Pvp({
           rotate: [0, -7, 7, 0],
           transition: { duration: 0.25 },
         });
-        currentOpponentHealth = Math.max(0, currentOpponentHealth - round.attackerDamage);
+        currentOpponentHealth = Math.max(
+          0,
+          currentOpponentHealth - round.attackerDamage,
+        );
         setOpponentHealth(currentOpponentHealth);
       } else if (currentOpponentHealth > 0) {
         playSound("/assets/sounds/melemiss.wav");
@@ -234,7 +242,10 @@ export default function Pvp({
             rotate: [0, -7, 7, 0],
             transition: { duration: 0.25 },
           });
-          currentUserHealth = Math.max(0, currentUserHealth - round.defenderDamage);
+          currentUserHealth = Math.max(
+            0,
+            currentUserHealth - round.defenderDamage,
+          );
           setUserHealth(currentUserHealth);
         } else {
           playSound("/assets/sounds/melemiss.wav");
@@ -255,8 +266,12 @@ export default function Pvp({
       }
 
       setCurrentBattle(combatResult);
+
+      // Check for active effects
+      setUserHasActiveEffect(combatResult.attacker.pvp.activeEffects?.length > 0);
+      setOpponentHasActiveEffect(combatResult.defender.pvp.activeEffects?.length > 0);
     },
-    [opponent, userControls, opponentControls, userHealth, opponentHealth]
+    [opponent, userControls, opponentControls, userHealth, opponentHealth],
   );
 
   const handleDeathmatchClick = useCallback(async () => {
@@ -271,9 +286,12 @@ export default function Pvp({
         const opponentId = players[0].id;
         setSearchingStep("starting");
         const result = await startFight(userInfo.id, opponentId, selectedItem);
+        console.log(result);
+
         if (result) {
           const opponentData = result.opponent || players[0];
-          const opponentHealth = result.defender.pvp.healthPoints || players[0]?.pvp?.healthPoints;
+          const opponentHealth =
+            result.defender.pvp.healthPoints || players[0]?.pvp?.healthPoints;
           setOpponentHealth(opponentHealth || 100);
           setUserHealth(result.attacker.pvp.healthPoints || 100);
           setOpponent({
@@ -281,9 +299,18 @@ export default function Pvp({
             image: "/assets/pvp/userImage.png",
           });
 
-          // Check if there's an active special item
+          // Check for active effects and selected items
           const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
-          setSpecialItem(activeItem || selectedItem);
+          const selectedItems = result.attacker.selectedItems;
+          
+          if (activeItem) {
+            setSpecialItem(activeItem);
+          } else if (selectedItems && selectedItems.length > 0) {
+            setSpecialItem(selectedItems[0].itemId as ECRAFTABLE_ITEM);
+          } else {
+            setSpecialItem(null);
+          }
+
           setSelectedItem(null);
 
           setCombatState("fighting");
@@ -358,7 +385,14 @@ export default function Pvp({
     } finally {
       setIsAttacking(false);
     }
-  }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking, specialItem]);
+  }, [
+    opponent,
+    currentBattle,
+    performAttack,
+    simulateCombat,
+    isAttacking,
+    specialItem,
+  ]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -539,6 +573,7 @@ export default function Pvp({
                             maxHealth={opponent.pvp?.healthPoints || 100}
                             damageReceived={opponentDamageReceived}
                             light={false}
+                            hasActiveEffect={opponentHasActiveEffect}
                           />
                         </motion.div>
                       </motion.div>
@@ -580,6 +615,7 @@ export default function Pvp({
                       maxHealth={userInfo.pvp?.healthPoints || 100}
                       damageReceived={userDamageReceived}
                       light={false}
+                      hasActiveEffect={userHasActiveEffect}
                     />
                   </motion.div>
                 </motion.div>
