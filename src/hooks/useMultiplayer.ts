@@ -69,7 +69,7 @@ export function useMultiplayer(
   }, [setUserInfo]);
 
   const startFight = useCallback(
-    async (playerId: string, opponentId: string, selectedItem: ECRAFTABLE_ITEM | null) => {
+    async (playerId: string, opponentId: string) => {
       setLoading(true);
       setError(null);
       setErrorCode(null);
@@ -78,8 +78,7 @@ export function useMultiplayer(
       setSocialNetworkRequired(false);
       try {
         const response = await axiosInstance.post<IBattle>(
-          `/multiplayer/start/${opponentId}`,
-          { selectedItemIds: selectedItem ? [selectedItem] : undefined }
+          `/multiplayer/start/${opponentId}`
         );
         setLoading(false);
         setSuccessMessage("Fight started successfully");
@@ -104,18 +103,18 @@ export function useMultiplayer(
     [],
   );
 
-  const performAttack = useCallback(async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
+  const combatAction = useCallback(async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
     setLoading(true);
     setError(null);
     setErrorCode(null);
     setSuccessMessage(null);
     try {
       const response = await axiosInstance.post<IBattle>(
-        `/multiplayer/attack/${battleId}`,
+        `/multiplayer/combatAction/${battleId}`,
         { itemId }
       );
       setLoading(false);
-      setSuccessMessage("Attack performed successfully");
+      setSuccessMessage("Combat action performed successfully");
       return response.data;
     } catch (err: any) {
       setLoading(false);
@@ -123,7 +122,7 @@ export function useMultiplayer(
         setError(err.response.data.message);
         setErrorCode(err.response.status);
       } else {
-        setError("Failed to perform attack");
+        setError("Failed to perform combat action");
       }
       console.error(err);
       return null;
@@ -196,7 +195,7 @@ export function useMultiplayer(
   return {
     searchPlayer,
     startFight,
-    performAttack,
+    combatAction,
     fetchBattleHistory,
     upsertBattleResult,
     fetchuser,

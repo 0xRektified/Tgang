@@ -100,7 +100,7 @@ export default function Pvp({
   const {
     searchPlayer,
     startFight,
-    performAttack,
+    combatAction,
     fetchBattleHistory,
     upsertBattleResult,
     fetchuser,
@@ -155,9 +155,6 @@ export default function Pvp({
     "searching",
   );
   const [isAttacking, setIsAttacking] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ECRAFTABLE_ITEM | null>(
-    null,
-  );
   const [specialItem, setSpecialItem] = useState<ECRAFTABLE_ITEM | null>(null);
 
   const [userHasActiveEffect, setUserHasActiveEffect] = useState(false);
@@ -285,7 +282,7 @@ export default function Pvp({
       if (players && players.length > 0) {
         const opponentId = players[0].id;
         setSearchingStep("starting");
-        const result = await startFight(userInfo.id, opponentId, selectedItem);
+        const result = await startFight(userInfo.id, opponentId);
         console.log(result);
 
         if (result) {
@@ -311,8 +308,6 @@ export default function Pvp({
             setSpecialItem(null);
           }
 
-          setSelectedItem(null);
-
           setCombatState("fighting");
           setCurrentBattle(result);
           await simulateCombat(result);
@@ -334,32 +329,30 @@ export default function Pvp({
     userInfo.id,
     simulateCombat,
     socialNetworkRequired,
-    selectedItem,
   ]);
 
   const handleStart = useCallback(async () => {
-    const result = await startFight(userInfo.id, opponent.id, selectedItem);
+    const result = await startFight(userInfo.id, opponent.id);
     if (result) {
       setUserHealth(result.attacker.pvp.healthPoints || 100);
       setOpponentHealth(result.defender.pvp.healthPoints || 100);
 
       // Check if there's an active special item
       const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
-      setSpecialItem(activeItem || selectedItem);
-      setSelectedItem(null);
+      setSpecialItem(activeItem || null);
 
       setCombatState("fighting");
       setCurrentBattle(result);
       await simulateCombat(result);
     }
-  }, [opponent, startFight, userInfo.id, simulateCombat, selectedItem]);
+  }, [opponent, startFight, userInfo.id, simulateCombat]);
 
   const handleAttack = useCallback(async () => {
     if (!opponent || !currentBattle || isAttacking) return;
 
     setIsAttacking(true);
     try {
-      const result = await performAttack(currentBattle.battleId);
+      const result = await combatAction(currentBattle.battleId);
       if (result) {
         await simulateCombat(result);
       }
@@ -368,31 +361,24 @@ export default function Pvp({
     } finally {
       setIsAttacking(false);
     }
-  }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking]);
+  }, [opponent, currentBattle, combatAction, simulateCombat, isAttacking]);
 
-  const handleUseSpecialItem = useCallback(async () => {
-    if (!opponent || !currentBattle || isAttacking || !specialItem) return;
+  const handleUseSpecialItem = useCallback(async (itemId: ECRAFTABLE_ITEM) => {
+    if (!opponent || !currentBattle || isAttacking) return;
 
     setIsAttacking(true);
     try {
-      const result = await performAttack(currentBattle.battleId, specialItem);
+      const result = await combatAction(currentBattle.battleId, itemId);
       if (result) {
         await simulateCombat(result);
-        setSpecialItem(null); // Remove the special item after use
+        setSpecialItem(null);
       }
     } catch (error) {
       console.error("Use special item error:", error);
     } finally {
       setIsAttacking(false);
     }
-  }, [
-    opponent,
-    currentBattle,
-    performAttack,
-    simulateCombat,
-    isAttacking,
-    specialItem,
-  ]);
+  }, [opponent, currentBattle, combatAction, simulateCombat, isAttacking]);
 
   const handleInfoClick = useCallback((player: any) => {
     setSelectedPlayer(player);
@@ -483,10 +469,6 @@ export default function Pvp({
     }
   }, [socialNetworkRequired]);
 
-  const handleSelectItem = useCallback((item: ECRAFTABLE_ITEM | null) => {
-    setSelectedItem(item);
-  }, []);
-
   return (
     <PvpWrapper>
       <PvpContainer className="scrollable-content">
@@ -506,8 +488,6 @@ export default function Pvp({
             isHistoryLoading={multiplayerLoading}
             referralToken={referralToken}
             userItems={userInfo.craftedItems || []}
-            selectedItem={selectedItem}
-            onSelectItem={setSelectedItem}
           />
 
           <AnimatePresence>
@@ -583,8 +563,8 @@ export default function Pvp({
                         onUseSpecialItemClick={handleUseSpecialItem}
                         isWinner={combatResult?.winner === "attacker"}
                         isAttacking={isAttacking}
-                        specialItem={specialItem}
                         onStartBattle={handleStart}
+                        userItems={userInfo.craftedItems || []}
                       />
                     </>
                   )}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { CombatState } from "./Pvp";
 import {
@@ -90,13 +90,54 @@ const ControlsContainer = styled.div`
   margin-top: 1rem;
 `;
 
+const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background-color: #27272a;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+`;
+
+const ItemGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+`;
+
+const ItemButton = styled.button`
+  background-color: #3a3a3d;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #4a4a4d;
+  }
+`;
+
 interface PvpControlsProps {
   combatState: CombatState;
   onAttackClick: () => void;
-  onUseSpecialItemClick: () => void;
+  onUseSpecialItemClick: (itemId: ECRAFTABLE_ITEM) => void;
   isWinner: boolean;
   isAttacking: boolean;
-  specialItem: ECRAFTABLE_ITEM | null;
+  userItems: Array<{ itemId: ECRAFTABLE_ITEM; quantity: number }>;
   onStartBattle: () => void;
 }
 
@@ -106,47 +147,25 @@ export function PvpControls({
   onUseSpecialItemClick,
   isWinner,
   isAttacking,
-  specialItem,
+  userItems,
   onStartBattle,
 }: PvpControlsProps) {
-  const renderSpecialItemButton = () => {
-    if (!specialItem) return null;
+  const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 
-    const item = CRAFTABLE_ITEMS[specialItem];
+  const renderItemButton = (item: ECRAFTABLE_ITEM, quantity: number) => {
+    const itemData = CRAFTABLE_ITEMS[item];
     return (
-      <SpecialItemButton onClick={onUseSpecialItemClick} disabled={isAttacking}>
-        <ItemIconContainer>
-          <UseText>Use</UseText>
-          <ItemIcon src={item.image} alt={item.name} />
-        </ItemIconContainer>
-        <ItemStats>
-          {item.pvpEffect.damage && (
-            <StatItem>
-              <StatValue>+{item.pvpEffect.damage}</StatValue>
-              <StatIcon>
-                <FaBomb />
-              </StatIcon>
-            </StatItem>
-          )}
-          {item.pvpEffect.protection && (
-            <StatItem>
-              <StatValue>+{item.pvpEffect.protection}%</StatValue>
-              <StatIcon>
-                <FaShieldAlt />
-              </StatIcon>
-            </StatItem>
-          )}
-          {item.pvpEffect.evasion && (
-            <StatItem>
-              <StatValue>+{item.pvpEffect.evasion}%</StatValue>
-              <StatIcon>
-                <GiDodging />
-              </StatIcon>
-            </StatItem>
-          )}
-        </ItemStats>
-      </SpecialItemButton>
+      <ItemButton key={item} onClick={() => handleItemClick(item)}>
+        <img src={itemData.image} alt={itemData.name} width="50" height="50" />
+        <div>{itemData.name}</div>
+        <div>Quantity: {quantity}</div>
+      </ItemButton>
     );
+  };
+
+  const handleItemClick = (itemId: ECRAFTABLE_ITEM) => {
+    onUseSpecialItemClick(itemId);
+    setIsItemModalOpen(false);
   };
 
   return (
@@ -156,7 +175,9 @@ export function PvpControls({
           <ControlButton onClick={onAttackClick} disabled={isAttacking}>
             Attack
           </ControlButton>
-          {renderSpecialItemButton()}
+          <ControlButton onClick={() => setIsItemModalOpen(true)} disabled={isAttacking}>
+            Use Item
+          </ControlButton>
         </>
       )}
       {combatState === "ready" && (
@@ -166,6 +187,17 @@ export function PvpControls({
         <ControlButton onClick={onAttackClick}>
           {isWinner ? "Collect Rewards" : "Try Again"}
         </ControlButton>
+      )}
+
+      {isItemModalOpen && (
+        <ModalBackground onClick={() => setIsItemModalOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h2>Select an Item to Use</h2>
+            <ItemGrid>
+              {userItems.map((item) => renderItemButton(item.itemId, item.quantity))}
+            </ItemGrid>
+          </ModalContent>
+        </ModalBackground>
       )}
     </ControlsContainer>
   );

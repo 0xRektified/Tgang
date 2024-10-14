@@ -25,7 +25,6 @@ import {
   CRAFTABLE_ITEMS,
   ECRAFTABLE_ITEM,
 } from "../interfaces/craftableItem.interface";
-import CraftedItemModal from "./craftedItemModal";
 
 // Define keyframes before using them
 const glowingBorder = keyframes`
@@ -464,129 +463,6 @@ const AttackInfo = styled.span`
   font-weight: bold;
 `;
 
-const SpecialItemButton = styled.button`
-  background-color: #5473a580;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 9em;
-  height: 5em;
-  text-align: center;
-
-  &:hover {
-    background-color: #2563eb;
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
-  }
-`;
-
-const SelectedItemCard = styled(SpecialItemButton)`
-  background: linear-gradient(135deg, #3a3a3c, #2c2c2e);
-  border: 2px solid #1e90ff;
-  box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0.4rem;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 15px rgba(30, 144, 255, 0.7);
-  }
-`;
-
-const ItemImageColumn = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40%;
-  gap: 0px;
-`;
-
-const ItemImage = styled.img`
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-`;
-
-const ItemEffectColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-`;
-
-const ItemName = styled.div`
-  color: #ffffff;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-`;
-
-const ItemEffectContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ItemEffect = styled.div`
-  font-size: 0.6rem;
-  color: white;
-`;
-
-const ItemDuration = styled.div`
-  font-size: 0.6rem;
-  color: #4ade80;
-  margin-top: 0.25rem;
-`;
-
-const ModalContent = styled.div`
-  border-radius: 0.5rem;
-  padding: 1rem;
-`;
-
-const ItemGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const ItemButton = styled.button<{ isSelected: boolean }>`
-  background: ${(props) =>
-    props.isSelected
-      ? "linear-gradient(135deg, #3a3a3c, #2c2c2e)"
-      : "linear-gradient(135deg, #2c2c2e, #1c1c1e)"};
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 150px;
-  border: 2px solid ${(props) => (props.isSelected ? "#1e90ff" : "transparent")};
-  box-shadow: ${(props) =>
-    props.isSelected ? "0 0 10px rgba(30, 144, 255, 0.5)" : "none"};
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
 const ActionRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -606,10 +482,8 @@ interface PvpHeaderProps {
   battleHistory: IHistoryBattleResult[];
   isHistoryLoading: boolean;
   referralToken: string;
-  won?: boolean;
   userItems: { itemId: ECRAFTABLE_ITEM; quantity: number }[];
-  selectedItem: ECRAFTABLE_ITEM | null;
-  onSelectItem: (item: ECRAFTABLE_ITEM | null) => void;
+  // Remove selectedItem and onSelectItem from props
 }
 
 const BattleResult = styled.span`
@@ -634,8 +508,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
   isHistoryLoading,
   referralToken,
   userItems,
-  selectedItem,
-  onSelectItem,
+  // Remove selectedItem and onSelectItem from destructuring
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -651,22 +524,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
     navigator.clipboard.writeText(
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
     );
-  };
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleSelectItem = (item: ECRAFTABLE_ITEM) => {
-    onSelectItem(selectedItem === item ? null : item);
-    handleCloseModal();
-  };
-
-  const renderEffectText = (
-    item: (typeof CRAFTABLE_ITEMS)[ECRAFTABLE_ITEM],
-  ) => {
-    return Object.entries(item.pvpEffect)
-      .map(([key, value]) => `${key}: +${value}`)
-      .join(", ");
   };
 
   return (
@@ -723,23 +580,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             </div>
 
             <ActionRow>
-              {selectedItem ? (
-                <SelectedItemCard onClick={handleOpenModal}>
-                  <ItemImageColumn>
-                    <ItemImage
-                      src={CRAFTABLE_ITEMS[selectedItem].image}
-                      alt={CRAFTABLE_ITEMS[selectedItem].name}
-                    />
-                  </ItemImageColumn>
-                  <ItemEffectColumn>
-                    <ItemName>{CRAFTABLE_ITEMS[selectedItem].name}</ItemName>
-                  </ItemEffectColumn>
-                </SelectedItemCard>
-              ) : (
-                <SpecialItemButton onClick={handleOpenModal}>
-                  Special Item
-                </SpecialItemButton>
-              )}
+              {/* Remove the SelectedItemCard and SpecialItemButton */}
               <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
                 <GiAk47 style={{ marginRight: "0.3rem", fontSize: "2em" }} />
                 Raid
@@ -849,40 +690,6 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
               </CombatHistoryList>
             )}
           </PvpCard>
-
-          <CraftedItemModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            title="Select Special Item"
-          >
-            <ModalContent>
-              <ItemGrid>
-                {userItems.map((item) => (
-                  <ItemButton
-                    key={item.itemId}
-                    isSelected={selectedItem === item.itemId}
-                    onClick={() => handleSelectItem(item.itemId)}
-                    disabled={item.quantity === 0}
-                  >
-                    <ItemName>{CRAFTABLE_ITEMS[item.itemId].name}</ItemName>
-                    <ItemImage
-                      src={CRAFTABLE_ITEMS[item.itemId].image}
-                      alt={CRAFTABLE_ITEMS[item.itemId].name}
-                    />
-                    <ItemEffectContainer>
-                      <ItemEffect>
-                        {renderEffectText(CRAFTABLE_ITEMS[item.itemId])}
-                      </ItemEffect>
-                      <ItemDuration>
-                        {CRAFTABLE_ITEMS[item.itemId].duration} rounds
-                      </ItemDuration>
-                    </ItemEffectContainer>
-                    <span>({item.quantity})</span>
-                  </ItemButton>
-                ))}
-              </ItemGrid>
-            </ModalContent>
-          </CraftedItemModal>
         </motion.div>
       )}
     </AnimatePresence>
