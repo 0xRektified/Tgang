@@ -116,7 +116,7 @@ export function useMultiplayer(
       setSuccessMessage(null);
       try {
         const response = await axiosInstance.post<IBattle>(
-          `/multiplayer/combatAction/${battleId}`,
+          `/multiplayer/action/${battleId}`,
           { itemId },
         );
         setLoading(false);
