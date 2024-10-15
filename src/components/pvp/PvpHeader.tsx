@@ -566,15 +566,11 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
             <div>
               <PlayerCard
                 player={userInfo}
-                title="You"
-                isAttacking={false}
-                isDefending={false}
-                onInfoClick={() => {}}
                 health={userInfo.pvp?.healthPoints || 100}
                 maxHealth={userInfo.pvp?.healthPoints || 100}
                 damageReceived={undefined}
                 light={true}
-                hasActiveEffect={false}
+                activeEffects={[]}
               />
             </div>
 

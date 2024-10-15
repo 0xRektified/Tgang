@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import {
   ECRAFTABLE_ITEM,
@@ -8,13 +8,13 @@ import { IUserInfo } from "../interfaces/user.interface";
 import { useCraftItem } from "../../hooks/useCraftItem";
 import { ApiToast } from "../ApiToast";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { FlexBoxRow } from "../styled/globalStyled";
+import WebApp from "@twa-dev/sdk";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 const CraftingContainer = styled.div`
   background-color: #1c1c1e;
   border-radius: 0.5rem;
-  padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
@@ -85,6 +85,7 @@ const CraftingDetails = styled.div`
   border-radius: 0.5rem;
   padding: 1rem;
   margin-top: 1rem;
+  scroll-margin-top: 1rem; // This ensures the scroll doesn't cut off the top of the component
 `;
 
 const RequirementsList = styled.ul`
@@ -190,24 +191,34 @@ const MissingResourceItem = styled.li`
 const CraftedItemsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
 `;
 
 const CraftedItemBox = styled.div`
-  background-color: #2c2c2e;
   border-radius: 0.375rem;
-  padding: 0.5rem;
+  padding: 0.3rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-width: 100px;
+  justify-content: center;
+  width: 3em;
+  flex: 0 0 calc(20% - 1rem);
+
+`;
+
+const FlexBoxRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 const CraftedItemIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  margin-right: 0.5rem;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.5rem;
 `;
 
 const CraftedItemQuantity = styled.span`
@@ -259,6 +270,16 @@ const ModalQuantity = styled.p`
   font-weight: bold;
 `;
 
+const CraftingTitle = styled.h2`
+  color: white;
+  font-size: 0.7rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 interface CraftingStationProps {
   userInfo: IUserInfo;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
@@ -279,18 +300,29 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
     quantity: number;
     image: string;
   } | null>(null);
+  const craftingDetailsRef = useRef<HTMLDivElement>(null);
 
   const handleItemSelect = (itemId: ECRAFTABLE_ITEM) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
+
     setSelectedItem(itemId);
     setQuantity(1);
+    // Scroll to CraftingDetails after a short delay to ensure render
+    setTimeout(() => {
+      craftingDetailsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleQuantityChange = (change: number) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
+
     setQuantity(Math.max(1, quantity + change));
   };
 
   const handleCraft = async () => {
     if (selectedItem) {
+      WebApp.HapticFeedback.impactOccurred("heavy");
+
       try {
         const success = await craftItem(selectedItem, quantity, setUserInfo);
         if (success) {
@@ -335,6 +367,8 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
   const renderEffectText = (
     item: (typeof CRAFTABLE_ITEMS)[ECRAFTABLE_ITEM],
   ) => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
+
     return Object.entries(item.pvpEffect)
       .map(([key, value]) => `${key}: +${value}`)
       .join("\n");
@@ -348,6 +382,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
 
   return (
     <CraftingContainer className="scrollable-content">
+      <CraftingTitle>Craft special items to boost your PvP stats</CraftingTitle>
       <CraftedItemsContainer>
         {Object.entries(CRAFTABLE_ITEMS).map(([itemId, item]) => (
           <CraftedItemBox key={itemId}>
@@ -378,7 +413,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
         ))}
       </CraftingGrid>
       {selectedItem && (
-        <CraftingDetails>
+        <CraftingDetails ref={craftingDetailsRef}>
           <h3>{CRAFTABLE_ITEMS[selectedItem].name}</h3>
           <RequirementsList>
             {Object.entries(CRAFTABLE_ITEMS[selectedItem].requirements).map(
@@ -429,7 +464,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
       <ApiToast
         loading={loading}
         error={error}
-        successMessage={null} // We're not using ApiToast for success anymore
+        successMessage={null}
       />
       <AnimatePresence>
         {showModal && craftedItemInfo && (

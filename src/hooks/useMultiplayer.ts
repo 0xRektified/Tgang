@@ -28,11 +28,13 @@ export function useMultiplayer(
   );
   const [maxAttacksReached, setMaxAttacksReached] = useState(false);
   const [socialNetworkRequired, setSocialNetworkRequired] = useState(false);
-  const [activeEffects, setActiveEffects] = useState<Array<{
-    itemId: ECRAFTABLE_ITEM;
-    effect: { [key: string]: number };
-    remainingRounds: number;
-  }>>([]);
+  const [activeEffects, setActiveEffects] = useState<
+    Array<{
+      itemId: ECRAFTABLE_ITEM;
+      effect: { [key: string]: number };
+      remainingRounds: number;
+    }>
+  >([]);
 
   const searchPlayer = useCallback(async () => {
     setLoading(true);
@@ -61,10 +63,13 @@ export function useMultiplayer(
 
   const fetchuser = useCallback(async () => {
     try {
-      const { data } = await axiosInstance.get<IUserInfo>(`/users`);
-      setUserInfo(data);
-    } catch (error: any) {
-      console.error("Failed to fetch user");
+      const response = await axiosInstance.get<IUserInfo>(`/users`);
+      if (response.data) {
+        setUserInfo(response.data);
+        return response.data; // Return the updated user info
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
     }
   }, [setUserInfo]);
 
@@ -78,7 +83,7 @@ export function useMultiplayer(
       setSocialNetworkRequired(false);
       try {
         const response = await axiosInstance.post<IBattle>(
-          `/multiplayer/start/${opponentId}`
+          `/multiplayer/start/${opponentId}`,
         );
         setLoading(false);
         setSuccessMessage("Fight started successfully");
@@ -103,31 +108,34 @@ export function useMultiplayer(
     [],
   );
 
-  const combatAction = useCallback(async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
-    setLoading(true);
-    setError(null);
-    setErrorCode(null);
-    setSuccessMessage(null);
-    try {
-      const response = await axiosInstance.post<IBattle>(
-        `/multiplayer/combatAction/${battleId}`,
-        { itemId }
-      );
-      setLoading(false);
-      setSuccessMessage("Combat action performed successfully");
-      return response.data;
-    } catch (err: any) {
-      setLoading(false);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-        setErrorCode(err.response.status);
-      } else {
-        setError("Failed to perform combat action");
+  const combatAction = useCallback(
+    async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
+      setLoading(true);
+      setError(null);
+      setErrorCode(null);
+      setSuccessMessage(null);
+      try {
+        const response = await axiosInstance.post<IBattle>(
+          `/multiplayer/combatAction/${battleId}`,
+          { itemId },
+        );
+        setLoading(false);
+        setSuccessMessage("Combat action performed successfully");
+        return response.data;
+      } catch (err: any) {
+        setLoading(false);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+          setErrorCode(err.response.status);
+        } else {
+          setError("Failed to perform combat action");
+        }
+        console.error(err);
+        return null;
       }
-      console.error(err);
-      return null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   const fetchBattleHistory = useCallback(async () => {
     setLoading(true);

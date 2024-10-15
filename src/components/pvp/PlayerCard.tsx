@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 import { FaQuestionCircle, FaDollarSign } from "react-icons/fa";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
 import { renderStatIcon } from "./Pvp.constant";
+import { CRAFTABLE_ITEMS } from "../interfaces/craftableItem.interface";
+import InfoModal from "./InfoModal";
+import { statIcons } from "./Pvp.constant";
 
 const truncateUsername = (username: string, maxLength: number = 19) => {
   if (username.length <= maxLength) return username;
@@ -120,12 +123,6 @@ const CashAmount = styled.span`
   color: #ffffff;
 `;
 
-const StatRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-`;
-
 const StatItem = styled.div`
   display: flex;
   align-items: center;
@@ -134,28 +131,16 @@ const StatItem = styled.div`
 `;
 
 const StatIcon = styled.div`
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-right: 0.2rem;
   gap: 0.5em;
-`;
-
-const RedIcon = styled(StatIcon)`
-  color: #e53e3e; // Red color for heart (baseHP)
-`;
-
-const WhiteIcon = styled(StatIcon)`
-  color: #ffffff; // White color for evasion
-`;
-
-const GoldIcon = styled(StatIcon)`
-  color: gold;
 `;
 
 const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 0.2rem;
-  margin-top: 0.5rem;
+  margin-top: 0.2rem;
 `;
 
 const ProductItem = styled.div`
@@ -178,9 +163,10 @@ const ProductQuantity = styled.p`
 
 const StatsRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
 `;
 
 const StatGroup = styled.div`
@@ -241,61 +227,83 @@ const Overlay = styled(motion.div)`
 const HealthBarContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.3rem;
 `;
 
-const StatValue = styled.span<{ increased?: boolean }>`
-  color: ${({ increased }) => (increased ? "#4299e1" : "inherit")};
+const StatValue = styled.span`
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
 `;
 
 const StatIncrease = styled.span`
   color: #4299e1;
   margin-left: 0.2rem;
+  font-weight: bold;
+  font-size: 0.7rem;
 `;
+
+const ActiveEffectDisplay = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
+const EffectBadge = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: white;
+  font-size: 0.7rem;
+`;
+
+const ItemIcon = styled.img`
+  width: 1rem;
+  height: 1rem;
+`;
+
+interface ActiveEffect {
+  itemId: ECRAFTABLE_ITEM;
+  effect: Record<string, number>;
+  remainingRounds: number;
+}
 
 interface PlayerCardProps {
   player: any;
-  title: string;
-  isAttacking: boolean;
-  isDefending: boolean;
-  onInfoClick: () => void;
   health: number;
   maxHealth: number;
   damageReceived?: number;
   light: boolean;
-  hasActiveEffect: boolean;
-  itemUsed?: {
-    itemId: ECRAFTABLE_ITEM;
-    effects: Record<string, number>;
-  } | null;
+  activeEffects: ActiveEffect[];
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   player,
-  title,
-  isAttacking,
-  isDefending,
-  onInfoClick,
   health,
   maxHealth,
   damageReceived,
   light,
-  hasActiveEffect,
-  itemUsed,
+  activeEffects,
 }) => {
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
   if (!player || !player.pvp) return null;
 
   const healthPercentage = (health / maxHealth) * 100;
 
   const renderStat = (key: string, value: number) => {
-    const increase = itemUsed?.effects[key];
-    const isIncreased = increase !== undefined;
+    const activeEffect = activeEffects.find(
+      (effect) => effect.effect[key] !== undefined,
+    );
+    const increase = activeEffect?.effect[key] || 0;
+    const isIncreased = increase > 0;
 
     return (
       <StatItem key={key}>
-        <StatIcon>{renderStatIcon(key, key === "victory" ? "gold" : undefined)}</StatIcon>
-        <StatValue increased={isIncreased}>
+        <StatIcon>
+          {renderStatIcon(key, key === "victory" ? "gold" : undefined)}
+        </StatIcon>
+        <StatValue>
           {value}
           {isIncreased && <StatIncrease>(+{increase})</StatIncrease>}
         </StatValue>
@@ -304,104 +312,142 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   };
 
   return (
-    <StyledCard hasActiveEffect={hasActiveEffect}>
-      <AnimatePresence>
-        {damageReceived !== undefined && (
-          <DamagePastil
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {damageReceived === 0 ? "Miss" : damageReceived}
-          </DamagePastil>
-        )}
-      </AnimatePresence>
+    <>
+      <StyledCard hasActiveEffect={activeEffects.length > 0}>
+        <AnimatePresence>
+          {damageReceived !== undefined && (
+            <DamagePastil
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {damageReceived === 0 ? "Miss" : damageReceived}
+            </DamagePastil>
+          )}
+        </AnimatePresence>
 
-      <AnimatePresence>
-        {damageReceived !== undefined && (
-          <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-            style={{ backgroundColor: damageReceived === 0 ? "white" : "red" }}
-          />
-        )}
-      </AnimatePresence>
-
-      <QuestionButton onClick={onInfoClick}>
-        <FaQuestionCircle />
-      </QuestionButton>
-      <CardHeader>
-        <UserInfo>
-          <Avatar
-            src={player.image || "/assets/pvp/userImage.png"}
-            alt={player.username}
-          />
-          <UserDetails>
-            <UsernameLine>
-              <Username title={player.username}>
-                <UsernameText>{truncateUsername(player.username)}</UsernameText>
-                <StatGroup>
-                  {renderStat("victory", player.pvp.victory)}
-                  {renderStat("defeat", player.pvp.defeat)}
-                </StatGroup>
-              </Username>
-            </UsernameLine>
-            <UserLevel>
-              <span>(Level {player.userLevel.level})</span>
-              <span>{player.userLevel.title}</span>
-              <CashAmount>
-                <GreenIcon>
-                  <FaDollarSign />
-                </GreenIcon>
-                {Math.floor(player.cashAmount)}
-              </CashAmount>
-            </UserLevel>
-            <StatsRow>
-              {renderStat("protection", player.pvp.protection)}
-              {renderStat("damage", player.pvp.damage)}
-              {renderStat("evasion", player.pvp.evasion)}
-              {renderStat("accuracy", player.pvp.accuracy)}
-              {renderStat("criticalChance", player.pvp.criticalChance)}
-            </StatsRow>
-          </UserDetails>
-        </UserInfo>
-        <HealthBarContainer>
-          <HealthBar>
-            <HealthFill
-              initial={{ width: `${healthPercentage}%` }}
-              animate={{ width: `${healthPercentage}%` }}
-              transition={{ duration: 0.5 }}
+        <AnimatePresence>
+          {damageReceived !== undefined && (
+            <Overlay
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.3 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              style={{
+                backgroundColor: damageReceived === 0 ? "white" : "red",
+              }}
             />
-          </HealthBar>
-          <HealthText>{`${health} / ${maxHealth}`}</HealthText>
-        </HealthBarContainer>
-      </CardHeader>
-      {!light && (
-        <CardContent>
-          <div>
-            <ProductsGrid>
-              {Object.values(EProduct).map((productName: string) => {
-                const product = player.products.find(
-                  (p: { name: string }) => p.name === productName,
-                );
-                const quantity = product ? product.quantity : 0;
-                const emoji =
-                  EProductIcon[productName as keyof typeof EProductIcon];
-                return (
-                  <ProductItem key={productName}>
-                    <ProductIcon>{emoji}</ProductIcon>
-                    <ProductQuantity>{quantity}</ProductQuantity>
-                  </ProductItem>
-                );
-              })}
-            </ProductsGrid>
-          </div>
-        </CardContent>
-      )}
-    </StyledCard>
+          )}
+        </AnimatePresence>
+
+        <QuestionButton onClick={() => setIsInfoModalOpen(true)}>
+          <FaQuestionCircle />
+        </QuestionButton>
+        <CardHeader>
+          <UserInfo>
+            <Avatar
+              src={player.image || "/assets/pvp/userImage.png"}
+              alt={player.username}
+            />
+            <UserDetails>
+              <UsernameLine>
+                <Username title={player.username}>
+                  <UsernameText>
+                    {truncateUsername(player.username)}
+                  </UsernameText>
+                  <StatGroup>
+                    {renderStat("victory", player.pvp.victory)}
+                    {renderStat("defeat", player.pvp.defeat)}
+                  </StatGroup>
+                </Username>
+              </UsernameLine>
+              <UserLevel>
+                <span>(Level {player.userLevel.level})</span>
+                <span>{player.userLevel.title}</span>
+                <CashAmount>
+                  <GreenIcon>
+                    <FaDollarSign />
+                  </GreenIcon>
+                  {Math.floor(player.cashAmount)}
+                </CashAmount>
+              </UserLevel>
+            </UserDetails>
+          </UserInfo>
+          <StatsRow>
+            {renderStat("protection", player.pvp.protection)}
+            {renderStat("damage", player.pvp.damage)}
+            {renderStat("evasion", player.pvp.evasion)}
+            {renderStat("accuracy", player.pvp.accuracy)}
+            {renderStat("criticalChance", player.pvp.criticalChance)}
+          </StatsRow>
+          <HealthBarContainer>
+            <HealthBar>
+              <HealthFill
+                initial={{ width: `${healthPercentage}%` }}
+                animate={{ width: `${healthPercentage}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </HealthBar>
+            <HealthText>{`${health} / ${maxHealth}`}</HealthText>
+          </HealthBarContainer>
+          <ActiveEffectDisplay>
+            {activeEffects.map((effect, index) => (
+              <EffectBadge key={index}>
+                <ItemIcon
+                  src={CRAFTABLE_ITEMS[effect.itemId as ECRAFTABLE_ITEM].image}
+                  alt={CRAFTABLE_ITEMS[effect.itemId as ECRAFTABLE_ITEM].name}
+                />
+                <span>{effect.remainingRounds} rounds left</span>
+              </EffectBadge>
+            ))}
+          </ActiveEffectDisplay>
+        </CardHeader>
+        {!light && (
+          <CardContent>
+            <div>
+              <ProductsGrid>
+                {Object.values(EProduct).map((productName: string) => {
+                  const product = player.products.find(
+                    (p: { name: string }) => p.name === productName,
+                  );
+                  const quantity = product ? product.quantity : 0;
+                  const emoji =
+                    EProductIcon[productName as keyof typeof EProductIcon];
+                  return (
+                    <ProductItem key={productName}>
+                      <ProductIcon>{emoji}</ProductIcon>
+                      <ProductQuantity>{quantity}</ProductQuantity>
+                    </ProductItem>
+                  );
+                })}
+              </ProductsGrid>
+            </div>
+          </CardContent>
+        )}
+      </StyledCard>
+
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+      >
+        <ul className="space-y-4">
+          {statIcons.map((stat, index) => (
+            <li key={index} className="flex items-center">
+              <span className="text-2xl mr-4">
+                <stat.icon />
+              </span>
+              <div>
+                <strong className="block">{stat.label}</strong>
+                <span className="text-sm text-gray-600">
+                  {stat.description}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </InfoModal>
+    </>
   );
 };
 

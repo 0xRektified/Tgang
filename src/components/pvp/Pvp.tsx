@@ -94,6 +94,13 @@ export type CombatState =
   | "fighting"
   | "result";
 
+// Add this interface to define the structure of an active effect
+interface ActiveEffect {
+  itemId: ECRAFTABLE_ITEM;
+  effect: Record<string, number>;
+  remainingRounds: number;
+}
+
 export default function Pvp({
   userInfo,
   setUserInfo,
@@ -167,6 +174,20 @@ export default function Pvp({
     itemId: ECRAFTABLE_ITEM;
     effects: Record<string, number>;
   } | null>(null);
+
+  const [userActiveEffects, setUserActiveEffects] = useState<ActiveEffect[]>(
+    [],
+  );
+  const [opponentActiveEffects, setOpponentActiveEffects] = useState<
+    ActiveEffect[]
+  >([]);
+
+  const [userItems, setUserItems] = useState(userInfo.craftedItems || []);
+
+  // Update userItems when userInfo changes
+  useEffect(() => {
+    setUserItems(userInfo.craftedItems || []);
+  }, [userInfo]);
 
   const playSound = (sound: string) => {
     const audio = new Audio(sound);
@@ -293,8 +314,46 @@ export default function Pvp({
       setOpponentHasActiveEffect(
         combatResult.defender.pvp.activeEffects?.length > 0,
       );
+
+      // Update user active effects
+      const newUserActiveEffects = combatResult.attacker.pvp.activeEffects.map(
+        (effect) => ({
+          itemId: effect.itemId as ECRAFTABLE_ITEM,
+          effect: effect.effect,
+          remainingRounds: effect.remainingRounds,
+        }),
+      );
+      setUserActiveEffects(newUserActiveEffects);
+
+      // Update opponent active effects
+      const newOpponentActiveEffects =
+        combatResult.defender.pvp.activeEffects.map((effect) => ({
+          itemId: effect.itemId as ECRAFTABLE_ITEM,
+          effect: effect.effect,
+          remainingRounds: effect.remainingRounds,
+        }));
+      setOpponentActiveEffects(newOpponentActiveEffects);
+
+      // Update health if a health potion was used
+      const healthPotion = newUserActiveEffects.find((effect) =>
+        effect.itemId.includes("HEALTH_POTION"),
+      );
+      if (healthPotion) {
+        const newHealth = Math.min(
+          userInfo.pvp?.healthPoints || 100,
+          currentUserHealth + (healthPotion.effect.healthPoints || 0),
+        );
+        setUserHealth(newHealth);
+      }
     },
-    [opponent, userControls, opponentControls, userHealth, opponentHealth],
+    [
+      opponent,
+      userControls,
+      opponentControls,
+      userHealth,
+      opponentHealth,
+      userInfo.pvp?.healthPoints,
+    ],
   );
 
   const handleDeathmatchClick = useCallback(async () => {
@@ -322,15 +381,47 @@ export default function Pvp({
             image: "/assets/pvp/userImage.png",
           });
 
-          const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
+          // Update active effects for both user and opponent
+          if (result.attacker.pvp.activeEffects) {
+            const userActiveEffects = result.attacker.pvp.activeEffects.map(
+              (effect) => ({
+                itemId: effect.itemId as ECRAFTABLE_ITEM,
+                effect: effect.effect,
+                remainingRounds: effect.remainingRounds,
+              }),
+            );
+            setUserActiveEffects(userActiveEffects);
+          }
+
+          if (result.defender.pvp.activeEffects) {
+            const opponentActiveEffects = result.defender.pvp.activeEffects.map(
+              (effect) => ({
+                itemId: effect.itemId as ECRAFTABLE_ITEM,
+                effect: effect.effect,
+                remainingRounds: effect.remainingRounds,
+              }),
+            );
+            setOpponentActiveEffects(opponentActiveEffects);
+          }
+          // Set user and opponent active effect flags
+          setUserHasActiveEffect(userActiveEffects.length > 0);
+          setOpponentHasActiveEffect(opponentActiveEffects.length > 0);
+
+          // Update special item
+          const activeItem = userActiveEffects[0]?.itemId;
           const selectedItems = result.attacker.selectedItems;
 
           if (activeItem) {
             setSpecialItem(activeItem);
+            setUserItemUsed({
+              itemId: activeItem,
+              effects: userActiveEffects[0].effect,
+            });
           } else if (selectedItems && selectedItems.length > 0) {
             setSpecialItem(selectedItems[0].itemId as ECRAFTABLE_ITEM);
           } else {
             setSpecialItem(null);
+            setUserItemUsed(null);
           }
 
           setCombatState("fighting");
@@ -356,21 +447,6 @@ export default function Pvp({
     socialNetworkRequired,
   ]);
 
-  const handleStart = useCallback(async () => {
-    const result = await startFight(userInfo.id, opponent.id);
-    if (result) {
-      setUserHealth(result.attacker.pvp.healthPoints || 100);
-      setOpponentHealth(result.defender.pvp.healthPoints || 100);
-
-      const activeItem = result.attacker.pvp.activeEffects?.[0]?.itemId;
-      setSpecialItem(activeItem || null);
-
-      setCombatState("fighting");
-      setCurrentBattle(result);
-      await simulateCombat(result);
-    }
-  }, [opponent, startFight, userInfo.id, simulateCombat]);
-
   const handleAttack = useCallback(async () => {
     if (!opponent || !currentBattle || isAttacking) return;
 
@@ -395,13 +471,16 @@ export default function Pvp({
       try {
         const result = await combatAction(currentBattle.battleId, itemId);
         if (result && multiplayerSuccessMessage) {
-          const itemUsed = CRAFTABLE_ITEMS[itemId];
-          setUserItemUsed({
-            itemId: itemId,
-            effects: itemUsed.pvpEffect,
-          });
           await simulateCombat(result, true);
           setSpecialItem(null);
+
+          // Fetch updated user info after using an item
+          const updatedUserInfo = await fetchuser();
+          if (updatedUserInfo) {
+            setUserInfo(updatedUserInfo);
+            setUserItems(updatedUserInfo.craftedItems || []);
+            console.log("Updated user items:", updatedUserInfo.craftedItems); // Add this log
+          }
         } else {
           setUserItemUsed(null);
           console.error(
@@ -423,13 +502,10 @@ export default function Pvp({
       simulateCombat,
       isAttacking,
       multiplayerSuccessMessage,
+      fetchuser,
+      setUserInfo,
     ],
   );
-
-  const handleInfoClick = useCallback((player: any) => {
-    setSelectedPlayer(player);
-    setIsInfoModalOpen(true);
-  }, []);
 
   const handleGetMoreAttacks = () => {
     console.log("Getting more attacks");
@@ -578,15 +654,11 @@ export default function Pvp({
                         <motion.div animate={opponentControls}>
                           <PlayerCard
                             player={opponent}
-                            title="Opponent"
-                            isAttacking={combatState === "fighting"}
-                            isDefending={combatState === "fighting"}
-                            onInfoClick={() => handleInfoClick(opponent)}
                             health={opponentHealth}
                             maxHealth={opponent.pvp?.healthPoints || 100}
                             damageReceived={opponentDamageReceived}
                             light={false}
-                            hasActiveEffect={opponentHasActiveEffect}
+                            activeEffects={opponentActiveEffects}
                           />
                         </motion.div>
                       </motion.div>
@@ -596,8 +668,7 @@ export default function Pvp({
                         onUseSpecialItemClick={handleUseSpecialItem}
                         isWinner={combatResult?.winner === "attacker"}
                         isAttacking={isAttacking}
-                        onStartBattle={handleStart}
-                        userItems={userInfo.craftedItems || []}
+                        userItems={userItems}
                       />
                     </>
                   )}
@@ -620,16 +691,11 @@ export default function Pvp({
                   <motion.div animate={userControls}>
                     <PlayerCard
                       player={userInfo}
-                      title="You"
-                      isAttacking={combatState === "fighting"}
-                      isDefending={combatState === "fighting"}
-                      onInfoClick={() => handleInfoClick(userInfo)}
                       health={userHealth}
                       maxHealth={userInfo.pvp?.healthPoints || 100}
                       damageReceived={userDamageReceived}
                       light={false}
-                      hasActiveEffect={userHasActiveEffect}
-                      itemUsed={userItemUsed}
+                      activeEffects={userActiveEffects}
                     />
                   </motion.div>
                 </motion.div>

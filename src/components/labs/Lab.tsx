@@ -295,6 +295,7 @@ export const Lab: React.FC<LabProps> = ({
   };
 
   const handleTabChange = (tab: 'production' | 'crafting') => {
+    WebApp.HapticFeedback.impactOccurred("heavy");
     setActiveTab(tab);
   };
 

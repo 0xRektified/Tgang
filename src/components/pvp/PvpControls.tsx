@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { CombatState } from "./Pvp";
 import {
@@ -6,8 +6,7 @@ import {
   CRAFTABLE_ITEMS,
   PvpEffect,
 } from "../interfaces/craftableItem.interface";
-import { FaFistRaised, FaBomb, FaShieldAlt, FaTimes } from "react-icons/fa";
-import { GiDodging } from "react-icons/gi";
+import {  FaTimes } from "react-icons/fa";
 
 const ControlButton = styled.button`
   background-color: #27272a;
@@ -41,6 +40,7 @@ const ControlsContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const ModalBackground = styled.div`
@@ -171,7 +171,6 @@ interface PvpControlsProps {
   isWinner: boolean;
   isAttacking: boolean;
   userItems: Array<{ itemId: ECRAFTABLE_ITEM; quantity: number }>;
-  onStartBattle: () => void;
 }
 
 export function PvpControls({
@@ -181,9 +180,14 @@ export function PvpControls({
   isWinner,
   isAttacking,
   userItems,
-  onStartBattle,
 }: PvpControlsProps) {
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [itemsKey, setItemsKey] = useState(0);
+
+  useEffect(() => {
+    // Increment the key when userItems change to force a re-render
+    setItemsKey(prev => prev + 1);
+  }, [userItems]);
 
   const renderPvpEffects = (effects: PvpEffect) => {
     return Object.entries(effects).map(([key, value]) => (
@@ -247,9 +251,6 @@ export function PvpControls({
           </ControlButton>
         </>
       )}
-      {combatState === "ready" && (
-        <ControlButton onClick={onStartBattle}>Start Battle</ControlButton>
-      )}
       {combatState === "result" && (
         <ControlButton onClick={onAttackClick}>
           {isWinner ? "Collect Rewards" : "Try Again"}
@@ -258,7 +259,10 @@ export function PvpControls({
 
       {isItemModalOpen && (
         <ModalBackground onClick={() => setIsItemModalOpen(false)}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
+          <ModalContent 
+            onClick={(e) => e.stopPropagation()}
+            key={itemsKey}
+          >
             <CloseButton onClick={() => setIsItemModalOpen(false)}>
               <FaTimes />
             </CloseButton>
