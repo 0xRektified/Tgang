@@ -4,12 +4,7 @@ import { FlexBoxRow } from "../styled/globalStyled";
 import useDailyRobbery from "../../hooks/useDailyRobbery";
 import { IUserInfo } from "../interfaces/user.interface";
 import WebApp from "@twa-dev/sdk";
-import {
-  ItalicText,
-  StatDesc,
-  StatValue,
-  Card,
-} from "./styles/airdrop.css";
+import { ItalicText, StatDesc, StatValue, Card } from "./styles/airdrop.css";
 import { ApiToast } from "../ApiToast";
 import { NeonButton } from "../styled/cardStyled";
 import styled from "styled-components";
@@ -138,7 +133,7 @@ const MissionsComponent: React.FC<MissionsComponentProps> = ({
     setIsButtonDisabled(true);
     setTimeout(() => {
       const audio = new Audio("/assets/ak_robbery.mp3");
-      audio.volume = 0.4;
+      audio.volume = 0.2;
       audio.play();
       const hapticCount = 5;
       const interval = 500 / hapticCount;

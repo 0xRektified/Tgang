@@ -307,7 +307,6 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
 
     setSelectedItem(itemId);
     setQuantity(1);
-    // Scroll to CraftingDetails after a short delay to ensure render
     setTimeout(() => {
       craftingDetailsRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
