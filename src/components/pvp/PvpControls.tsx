@@ -247,7 +247,7 @@ export function PvpControls({
             onClick={() => setIsItemModalOpen(true)}
             disabled={isAttacking}
           >
-            Use Item
+            Item
           </ControlButton>
         </>
       )}
