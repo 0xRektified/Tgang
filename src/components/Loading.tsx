@@ -171,7 +171,7 @@ const Loading: React.FC<LoadingProps> = ({ isContentLoaded }) => {
         <ContentWrapper>
           <NewsContainer>
             <NewsContent>
-              Claim your OG Badge Now in the airdrop/achievements section !
+              Checkout the new Crafting section and boost your Pvp powers !
             </NewsContent>
           </NewsContainer>
           <LoadingSpinner className="loading loading-spinner loading-md" />

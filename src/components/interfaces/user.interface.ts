@@ -139,6 +139,8 @@ export interface IUserPvp {
   healthPoints: number;
   attackPower: number;
   defensePower: number;
+  accuracy: number;
+  evasion: number;
   criticalChance: number;
   lastAttackDate: Date;
   attacksToday: number;

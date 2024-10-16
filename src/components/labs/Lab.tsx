@@ -21,6 +21,7 @@ import { useTutorial } from "../../hooks/useTutorial";
 import { FlexBoxRow } from "../styled/globalStyled";
 import { SkipButton } from "../home/Home";
 import { CraftingStation } from "./CraftingStation";
+import mixpanel from "mixpanel-browser";
 
 const LabContainer = styled.div`
   background-color: #1c1c1e;
@@ -188,8 +189,8 @@ const TabContainer = styled.div`
 const TabButton = styled.button<{ active: boolean }>`
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  background-color: ${props => props.active ? '#3a3a3c' : '#2c2c2e'};
-  color: ${props => props.active ? '#ffffff' : '#a0a0a0'};
+  background-color: ${(props) => (props.active ? "#3a3a3c" : "#2c2c2e")};
+  color: ${(props) => (props.active ? "#ffffff" : "#a0a0a0")};
   border: none;
   border-radius: 0.25rem;
   margin: 0 0.5rem;
@@ -225,7 +226,9 @@ export const Lab: React.FC<LabProps> = ({
   const [showBalanceErrorToast, setShowBalanceErrorToast] =
     useState<boolean>(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
-  const [activeTab, setActiveTab] = useState<'production' | 'crafting'>('production');
+  const [activeTab, setActiveTab] = useState<"production" | "crafting">(
+    "production",
+  );
 
   const {
     buyLabPlot,
@@ -294,9 +297,10 @@ export const Lab: React.FC<LabProps> = ({
     tutorial.tutorialCompleted = true;
   };
 
-  const handleTabChange = (tab: 'production' | 'crafting') => {
+  const handleTabChange = (tab: "production" | "crafting") => {
     WebApp.HapticFeedback.impactOccurred("heavy");
     setActiveTab(tab);
+    mixpanel.track("Shop Tab Changed", { tab });
   };
 
   const production = {
@@ -353,20 +357,20 @@ export const Lab: React.FC<LabProps> = ({
     <LabContainer>
       <TabContainer>
         <TabButton
-          active={activeTab === 'production'}
-          onClick={() => handleTabChange('production')}
+          active={activeTab === "production"}
+          onClick={() => handleTabChange("production")}
         >
           Production
         </TabButton>
         <TabButton
-          active={activeTab === 'crafting'}
-          onClick={() => handleTabChange('crafting')}
+          active={activeTab === "crafting"}
+          onClick={() => handleTabChange("crafting")}
         >
           Crafting
         </TabButton>
       </TabContainer>
 
-      {activeTab === 'production' ? (
+      {activeTab === "production" ? (
         <>
           <CombinedProduction
             currentAmount={mapProductsToProduction(userInfo.products)}
@@ -400,7 +404,9 @@ export const Lab: React.FC<LabProps> = ({
                 })}
               </FlexBoxRow>
               <TutorialText>Collect resources as 🌱 supply grows.</TutorialText>
-              <SkipButton onClick={handleSkipTutorial}>Skip Tutorial</SkipButton>
+              <SkipButton onClick={handleSkipTutorial}>
+                Skip Tutorial
+              </SkipButton>
             </TutorialOverlay>
           ) : (
             <LabsGrid className="scrollable-content">
