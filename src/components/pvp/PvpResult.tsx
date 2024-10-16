@@ -122,10 +122,10 @@ export const PvpResult: React.FC<PvpResultProps> = ({
     if (collectingRewards && isWinner) {
       const rewards = [
         { type: "cash", amount: combatResult.cashLoot },
-        ...combatResult.productLoot.map((product) => ({
+        ...(combatResult.productLoot?.map((product) => ({
           type: "product",
           ...product,
-        })),
+        })) ?? []),
       ];
       WebApp.HapticFeedback.impactOccurred("heavy");
       WebApp.HapticFeedback.impactOccurred("heavy");
@@ -209,7 +209,7 @@ export const PvpResult: React.FC<PvpResultProps> = ({
           </ResultItem>
           <ProductsGrid>
             {Object.values(EProduct).map((productName: string) => {
-              const lootedProduct = combatResult.productLoot.find(
+              const lootedProduct = combatResult.productLoot?.find(
                 (p) => p.name === productName,
               );
               const quantity = lootedProduct ? lootedProduct.quantity : 0;

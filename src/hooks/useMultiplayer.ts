@@ -5,8 +5,8 @@ import {
   IBattle,
   IHistoryBattleResult,
 } from "../components/interfaces/multiplayer.interface";
+import { ECRAFTABLE_ITEM } from "../components/interfaces/craftableItem.interface";
 
-// Add these constants at the top of the file
 const PRECONDITION_REQUIRED = 428; // For social network requirement
 const PRECONDITION_FAILED = 412; // For max attacks reached
 
@@ -28,6 +28,13 @@ export function useMultiplayer(
   );
   const [maxAttacksReached, setMaxAttacksReached] = useState(false);
   const [socialNetworkRequired, setSocialNetworkRequired] = useState(false);
+  const [activeEffects, setActiveEffects] = useState<
+    Array<{
+      itemId: ECRAFTABLE_ITEM;
+      effect: { [key: string]: number };
+      remainingRounds: number;
+    }>
+  >([]);
 
   const searchPlayer = useCallback(async () => {
     setLoading(true);
@@ -56,37 +63,15 @@ export function useMultiplayer(
 
   const fetchuser = useCallback(async () => {
     try {
-      const { data } = await axiosInstance.get<IUserInfo>(`/users`);
-      setUserInfo(data);
-    } catch (error: any) {
-      console.error("Failed to fetch user");
+      const response = await axiosInstance.get<IUserInfo>(`/users`);
+      if (response.data) {
+        setUserInfo(response.data);
+        return response.data; // Return the updated user info
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
     }
   }, [setUserInfo]);
-
-  const performAttack = useCallback(async (battleId: string) => {
-    setLoading(true);
-    setError(null);
-    setErrorCode(null);
-    setSuccessMessage(null);
-    try {
-      const response = await axiosInstance.post<IBattle>(
-        `/multiplayer/attack/${battleId}`,
-      );
-      setLoading(false);
-      setSuccessMessage("Attack performed successfully");
-      return response.data;
-    } catch (err: any) {
-      setLoading(false);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message);
-        setErrorCode(err.response.status);
-      } else {
-        setError("Failed to perform attack");
-      }
-      console.error(err);
-      return null;
-    }
-  }, []);
 
   const startFight = useCallback(
     async (playerId: string, opponentId: string) => {
@@ -115,6 +100,35 @@ export function useMultiplayer(
           }
         } else {
           setError("Failed to start fight");
+        }
+        console.error(err);
+        return null;
+      }
+    },
+    [],
+  );
+
+  const combatAction = useCallback(
+    async (battleId: string, itemId?: ECRAFTABLE_ITEM) => {
+      setLoading(true);
+      setError(null);
+      setErrorCode(null);
+      setSuccessMessage(null);
+      try {
+        const response = await axiosInstance.post<IBattle>(
+          `/multiplayer/action/${battleId}`,
+          { itemId },
+        );
+        setLoading(false);
+        setSuccessMessage("Combat action performed successfully");
+        return response.data;
+      } catch (err: any) {
+        setLoading(false);
+        if (err.response && err.response.data) {
+          setError(err.response.data.message);
+          setErrorCode(err.response.status);
+        } else {
+          setError("Failed to perform combat action");
         }
         console.error(err);
         return null;
@@ -165,8 +179,8 @@ export function useMultiplayer(
           newBattle.winner === "attacker"
             ? newBattle.attacker.id.toString()
             : newBattle.defender.id.toString(),
-        cashLoot: newBattle.cashLoot,
-        productLoot: newBattle.productLoot,
+        cashLoot: newBattle.cashLoot || 0,
+        productLoot: newBattle.productLoot || [],
       };
 
       const index = prevHistory.findIndex(
@@ -182,10 +196,14 @@ export function useMultiplayer(
     });
   }, []);
 
+  const getActiveEffects = useCallback(() => {
+    return activeEffects;
+  }, [activeEffects]);
+
   return {
     searchPlayer,
     startFight,
-    performAttack,
+    combatAction,
     fetchBattleHistory,
     upsertBattleResult,
     fetchuser,
@@ -196,5 +214,7 @@ export function useMultiplayer(
     successMessage,
     maxAttacksReached,
     socialNetworkRequired,
+    getActiveEffects,
+    activeEffects,
   };
 }

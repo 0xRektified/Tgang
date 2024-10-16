@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaSkull,
@@ -21,6 +21,11 @@ import { IUserInfo } from "../interfaces/user.interface";
 import WebApp from "@twa-dev/sdk";
 import styled, { css, keyframes } from "styled-components";
 import { GiAk47 } from "react-icons/gi";
+import {
+  CRAFTABLE_ITEMS,
+  ECRAFTABLE_ITEM,
+} from "../interfaces/craftableItem.interface";
+
 // Define keyframes before using them
 const glowingBorder = keyframes`
   0%, 100% { 
@@ -110,10 +115,11 @@ const PvpButtonDeatchmatch = styled(PvpButton)`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  width: 50%;
-  margin: 0 auto;
+  gap: 0.3rem;
+  padding: 0.4rem;
+  width: 12em; // Increased width for better proportion
+  margin: 0 auto; // Center the button within its container
+  height: 4em;
   animation: ${glowingBorder} 3s infinite, ${subtleBounce} 2s infinite,
     ${pulse} 2s infinite;
 
@@ -123,9 +129,9 @@ const PvpButtonDeatchmatch = styled(PvpButton)`
   }
 
   svg {
-    font-size: 1.5rem; // Increase from 1.2rem
+    font-size: 1.5rem;
     animation: ${pulse} 2s infinite;
-    font-weight: bold; // Add this line to make it bolder
+    font-weight: bold;
   }
 `;
 
@@ -457,6 +463,13 @@ const AttackInfo = styled.span`
   font-weight: bold;
 `;
 
+const ActionRow = styled.div`
+  display: flex;
+  justify-content: center; // Center the content horizontally
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
 interface PvpHeaderProps {
   userInfo: IUserInfo;
   attacksLeft: number;
@@ -468,7 +481,8 @@ interface PvpHeaderProps {
   battleHistory: IHistoryBattleResult[];
   isHistoryLoading: boolean;
   referralToken: string;
-  won?: boolean;
+  userItems: { itemId: ECRAFTABLE_ITEM; quantity: number }[];
+  // Remove selectedItem and onSelectItem from props
 }
 
 const BattleResult = styled.span`
@@ -492,7 +506,11 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
   battleHistory,
   isHistoryLoading,
   referralToken,
+  userItems,
+  // Remove selectedItem and onSelectItem from destructuring
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleRefForward = () => {
     WebApp.openTelegramLink(
       `https://t.me/share/url?url=${
@@ -506,6 +524,7 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
       `${import.meta.env.VITE_WEB_APP_URL}?startapp=${referralToken}`,
     );
   };
+
   return (
     <AnimatePresence>
       {combatState === "idle" && (
@@ -544,25 +563,25 @@ export const PvpHeader: React.FC<PvpHeaderProps> = ({
                 </XpLootRow>
               </XpLootInfo>
             </RewardInfoBox>
-
             <div>
               <PlayerCard
                 player={userInfo}
-                title="You"
-                isAttacking={false}
-                isDefending={false}
-                onInfoClick={() => {}}
                 health={userInfo.pvp?.healthPoints || 100}
                 maxHealth={userInfo.pvp?.healthPoints || 100}
                 damageReceived={undefined}
                 light={true}
+                activeEffects={[]}
               />
             </div>
-            <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
-              <GiAk47 style={{ marginRight: "0.5rem", fontSize: "2em" }} />
-              Raid
-              <GiAk47 style={{ marginLeft: "0.5rem", fontSize: "2em" }} />
-            </PvpButtonDeatchmatch>
+
+            <ActionRow>
+              {/* Remove the SelectedItemCard and SpecialItemButton */}
+              <PvpButtonDeatchmatch onClick={onDeathmatchClick}>
+                <GiAk47 style={{ marginRight: "0.3rem", fontSize: "2em" }} />
+                Raid
+                <GiAk47 style={{ marginLeft: "0.3rem", fontSize: "2em" }} />
+              </PvpButtonDeatchmatch>
+            </ActionRow>
             <Separator />
             <FriendInviteCard>
               <SectionTitle>

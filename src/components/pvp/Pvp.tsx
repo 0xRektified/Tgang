@@ -18,6 +18,11 @@ import { SocialChannel, SocialData } from "../interfaces/social.interface";
 import { statIcons } from "./Pvp.constant";
 import { ApiToast } from "../ApiToast";
 
+import {
+  CRAFTABLE_ITEMS,
+  ECRAFTABLE_ITEM,
+} from "../interfaces/craftableItem.interface";
+
 const PvpWrapper = styled.div`
   position: relative;
   height: 100%;
@@ -89,6 +94,13 @@ export type CombatState =
   | "fighting"
   | "result";
 
+// Add this interface to define the structure of an active effect
+interface ActiveEffect {
+  itemId: ECRAFTABLE_ITEM;
+  effect: Record<string, number>;
+  remainingRounds: number;
+}
+
 export default function Pvp({
   userInfo,
   setUserInfo,
@@ -98,7 +110,7 @@ export default function Pvp({
   const {
     searchPlayer,
     startFight,
-    performAttack,
+    combatAction,
     fetchBattleHistory,
     upsertBattleResult,
     fetchuser,
@@ -153,6 +165,29 @@ export default function Pvp({
     "searching",
   );
   const [isAttacking, setIsAttacking] = useState(false);
+  const [specialItem, setSpecialItem] = useState<ECRAFTABLE_ITEM | null>(null);
+
+  const [userHasActiveEffect, setUserHasActiveEffect] = useState(false);
+  const [opponentHasActiveEffect, setOpponentHasActiveEffect] = useState(false);
+
+  const [userItemUsed, setUserItemUsed] = useState<{
+    itemId: ECRAFTABLE_ITEM;
+    effects: Record<string, number>;
+  } | null>(null);
+
+  const [userActiveEffects, setUserActiveEffects] = useState<ActiveEffect[]>(
+    [],
+  );
+  const [opponentActiveEffects, setOpponentActiveEffects] = useState<
+    ActiveEffect[]
+  >([]);
+
+  const [userItems, setUserItems] = useState(userInfo.craftedItems || []);
+
+  // Update userItems when userInfo changes
+  useEffect(() => {
+    setUserItems(userInfo.craftedItems || []);
+  }, [userInfo]);
 
   const playSound = (sound: string) => {
     const audio = new Audio(sound);
@@ -166,7 +201,7 @@ export default function Pvp({
     }
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Call once to set initial size
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -185,35 +220,52 @@ export default function Pvp({
   }, [userInfo.pvp?.healthPoints, opponent]);
 
   const simulateCombat = useCallback(
-    async (combatResult: IBattle) => {
+    async (combatResult: IBattle, isSpecialItemUse: boolean = false) => {
+      console.log(combatResult);
       if (!opponent) return;
       let currentUserHealth = userHealth;
       let currentOpponentHealth = opponentHealth;
       const round =
         combatResult.roundResults[combatResult.roundResults.length - 1];
 
-      // Attacker's turn
-      setOpponentDamageReceived(round.attackerDamage);
-      await userControls.start({
-        x: [0, 15, 0],
-        transition: { duration: 0.25 },
-      });
-
-      if (round.attackerDamage > 0 && currentOpponentHealth > 0) {
-        playSound("/assets/sounds/melehit.wav");
-        WebApp.HapticFeedback.impactOccurred("rigid");
-        await opponentControls.start({
-          rotate: [0, -7, 7, 0],
-          transition: { duration: 0.25 },
+      // Update user stats based on active effects
+      const activeEffect = combatResult.attacker.pvp.activeEffects[0];
+      if (activeEffect) {
+        setUserItemUsed({
+          itemId: activeEffect.itemId as ECRAFTABLE_ITEM,
+          effects: activeEffect.effect,
         });
-        currentOpponentHealth = Math.max(0, currentOpponentHealth - round.attackerDamage);
-        setOpponentHealth(currentOpponentHealth);
-      } else if (currentOpponentHealth > 0) {
-        playSound("/assets/sounds/melemiss.wav");
+      } else {
+        setUserItemUsed(null);
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setOpponentDamageReceived(undefined);
+      // Skip attacker's turn if it's a special item use
+      if (!isSpecialItemUse) {
+        setOpponentDamageReceived(round.attackerDamage);
+        await userControls.start({
+          x: [0, 15, 0],
+          transition: { duration: 0.25 },
+        });
+
+        if (round.attackerDamage > 0 && currentOpponentHealth > 0) {
+          playSound("/assets/sounds/melehit.wav");
+          WebApp.HapticFeedback.impactOccurred("rigid");
+          await opponentControls.start({
+            rotate: [0, -7, 7, 0],
+            transition: { duration: 0.25 },
+          });
+          currentOpponentHealth = Math.max(
+            0,
+            currentOpponentHealth - round.attackerDamage,
+          );
+          setOpponentHealth(currentOpponentHealth);
+        } else if (currentOpponentHealth > 0) {
+          playSound("/assets/sounds/melemiss.wav");
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setOpponentDamageReceived(undefined);
+      }
 
       // Defender's turn (only if opponent is still alive)
       if (currentOpponentHealth > 0) {
@@ -230,7 +282,10 @@ export default function Pvp({
             rotate: [0, -7, 7, 0],
             transition: { duration: 0.25 },
           });
-          currentUserHealth = Math.max(0, currentUserHealth - round.defenderDamage);
+          currentUserHealth = Math.max(
+            0,
+            currentUserHealth - round.defenderDamage,
+          );
           setUserHealth(currentUserHealth);
         } else {
           playSound("/assets/sounds/melemiss.wav");
@@ -251,8 +306,54 @@ export default function Pvp({
       }
 
       setCurrentBattle(combatResult);
+
+      // Check for active effects
+      setUserHasActiveEffect(
+        combatResult.attacker.pvp.activeEffects?.length > 0,
+      );
+      setOpponentHasActiveEffect(
+        combatResult.defender.pvp.activeEffects?.length > 0,
+      );
+
+      // Update user active effects
+      const newUserActiveEffects = combatResult.attacker.pvp.activeEffects.map(
+        (effect) => ({
+          itemId: effect.itemId as ECRAFTABLE_ITEM,
+          effect: effect.effect,
+          remainingRounds: effect.remainingRounds,
+        }),
+      );
+      setUserActiveEffects(newUserActiveEffects);
+
+      // Update opponent active effects
+      const newOpponentActiveEffects =
+        combatResult.defender.pvp.activeEffects.map((effect) => ({
+          itemId: effect.itemId as ECRAFTABLE_ITEM,
+          effect: effect.effect,
+          remainingRounds: effect.remainingRounds,
+        }));
+      setOpponentActiveEffects(newOpponentActiveEffects);
+
+      // Update health if a health potion was used
+      const healthPotion = newUserActiveEffects.find((effect) =>
+        effect.itemId.includes("HEALTH_POTION"),
+      );
+      if (healthPotion) {
+        const newHealth = Math.min(
+          userInfo.pvp?.healthPoints || 100,
+          currentUserHealth + (healthPotion.effect.healthPoints || 0),
+        );
+        setUserHealth(newHealth);
+      }
     },
-    [opponent, userControls, opponentControls, userHealth, opponentHealth]
+    [
+      opponent,
+      userControls,
+      opponentControls,
+      userHealth,
+      opponentHealth,
+      userInfo.pvp?.healthPoints,
+    ],
   );
 
   const handleDeathmatchClick = useCallback(async () => {
@@ -267,16 +368,61 @@ export default function Pvp({
         const opponentId = players[0].id;
         setSearchingStep("starting");
         const result = await startFight(userInfo.id, opponentId);
+        console.log(result);
+
         if (result) {
           const opponentData = result.opponent || players[0];
           const opponentHealth =
-            result.defender.healthPoints || players[0]?.pvp?.healthPoints;
+            result.defender.pvp.healthPoints || players[0]?.pvp?.healthPoints;
           setOpponentHealth(opponentHealth || 100);
-          setUserHealth(result.attacker.healthPoints || 100);
+          setUserHealth(result.attacker.pvp.healthPoints || 100);
           setOpponent({
             ...opponentData,
             image: "/assets/pvp/userImage.png",
           });
+
+          // Update active effects for both user and opponent
+          if (result.attacker.pvp.activeEffects) {
+            const userActiveEffects = result.attacker.pvp.activeEffects.map(
+              (effect) => ({
+                itemId: effect.itemId as ECRAFTABLE_ITEM,
+                effect: effect.effect,
+                remainingRounds: effect.remainingRounds,
+              }),
+            );
+            setUserActiveEffects(userActiveEffects);
+          }
+
+          if (result.defender.pvp.activeEffects) {
+            const opponentActiveEffects = result.defender.pvp.activeEffects.map(
+              (effect) => ({
+                itemId: effect.itemId as ECRAFTABLE_ITEM,
+                effect: effect.effect,
+                remainingRounds: effect.remainingRounds,
+              }),
+            );
+            setOpponentActiveEffects(opponentActiveEffects);
+          }
+          // Set user and opponent active effect flags
+          setUserHasActiveEffect(userActiveEffects.length > 0);
+          setOpponentHasActiveEffect(opponentActiveEffects.length > 0);
+
+          // Update special item
+          const activeItem = userActiveEffects[0]?.itemId;
+          const selectedItems = result.attacker.selectedItems;
+
+          if (activeItem) {
+            setSpecialItem(activeItem);
+            setUserItemUsed({
+              itemId: activeItem,
+              effects: userActiveEffects[0].effect,
+            });
+          } else if (selectedItems && selectedItems.length > 0) {
+            setSpecialItem(selectedItems[0].itemId as ECRAFTABLE_ITEM);
+          } else {
+            setSpecialItem(null);
+            setUserItemUsed(null);
+          }
 
           setCombatState("fighting");
           setCurrentBattle(result);
@@ -301,21 +447,12 @@ export default function Pvp({
     socialNetworkRequired,
   ]);
 
-  const handleStart = useCallback(async () => {
-    const result = await startFight(userInfo.id, opponent.id);
-    if (result) {
-      setCombatState("fighting");
-      setCurrentBattle(result);
-      await simulateCombat(result);
-    }
-  }, [opponent, startFight, userInfo.id, simulateCombat]);
-
   const handleAttack = useCallback(async () => {
     if (!opponent || !currentBattle || isAttacking) return;
 
     setIsAttacking(true);
     try {
-      const result = await performAttack(currentBattle.battleId);
+      const result = await combatAction(currentBattle.battleId);
       if (result) {
         await simulateCombat(result);
       }
@@ -324,12 +461,51 @@ export default function Pvp({
     } finally {
       setIsAttacking(false);
     }
-  }, [opponent, currentBattle, performAttack, simulateCombat, isAttacking]);
+  }, [opponent, currentBattle, combatAction, simulateCombat, isAttacking]);
 
-  const handleInfoClick = useCallback((player: any) => {
-    setSelectedPlayer(player);
-    setIsInfoModalOpen(true);
-  }, []);
+  const handleUseSpecialItem = useCallback(
+    async (itemId: ECRAFTABLE_ITEM) => {
+      if (!opponent || !currentBattle || isAttacking) return;
+
+      setIsAttacking(true);
+      try {
+        const result = await combatAction(currentBattle.battleId, itemId);
+        if (result && multiplayerSuccessMessage) {
+          await simulateCombat(result, true);
+          setSpecialItem(null);
+
+          // Fetch updated user info after using an item
+          const updatedUserInfo = await fetchuser();
+          if (updatedUserInfo) {
+            setUserInfo(updatedUserInfo);
+            setUserItems(updatedUserInfo.craftedItems || []);
+            console.log("Updated user items:", updatedUserInfo.craftedItems); // Add this log
+          }
+        } else {
+          setUserItemUsed(null);
+          console.error(
+            "Failed to use special item:",
+            multiplayerSuccessMessage || "Unknown error",
+          );
+        }
+      } catch (error) {
+        console.error("Use special item error:", error);
+        setUserItemUsed(null);
+      } finally {
+        setIsAttacking(false);
+      }
+    },
+    [
+      opponent,
+      currentBattle,
+      combatAction,
+      simulateCombat,
+      isAttacking,
+      multiplayerSuccessMessage,
+      fetchuser,
+      setUserInfo,
+    ],
+  );
 
   const handleGetMoreAttacks = () => {
     console.log("Getting more attacks");
@@ -392,19 +568,6 @@ export default function Pvp({
 
   const error = multiplayerError || verifyError || joinError;
 
-  const handleControlButtonClick = useCallback(() => {
-    if (combatState === "ready") {
-      WebApp.HapticFeedback.impactOccurred("heavy");
-      handleStart();
-    } else if (combatState === "fighting") {
-      WebApp.HapticFeedback.impactOccurred("heavy");
-      handleAttack();
-    } else if (combatState === "result") {
-      WebApp.HapticFeedback.impactOccurred("heavy");
-      handleCollectAndReturn();
-    }
-  }, [combatState, handleStart, handleAttack, handleCollectAndReturn]);
-
   useEffect(() => {
     fetchBattleHistory();
   }, [fetchBattleHistory]);
@@ -433,6 +596,7 @@ export default function Pvp({
             battleHistory={battleHistory}
             isHistoryLoading={multiplayerLoading}
             referralToken={referralToken}
+            userItems={userInfo.craftedItems || []}
           />
 
           <AnimatePresence>
@@ -490,22 +654,21 @@ export default function Pvp({
                         <motion.div animate={opponentControls}>
                           <PlayerCard
                             player={opponent}
-                            title="Opponent"
-                            isAttacking={combatState === "fighting"}
-                            isDefending={combatState === "fighting"}
-                            onInfoClick={() => handleInfoClick(opponent)}
                             health={opponentHealth}
                             maxHealth={opponent.pvp?.healthPoints || 100}
                             damageReceived={opponentDamageReceived}
                             light={false}
+                            activeEffects={opponentActiveEffects}
                           />
                         </motion.div>
                       </motion.div>
                       <PvpControls
                         combatState={combatState}
-                        onButtonClick={handleControlButtonClick}
+                        onAttackClick={handleAttack}
+                        onUseSpecialItemClick={handleUseSpecialItem}
                         isWinner={combatResult?.winner === "attacker"}
                         isAttacking={isAttacking}
+                        userItems={userItems}
                       />
                     </>
                   )}
@@ -528,14 +691,11 @@ export default function Pvp({
                   <motion.div animate={userControls}>
                     <PlayerCard
                       player={userInfo}
-                      title="You"
-                      isAttacking={combatState === "fighting"}
-                      isDefending={combatState === "fighting"}
-                      onInfoClick={() => handleInfoClick(userInfo)}
                       health={userHealth}
                       maxHealth={userInfo.pvp?.healthPoints || 100}
                       damageReceived={userDamageReceived}
                       light={false}
+                      activeEffects={userActiveEffects}
                     />
                   </motion.div>
                 </motion.div>
@@ -549,9 +709,6 @@ export default function Pvp({
           >
             {selectedPlayer && (
               <>
-                <h2 className="text-xl font-bold mb-4">
-                  Player Stats: {selectedPlayer.username}
-                </h2>
                 <ul className="space-y-4">
                   {statIcons.map((stat, index) => (
                     <li key={index} className="flex items-center">
