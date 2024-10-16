@@ -1,0 +1,454 @@
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import styled from "styled-components";
+import { FaQuestionCircle, FaDollarSign } from "react-icons/fa";
+import { EProduct, EProductIcon } from "../interfaces/product.interface";
+import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
+import { renderStatIcon } from "./Pvp.constant";
+import { CRAFTABLE_ITEMS } from "../interfaces/craftableItem.interface";
+import InfoModal from "./InfoModal";
+import { statIcons } from "./Pvp.constant";
+
+const truncateUsername = (username: string, maxLength: number = 19) => {
+  if (username.length <= maxLength) return username;
+  return `${username.slice(0, maxLength - 3)}...`;
+};
+
+const QuestionButton = styled.button`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 1.2rem;
+  cursor: pointer;
+`;
+
+const StyledCard = styled(motion.div)<{ hasActiveEffect: boolean }>`
+  background-color: #2c2c2e;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  font-size: 0.9rem;
+  ${({ hasActiveEffect }) =>
+    hasActiveEffect &&
+    `
+    box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+    animation: pulse 2s infinite;
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 25px 10px rgba(30, 144, 255, 0.9);
+      }
+      100% {
+        box-shadow: 0 0 15px 5px rgba(30, 144, 255, 0.7);
+      }
+    }
+  `}
+`;
+
+const CardHeader = styled.div`
+  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  padding: 0.5rem;
+  border-bottom: 2px solid #4a4a4e;
+`;
+
+const CardContent = styled.div`
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const Avatar = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid #48bb78;
+  box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+`;
+
+const UserDetails = styled.div`
+  flex-grow: 1;
+`;
+
+const UsernameLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Username = styled.div`
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const UsernameText = styled.span`
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+`;
+
+const UserLevel = styled.div`
+  font-size: 0.8rem;
+  color: #48bb78;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const CashAmount = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #ffffff;
+`;
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 0.5em;
+`;
+
+const StatIcon = styled.div`
+  font-size: 0.9rem;
+  margin-right: 0.2rem;
+  gap: 0.5em;
+`;
+
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.2rem;
+  margin-top: 0.2rem;
+`;
+
+const ProductItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const ProductIcon = styled.div`
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+`;
+
+const ProductQuantity = styled.p`
+  font-size: 0.7rem;
+  color: #a0aec0;
+  margin: 0;
+`;
+
+const StatsRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+`;
+
+const StatGroup = styled.div`
+  display: flex;
+  font-size: 0.8rem; // Reduce font size to match username
+`;
+
+const GreenIcon = styled(StatIcon)`
+  color: #48bb78;
+`;
+
+const HealthBar = styled.div`
+  flex-grow: 1;
+  height: 10px;
+  background-color: #e53e3e;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const HealthFill = styled(motion.div)`
+  height: 100%;
+  background-color: #48bb78;
+`;
+
+const HealthText = styled.p`
+  font-size: 0.8rem;
+  color: #ffffff;
+  text-align: center;
+  margin: 0.25rem 0 0;
+`;
+
+const DamagePastil = styled(motion.div)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff3333;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+`;
+
+const Overlay = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+`;
+
+const HealthBarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+`;
+
+const StatValue = styled.span`
+  color: white;
+  font-weight: bold;
+  font-size: 0.8rem;
+`;
+
+const StatIncrease = styled.span`
+  color: #4299e1;
+  margin-left: 0.2rem;
+  font-weight: bold;
+  font-size: 0.7rem;
+`;
+
+const ActiveEffectDisplay = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
+const EffectBadge = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: white;
+  font-size: 0.7rem;
+`;
+
+const ItemIcon = styled.img`
+  width: 1rem;
+  height: 1rem;
+`;
+
+interface ActiveEffect {
+  itemId: ECRAFTABLE_ITEM;
+  effect: Record<string, number>;
+  remainingRounds: number;
+}
+
+interface PlayerCardProps {
+  player: any;
+  health: number;
+  maxHealth: number;
+  damageReceived?: number;
+  light: boolean;
+  activeEffects: ActiveEffect[];
+}
+
+export const PlayerCard: React.FC<PlayerCardProps> = ({
+  player,
+  health,
+  maxHealth,
+  damageReceived,
+  light,
+  activeEffects,
+}) => {
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
+  if (!player || !player.pvp) return null;
+
+  const healthPercentage = (health / maxHealth) * 100;
+
+  const renderStat = (key: string, value: number) => {
+    const activeEffect = activeEffects.find(
+      (effect) => effect.effect[key] !== undefined,
+    );
+    const increase = activeEffect?.effect[key] || 0;
+    const isIncreased = increase > 0;
+
+    return (
+      <StatItem key={key}>
+        <StatIcon>
+          {renderStatIcon(key, key === "victory" ? "gold" : undefined)}
+        </StatIcon>
+        <StatValue>
+          {value}
+          {isIncreased && <StatIncrease>(+{increase})</StatIncrease>}
+        </StatValue>
+      </StatItem>
+    );
+  };
+
+  return (
+    <>
+      <StyledCard hasActiveEffect={activeEffects.length > 0}>
+        <AnimatePresence>
+          {damageReceived !== undefined && (
+            <DamagePastil
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {damageReceived === 0 ? "Miss" : damageReceived}
+            </DamagePastil>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {damageReceived !== undefined && (
+            <Overlay
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.3 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              style={{
+                backgroundColor: damageReceived === 0 ? "white" : "red",
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <QuestionButton onClick={() => setIsInfoModalOpen(true)}>
+          <FaQuestionCircle />
+        </QuestionButton>
+        <CardHeader>
+          <UserInfo>
+            <Avatar
+              src={player.image || "/assets/pvp/userImage.png"}
+              alt={player.username}
+            />
+            <UserDetails>
+              <UsernameLine>
+                <Username title={player.username}>
+                  <UsernameText>
+                    {truncateUsername(player.username)}
+                  </UsernameText>
+                  <StatGroup>
+                    {renderStat("victory", player.pvp.victory)}
+                    {renderStat("defeat", player.pvp.defeat)}
+                  </StatGroup>
+                </Username>
+              </UsernameLine>
+              <UserLevel>
+                <span>(Level {player.userLevel.level})</span>
+                <span>{player.userLevel.title}</span>
+                <CashAmount>
+                  <GreenIcon>
+                    <FaDollarSign />
+                  </GreenIcon>
+                  {Math.floor(player.cashAmount)}
+                </CashAmount>
+              </UserLevel>
+            </UserDetails>
+          </UserInfo>
+          <StatsRow>
+            {renderStat("protection", player.pvp.protection)}
+            {renderStat("damage", player.pvp.damage)}
+            {renderStat("evasion", player.pvp.evasion)}
+            {renderStat("accuracy", player.pvp.accuracy)}
+            {renderStat("criticalChance", player.pvp.criticalChance)}
+          </StatsRow>
+          <HealthBarContainer>
+            <HealthBar>
+              <HealthFill
+                initial={{ width: `${healthPercentage}%` }}
+                animate={{ width: `${healthPercentage}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </HealthBar>
+            <HealthText>{`${health} / ${maxHealth}`}</HealthText>
+          </HealthBarContainer>
+          <ActiveEffectDisplay>
+            {activeEffects.map((effect, index) => (
+              <EffectBadge key={index}>
+                <ItemIcon
+                  src={CRAFTABLE_ITEMS[effect.itemId as ECRAFTABLE_ITEM].image}
+                  alt={CRAFTABLE_ITEMS[effect.itemId as ECRAFTABLE_ITEM].name}
+                />
+                <span>{effect.remainingRounds} rounds left</span>
+              </EffectBadge>
+            ))}
+          </ActiveEffectDisplay>
+        </CardHeader>
+        {!light && (
+          <CardContent>
+            <div>
+              <ProductsGrid>
+                {Object.values(EProduct).map((productName: string) => {
+                  const product = player.products.find(
+                    (p: { name: string }) => p.name === productName,
+                  );
+                  const quantity = product ? product.quantity : 0;
+                  const emoji =
+                    EProductIcon[productName as keyof typeof EProductIcon];
+                  return (
+                    <ProductItem key={productName}>
+                      <ProductIcon>{emoji}</ProductIcon>
+                      <ProductQuantity>{quantity}</ProductQuantity>
+                    </ProductItem>
+                  );
+                })}
+              </ProductsGrid>
+            </div>
+          </CardContent>
+        )}
+      </StyledCard>
+
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+      >
+        <ul className="space-y-4">
+          {statIcons.map((stat, index) => (
+            <li key={index} className="flex items-center">
+              <span className="text-2xl mr-4">
+                <stat.icon />
+              </span>
+              <div>
+                <strong className="block">{stat.label}</strong>
+                <span className="text-sm text-gray-600">
+                  {stat.description}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </InfoModal>
+    </>
+  );
+};
+
+export default PlayerCard;
