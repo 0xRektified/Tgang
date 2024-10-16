@@ -6,7 +6,8 @@ import {
   CRAFTABLE_ITEMS,
   PvpEffect,
 } from "../interfaces/craftableItem.interface";
-import {  FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
+import capsDefaultIcon from "/assets/pvp/craftables/capsDefault.png";
 
 const ControlButton = styled.button`
   background-color: #27272a;
@@ -22,6 +23,9 @@ const ControlButton = styled.button`
   transition: all 0.3s ease;
   box-shadow: 0 0 5px #1e90ff;
   margin: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     box-shadow: 0 0 10px #1e90ff;
@@ -164,6 +168,18 @@ const UseButton = styled.button<{ isAvailable: boolean }>`
   }
 `;
 
+const ItemButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ItemIconMenu = styled.img`
+  width: 1.5em;
+  height: 1.5em;
+  margin-left: 5px;
+  vertical-align: middle;
+`;
+
 interface PvpControlsProps {
   combatState: CombatState;
   onAttackClick: () => void;
@@ -186,7 +202,7 @@ export function PvpControls({
 
   useEffect(() => {
     // Increment the key when userItems change to force a re-render
-    setItemsKey(prev => prev + 1);
+    setItemsKey((prev) => prev + 1);
   }, [userItems]);
 
   const renderPvpEffects = (effects: PvpEffect) => {
@@ -247,7 +263,7 @@ export function PvpControls({
             onClick={() => setIsItemModalOpen(true)}
             disabled={isAttacking}
           >
-            Item
+            Item <ItemIconMenu src={capsDefaultIcon} alt="Item" />
           </ControlButton>
         </>
       )}
@@ -259,10 +275,7 @@ export function PvpControls({
 
       {isItemModalOpen && (
         <ModalBackground onClick={() => setIsItemModalOpen(false)}>
-          <ModalContent 
-            onClick={(e) => e.stopPropagation()}
-            key={itemsKey}
-          >
+          <ModalContent onClick={(e) => e.stopPropagation()} key={itemsKey}>
             <CloseButton onClick={() => setIsItemModalOpen(false)}>
               <FaTimes />
             </CloseButton>

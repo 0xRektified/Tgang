@@ -29,7 +29,7 @@ export interface CraftableItem {
 export const CRAFTABLE_ITEMS: Record<ECRAFTABLE_ITEM, CraftableItem> = {
   [ECRAFTABLE_ITEM.BOOSTER_ATTACK_1]: {
     itemId: ECRAFTABLE_ITEM.BOOSTER_ATTACK_1,
-    name: "Attack Booster II",
+    name: "Attack Booster I",
     image: "/assets/pvp/craftables/caps1.png",
     requirements: {
       [EProduct.POWDER]: 3,
@@ -57,7 +57,7 @@ export const CRAFTABLE_ITEMS: Record<ECRAFTABLE_ITEM, CraftableItem> = {
   },
   [ECRAFTABLE_ITEM.HEALTH_POTION_SMALL]: {
     itemId: ECRAFTABLE_ITEM.HEALTH_POTION_SMALL,
-    name: "Health Potion",
+    name: "Small Health Potion",
     image: "/assets/pvp/craftables/caps3.png",
     requirements: {
       [EProduct.HERB]: 10,

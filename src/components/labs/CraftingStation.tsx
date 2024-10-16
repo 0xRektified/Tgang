@@ -73,7 +73,12 @@ const ItemDetails = styled.div`
 `;
 
 const ItemEffect = styled.div`
+  color: white;
   margin-bottom: 0.25rem;
+  
+  strong {
+    font-weight: bold;
+  }
 `;
 
 const ItemDuration = styled.div`
@@ -205,7 +210,6 @@ const CraftedItemBox = styled.div`
   justify-content: center;
   width: 3em;
   flex: 0 0 calc(20% - 1rem);
-
 `;
 
 const FlexBoxRow = styled.div`
@@ -308,7 +312,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
     setSelectedItem(itemId);
     setQuantity(1);
     setTimeout(() => {
-      craftingDetailsRef.current?.scrollIntoView({ behavior: 'smooth' });
+      craftingDetailsRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 
@@ -369,8 +373,8 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
     WebApp.HapticFeedback.impactOccurred("heavy");
 
     return Object.entries(item.pvpEffect)
-      .map(([key, value]) => `${key}: +${value}`)
-      .join("\n");
+      .map(([key, value]) => `${key}: <strong>+${value}</strong>`)
+      .join("<br>");
   };
 
   const getCraftedItemQuantity = (itemId: ECRAFTABLE_ITEM) => {
@@ -405,7 +409,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
             <ItemName>{item.name}</ItemName>
             <ItemImage src={item.image} alt={item.name} />
             <ItemDetails>
-              <ItemEffect>{renderEffectText(item)}</ItemEffect>
+              <ItemEffect dangerouslySetInnerHTML={{ __html: renderEffectText(item) }} />
               <ItemDuration>Duration: {item.duration} rounds</ItemDuration>
             </ItemDetails>
           </CraftingItem>
@@ -460,11 +464,7 @@ export const CraftingStation: React.FC<CraftingStationProps> = ({
           )}
         </CraftingDetails>
       )}
-      <ApiToast
-        loading={loading}
-        error={error}
-        successMessage={null}
-      />
+      <ApiToast loading={loading} error={error} successMessage={null} />
       <AnimatePresence>
         {showModal && craftedItemInfo && (
           <ModalOverlay
