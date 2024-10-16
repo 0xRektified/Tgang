@@ -32,8 +32,8 @@ export const CRAFTABLE_ITEMS: Record<ECRAFTABLE_ITEM, CraftableItem> = {
     name: "Attack Booster I",
     image: "/assets/pvp/craftables/caps1.png",
     requirements: {
-      [EProduct.POWDER]: 3,
-      [EProduct.PILL]: 1,
+      [EProduct.POWDER]: 2,
+      [EProduct.PILL]: 2,
     },
     pvpEffect: {
       damage: 10,
