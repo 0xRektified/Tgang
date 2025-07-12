@@ -5,6 +5,7 @@ import { SwapRequest, useSwapPool } from "../../hooks/useSwapPool";
 import { IUserInfo } from "../interfaces/user.interface";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { ApiToast } from "../ApiToast";
+import { centsToDollars, dollarsToCents, formatCentsAsNumber, parseInputToCents } from "../../utils/currency";
 
 const SwapContainer = styled.div`
   background: rgba(255, 255, 255, 0.05);
@@ -262,11 +263,10 @@ export const SwapInterface: React.FC<SwapInterfaceProps> = ({
     return foundPool;
   };
 
-  // Calculate estimated output
+  // Calculate estimated output (returns in display units: dollars for USD, units for products)
   const getEstimatedOutput = (): number => {
     const currentPool = getCurrentPool();
     if (!currentPool || !amount || isNaN(Number(amount))) {
-      console.log('getEstimatedOutput early return:', { currentPool: !!currentPool, amount, isNumber: !isNaN(Number(amount)) });
       return 0;
     }
 
@@ -276,35 +276,32 @@ export const SwapInterface: React.FC<SwapInterfaceProps> = ({
     try {
       const feePercent = currentPool.feePercent || 0;
       const feeMultiplier = 1 - (feePercent / 100);
-      const amountWithFee = amountNum * feeMultiplier;
-
-      let reserveIn: number = 0, reserveOut: number = 0;
+      
+      let reserveIn: number = 0, reserveOut: number = 0, amountInForCalculation: number = 0;
       
       if (isBuying) {
-        // Buying product with USD
-        reserveIn = currentPool.cash?.reserve || 0;
-        reserveOut = currentPool.product?.reserve || 0;
+        // Buying product with USD: convert user input dollars to cents for calculation
+        amountInForCalculation = dollarsToCents(amountNum) * feeMultiplier;
+        reserveIn = currentPool.cash?.reserve || 0; // USD in cents
+        reserveOut = currentPool.product?.reserve || 0; // Product units
       } else {
-        // Selling product for USD
-        reserveIn = currentPool.product?.reserve || 0;
-        reserveOut = currentPool.cash?.reserve || 0;
+        // Selling product for USD: input is already in product units
+        amountInForCalculation = amountNum * feeMultiplier;
+        reserveIn = currentPool.product?.reserve || 0; // Product units
+        reserveOut = currentPool.cash?.reserve || 0; // USD in cents
       }
-
-      console.log('Pool calculation:', { 
-        isBuying, 
-        reserveIn, 
-        reserveOut, 
-        amountWithFee,
-        currentPool: currentPool.id,
-        cashReserve: currentPool.cash?.reserve,
-        productReserve: currentPool.product?.reserve
-      });
 
       if (reserveIn <= 0 || reserveOut <= 0) return 0;
 
-      const estimatedAmount = (amountWithFee * reserveOut) / (reserveIn + amountWithFee);
-      console.log('Estimated amount:', estimatedAmount);
-      return Math.max(0, estimatedAmount);
+      const estimatedAmountRaw = (amountInForCalculation * reserveOut) / (reserveIn + amountInForCalculation);
+      
+      if (isBuying) {
+        // Output is product units (already in correct format)
+        return Math.max(0, estimatedAmountRaw);
+      } else {
+        // Output is USD in cents, convert to dollars for display
+        return Math.max(0, centsToDollars(estimatedAmountRaw).toNumber());
+      }
     } catch (error) {
       console.error('Error calculating estimated output:', error);
       return 0;
@@ -328,11 +325,25 @@ export const SwapInterface: React.FC<SwapInterfaceProps> = ({
       return;
     }
 
+    // Convert amounts to cents when dealing with USD
+    let amountInCents: number;
+    let minAmountOutCents: number;
+    
+    if (isBuying) {
+      // Buying product with USD: convert USD input to cents
+      amountInCents = dollarsToCents(Number(amount));
+      minAmountOutCents = Math.floor(estimatedOut * 0.95); // Product units (already integers)
+    } else {
+      // Selling product for USD: input is product units, output should be in cents
+      amountInCents = Number(amount); // Product units (already integers)
+      minAmountOutCents = dollarsToCents(estimatedOut * 0.95); // Convert USD output to cents
+    }
+
     const swapRequest: SwapRequest = {
       tokenIn: isBuying ? "USD" : selectedProduct,
       tokenOut: isBuying ? selectedProduct : "USD",
-      amountIn: Number(amount),
-      minAmountOut: estimatedOut * 0.95, // 5% slippage tolerance
+      amountIn: amountInCents,
+      minAmountOut: minAmountOutCents,
     };
 
     console.log('Swap request:', swapRequest);
@@ -344,7 +355,9 @@ export const SwapInterface: React.FC<SwapInterfaceProps> = ({
 
   const getUserBalance = (token: string): number => {
     if (token === "USD") {
-      return userInfo?.cashAmount || 0;
+      // cashAmount is in cents, convert to dollars for display
+      const cashInCents = userInfo?.cashAmount || 0;
+      return centsToDollars(cashInCents).toNumber();
     }
     const product = userInfo?.products?.find(p => p.name === token);
     return product?.quantity || 0;
@@ -377,10 +390,12 @@ export const SwapInterface: React.FC<SwapInterfaceProps> = ({
     amountNumber: Number(amount)
   });
 
-  // Helper function to get pool price
+  // Helper function to get pool price (USD per product unit)
   const getPoolPrice = (pool: Pool): number => {
     if (!pool.cash?.reserve || !pool.product?.reserve) return 0;
-    return pool.cash.reserve / pool.product.reserve;
+    // pool.cash.reserve is in cents, convert to dollars for display
+    const dollarsReserve = centsToDollars(pool.cash.reserve).toNumber();
+    return dollarsReserve / pool.product.reserve;
   };
 
   return (

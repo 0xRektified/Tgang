@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 import { FaQuestionCircle, FaDollarSign } from "react-icons/fa";
+import { formatCentsAsNumber } from "../../utils/currency";
 import { EProduct, EProductIcon } from "../interfaces/product.interface";
 import { ECRAFTABLE_ITEM } from "../interfaces/craftableItem.interface";
 import { renderStatIcon } from "./Pvp.constant";
@@ -369,7 +370,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
                   <GreenIcon>
                     <FaDollarSign />
                   </GreenIcon>
-                  {Math.floor(player.cashAmount)}
+                  {formatCentsAsNumber(player.cashAmount, 0)}
                 </CashAmount>
               </UserLevel>
             </UserDetails>

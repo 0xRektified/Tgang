@@ -1,5 +1,9 @@
-export const formatPrice = (price: number, showDecimals: boolean) => {
-  return price.toLocaleString("en-US", {
+import { centsToDollars } from "../../utils/currency";
+
+export const formatPrice = (priceInCents: number, showDecimals: boolean) => {
+  // Backend now sends amounts in cents, convert to dollars for display
+  const dollars = centsToDollars(priceInCents).toNumber();
+  return dollars.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: showDecimals ? 2 : 0,
