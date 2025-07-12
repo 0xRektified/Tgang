@@ -7,7 +7,6 @@ import {
 } from "../components/interfaces/upgrade.interface";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { EProduct } from "../components/interfaces/product.interface";
-import { IMarketInfo } from "../components/interfaces/market.interface";
 
 export function useBuyUpgrades() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -19,8 +18,7 @@ export function useBuyUpgrades() {
       category: EUpgradeCategory;
       upgrade: EProduct | EDealerUpgrade;
     },
-    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
-    setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>
+    setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>
   ) => {
     setLoading(true);
     setError(null);
@@ -30,9 +28,8 @@ export function useBuyUpgrades() {
         category: params.category,
         upgrade: params.upgrade,
       });
-      const { user: newUserInfo, market: newMarketInfo } = response.data;
+      const { user: newUserInfo } = response.data;
       setUserInfo(newUserInfo);
-      setMarketInfo(newMarketInfo);
       setSuccessMessage("Upgrade purchased successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {

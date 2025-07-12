@@ -1,18 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuthAndFetchUserData } from "./useAuthAndFetchUserData";
 import { useFetchUpgrades } from "./useFetchUpgrades";
-import { useMarketData } from "./useMarketData";
 import { IUserInfo } from "../components/interfaces/user.interface";
 import { useFetchLabs } from "./useFetchLabs";
-import { useFetchShippingMethods } from "./useFetchShippingMethods";
 import { useFetchSocials } from "./useFetchSocials";
+import { useFetchPools } from "./useFetchPools";
 
 const defaultUserInfo: IUserInfo = {
   id: "",
   username: "",
   cashAmount: 1000,
   products: [],
-  shipping: [],
   labPlots: [],
   labPlotPrice: 0,
   referralToken: "",
@@ -24,7 +22,6 @@ const defaultUserInfo: IUserInfo = {
   customerAmountMax: 1000,
   dealerUpgrades: [],
   robberyStrike: 0,
-  nextShipment: new Date(),
   reputation: 0,
   userLevel: {
     level: 0,
@@ -61,21 +58,6 @@ export function useInitializeGame() {
     fetchLabs,
   } = useFetchLabs();
 
-  const {
-    shippingMethods,
-    setShippingMethods,
-    loading: shippingLoading,
-    error: shippingError,
-    fetchShippingMethods,
-  } = useFetchShippingMethods();
-
-  const {
-    marketInfo,
-    setMarketInfo,
-    loading: marketLoading,
-    error: marketError,
-    fetchMarketData,
-  } = useMarketData();
 
   const {
     socials,
@@ -84,6 +66,14 @@ export function useInitializeGame() {
     error: socialsError,
     fetchSocials,
   } = useFetchSocials();
+
+  const {
+    pools,
+    setPools,
+    loading: poolsLoading,
+    error: poolsError,
+    fetchPools,
+  } = useFetchPools();
 
   const initializeGame = useCallback(async () => {
     try {
@@ -98,31 +88,29 @@ export function useInitializeGame() {
         throw new Error("User info is not available");
       }
 
-      const [upgradesData, marketData, labs, shippingMethods, socials] =
+      const [upgradesData, labs, socials, pools] =
         await Promise.all([
           fetchUpgrades(),
-          fetchMarketData(),
           fetchLabs(),
-          fetchShippingMethods(),
           fetchSocials(),
+          fetchPools(),
         ]);
 
-      if (upgradesError || marketError || labsError) {
+      if (upgradesError || labsError || poolsError) {
         throw new Error("Failed to fetch one or more game data");
       }
 
       setUpgrades(upgradesData?.upgrades);
-      setMarketInfo(marketData?.marketInfo);
       setLabs(labs?.labs);
-      setShippingMethods(shippingMethods?.shippingMethods);
       setSocials(socials);
+      setPools(pools);
     } catch (error) {
       setError(`Failed to initialize game: ${error}`);
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [authError, fetchUpgrades, fetchMarketData, setUpgrades, setMarketInfo, setSocials]);
+  }, [authError, fetchUpgrades, setUpgrades, setSocials, fetchPools, setPools]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -133,15 +121,13 @@ export function useInitializeGame() {
   return {
     userInfo: user,
     upgrades,
-    marketInfo,
     labs,
-    shippingMethods,
+    pools,
     socials,
     setUserInfo: setUser,
     setUpgrades,
-    setMarketInfo,
     setLabs,
-    setShippingMethods,
+    setPools,
     loading,
     error,
     signup,

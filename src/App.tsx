@@ -48,13 +48,11 @@ function App() {
   const {
     userInfo,
     upgrades,
-    marketInfo,
     labs,
-    shippingMethods,
+    pools,
     socials,
     setUserInfo,
     setUpgrades,
-    setMarketInfo,
     loading,
     error,
     signup,
@@ -63,7 +61,6 @@ function App() {
 
   const [currentView, setCurrentView] = useState("Base");
   const [activeTab, setActiveTab] = useState<string>("dealer");
-  const [isCombinedModalOpen, setIsCombinedModalOpen] = useState(false);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
 
   useEffect(() => {
@@ -128,15 +125,9 @@ function App() {
         return (
           <Home
             userInfo={userInfo}
-            marketInfo={marketInfo}
             setUserInfo={setUserInfo}
             onUnlockClick={handleUnlockClick}
-            shippingMethods={shippingMethods}
-            signup={signup}
-            tutorial={tutorial}
-            handleTutorialComplete={handleHomeTutorialComplete}
-            isCombinedModalOpen={isCombinedModalOpen}
-            closeCombinedModal={() => setIsCombinedModalOpen(false)}
+            pools={pools}
             isContentLoaded={isContentLoaded}
           />
         );
@@ -156,10 +147,8 @@ function App() {
             userInfo={userInfo}
             activeTab={activeTab}
             upgradesData={upgrades}
-            shippingMethods={shippingMethods}
             setUserInfo={setUserInfo}
             setUpgrades={setUpgrades}
-            setMarketInfo={setMarketInfo}
           />
         );
       case "Airdrop":
@@ -189,15 +178,9 @@ function App() {
         return (
           <Home
             userInfo={userInfo}
-            marketInfo={marketInfo}
             setUserInfo={setUserInfo}
             onUnlockClick={handleUnlockClick}
-            shippingMethods={shippingMethods}
-            signup={signup}
-            tutorial={tutorial}
-            handleTutorialComplete={handleHomeTutorialComplete}
-            isCombinedModalOpen={isCombinedModalOpen}
-            closeCombinedModal={() => setIsCombinedModalOpen(false)}
+            pools={pools}
             isContentLoaded={isContentLoaded}
           />
         );
@@ -205,16 +188,14 @@ function App() {
   }, [
     currentView,
     userInfo,
-    marketInfo,
     setUserInfo,
     handleUnlockClick,
-    shippingMethods,
+    pools,
     labs,
     activeTab,
     upgrades,
     setUpgrades,
     tutorial,
-    isCombinedModalOpen,
     isContentLoaded,
   ]);
 

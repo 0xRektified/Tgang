@@ -11,7 +11,6 @@ import { IUserInfo, Product } from "../interfaces/user.interface";
 import { EProduct } from "../interfaces/product.interface";
 import BuyCard from "../BuyCard";
 import { TouchPoint } from "../utils/types";
-import { IMarketInfo } from "../interfaces/market.interface";
 
 interface RenderUpgradesProps {
   userInfo: IUserInfo;
@@ -21,16 +20,12 @@ interface RenderUpgradesProps {
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
   setShowBalanceErrorToast: React.Dispatch<React.SetStateAction<boolean>>;
-  setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>;
   buyUpgrade: (
     params: {
       category: EUpgradeCategory;
       upgrade: EProduct | EDealerUpgrade;
     },
     setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>,
-    setMarketInfo: React.Dispatch<
-      React.SetStateAction<IMarketInfo | undefined>
-    >,
   ) => Promise<void>;
 }
 
@@ -42,7 +37,6 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
   setUserInfo,
   setShowBalanceErrorToast,
   buyUpgrade,
-  setMarketInfo,
 }) => {
   const render = (
     upgrade: ProductUpgrade | DealerUpgrade,
@@ -74,7 +68,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
         }}
         locked={locked || false}
         nextUpgrade={nextUpgrade}
-        onBuyClick={(params) => buyUpgrade(params, setUserInfo, setMarketInfo)}
+        onBuyClick={(params) => buyUpgrade(params, setUserInfo)}
         upgradeOption={false}
         userInfo={userInfo}
         setUserInfo={setUserInfo}
@@ -182,11 +176,7 @@ export const RenderUpgrades: React.FC<RenderUpgradesProps> = ({
               }
             });
           }
-          const upgradeEffect = (userUpgrade?.upgradeMarketDiscount && userUpgrade?.level > 0)
-            ? `From -${userUpgrade?.marketDiscount.toFixed(
-                2,
-              )}% to -${userUpgrade?.upgradeMarketDiscount.toFixed(2)}%`
-            : `Unlock a -${productUpgrade.baseDiscount}% discount`;
+          const upgradeEffect = `Level ${level + 1} product upgrade`;
           return render(
             productUpgrade,
             key as EProduct | EDealerUpgrade,

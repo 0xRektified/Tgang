@@ -12,37 +12,24 @@ import { TouchPoint } from "../utils/types";
 import { RenderUpgrades } from "./RenderUpgrades";
 import { IUserInfo } from "../interfaces/user.interface";
 import { IUpgrade } from "../interfaces/upgrade.interface";
-import {
-  EShippingMethod,
-  IShippingMethod,
-} from "../interfaces/shipping.interface";
-import { RenderShipping } from "./RenderShipping";
-import { useBuyShippingMethod } from "../../hooks/useBuyShippingMethod";
 import { useBuyUpgrades } from "../../hooks/useBuyUpgrade";
 import { ApiToast } from "../ApiToast";
-import { useUpgradeShippingCapacity } from "../../hooks/useUpgradeShippingCapacity";
-import { useUpgradeShippingShippingTime } from "../../hooks/useUpgradeShippingTime";
-import { IMarketInfo } from "../interfaces/market.interface";
 import mixpanel from "mixpanel-browser";
 
 interface UpgradeProps {
   userInfo: IUserInfo;
   activeTab: string;
   upgradesData: IUpgrade | undefined;
-  shippingMethods: Record<EShippingMethod, IShippingMethod> | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<IUserInfo>>;
   setUpgrades: React.Dispatch<React.SetStateAction<IUpgrade | undefined>>;
-  setMarketInfo: React.Dispatch<React.SetStateAction<IMarketInfo | undefined>>;
 }
 
 export const Upgrade: React.FC<UpgradeProps> = ({
   userInfo,
   activeTab,
   upgradesData,
-  shippingMethods,
   setUserInfo,
   setUpgrades,
-  setMarketInfo,
 }) => {
   const [showBalanceErrorToast, setShowBalanceErrorToast] =
     useState<boolean>(false);
@@ -54,31 +41,11 @@ export const Upgrade: React.FC<UpgradeProps> = ({
   }, [activeTab]);
 
   const {
-    buyShippingMethod,
-    loading: shippingLoading,
-    error: shippingError,
-    successMessage: shippingSuccess,
-  } = useBuyShippingMethod();
-  const {
     buyUpgrade,
     loading: upgradeLoading,
     error: upgradeError,
     successMessage: upgradeSuccess,
   } = useBuyUpgrades();
-
-  const {
-    upgradeShippingCapacity,
-    loading: capacityLoading,
-    error: capacityError,
-    successMessage: capacitySuccess,
-  } = useUpgradeShippingCapacity();
-
-  const {
-    upgradeShippingShippingTime,
-    loading: shippingTimeLoading,
-    error: shippingTimeError,
-    successMessage: shippingTimeSuccess,
-  } = useUpgradeShippingShippingTime();
 
   useEffect(() => {
     if (showBalanceErrorToast) {
@@ -106,26 +73,10 @@ export const Upgrade: React.FC<UpgradeProps> = ({
         setUpgrades={setUpgrades}
         setShowBalanceErrorToast={setShowBalanceErrorToast}
         buyUpgrade={buyUpgrade}
-        setMarketInfo={setMarketInfo}
       />
     );
   };
 
-  const renderShipping = () => {
-    return (
-      <RenderShipping
-        userInfo={userInfo}
-        tab={currentTab}
-        shippingMethods={shippingMethods}
-        setTouchPoints={setTouchPoints}
-        setUserInfo={setUserInfo}
-        setShowBalanceErrorToast={setShowBalanceErrorToast}
-        buyShippingMethod={buyShippingMethod}
-        upgradeShippingCapacity={upgradeShippingCapacity}
-        upgradeShippingShippingTime={upgradeShippingShippingTime}
-      />
-    );
-  };
 
   return (
     <>
@@ -138,35 +89,15 @@ export const Upgrade: React.FC<UpgradeProps> = ({
           >
             Production
           </TabButton>
-          <TabButton
-            role="tab"
-            active={currentTab === "shipping"}
-            onClick={() => handleTabClick("shipping")}
-          >
-            Shipping
-          </TabButton>
         </TabContainer>
         <UpgradeContainer>
           {currentTab === "dealer" && renderUpgrades()}
-          {currentTab === "shipping" && renderShipping()}
         </UpgradeContainer>
         <TouchPoints touchPoints={touchPoints} />
         <ApiToast
-          loading={
-            shippingLoading ||
-            upgradeLoading ||
-            capacityLoading ||
-            shippingTimeLoading
-          }
-          error={
-            shippingError || upgradeError || capacityError || shippingTimeError
-          }
-          successMessage={
-            shippingSuccess ||
-            upgradeSuccess ||
-            capacitySuccess ||
-            shippingTimeSuccess
-          }
+          loading={upgradeLoading}
+          error={upgradeError}
+          successMessage={upgradeSuccess}
         />
       </ShopContainer>
     </>

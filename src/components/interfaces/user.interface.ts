@@ -1,6 +1,5 @@
 import { ECRAFTABLE_ITEM } from "./craftableItem.interface";
 import { EProduct } from "./product.interface";
-import { EShippingMethod } from "./shipping.interface";
 import { SocialChannel } from "./social.interface";
 import { EDealerUpgrade, IRequirement, IUpgrade } from "./upgrade.interface";
 
@@ -29,26 +28,6 @@ export interface LabPlot {
   lab?: UserLab;
 }
 
-export interface IUserShipping {
-  method: EShippingMethod;
-  title: string;
-  image: string;
-  capacityLevel: number;
-  shippingTimeLevel: number;
-  capacity: number;
-  shippingTime: number;
-  upgradeCapacityPrice: number;
-  upgradeCapacity: number;
-  lastCapacityUpgrade: Date;
-  nextCapacityUpgrade: Date;
-  upgradeShippingTimePrice: number;
-  upgradeShippingTime: number;
-  lastShippingTimeUpgrade: Date;
-  nextShippingTimeUpgrade: Date;
-  lastShipment: Date;
-  nextShipment: Date;
-  requirements: IRequirement[] | null;
-}
 
 export interface Product {
   name: EProduct;
@@ -58,8 +37,6 @@ export interface Product {
   upgradePrice: number;
   lastUpgrade: Date;
   nextUpgrade: Date;
-  marketDiscount: number;
-  upgradeMarketDiscount: number;
   selected: boolean;
   slot: number | null;
 }
@@ -113,7 +90,6 @@ export interface IUserInfo {
   upgrades: IUpgrade[];
   products: Product[];
   dealerUpgrades: UserDealerUpgrade[];
-  shipping: IUserShipping[];
   labPlots: LabPlot[];
   labPlotPrice: number;
   referralToken: string;
@@ -124,8 +100,6 @@ export interface IUserInfo {
   customerAmountRemaining: number;
   robberyStrike: number;
   lastRobbery?: Date;
-  lastShipment?: Date;
-  nextShipment: Date;
   reputation: number;
   userLevel: IReputationLevel;
   socials?: IUserSocial[];
